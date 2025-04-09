@@ -47,3 +47,6 @@ class Pewik(Service):
             else:
                 break
         return payments
+
+    def logout(self):
+        self.browser.find_element(By.CLASS_NAME, 'btn-wyloguj').click()

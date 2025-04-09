@@ -76,7 +76,7 @@ def main():
                 services.Nordhome('FILTERED_SERVICE_LOGIN')
             ]
 
-    Payments(Browser(**params), [items[0]], verbose).collect()
+    Payments(Browser(**params), [items[4]], verbose).collect()
 
     end_time = datetime.datetime.now()
     print("Finished at %s" % end_time)
