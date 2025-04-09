@@ -2,7 +2,7 @@ from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from time import sleep
 from payment import Payment
-from .service import AuthInput, Service
+from .service import AuthElement, Service
 from log import setup_logging
 from datetime import date
 
@@ -11,8 +11,8 @@ log = setup_logging(__name__, 'DEBUG')
 
 class Multimedia(Service):
     def __init__(self, keystore_user):
-        user_input = AuthInput(By.ID, "Login_SSO_UserName")
-        password_input = AuthInput(By.ID, "Login_SSO_Password")
+        user_input = AuthElement(By.ID, "Login_SSO_UserName")
+        password_input = AuthElement(By.ID, "Login_SSO_Password")
         url = "https://ebok.multimedia.pl/panel-glowny.aspx"
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, keystore_user, user_input, password_input)

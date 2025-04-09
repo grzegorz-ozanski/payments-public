@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 from payment import Payment
 from datetime import date
-from .service import AuthInput, Service
+from .service import AuthElement, Service
 from log import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
@@ -9,8 +9,8 @@ log = setup_logging(__name__, 'DEBUG')
 
 class Pewik(Service):
     def __init__(self, keystore_user):
-        user_input = AuthInput(By.ID, "username")
-        password_input = AuthInput(By.ID, "password")
+        user_input = AuthElement(By.ID, "username")
+        password_input = AuthElement(By.ID, "password")
         url = "https://ebok.pewik.gdynia.pl/login"
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, keystore_user, user_input, password_input)

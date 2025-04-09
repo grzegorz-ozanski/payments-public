@@ -67,13 +67,13 @@ def main():
         params["url"] = chromedriver
 
     items = [
-                services.Pgnig("FILTERED_SERVICE_LOGIN"),
-                services.Energa("FILTERED_SERVICE_LOGIN"),
-                services.Actum("FILTERED_SERVICE_LOGIN"),
-                services.Multimedia("FILTERED_SERVICE_LOGIN"),
-                services.Pewik("FILTERED_SERVICE_LOGIN"),
-                services.Opec('FILTERED_SERVICE_LOGIN'),
-                services.Nordhome('FILTERED_SERVICE_LOGIN')
+                services.Pgnig("FILTERED_SERVICE_LOGIN"),  # 0
+                services.Energa("FILTERED_SERVICE_LOGIN"),        # 1
+                services.Actum("FILTERED_SERVICE_LOGIN"),              # 2
+                services.Multimedia("FILTERED_SERVICE_LOGIN"),       # 3
+                services.Pewik("FILTERED_SERVICE_LOGIN"),  # 4
+                services.Opec('FILTERED_SERVICE_LOGIN'),             # 5
+                services.Nordhome('FILTERED_SERVICE_LOGIN')            # 6
             ]
 
     Payments(Browser(**params), [items[4]], verbose).collect()

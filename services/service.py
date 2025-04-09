@@ -1,4 +1,7 @@
+from dataclasses import dataclass
+
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 import keyring
 from log import setup_logging
 
@@ -14,15 +17,15 @@ class Account:
         self.name = name
         self.key = self._sort_order[name]
 
+@dataclass
+class AuthElement:
+    by: By
+    selector: str
 
-class AuthInput:
-    def __init__(self, by, selector):
-        self.by = by
-        self.selector = selector
-
-
+@dataclass
 class Service:
-    def __init__(self, url, keystore_service, keystore_user, user_input, password_input):
+    def __init__(self, url: str, keystore_service: str, keystore_user: str,
+                 user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None):
         self.browser = None
         self.url = url
         self.name = keystore_service
@@ -30,6 +33,9 @@ class Service:
         self.keystore_user = keystore_user
         self.user_input = user_input
         self.password_input = password_input
+        if not logout_button:
+            logout_button = AuthElement(By.XPATH, '//*[contains(text(), "Wyloguj")]')
+        self.logout_button = logout_button
 
     def login(self, browser, load=True):
         self.browser = browser
@@ -76,7 +82,7 @@ class Service:
         raise NotImplementedError
 
     def logout(self):
-        raise NotImplementedError
+        self.browser.find_element(self.logout_button.by, self.logout_button.selector).click()
 
     @staticmethod
     def _get_account(address):

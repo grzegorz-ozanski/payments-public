@@ -1,14 +1,14 @@
 from selenium.webdriver.common.by import By
 from payment import Payment, get_amount, get_date
-from .service import AuthInput, Service
+from .service import AuthElement, Service
 from log import setup_logging
 log = setup_logging(__name__, 'DEBUG')
 
 
 class Opec(Service):
     def __init__(self, keystore_user):
-        user_input = AuthInput(By.ID, "_58_login")
-        password_input = AuthInput(By.ID, "_58_password")
+        user_input = AuthElement(By.ID, "_58_login")
+        password_input = AuthElement(By.ID, "_58_password")
         url = "https://ebok.opecgdy.com.pl/home"
         keystore_service = self.__class__.__name__.lower()
         self.account = Service._get_account('Sezamowa')

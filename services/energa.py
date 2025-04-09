@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 from payment import Payment
-from .service import AuthInput, Service
+from .service import AuthElement, Service
 from log import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
@@ -9,8 +9,8 @@ log = setup_logging(__name__, 'DEBUG')
 
 class Energa(Service):
     def __init__(self, keystore_user):
-        user_input = AuthInput(By.ID, "pt1:s13:it1::content")
-        password_input = AuthInput(By.ID, "pt1:s13:it2::content")
+        user_input = AuthElement(By.ID, "pt1:s13:it1::content")
+        password_input = AuthElement(By.ID, "pt1:s13:it2::content")
         url = "https://24.energa.pl"
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, keystore_user, user_input, password_input)
