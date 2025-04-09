@@ -1,0 +1,88 @@
+from selenium.webdriver.common.keys import Keys
+import keyring
+from log import setup_logging
+
+log = setup_logging(__name__, 'DEBUG')
+
+
+class Account:
+
+    _sort_order = {"Hodowlana": 1, "Bryla": 2, "Sezamowa": 3}
+
+    def __init__(self, name):
+        assert name in self._sort_order.keys()
+        self.name = name
+        self.key = self._sort_order[name]
+
+
+class AuthInput:
+    def __init__(self, by, selector):
+        self.by = by
+        self.selector = selector
+
+
+class Service:
+    def __init__(self, url, keystore_service, keystore_user, user_input, password_input):
+        self.browser = None
+        self.url = url
+        self.name = keystore_service
+        self.keystore_service = keystore_service
+        self.keystore_user = keystore_user
+        self.user_input = user_input
+        self.password_input = password_input
+
+    def login(self, browser, load=True):
+        self.browser = browser
+        if load:
+            log.debug("Opening %s" % self.url)
+            self.browser.get(self.url)
+        log.info("Logging into service...")
+        self.browser.wait_for_load()
+        # sleep(2)
+        try:
+            input_user = self.browser.wait_for_element(self.user_input.selector, self.user_input.by)
+            # input_user = None
+            # while input_user is None:
+            #     try:
+            #         input_user = self.driver.find_element(self.user_input.by, self.user_input.selector)
+            #     except NoSuchElementException:
+            #         sleep(0.01)
+            #         pass
+            # print(input_user)
+            if input_user is None:
+                print(self.browser.page_source)
+            assert input_user is not None
+            input_password = self.browser.wait_for_element(self.password_input.selector, self.password_input.by)
+            # assert input_password is not None
+            input_user.send_keys(self.keystore_user)
+            password = keyring.get_password(self.keystore_service, self.keystore_user)
+            if password is not None:
+                input_password.send_keys(password)
+            else:
+                raise Exception(f"No valid password found for service '{self.keystore_service}', user '{self.keystore_user}'!")
+            input_password.send_keys(Keys.ENTER)
+            # TODO workaround for Energa issue
+            try:
+                input_password.send_keys(Keys.ENTER)
+            except Exception:
+                pass
+            self.browser.wait_for_load()
+            log.info("Done.")
+        except Exception as e:
+            log.info("Cannot login into service: %s" % e)
+            raise
+
+    def get_payments(self):
+        raise NotImplementedError
+
+    def logout(self):
+        raise NotImplementedError
+
+    @staticmethod
+    def _get_account(address):
+        account = None
+        for street in ["Hodowlana", "Bryla", "Sezamowa"]:
+            if street in address:
+                account = Account(street)
+                break
+        return account
