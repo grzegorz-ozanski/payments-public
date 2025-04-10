@@ -34,6 +34,8 @@ def get_date(value):
         value = date.today()
     elif type(value) == WebElement:
         value = value.text
+    if "dzisiaj" in value:
+        return date.today().strftime('%d-%m-%Y')
     try:
         return parser.parse(value).strftime('%d-%m-%Y')
     except TypeError:
