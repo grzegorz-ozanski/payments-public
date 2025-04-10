@@ -70,13 +70,13 @@ def main():
                 services.Pgnig("FILTERED_SERVICE_LOGIN"),  # 0 - fixed
                 services.Energa("FILTERED_SERVICE_LOGIN"),        # 1
                 services.Actum("FILTERED_SERVICE_LOGIN"),              # 2 - fixed
-                services.Multimedia("FILTERED_SERVICE_LOGIN"),       # 3
+                services.Multimedia("FILTERED_SERVICE_LOGIN"),       # 3 - fixed
                 services.Pewik("FILTERED_SERVICE_LOGIN"),  # 4 - fixed
                 services.Opec('FILTERED_SERVICE_LOGIN'),             # 5 - fixed
                 services.Nordhome('FILTERED_SERVICE_LOGIN')            # 6 - fixed
             ]
 
-    Payments(Browser(**params), [items[6]], verbose).collect()
+    Payments(Browser(**params), [items[3]], verbose).collect()
 
     end_time = datetime.datetime.now()
     print("Finished at %s" % end_time)

@@ -35,9 +35,9 @@ class Multimedia(Service):
                     amount = invoice.find_element(By.CLASS_NAME, "kwota").text
                     due_date = invoice.find_element(By.CLASS_NAME, "platnoscDo")
                     log.debug("Got amount '%s'" % amount)
-                    if amount.startswith("91,00"):
+                    if amount.startswith("77,00"):
                         account = self._get_account("Sezamowa")
-                    elif amount.startswith("69,00"):
+                    elif amount.startswith("90,00"):
                         account = self._get_account("Hodowlana")
                     else:
                         raise Exception(f"Cannot find suitable account for payment '{amount}'!")
