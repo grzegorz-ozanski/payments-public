@@ -17,9 +17,9 @@ class Energa(Service):
 
     def _get_maintenance_buttons(self, by):
         if by == By.ID:
-            return self.browser.wait_for_elements("pt1:r1:0:cb1", By.ID, 0)
+            return self.browser.wait_for_elements(By.ID, "pt1:r1:0:cb1", 0)
         else:  # By.XPATH
-            return [b for b in self.browser.wait_for_elements("//button", By.XPATH) if "PRZEJDŹ DO ENERGA24" in b.text]
+            return [b for b in self.browser.wait_for_elements(By.XPATH, "//button") if "PRZEJDŹ DO ENERGA24" in b.text]
 
     def _get_due_date(self):
         details_class = "seeDetails"
@@ -27,7 +27,7 @@ class Energa(Service):
         date_value_class = "textViolet"
         details = self.browser.find_element(By.CLASS_NAME, details_class)
         details.click()
-        date_span = self.browser.wait_for_elements(date_span_id, By.ID, 3)
+        date_span = self.browser.wait_for_elements(By.ID, date_span_id, 3)
         due_date = date_span[0].find_element(By.CLASS_NAME, date_value_class).text if date_span else ""
         self.browser.back()
         return due_date
@@ -38,7 +38,7 @@ class Energa(Service):
         retries = 10
         amounts = None
         for i in range(retries):
-            amounts = self.browser.wait_for_elements("payAmount", delay=1)
+            amounts = self.browser.wait_for_elements(By.CLASS_NAME, "payAmount", delay=1)
             if amounts is None:
                 buttons = self._get_maintenance_buttons(By.ID)
                 if buttons:
@@ -51,7 +51,7 @@ class Energa(Service):
 
     def get_payments(self):
         log.info("Getting payments...")
-        accounts = self.browser.wait_for_elements("pbToolbar")
+        accounts = self.browser.wait_for_elements(By.CLASS_NAME, "pbToolbar")
         if accounts is None:
             print(self.browser.page_source)
         accounts_ids = [x.get_property("id") for x in accounts]
@@ -61,7 +61,7 @@ class Energa(Service):
         for account_id in accounts_ids:
             print(f'...account {next_id+1} of {len(accounts_ids)}')
             log.debug("Processing account '%s'" % account_id)
-            account = self.browser.wait_for_element(account_id, By.ID)
+            account = self.browser.wait_for_element(By.ID, account_id)
             if account:
                 log.debug("Opening account page")
                 account.click()
@@ -81,6 +81,6 @@ class Energa(Service):
                 next_id += 1
                 ActionChains(self.browser.browser).move_to_element(menu).click(item).perform()
                 # self.login()
-                # self.driver.wait_for_element(self.user_input.selector, self.user_input.by)
+                # self.driver.wait_for_element(self.user_input.by, self.user_input.selector)
 
         return payments

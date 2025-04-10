@@ -14,8 +14,8 @@ class IOK(Service, ABC):
 
     def get_payments(self):
         self.log.info("Getting payments...")
-        amount = self.browser.wait_for_element('home-amount', By.CLASS_NAME)
-        due_date = self.browser.wait_for_element('home-info', By.CLASS_NAME)
+        amount = self.browser.wait_for_element(By.CLASS_NAME, 'home-amount')
+        due_date = self.browser.wait_for_element(By.CLASS_NAME, 'home-info')
         due_date = due_date.find_element(By.TAG_NAME, 'span')
         account = self._get_account(self.account_name)
 

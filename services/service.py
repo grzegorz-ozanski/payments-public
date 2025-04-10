@@ -50,7 +50,7 @@ class Service:
         self.browser.wait_for_page_load_completed()
         # sleep(2)
         try:
-            input_user = self.browser.wait_for_element(self.user_input.selector, self.user_input.by)
+            input_user = self.browser.wait_for_element(self.user_input.by, self.user_input.selector)
             # input_user = None
             # while input_user is None:
             #     try:
@@ -62,7 +62,7 @@ class Service:
             if input_user is None:
                 print(self.browser.page_source)
             assert input_user is not None
-            input_password = self.browser.wait_for_element(self.password_input.selector, self.password_input.by)
+            input_password = self.browser.wait_for_element(self.password_input.by, self.password_input.selector)
             # assert input_password is not None
             input_user.send_keys(self.keystore_user)
             password = keyring.get_password(self.keystore_service, self.keystore_user)
@@ -86,7 +86,8 @@ class Service:
         raise NotImplementedError
 
     def logout(self):
-        self.browser.find_element(self.logout_button.by, self.logout_button.selector).click()
+        logout_button = self.browser.find_element(self.logout_button.by, self.logout_button.selector)
+        self.browser.execute_script("arguments[0].click()", logout_button)
 
     @staticmethod
     def _get_account(address):

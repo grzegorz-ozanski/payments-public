@@ -23,7 +23,7 @@ class Multimedia(Service):
         while any(item.is_empty() for item in payments) or len(payments) == 0:
             sleep(0.1)
             payments = []
-            invoices = self.browser.wait_for_elements("invoiceInfo")
+            invoices = self.browser.wait_for_elements(By.CLASS_NAME, "invoiceInfo")
             if invoices is None:
                 today = date.today()
                 due_date = date(today.year, today.month, 20)

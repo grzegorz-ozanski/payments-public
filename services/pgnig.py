@@ -15,13 +15,13 @@ class Pgnig(Service):
 
     def get_payments(self):
         log.info("Getting payments...")
-        account = self._get_account(self.browser.wait_for_element('reading-adress').text)
+        account = self._get_account(self.browser.wait_for_element(By.CLASS_NAME, 'reading-adress').text)
         log.info("Getting invoices menu...")
         invoices_menu = self.browser.find_element_ex(By.CLASS_NAME, "menu-element", 'text = Faktury')
         log.info("Opening invoices menu...")
         invoices_menu.click()
         log.info("Getting invoices list...")
-        invoices = self.browser.wait_for_elements("main-row-container")
+        invoices = self.browser.wait_for_elements(By.CLASS_NAME, "main-row-container")
         log.info("Filtering unpaid invoices...")
         unpaid_invoices = [item for item in invoices if item.find_element(By.CLASS_NAME, 'button').text == "Zapłać"]
         payments_dict = {}
@@ -34,4 +34,4 @@ class Pgnig(Service):
         return payments
 
     def logout(self):
-        self.browser.wait_for_element('//a[text()="Wyloguj"]', By.XPATH).click()
+        self.browser.wait_for_element(By.XPATH, '//a[text()="Wyloguj"]').click()
