@@ -86,8 +86,7 @@ class Service:
         raise NotImplementedError
 
     def logout(self):
-        logout_button = self.browser.find_element(self.logout_button.by, self.logout_button.selector)
-        self.browser.execute_script("arguments[0].click()", logout_button)
+        self.browser.click_element(self.logout_button.by, self.logout_button.selector)
 
     @staticmethod
     def _get_account(address):
