@@ -34,7 +34,11 @@ class Service:
         self.user_input = user_input
         self.password_input = password_input
         if not logout_button:
-            logout_button = AuthElement(By.XPATH, '//*[contains(text(), "Wyloguj")]')
+            logout_button = AuthElement(
+                By.XPATH,
+                # lowest element in DOM containing 'Wyloguj' string
+                '//*[contains(string(), "Wyloguj") and not(.//*[contains(string(), "Wyloguj")])]'
+            )
         self.logout_button = logout_button
 
     def login(self, browser, load=True):
