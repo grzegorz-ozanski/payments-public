@@ -1,6 +1,7 @@
 from dateutil import parser
 from datetime import date
 from log import setup_logging
+import re
 from selenium.webdriver.remote.webelement import WebElement
 
 log = setup_logging(__name__, 'DEBUG')
@@ -12,8 +13,7 @@ def get_amount(value, decimal=False):
     if type(value) == WebElement:
         value = value.text
     try:
-        if ' ' in value:
-            value = value.rsplit(' ', 1)[0]
+        value = re.sub(r"[^\d,.-]", "", value)
     except TypeError:
         value = f'{value:.2f}'
     # Replace any coma with correct locale decimal separator
