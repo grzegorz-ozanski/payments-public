@@ -25,7 +25,7 @@ class Pewik(Service):
         invoice.click()
         invoice = self.browser.find_element_ex(By.TAG_NAME, 'a', "text=Salda")
         invoice.click()
-        self.browser.wait_for_load()
+        self.browser.wait_for_page_load_completed()
         while True:
             account = self._get_account(self.browser.find_element(By.CLASS_NAME, 'select2-chosen').
                                         find_elements(By.TAG_NAME, 'span')[2].text)

@@ -43,7 +43,7 @@ class Service:
             log.debug("Opening %s" % self.url)
             self.browser.get(self.url)
         log.info("Logging into service...")
-        self.browser.wait_for_load()
+        self.browser.wait_for_page_load_completed()
         # sleep(2)
         try:
             input_user = self.browser.wait_for_element(self.user_input.selector, self.user_input.by)
@@ -72,7 +72,7 @@ class Service:
                 input_password.send_keys(Keys.ENTER)
             except Exception:
                 pass
-            self.browser.wait_for_load()
+            self.browser.wait_for_page_load_completed()
             log.info("Done.")
         except Exception as e:
             log.info("Cannot login into service: %s" % e)
