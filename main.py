@@ -67,16 +67,16 @@ def main():
         params["url"] = chromedriver
 
     items = [
-                services.Pgnig("FILTERED_SERVICE_LOGIN"),  # 0
+                services.Pgnig("FILTERED_SERVICE_LOGIN"),  # 0 - fixed
                 services.Energa("FILTERED_SERVICE_LOGIN"),        # 1
-                services.Actum("FILTERED_SERVICE_LOGIN"),              # 2
+                services.Actum("FILTERED_SERVICE_LOGIN"),              # 2 - fixed
                 services.Multimedia("FILTERED_SERVICE_LOGIN"),       # 3
-                services.Pewik("FILTERED_SERVICE_LOGIN"),  # 4
-                services.Opec('FILTERED_SERVICE_LOGIN'),             # 5
+                services.Pewik("FILTERED_SERVICE_LOGIN"),  # 4 - fixed
+                services.Opec('FILTERED_SERVICE_LOGIN'),             # 5 - fixed
                 services.Nordhome('FILTERED_SERVICE_LOGIN')            # 6
             ]
 
-    Payments(Browser(**params), [items[4]], verbose).collect()
+    Payments(Browser(**params), [items[5]], verbose).collect()
 
     end_time = datetime.datetime.now()
     print("Finished at %s" % end_time)
