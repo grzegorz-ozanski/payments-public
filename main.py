@@ -73,10 +73,10 @@ def main():
                 services.Multimedia("FILTERED_SERVICE_LOGIN"),       # 3
                 services.Pewik("FILTERED_SERVICE_LOGIN"),  # 4 - fixed
                 services.Opec('FILTERED_SERVICE_LOGIN'),             # 5 - fixed
-                services.Nordhome('FILTERED_SERVICE_LOGIN')            # 6
+                services.Nordhome('FILTERED_SERVICE_LOGIN')            # 6 - fixed
             ]
 
-    Payments(Browser(**params), [items[5]], verbose).collect()
+    Payments(Browser(**params), [items[6]], verbose).collect()
 
     end_time = datetime.datetime.now()
     print("Finished at %s" % end_time)
