@@ -55,8 +55,8 @@ class Payment:
         # log.debug("amount: %s, due_date: %s, acc")
         return self.amount is None or self.due_date is None or self.account is None
 
-    def print(self, debug_mode):
-        if debug_mode:
+    def print(self, long: bool):
+        if long:
             print("%s %s %s" % (self.amount, self.account.name, self.due_date))
         else:
             # print("%s" % self.amount)

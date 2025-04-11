@@ -1,17 +1,27 @@
 import platform
+from dataclasses import dataclass, field
+from typing import List
 
 import services
 import logging
 from log import setup_logging
 from browser import Browser
-from payments import Payments
+from paymentsmanager import PaymentsManager
 import sys
 import datetime
 import pathlib
 import argparse
 
 
-def main():
+@dataclass
+class Options:
+    verbose: bool = False
+    url: str = ''
+    binary_location: str = ''
+    browser_options: List[str] = field(default_factory=list)
+
+
+def parse_args() -> Options:
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-v', '--verbose', default=None, action='store_true', help='verbose')
     parser.add_argument('-l', '--headless', choices=['TRUE', 'FALSE'], nargs='?', help='headless browser')
@@ -20,13 +30,12 @@ def main():
     args = parser.parse_args()
 
     print(args)
-    begin_time = datetime.datetime.now()
-    print("Starting at %s" % datetime.datetime.now())
+    options = Options()
 
     if args.verbose is not None:
-        verbose = args.verbose
+        options.verbose = args.verbose
     else:
-        verbose = sys.gettrace() is not None
+        options.verbose = sys.gettrace() is not None
     if args.headless is not None:
         value = "-l=FALSE".split('=')[1].strip().lower()
         if value == 'true':
@@ -36,35 +45,42 @@ def main():
         else:
             raise Exception(f"Unrecognized bool value for '--headless': {value}")
     else:
-        headless = not verbose
+        headless = not options.verbose
 
     chromedriver = None
     if args.chromedriver is not None:
-         chromedriver = args.chromedriver
+        chromedriver = args.chromedriver
 
-    params = {"options": ["disable-gpu", "window-size=1200,1100"]}
+    options.browser_options = ["disable-gpu", "window-size=1200,1100"]
 
     if headless:
-        params["options"].append("headless")
-    log = setup_logging(__name__, 'DEBUG')
+        options.browser_options.append("headless")
+    _ = setup_logging(__name__, 'DEBUG')
 
-    if not verbose:
+    if not options.verbose:
         logging.disable(logging.CRITICAL)
 
     if chromedriver is None:
         system = platform.system()
         if system == 'Darwin':  # running on macOS
-            params["url"] = "file://***REMOVED***"
+            options.url = "file://***REMOVED***"
         elif system == 'Windows' or system == 'Linux':
             chromedriver_root = pathlib.Path(__file__).parent.joinpath('chromedriver').resolve(True)
-            params["url"] = f"file://{chromedriver_root.joinpath('chromedriver')}"
+            options.url = f"file://{chromedriver_root.joinpath('chromedriver')}"
             if system == 'Windows':
-                params["url"] += ".exe"
-                params["binary_location"] = str(chromedriver_root.joinpath("chrome").joinpath("chrome.exe"))
+                options.url += ".exe"
+                options.binary_location = str(chromedriver_root.joinpath("chrome").joinpath("chrome.exe"))
         else:
             raise NotImplementedError(f"'{system}' is not supported.")
     else:
-        params["url"] = chromedriver
+        options.url = chromedriver
+
+    return options
+
+def main():
+    begin_time = datetime.datetime.now()
+    print("Starting at %s" % datetime.datetime.now())
+
 
     items = [
                 services.Pgnig("FILTERED_SERVICE_LOGIN"),   # 0 - fixed
@@ -76,7 +92,13 @@ def main():
                 services.Nordhome('FILTERED_SERVICE_LOGIN')             # 6 - fixed
             ]
 
-    Payments(Browser(**params), [items[1]], verbose).collect()
+    options = parse_args()
+    browser = Browser(url=options.url,
+                      options=options.browser_options,
+                      binary_location=options.binary_location)
+    payments = PaymentsManager(browser, [items[0]], options.verbose)
+    payments.collect()
+    payments.print()
 
     end_time = datetime.datetime.now()
     print("Finished at %s" % end_time)
