@@ -1,3 +1,4 @@
+import time
 from dataclasses import dataclass
 
 from selenium.common.exceptions import NoSuchElementException
@@ -5,7 +6,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import keyring
 from log import setup_logging
-from accountmanager import AccountsManager
 
 log = setup_logging(__name__, 'DEBUG')
 
@@ -15,7 +15,6 @@ class AuthElement:
     by: By
     selector: str
 
-@dataclass
 class BaseService:
     def __init__(self, url: str, keystore_service: str, keystore_user: str,
                  user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None):
@@ -40,8 +39,8 @@ class BaseService:
             log.debug("Opening %s" % self.url)
             self.browser.goto_url_forcefully(self.url)
         log.info("Logging into service...")
-        self.browser.wait_for_page_load_completed()
-        # sleep(2)
+        self.browser.wait_for_page_inactive()
+        time.sleep(2)
         try:
             input_user = self.browser.wait_for_element(self.user_input.by, self.user_input.selector)
             # input_user = None
@@ -59,7 +58,7 @@ class BaseService:
                     error_file.write(self.browser.page_source)
             assert input_user is not None
             input_password = self.browser.wait_for_element(self.password_input.by, self.password_input.selector)
-            # assert input_password is not None
+            assert input_password is not None
             input_user.send_keys(self.keystore_user)
             password = keyring.get_password(self.keystore_service, self.keystore_user)
             if password is not None:
