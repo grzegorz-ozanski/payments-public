@@ -30,6 +30,8 @@ def get_amount(value, decimal=False):
 
 
 def get_date(value):
+    if type(value) == date:
+        return value
     if value is None:
         value = date.today()
     elif type(value) == WebElement:
