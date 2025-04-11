@@ -34,6 +34,3 @@ class Pgnig(BaseService):
         for date, amount in payments_dict.items():
             payments.append(Payment(amount, date, account_name))
         return payments
-
-    def logout(self):
-        self.browser.wait_for_element(By.XPATH, '//a[text()="Wyloguj"]').click()
