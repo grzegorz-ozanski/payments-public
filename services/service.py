@@ -52,7 +52,10 @@ class BaseService:
             #         pass
             # print(input_user)
             if input_user is None:
-                print(self.browser.page_source)
+                print(f"No user input {self.user_input} found!")
+                self.browser.save_screenshot(f"{self.name}-error.png")
+                with open(f"{self.name}-error.html", "wt") as error_file:
+                    error_file.write(self.browser.page_source)
             assert input_user is not None
             input_password = self.browser.wait_for_element(self.password_input.by, self.password_input.selector)
             # assert input_password is not None
