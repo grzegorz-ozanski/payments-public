@@ -31,7 +31,6 @@ class Opec(BaseService):
         self.browser.wait_for_page_inactive()
         time.sleep(1)
         invoices = self.browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
-        # invoices = self.browser.wait_for_elements(By.TAG_NAME, 'tr')
         amount = 0
         due_date = None
         for invoice in invoices:

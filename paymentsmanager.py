@@ -38,6 +38,5 @@ class PaymentsManager:
 
     def print(self):
         for payment in self.payments:
-            # payment.print(self.debug_mode)
             payment.print(True)
         self.browser.quit()

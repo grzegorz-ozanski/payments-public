@@ -43,14 +43,6 @@ class BaseService:
         time.sleep(2)
         try:
             input_user = self.browser.wait_for_element(self.user_input.by, self.user_input.selector)
-            # input_user = None
-            # while input_user is None:
-            #     try:
-            #         input_user = self.driver.find_element(self.user_input.by, self.user_input.selector)
-            #     except NoSuchElementException:
-            #         sleep(0.01)
-            #         pass
-            # print(input_user)
             if input_user is None:
                 print(f"No user input {self.user_input} found!")
                 self.browser.save_screenshot(f"{self.name}-error.png")

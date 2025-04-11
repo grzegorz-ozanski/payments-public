@@ -16,8 +16,6 @@ def get_amount(value, decimal=False):
         value = re.sub(r"[^\d,.-]", "", value)
     except TypeError:
         value = f'{value:.2f}'
-    # Replace any coma with correct locale decimal separator
-    # decimal_sep = locale.format_string('%.1f', 0)[1]
     value = value.replace(' ', '')
     if decimal:
         decimal_sep = '.'

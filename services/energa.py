@@ -77,12 +77,9 @@ class Energa(BaseService):
                 payments.append(Payment(value, due_date, account))
             log.debug("Moving to the next account")
             if account_id != accounts_ids[-1]:
-                # self.driver.find_element(By.ID, "pt1:close_popup").click()
                 menu = self.browser.find_element(By.ID, "pt1:pt_pgl11")
                 item = self.browser.find_element(By.ID, f"pt1:pt_i2:{next_id}:pt_cl1")
                 next_id += 1
                 ActionChains(self.browser.browser).move_to_element(menu).click(item).perform()
-                # self.login()
-                # self.driver.wait_for_element(self.user_input.by, self.user_input.selector)
 
         return payments
