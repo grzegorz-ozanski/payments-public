@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import keyring
@@ -81,13 +82,7 @@ class BaseService:
         raise NotImplementedError
 
     def logout(self):
-        self.browser.click_element(self.logout_button.by, self.logout_button.selector)
-
-    # def _get_account(self, address):
-    #     return self.acc
-    #     account = None
-    #     for street in ["Hodowlana", "Bryla", "Sezamowa"]:
-    #         if street in address:
-    #             account = Account(street)
-    #             break
-    #     return account
+        try:
+            self.browser.click_element(self.logout_button.by, self.logout_button.selector)
+        except NoSuchElementException:
+            log.debug("Cannot click logout button. Are we even logged in?")
