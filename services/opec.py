@@ -28,7 +28,7 @@ class Opec(BaseService):
     def get_payments(self):
         self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Płatności').click()
         self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Dokumenty').click()
-        self.browser.wait_for_page_inactive()
+        self.browser.wait_for_network_inactive()
         time.sleep(1)
         invoices = self.browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
         amount = 0
@@ -40,6 +40,6 @@ class Opec(BaseService):
                     continue
             amount += value
             date = get_date(columns[4])
-            if due_date is None or date < due_date:
+            if due_date is None or (date < due_date and value > 0):
                 due_date = date
         return [Payment(amount, due_date, 'Sezamowa')]
