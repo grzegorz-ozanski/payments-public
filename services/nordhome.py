@@ -8,4 +8,4 @@ class Nordhome(IOK):
     def __init__(self, keystore_user):
         url = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__('Bryla', url, keystore_user, keystore_service, log)
+        super().__init__('Bryla', 10, url, keystore_user, keystore_service, log)
