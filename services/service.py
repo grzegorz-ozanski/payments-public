@@ -37,7 +37,7 @@ class BaseService:
         self.browser = browser
         if load:
             log.debug("Opening %s" % self.url)
-            self.browser.get(self.url)
+            self.browser.goto_url_forcefully(self.url)
         log.info("Logging into service...")
         self.browser.wait_for_page_load_completed()
         # sleep(2)
