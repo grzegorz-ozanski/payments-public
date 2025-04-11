@@ -15,16 +15,9 @@ class AccountsManager:
         self.accounts.append(Account(account_name, len(self.accounts) + 1))
         return self
 
-    def get(self, account_name: str) -> Account | None:
-        try:
-            # TODO restrict bact to '=='
-            return [account for account in self.accounts if account.name in account_name][0]
-        except IndexError:
-            return None
-
     def sort_key(self, account_name: str) -> int:
         try:
             # TODO restrict bact to '=='
-            return self.get(account_name).key
+            return [account for account in self.accounts if account.name in account_name][0].key
         except IndexError:
             return 0
