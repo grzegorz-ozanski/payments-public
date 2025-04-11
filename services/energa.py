@@ -3,13 +3,13 @@ from selenium.webdriver import ActionChains
 
 from accountmanager import AccountsManager
 from payment import Payment
-from .service import AuthElement, Service
+from .service import AuthElement, BaseService
 from log import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
 
 
-class Energa(Service):
+class Energa(BaseService):
     def __init__(self, keystore_user):
         user_input = AuthElement(By.ID, "email_login")
         password_input = AuthElement(By.ID, "password")
@@ -51,7 +51,7 @@ class Energa(Service):
                 break
         return amounts
 
-    def get_payments(self, accounts: AccountsManager):
+    def get_payments(self):
         log.info("Getting payments...")
         accounts = self.browser.wait_for_elements(By.CLASS_NAME, "pbToolbar")
         if accounts is None:

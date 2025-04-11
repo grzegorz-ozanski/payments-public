@@ -3,14 +3,14 @@ from typing import List
 
 from accountmanager import AccountsManager
 from browser import Browser
-from services.service import Service
+from services.service import BaseService
 from payment import Payment
 
 
 @dataclass
 class PaymentsManager:
     browser: Browser
-    services: List[Service]
+    services: List[BaseService]
     accounts: AccountsManager
     debug_mode: bool
     payments: List[Payment] = field(default_factory=list)
@@ -20,8 +20,8 @@ class PaymentsManager:
             try:
                 print("Processing service %s..." % service.name)
                 service.login(self.browser)
-                payment = service.get_payments(self.accounts)
-                self.payments += sorted(payment, key=lambda value: value.account.key)
+                self.payments += sorted(service.get_payments(),
+                                        key=lambda value: self.accounts.sort_key(value.account))
                 service.logout()
             except Exception as e:
                 print(e)

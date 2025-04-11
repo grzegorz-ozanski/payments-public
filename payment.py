@@ -43,7 +43,7 @@ def get_date(value):
 
 
 class Payment:
-    def __init__(self, amount=None, due_date=None, account=None):
+    def __init__(self, amount=None, due_date=None, account=''):
         self.amount = get_amount(amount)
         self.due_date = get_date(due_date)
         self.account = account
@@ -57,7 +57,7 @@ class Payment:
 
     def print(self, long: bool):
         if long:
-            print("%s %s %s" % (self.amount, self.account.name, self.due_date))
+            print("%s %s %s" % (self.amount, self.account, self.due_date))
         else:
             # print("%s" % self.amount)
             print("%s %s" % (self.amount, self.due_date))

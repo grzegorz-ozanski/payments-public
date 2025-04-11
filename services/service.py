@@ -15,7 +15,7 @@ class AuthElement:
     selector: str
 
 @dataclass
-class Service:
+class BaseService:
     def __init__(self, url: str, keystore_service: str, keystore_user: str,
                  user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None):
         self.browser = None
@@ -74,7 +74,7 @@ class Service:
             log.info("Cannot login into service: %s" % e)
             raise
 
-    def get_payments(self, accounts: AccountsManager):
+    def get_payments(self):
         raise NotImplementedError
 
     def logout(self):

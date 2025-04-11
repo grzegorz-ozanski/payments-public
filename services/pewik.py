@@ -3,13 +3,13 @@ from selenium.webdriver.common.by import By
 from accountmanager import AccountsManager
 from payment import Payment
 from datetime import date
-from .service import AuthElement, Service
+from .service import AuthElement, BaseService
 from log import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
 
 
-class Pewik(Service):
+class Pewik(BaseService):
     def __init__(self, keystore_user):
         user_input = AuthElement(By.ID, "username")
         password_input = AuthElement(By.ID, "password")
@@ -17,7 +17,7 @@ class Pewik(Service):
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, keystore_user, user_input, password_input)
 
-    def get_payments(self, accounts: AccountsManager):
+    def get_payments(self):
         payments = []
         next_id = 1
         cookies_panel = self.browser.find_element(By.CLASS_NAME, 'panel-cookies')
@@ -29,8 +29,7 @@ class Pewik(Service):
         invoice.click()
         self.browser.wait_for_page_load_completed()
         while True:
-            account = accounts.get(self.browser.find_element(By.CLASS_NAME, 'select2-chosen').
-                                        find_elements(By.TAG_NAME, 'span')[2].text)
+            account = self.browser.find_element(By.CLASS_NAME, 'select2-chosen').find_elements(By.TAG_NAME, 'span')[2].text
             balances = self.browser.find_element(By.ID, 'saldaWplatyWykaz').\
                 find_element(By.TAG_NAME, 'tbody').\
                 find_elements(By.TAG_NAME, 'tr')

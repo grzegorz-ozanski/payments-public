@@ -6,7 +6,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from accountmanager import AccountsManager
 from payment import Payment, get_amount, get_date
-from .service import AuthElement, Service
+from .service import AuthElement, BaseService
 from log import setup_logging
 log = setup_logging(__name__, 'DEBUG')
 
@@ -17,7 +17,7 @@ def _get_invoice_value(columns: List[WebElement]):
     return get_amount(columns[5], True)
 
 
-class Opec(Service):
+class Opec(BaseService):
     def __init__(self, keystore_user):
         user_input = AuthElement(By.ID, "_58_login")
         password_input = AuthElement(By.ID, "_58_password")
@@ -25,7 +25,7 @@ class Opec(Service):
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, keystore_user, user_input, password_input)
 
-    def get_payments(self, accounts: AccountsManager):
+    def get_payments(self):
         self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Płatności').click()
         self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Dokumenty').click()
         self.browser.wait_for_page_inactive()
@@ -43,4 +43,4 @@ class Opec(Service):
             date = get_date(columns[4])
             if due_date is None or date < due_date:
                 due_date = date
-        return [Payment(amount, due_date, accounts.get('Sezamowa'))]
+        return [Payment(amount, due_date, 'Sezamowa')]
