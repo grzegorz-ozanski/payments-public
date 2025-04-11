@@ -2,6 +2,7 @@ from abc import ABC
 from selenium.webdriver.common.by import By
 from payment import Payment
 from .service import AuthElement, Service
+from accountmanager import AccountsManager
 
 
 class IOK(Service, ABC):
@@ -12,12 +13,12 @@ class IOK(Service, ABC):
         self.account_name = account_name
         super().__init__(url, keystore_service, keystore_user, user_input, password_input)
 
-    def get_payments(self):
+    def get_payments(self, accounts: AccountsManager):
         self.log.info("Getting payments...")
         amount = self.browser.wait_for_element(By.CLASS_NAME, 'home-amount')
         due_date = self.browser.wait_for_element(By.CLASS_NAME, 'home-info')
         due_date = due_date.find_element(By.TAG_NAME, 'span')
-        account = self._get_account(self.account_name)
+        account = accounts.get(self.account_name)
 
         self.log.debug(f"Got amount '{amount.text}' of account '{account.name}'")
         return [Payment(amount, due_date, account)]

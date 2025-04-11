@@ -7,6 +7,7 @@ import logging
 from log import setup_logging
 from browser import Browser
 from paymentsmanager import PaymentsManager
+from accountmanager import AccountsManager
 import sys
 import datetime
 import pathlib
@@ -82,6 +83,7 @@ def main():
     print("Starting at %s" % datetime.datetime.now())
 
 
+    accounts = AccountsManager().add('Hodowlana').add('Bryla').add('Sezamowa')
     items = [
                 services.Pgnig("FILTERED_SERVICE_LOGIN"),   # 0 - fixed
                 services.Energa("FILTERED_SERVICE_LOGIN"),  # 1
@@ -96,7 +98,7 @@ def main():
     browser = Browser(url=options.url,
                       options=options.browser_options,
                       binary_location=options.binary_location)
-    payments = PaymentsManager(browser, [items[0]], options.verbose)
+    payments = PaymentsManager(browser, [items[0]], accounts, options.verbose)
     payments.collect()
     payments.print()
 

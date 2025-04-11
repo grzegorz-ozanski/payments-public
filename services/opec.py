@@ -3,6 +3,8 @@ from typing import List
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+
+from accountmanager import AccountsManager
 from payment import Payment, get_amount, get_date
 from .service import AuthElement, Service
 from log import setup_logging
@@ -21,10 +23,9 @@ class Opec(Service):
         password_input = AuthElement(By.ID, "_58_password")
         url = "https://ebok.opecgdy.com.pl/home"
         keystore_service = self.__class__.__name__.lower()
-        self.account = Service._get_account('Sezamowa')
         super().__init__(url, keystore_service, keystore_user, user_input, password_input)
 
-    def get_payments(self):
+    def get_payments(self, accounts: AccountsManager):
         self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Płatności').click()
         self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Dokumenty').click()
         self.browser.wait_for_page_inactive()
@@ -42,4 +43,4 @@ class Opec(Service):
             date = get_date(columns[4])
             if due_date is None or date < due_date:
                 due_date = date
-        return [Payment(amount, due_date, self.account)]
+        return [Payment(amount, due_date, accounts.get('Sezamowa'))]

@@ -4,18 +4,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import keyring
 from log import setup_logging
+from accountmanager import AccountsManager
 
 log = setup_logging(__name__, 'DEBUG')
 
-
-class Account:
-
-    _sort_order = {"Hodowlana": 1, "Bryla": 2, "Sezamowa": 3}
-
-    def __init__(self, name):
-        assert name in self._sort_order.keys()
-        self.name = name
-        self.key = self._sort_order[name]
 
 @dataclass
 class AuthElement:
@@ -36,7 +28,7 @@ class Service:
         if not logout_button:
             logout_button = AuthElement(
                 By.XPATH,
-                # lowest element in DOM containing 'Wyloguj' string
+                # lowest element in the DOM tree containing 'Wyloguj' string
                 '//*[contains(string(), "Wyloguj") and not(.//*[contains(string(), "Wyloguj")])]'
             )
         self.logout_button = logout_button
@@ -82,17 +74,17 @@ class Service:
             log.info("Cannot login into service: %s" % e)
             raise
 
-    def get_payments(self):
+    def get_payments(self, accounts: AccountsManager):
         raise NotImplementedError
 
     def logout(self):
         self.browser.click_element(self.logout_button.by, self.logout_button.selector)
 
-    @staticmethod
-    def _get_account(address):
-        account = None
-        for street in ["Hodowlana", "Bryla", "Sezamowa"]:
-            if street in address:
-                account = Account(street)
-                break
-        return account
+    # def _get_account(self, address):
+    #     return self.acc
+    #     account = None
+    #     for street in ["Hodowlana", "Bryla", "Sezamowa"]:
+    #         if street in address:
+    #             account = Account(street)
+    #             break
+    #     return account

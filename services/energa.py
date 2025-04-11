@@ -1,5 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
+
+from accountmanager import AccountsManager
 from payment import Payment
 from .service import AuthElement, Service
 from log import setup_logging
@@ -49,7 +51,7 @@ class Energa(Service):
                 break
         return amounts
 
-    def get_payments(self):
+    def get_payments(self, accounts: AccountsManager):
         log.info("Getting payments...")
         accounts = self.browser.wait_for_elements(By.CLASS_NAME, "pbToolbar")
         if accounts is None:
@@ -68,7 +70,7 @@ class Energa(Service):
             log.debug("Getting payment")
             amounts = self._get_amounts()
             for amount in amounts:
-                account = self._get_account(self.browser.find_element(By.ID, "pt1:pt_ot20").text)
+                account = accounts.get(self.browser.find_element(By.ID, "pt1:pt_ot20").text)
                 value = amount.text
                 due_date = self._get_due_date()
                 log.debug("Got amount '%s' of account '%s'" % (value, account))

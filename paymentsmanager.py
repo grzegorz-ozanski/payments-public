@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
+
+from accountmanager import AccountsManager
 from browser import Browser
 from services.service import Service
 from payment import Payment
@@ -9,6 +11,7 @@ from payment import Payment
 class PaymentsManager:
     browser: Browser
     services: List[Service]
+    accounts: AccountsManager
     debug_mode: bool
     payments: List[Payment] = field(default_factory=list)
 
@@ -17,7 +20,7 @@ class PaymentsManager:
             try:
                 print("Processing service %s..." % service.name)
                 service.login(self.browser)
-                payment = service.get_payments()
+                payment = service.get_payments(self.accounts)
                 self.payments += sorted(payment, key=lambda value: value.account.key)
                 service.logout()
             except Exception as e:

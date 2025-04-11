@@ -1,4 +1,6 @@
 from selenium.webdriver.common.by import By
+
+from accountmanager import AccountsManager
 from payment import Payment, get_amount
 from .service import AuthElement, Service
 from log import setup_logging
@@ -13,9 +15,10 @@ class Pgnig(Service):
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, keystore_user, user_input, password_input)
 
-    def get_payments(self):
+    def get_payments(self, accounts: AccountsManager):
         log.info("Getting payments...")
-        account = self._get_account(self.browser.wait_for_element(By.CLASS_NAME, 'reading-adress').text)
+        account_name = self.browser.wait_for_element(By.CLASS_NAME, 'reading-adress').text
+        account = accounts.get(account_name)
         log.info("Getting invoices menu...")
         invoices_menu = self.browser.find_element_ex(By.CLASS_NAME, "menu-element", 'text = Faktury')
         log.info("Opening invoices menu...")
