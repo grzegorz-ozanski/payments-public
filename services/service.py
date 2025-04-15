@@ -82,11 +82,6 @@ class BaseService:
             else:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{self.keystore_user}'!")
             input_password.send_keys(Keys.ENTER)
-            # TODO workaround for Energa issue
-            try:
-                input_password.send_keys(Keys.ENTER)
-            except Exception:
-                pass
             self.browser.wait_for_page_load_completed()
             print(f"Sleeping {self.post_login_delay} seconds")
             time.sleep(self.post_login_delay)
