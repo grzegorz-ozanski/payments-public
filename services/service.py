@@ -61,7 +61,7 @@ class BaseService:
         try:
             if load:
                 log.debug("Opening %s" % self.url)
-                self.browser.goto_url_forcefully(self.url)
+                self.browser.force_get(self.url)
             log.info("Logging into service...")
             self.browser.wait_for_page_load_completed()
             print(f"Sleeping {self.pre_login_delay} seconds")
@@ -73,7 +73,6 @@ class BaseService:
             assert input_user is not None
             input_password = self.browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
-            input_user.clear()
             input_user.send_keys(self.keystore_user)
             password = keyring.get_password(self.keystore_service, self.keystore_user)
             if password is not None:

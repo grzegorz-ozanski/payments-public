@@ -89,7 +89,7 @@ def main():
 
     items = [
                 services.Pgnig("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 0 - fixed
-                services.Energa("FILTERED_SERVICE_LOGIN", [hodowlana, bryla, sezamowa]),  # 1
+                services.Energa("FILTERED_SERVICE_LOGIN", [hodowlana, bryla, sezamowa]),  # 1 - fixed
                 services.Actum("FILTERED_SERVICE_LOGIN", [hodowlana]),                                # 2 - fixed
                 services.Multimedia("FILTERED_SERVICE_LOGIN", [hodowlana, sezamowa]),               # 3 - fixed
                 services.Pewik("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 4 - fixed
