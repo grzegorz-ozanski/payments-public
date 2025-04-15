@@ -31,7 +31,7 @@ def get_date(value):
     if type(value) == date:
         return value
     if value is None:
-        value = date.today()
+        value = "dzisiaj"
     elif type(value) == WebElement:
         value = value.text
     if "dzisiaj" in value:
