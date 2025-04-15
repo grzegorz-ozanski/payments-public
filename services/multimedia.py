@@ -2,7 +2,6 @@ from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from time import sleep
 
-from accountmanager import AccountsManager
 from payment import Payment
 from .service import AuthElement, BaseService
 from log import setup_logging
@@ -17,7 +16,7 @@ class Multimedia(BaseService):
         password_input = AuthElement(By.ID, "Login_SSO_Password")
         url = "https://ebok.multimedia.pl/panel-glowny.aspx"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, keystore_user, user_input, password_input)
+        super().__init__(url, keystore_service, keystore_user, user_input, password_input, pre_login_delay= 5)
 
     def get_payments(self):
         log.info("Getting payments...")
