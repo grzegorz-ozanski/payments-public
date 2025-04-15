@@ -1,7 +1,9 @@
+from typing import List
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver import ActionChains
 
-from accountmanager import AccountsManager
+from account import Account
 from payment import Payment
 from .service import AuthElement, BaseService
 from log import setup_logging
@@ -10,12 +12,12 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Energa(BaseService):
-    def __init__(self, keystore_user):
+    def __init__(self, keystore_user: str, accounts: List[Account]):
         user_input = AuthElement(By.ID, "email_login")
         password_input = AuthElement(By.ID, "password")
         url = "https://24.energa.pl"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, keystore_user, user_input, password_input)
+        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input)
 
     def _get_maintenance_buttons(self, by):
         if by == By.ID:

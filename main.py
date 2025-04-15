@@ -7,7 +7,7 @@ import logging
 from log import setup_logging
 from browser import Browser
 from paymentsmanager import PaymentsManager
-from accountmanager import AccountsManager
+from account import Account
 import sys
 import datetime
 import pathlib
@@ -83,15 +83,18 @@ def main():
     print("Starting at %s" % datetime.datetime.now())
 
 
-    accounts = AccountsManager().add('Hodowlana').add('Bryla').add('Sezamowa')
+    hodowlana = Account('Hodowlana')
+    bryla = Account('Bryla')
+    sezamowa = Account('Sezamowa')
+
     items = [
-                services.Pgnig("FILTERED_SERVICE_LOGIN"),   # 0 - fixed
-                services.Energa("FILTERED_SERVICE_LOGIN"),  # 1
-                services.Actum("FILTERED_SERVICE_LOGIN"),               # 2 - fixed
-                services.Multimedia("FILTERED_SERVICE_LOGIN"),        # 3 - fixed
-                services.Pewik("FILTERED_SERVICE_LOGIN"),   # 4 - fixed
-                services.Opec('FILTERED_SERVICE_LOGIN'),              # 5 - fixed
-                services.Nordhome('FILTERED_SERVICE_LOGIN')             # 6 - fixed
+                services.Pgnig("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 0 - fixed
+                services.Energa("FILTERED_SERVICE_LOGIN", [hodowlana, bryla, sezamowa]),  # 1
+                services.Actum("FILTERED_SERVICE_LOGIN", [hodowlana]),                                # 2 - fixed
+                services.Multimedia("FILTERED_SERVICE_LOGIN", [hodowlana, sezamowa]),               # 3 - fixed
+                services.Pewik("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 4 - fixed
+                services.Opec('FILTERED_SERVICE_LOGIN', [sezamowa]),                                # 5 - fixed
+                services.Nordhome('FILTERED_SERVICE_LOGIN', [bryla])                                  # 6 - fixed
             ]
 
     options = parse_args()

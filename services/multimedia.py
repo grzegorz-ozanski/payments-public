@@ -1,7 +1,10 @@
+from typing import List
+
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from time import sleep
 
+from account import Account
 from payment import Payment
 from .service import AuthElement, BaseService
 from log import setup_logging
@@ -11,12 +14,22 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Multimedia(BaseService):
-    def __init__(self, keystore_user):
+    def __init__(self, keystore_user: str, accounts: List[Account]):
         user_input = AuthElement(By.ID, "Login_SSO_UserName")
         password_input = AuthElement(By.ID, "Login_SSO_Password")
         url = "https://ebok.multimedia.pl/panel-glowny.aspx"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, keystore_user, user_input, password_input, pre_login_delay= 5)
+        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input, pre_login_delay= 5)
+
+    def _get_account(self, amount: str):
+        # TODO: Better way of account identification
+        if amount.startswith("77,00"):
+            account_name = "Sezamowa"
+        elif amount.startswith("90,00"):
+            account_name = "Hodowlana"
+        else:
+            raise Exception(f"Cannot find suitable account for payment '{amount}'!")
+        return super()._get_account(account_name)
 
     def get_payments(self):
         log.info("Getting payments...")
@@ -28,20 +41,15 @@ class Multimedia(BaseService):
             if invoices is None:
                 today = date.today()
                 due_date = date(today.year, today.month, 20)
-                for account_name in ["Hodowlana", "Sezamowa"]:
-                    payments.append(Payment(0, due_date, account_name))
+                for account in self.accounts:
+                    payments.append(Payment(0, due_date, account))
                 return payments
             for invoice in invoices:
                 try:
                     amount = invoice.find_element(By.CLASS_NAME, "kwota").text
                     due_date = invoice.find_element(By.CLASS_NAME, "platnoscDo")
                     log.debug("Got amount '%s'" % amount)
-                    if amount.startswith("77,00"):
-                        account = "Sezamowa"
-                    elif amount.startswith("90,00"):
-                        account = "Hodowlana"
-                    else:
-                        raise Exception(f"Cannot find suitable account for payment '{amount}'!")
+                    account = self._get_account(amount)
                     payments.append(Payment(amount, due_date, account))
                 except StaleElementReferenceException:
                     log.debug("StaleElementReferenceException occurred, retrying")

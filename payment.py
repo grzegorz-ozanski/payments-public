@@ -1,5 +1,7 @@
 from dateutil import parser
 from datetime import date
+
+from account import Account
 from log import setup_logging
 import re
 from selenium.webdriver.remote.webelement import WebElement
@@ -43,13 +45,13 @@ def get_date(value):
 
 
 class Payment:
-    def __init__(self, amount=None, due_date=None, account=''):
+    def __init__(self, amount=None, due_date=None, account: Account | None = None):
         self.amount = get_amount(amount)
         self.due_date = get_date(due_date)
         self.account = account
 
     def __str__(self):
-        return "{0} {1} {2}".format(self.account, self.due_date, self.amount)
+        return "{0} {1} {2}".format(self.account.name, self.due_date, self.amount)
 
     def is_empty(self):
         # log.debug("amount: %s, due_date: %s, acc")
@@ -57,7 +59,7 @@ class Payment:
 
     def print(self, long: bool):
         if long:
-            print("%s %s %s" % (self.amount, self.account, self.due_date))
+            print("%s %s %s" % (self.amount, self.account.name, self.due_date))
         else:
             # print("%s" % self.amount)
             print("%s %s" % (self.amount, self.due_date))

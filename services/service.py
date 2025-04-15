@@ -1,11 +1,14 @@
 import time
 from dataclasses import dataclass
 from datetime import datetime
+from typing import List
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import keyring
+
+from account import Account
 from log import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
@@ -17,7 +20,7 @@ class AuthElement:
     selector: str
 
 class BaseService:
-    def __init__(self, url: str, keystore_service: str, keystore_user: str,
+    def __init__(self, url: str, keystore_service: str, keystore_user: str, accounts: List[Account],
                  user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         self.browser = None
@@ -25,6 +28,7 @@ class BaseService:
         self.name = keystore_service
         self.keystore_service = keystore_service
         self.keystore_user = keystore_user
+        self.accounts = accounts
         self.user_input = user_input
         self.password_input = password_input
         if not logout_button:
@@ -42,6 +46,15 @@ class BaseService:
         self.browser.save_screenshot(f"{file_name}.png")
         with open(f"{file_name}.html", "w", encoding="utf-8") as error_file:
             error_file.write(self.browser.page_source)
+
+    def _get_account(self, name_string: str):
+        try:
+            return next(account for account in self.accounts if account.name in name_string)
+        except StopIteration:
+            log.error(f"Cannot find account valid for service {self.name}!\n"
+                      f"Account name string provided: '{name_string}'.\n"
+                      f"Valid service accounts: {','.join([account.name for account in self.accounts])}")
+            raise
 
     def login(self, browser, load=True):
         self.browser = browser
