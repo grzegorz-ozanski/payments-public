@@ -37,7 +37,7 @@ class BaseService:
     def _save_error_logs(self):
         file_name = f"{datetime.today().strftime('%Y-%m-%d %H-%M-%S')} {self.name}-error"
         self.browser.save_screenshot(f"{file_name}.png")
-        with open(f"{file_name}.html", "wt") as error_file:
+        with open(f"{file_name}.html", "w", encoding="utf-8") as error_file:
             error_file.write(self.browser.page_source)
 
     def _do_login(self, delay: int, load: bool):
