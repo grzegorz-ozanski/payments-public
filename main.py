@@ -38,7 +38,7 @@ def parse_args() -> Options:
     else:
         options.verbose = sys.gettrace() is not None
     if args.headless is not None:
-        value = "-l=FALSE".split('=')[1].strip().lower()
+        value = args.headless.strip().lower()
         if value == 'true':
             headless = True
         elif value == 'false':
