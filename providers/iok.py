@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
-from payment import Payment
-from .service import AuthElement, BaseService
+from payments import Payment
+from .baseservice import AuthElement, BaseService
 from datetime import date
 
 

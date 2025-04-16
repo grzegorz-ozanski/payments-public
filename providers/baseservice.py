@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import keyring
 
-from account import Account
+from accounts import Account
 from log import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
@@ -18,6 +18,11 @@ log = setup_logging(__name__, 'DEBUG')
 class AuthElement:
     by: By
     selector: str
+
+def _sleep(amount: int, message: str):
+    if amount:
+        log.debug(f"{message}: sleeping {amount} seconds")
+        time.sleep(amount)
 
 class BaseService:
     def __init__(self, url: str, keystore_service: str, keystore_user: str, accounts: List[Account],
@@ -64,12 +69,11 @@ class BaseService:
                 self.browser.force_get(self.url)
             log.info("Logging into service...")
             self.browser.wait_for_page_load_completed()
-            print(f"Sleeping {self.pre_login_delay} seconds")
-            time.sleep(self.pre_login_delay)
+            _sleep(self.pre_login_delay, "Pre-login")
             input_user = self.browser.wait_for_element(self.user_input.by, self.user_input.selector)
             if input_user is None:
                 print(f"No user input {self.user_input} found!")
-                self._save_error_logs()
+                self.save_error_logs()
             assert input_user is not None
             input_password = self.browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
@@ -82,12 +86,11 @@ class BaseService:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{self.keystore_user}'!")
             input_password.send_keys(Keys.ENTER)
             self.browser.wait_for_page_load_completed()
-            print(f"Sleeping {self.post_login_delay} seconds")
-            time.sleep(self.post_login_delay)
+            _sleep(self.post_login_delay, "Post-login")
             log.info("Done.")
         except Exception as e:
             log.info("Cannot login into service: %s" % e)
-            self._save_error_logs()
+            self.save_error_logs()
             raise
 
     def get_payments(self):

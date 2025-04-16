@@ -4,9 +4,9 @@ from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from time import sleep
 
-from account import Account
-from payment import Payment
-from .service import AuthElement, BaseService
+from accounts import Account
+from payments import Payment
+from .baseservice import AuthElement, BaseService
 from log import setup_logging
 from datetime import date
 

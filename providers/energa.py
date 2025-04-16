@@ -2,9 +2,9 @@ from typing import List
 
 from selenium.webdriver.common.by import By
 
-from account import Account
-from payment import Payment
-from .service import AuthElement, BaseService
+from accounts import Account
+from payments import Payment
+from .baseservice import AuthElement, BaseService
 from log import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
@@ -19,15 +19,19 @@ class Energa(BaseService):
         super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input)
 
     def logout(self):
-        self.browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
-        self.browser.find_element(By.XPATH, '//span[contains(text(), "Wyloguj się")]').click()
+        try:
+            self.browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
+            self.browser.find_element(By.XPATH, '//span[contains(text(), "Wyloguj się")]').click()
+        except AttributeError as e:
+            if 'move_to requires a WebElement' in str(e):
+                log.debug("Cannot click logout button. Are we even logged in?")
+            else:
+                raise
 
     def get_payments(self):
         log.info("Getting payments...")
         self.browser.wait_for_page_load_completed()
         accounts_lists = self.browser.wait_for_elements(By.CSS_SELECTOR, 'label')
-        if accounts_lists is None:
-            print(self.browser.page_source)
         log.debug("Identified %d accounts" % len(accounts_lists))
         payments = []
         for account_id in range(len(accounts_lists)):

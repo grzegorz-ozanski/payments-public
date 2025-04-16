@@ -2,10 +2,10 @@ from typing import List
 
 from selenium.webdriver.common.by import By
 
-from account import Account
-from payment import Payment
+from accounts import Account
+from payments import Payment
 from datetime import date
-from .service import AuthElement, BaseService
+from .baseservice import AuthElement, BaseService
 from log import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')

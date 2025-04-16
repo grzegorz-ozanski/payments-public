@@ -1,6 +1,6 @@
 from typing import List
 
-from account import Account
+from accounts import Account
 from log import setup_logging
 from .iok import IOK
 

@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 from typing import List
 
 from browser import Browser
-from services.service import BaseService
-from payment import Payment
+from providers.baseservice import BaseService
+from payments import Payment
 
 
 @dataclass
@@ -22,6 +22,7 @@ class PaymentsManager:
         except Exception as e:
             print(e)
             print("Cannot get payments for service %s!" % service.name)
+            service.save_error_logs()
         finally:
             service.logout()
         return payments

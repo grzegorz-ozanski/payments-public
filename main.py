@@ -2,12 +2,12 @@ import platform
 from dataclasses import dataclass, field
 from typing import List
 
-import services
+import providers
 import logging
 from log import setup_logging
 from browser import Browser
-from paymentsmanager import PaymentsManager
-from account import Account
+from payments import PaymentsManager
+from accounts import Account
 import sys
 import datetime
 import pathlib
@@ -30,7 +30,6 @@ def parse_args() -> Options:
 
     args = parser.parse_args()
 
-    print(args)
     options = Options()
 
     if args.verbose is not None:
@@ -80,28 +79,28 @@ def parse_args() -> Options:
 
 def main():
     begin_time = datetime.datetime.now()
-    print("Starting at %s" % datetime.datetime.now())
+    print(f"Starting at {datetime.datetime.now()}")
 
 
     hodowlana = Account('Hodowlana')
     bryla = Account('Bryla')
     sezamowa = Account('Sezamowa')
 
-    items = [
-                services.Pgnig("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 0 - fixed
-                services.Energa("FILTERED_SERVICE_LOGIN", [hodowlana, bryla, sezamowa]),  # 1 - fixed
-                services.Actum("FILTERED_SERVICE_LOGIN", [hodowlana]),                                # 2 - fixed
-                services.Multimedia("FILTERED_SERVICE_LOGIN", [hodowlana, sezamowa]),               # 3 - fixed
-                services.Pewik("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 4 - fixed
-                services.Opec('FILTERED_SERVICE_LOGIN', [sezamowa]),                                # 5 - fixed
-                services.Nordhome('FILTERED_SERVICE_LOGIN', [bryla])                                  # 6 - fixed
+    providers_list = [
+                providers.Pgnig("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 0 - fixed
+                providers.Energa("FILTERED_SERVICE_LOGIN", [hodowlana, bryla, sezamowa]),  # 1 - fixed
+                providers.Actum("FILTERED_SERVICE_LOGIN", [hodowlana]),                                # 2 - fixed
+                providers.Multimedia("FILTERED_SERVICE_LOGIN", [hodowlana, sezamowa]),               # 3 - fixed
+                providers.Pewik("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 4 - fixed
+                providers.Opec('FILTERED_SERVICE_LOGIN', [sezamowa]),                                # 5 - fixed
+                providers.Nordhome('FILTERED_SERVICE_LOGIN', [bryla])                                  # 6 - fixed
             ]
 
     options = parse_args()
     browser = Browser(url=options.url,
                       options=options.browser_options,
                       binary_location=options.binary_location)
-    payments = PaymentsManager(browser, [items[0], items[3]], accounts, options.verbose)
+    payments = PaymentsManager(browser, providers_list, options.verbose)
     payments.collect()
     payments.print()
 

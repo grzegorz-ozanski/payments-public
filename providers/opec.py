@@ -4,10 +4,11 @@ from typing import List
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from account import Account
-from payment import Payment, get_amount, get_date
-from .service import AuthElement, BaseService
+from accounts import Account
+from payments import Payment, get_amount, get_date
+from .baseservice import AuthElement, BaseService
 from log import setup_logging
+
 log = setup_logging(__name__, 'DEBUG')
 
 
