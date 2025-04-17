@@ -90,9 +90,9 @@ class BaseService:
             assert input_user is not None
             input_password = self.browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
-            username = keyring.get_password(self.keystore_service, f'{self.keystore_service}_user')
+            username = keyring.get_password(self.keystore_service, 'username')
             input_user.send_keys(username)
-            password = keyring.get_password(self.keystore_service, f'{self.keystore_service}_password')
+            password = keyring.get_password(self.keystore_service, 'password')
             if password is not None:
                 input_password.send_keys(password)
             else:
