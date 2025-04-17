@@ -1,5 +1,6 @@
 from typing import List
 
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 
 from accounts import Account
@@ -25,11 +26,11 @@ class Pewik(BaseService):
         next_id = 1
         cookies_panel = self.browser.find_element(By.CLASS_NAME, 'panel-cookies')
         if cookies_panel:
-            cookies_panel.find_element(value='cookiesClose').click()
+            self.browser.trace_click(cookies_panel.find_element(value='cookiesClose'))
         invoice = self.browser.find_element_ex(By.TAG_NAME, 'a', "text=Faktury i salda")
-        invoice.click()
+        self.browser.trace_click(invoice)
         invoice = self.browser.find_element_ex(By.TAG_NAME, 'a', "text=Salda")
-        invoice.click()
+        self.browser.trace_click(invoice)
         self.browser.wait_for_page_load_completed()
         while True:
             account = self._get_account(
@@ -44,10 +45,10 @@ class Pewik(BaseService):
                 else:
                     payments.append(Payment(0, date.today(), account))
             accounts_arrow = self.browser.find_element(By.CLASS_NAME, 'select2-arrow')
-            accounts_arrow.click()
+            self.browser.trace_click(accounts_arrow)
             accounts = self.browser.find_elements(By.CLASS_NAME, 'select2-result')
             if next_id < len(accounts):
-                accounts[next_id].click()
+                self.browser.trace_click(accounts[next_id])
                 next_id += 1
             else:
                 break
