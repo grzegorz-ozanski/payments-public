@@ -15,9 +15,10 @@ class Pewik(BaseService):
     def __init__(self, keystore_user: str, accounts: List[Account]):
         user_input = AuthElement(By.ID, "username")
         password_input = AuthElement(By.ID, "password")
+        logout_button = AuthElement(By.CLASS_NAME, 'btn-wyloguj')
         url = "https://ebok.pewik.gdynia.pl/login"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input)
+        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input, logout_button)
 
     def get_payments(self):
         payments = []
@@ -51,6 +52,3 @@ class Pewik(BaseService):
             else:
                 break
         return payments
-
-    def logout(self):
-        self.browser.find_element(By.CLASS_NAME, 'btn-wyloguj').click()
