@@ -24,11 +24,13 @@ class Energa(BaseService):
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             self.browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
             self.browser.find_element(By.XPATH, '//span[contains(text(), "Wyloguj się")]').click()
-        except AttributeError as e:
-            if 'move_to requires a WebElement' in str(e):
-                log.debug("Cannot click logout button. Are we even logged in?")
-            else:
-                raise
+        except (AttributeError, ElementNotInteractableException) as e:
+            self.save_error_logs()
+            if type(e) is AttributeError:
+                if 'move_to requires a WebElement' in str(e):
+                    log.debug("Cannot click logout button. Are we even logged in?")
+                else:
+                    raise
 
     def get_payments(self):
         log.info("Getting payments...")
