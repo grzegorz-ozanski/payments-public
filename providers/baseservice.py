@@ -81,7 +81,7 @@ class BaseService:
                 log.debug("Opening %s" % self.url)
                 self.browser.force_get(self.url)
             log.info("Logging into service...")
-            self.browser.wait_for_page_load_completed()
+            self.browser.wait_for_page_inactive(2)
             _sleep(self.pre_login_delay, "Pre-login")
             input_user = self.browser.wait_for_element(self.user_input.by, self.user_input.selector)
             if input_user is None:
@@ -111,6 +111,7 @@ class BaseService:
 
     def logout(self):
         try:
+            self.browser.wait_for_page_inactive(2)
             self.browser.click_element(self.logout_button.by, self.logout_button.selector)
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
