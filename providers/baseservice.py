@@ -47,7 +47,6 @@ class BaseService:
         self.url = url
         self.name = keystore_service
         self.keystore_service = keystore_service
-        self.keystore_user = keystore_user
         self.accounts = accounts
         self.user_input = user_input
         self.password_input = password_input
@@ -92,12 +91,13 @@ class BaseService:
             assert input_user is not None
             input_password = self.browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
-            input_user.send_keys(self.keystore_user)
-            password = keyring.get_password(self.keystore_service, self.keystore_user)
+            username = keyring.get_password(self.keystore_service, f'{self.keystore_service}_user')
+            input_user.send_keys(username)
+            password = keyring.get_password(self.keystore_service, f'{self.keystore_service}_password')
             if password is not None:
                 input_password.send_keys(password)
             else:
-                raise Exception(f"No valid password found for service '{self.keystore_service}', user '{self.keystore_user}'!")
+                raise Exception(f"No valid password found for service '{self.keystore_service}', user '{username}'!")
             input_password.send_keys(Keys.ENTER)
             self.browser.wait_for_page_load_completed()
             _sleep(self.post_login_delay, "Post-login")
