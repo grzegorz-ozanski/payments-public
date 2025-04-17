@@ -13,13 +13,13 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Pewik(BaseService):
-    def __init__(self, keystore_user: str, accounts: List[Account]):
+    def __init__(self, *accounts: Account):
         user_input = AuthElement(By.ID, "username")
         password_input = AuthElement(By.ID, "password")
         logout_button = AuthElement(By.CLASS_NAME, 'btn-wyloguj')
         url = "https://ebok.pewik.gdynia.pl/login"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input, logout_button)
+        super().__init__(url, keystore_service, accounts, user_input, password_input, logout_button)
 
     def get_payments(self):
         payments = []

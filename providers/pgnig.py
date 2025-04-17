@@ -11,12 +11,12 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Pgnig(BaseService):
-    def __init__(self, keystore_user: str, accounts: List[Account]):
+    def __init__(self, *accounts: Account):
         user_input = AuthElement(By.NAME, "identificator")
         password_input = AuthElement(By.NAME, "accessPin")
         url = "https://ebok.pgnig.pl"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input)
+        super().__init__(url, keystore_service, accounts, user_input, password_input)
 
     def get_payments(self):
         log.info("Getting payments...")

@@ -19,12 +19,12 @@ def _get_invoice_value(columns: List[WebElement]):
 
 
 class Opec(BaseService):
-    def __init__(self, keystore_user: str, accounts: List[Account]):
+    def __init__(self, *accounts: Account):
         user_input = AuthElement(By.ID, "_58_login")
         password_input = AuthElement(By.ID, "_58_password")
         url = "https://ebok.opecgdy.com.pl/home"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input)
+        super().__init__(url, keystore_service, accounts, user_input, password_input)
 
     def get_payments(self):
         self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Płatności').click()

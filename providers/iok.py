@@ -1,17 +1,19 @@
 from selenium.webdriver.common.by import By
+
+from accounts import Account
 from payments import Payment
 from .baseservice import AuthElement, BaseService
 from datetime import date
 
 
 class IOK(BaseService):
-    def __init__(self, due_day, url, keystore_user, keystore_service, log, accounts):
+    def __init__(self, due_day, url, keystore_service, log, accounts: tuple[Account, ...]):
         user_input = AuthElement(By.CSS_SELECTOR, "[aria-labelledby=login]")
         password_input = AuthElement(By.CSS_SELECTOR, "[aria-labelledby=haslo]")
         self.log = log
         today = date.today()
         self.due_date = date(today.year, today.month, due_day)
-        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input)
+        super().__init__(url, keystore_service, accounts, user_input, password_input)
 
     def get_payments(self):
         self.log.info("Getting payments...")

@@ -8,7 +8,7 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Nordhome(IOK):
-    def __init__(self, keystore_user: str, accounts: List[Account]):
+    def __init__(self, *accounts: Account):
         url = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(10, url, keystore_user, keystore_service, log, accounts)
+        super().__init__(10, url, keystore_service, log, accounts)

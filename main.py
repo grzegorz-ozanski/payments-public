@@ -87,13 +87,13 @@ def main():
     sezamowa = Account('Sezamowa')
 
     providers_list = [
-                providers.Pgnig("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 0 - fixed
-                providers.Energa("FILTERED_SERVICE_LOGIN", [hodowlana, bryla, sezamowa]),  # 1 - fixed
-                providers.Actum("FILTERED_SERVICE_LOGIN", [hodowlana]),                                # 2 - fixed
-                providers.Multimedia("FILTERED_SERVICE_LOGIN", [hodowlana, sezamowa]),               # 3 - fixed
-                providers.Pewik("FILTERED_SERVICE_LOGIN", [sezamowa]),                     # 4 - fixed
-                providers.Opec('FILTERED_SERVICE_LOGIN', [sezamowa]),                                # 5 - fixed
-                providers.Nordhome('FILTERED_SERVICE_LOGIN', [bryla])                                  # 6 - fixed
+                providers.Pgnig(sezamowa),                     # 0 - fixed
+                providers.Energa(hodowlana, bryla, sezamowa),  # 1 - fixed
+                providers.Actum(hodowlana),                    # 2 - fixed
+                providers.Multimedia(hodowlana, sezamowa),     # 3 - fixed
+                providers.Pewik(sezamowa),                     # 4 - fixed
+                providers.Opec(sezamowa),                      # 5 - fixed
+                providers.Nordhome(bryla)                      # 6 - fixed
             ]
 
     options = parse_args()

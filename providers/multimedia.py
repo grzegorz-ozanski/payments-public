@@ -14,12 +14,12 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Multimedia(BaseService):
-    def __init__(self, keystore_user: str, accounts: List[Account]):
+    def __init__(self, *accounts: Account):
         user_input = AuthElement(By.ID, "Login_SSO_UserName")
         password_input = AuthElement(By.ID, "Login_SSO_Password")
         url = "https://ebok.multimedia.pl/panel-glowny.aspx"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, keystore_user, accounts, user_input, password_input, pre_login_delay= 5)
+        super().__init__(url, keystore_service, accounts, user_input, password_input, pre_login_delay= 5)
 
     def _get_account(self, amount: str):
         # TODO: Better way of account identification

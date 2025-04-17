@@ -2,7 +2,6 @@ import inspect
 import time
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List
 
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.keys import Keys
@@ -40,7 +39,7 @@ def _get_caller():
     return f'{class_name}_{method_name}'
 
 class BaseService:
-    def __init__(self, url: str, keystore_service: str, keystore_user: str, accounts: List[Account],
+    def __init__(self, url: str, keystore_service: str, accounts: tuple[Account, ...],
                  user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         self.browser = None
