@@ -21,6 +21,7 @@ class Energa(BaseService):
 
     def logout(self):
         try:
+            self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             self.browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
             self.browser.find_element(By.XPATH, '//span[contains(text(), "Wyloguj się")]').click()
         except AttributeError as e:
