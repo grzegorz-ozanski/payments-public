@@ -95,7 +95,6 @@ class BaseService:
             input_user.send_keys(self.keystore_user)
             password = keyring.get_password(self.keystore_service, self.keystore_user)
             if password is not None:
-                input_password.clear()
                 input_password.send_keys(password)
             else:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{self.keystore_user}'!")
