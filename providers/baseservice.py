@@ -1,3 +1,4 @@
+import inspect
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -24,6 +25,20 @@ def _sleep(amount: int, message: str):
         log.debug(f"{message}: sleeping {amount} seconds")
         time.sleep(amount)
 
+def _get_caller():
+    # get callers name of the parent
+    frame = inspect.stack()[2].frame
+
+    # get method name
+    method_name = inspect.stack()[2].function
+
+    # get class name if available
+    class_name = None
+    if 'self' in frame.f_locals:
+        class_name = frame.f_locals['self'].__class__.__name__
+
+    return f'{class_name}_{method_name}'
+
 class BaseService:
     def __init__(self, url: str, keystore_service: str, keystore_user: str, accounts: List[Account],
                  user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None,
@@ -46,12 +61,6 @@ class BaseService:
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
 
-    def _save_error_logs(self):
-        file_name = f"{datetime.today().strftime('%Y-%m-%d %H-%M-%S')} {self.name}-error"
-        self.browser.save_screenshot(f"{file_name}.png")
-        with open(f"{file_name}.html", "w", encoding="utf-8") as error_file:
-            error_file.write(self.browser.page_source)
-
     def _get_account(self, name_string: str):
         try:
             return next(account for account in self.accounts if account.name in name_string)
@@ -60,6 +69,12 @@ class BaseService:
                       f"Account name string provided: '{name_string}'.\n"
                       f"Valid service accounts: {','.join([account.name for account in self.accounts])}")
             raise
+
+    def save_error_logs(self):
+        file_name = f"{datetime.today().strftime('%Y-%m-%d %H-%M-%S')} {self.name} {_get_caller()} error"
+        self.browser.save_screenshot(f"{file_name}.png")
+        with open(f"{file_name}.html", "w", encoding="utf-8") as error_file:
+            error_file.write(self.browser.page_source)
 
     def login(self, browser, load=True):
         self.browser = browser
