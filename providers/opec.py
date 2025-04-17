@@ -43,4 +43,4 @@ class Opec(BaseService):
             date = get_date(columns[4])
             if due_date is None or (date < due_date and value > 0):
                 due_date = date
-        return [Payment(amount, due_date, self.accounts[0])]
+        return [Payment(amount if amount > 0 else 0, due_date, self.accounts[0])]
