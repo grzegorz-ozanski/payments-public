@@ -7,7 +7,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from accounts import Account
 from payments import Payment, get_amount, get_date
 from .baseservice import AuthElement, BaseService
-from log import setup_logging
+from browser import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
 

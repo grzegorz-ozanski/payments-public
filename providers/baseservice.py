@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 import keyring
 
 from accounts import Account
-from log import setup_logging
+from browser import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
 

@@ -1,5 +1,5 @@
 from accounts import Account
-from log import setup_logging
+from browser import setup_logging
 
 from parsers import *
 

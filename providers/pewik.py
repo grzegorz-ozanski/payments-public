@@ -1,13 +1,10 @@
-from typing import List
-
-from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 
 from accounts import Account
 from payments import Payment
 from datetime import date
 from .baseservice import AuthElement, BaseService
-from log import setup_logging
+from browser import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
 

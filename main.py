@@ -4,8 +4,7 @@ from typing import List
 
 import providers
 import logging
-from log import setup_logging
-from browser import Browser
+from browser import Browser, setup_logging
 from payments import PaymentsManager
 from accounts import Account
 import sys

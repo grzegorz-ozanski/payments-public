@@ -3,7 +3,7 @@ from typing import List
 from selenium.webdriver.common.by import By
 
 from accounts import Account
-from log import setup_logging
+from browser import setup_logging
 from payments import Payment, get_amount
 from .baseservice import AuthElement, BaseService
 

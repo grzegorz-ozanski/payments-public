@@ -1,7 +1,5 @@
-from typing import List
-
 from accounts import Account
-from log import setup_logging
+from browser import setup_logging
 from .iok import IOK
 
 log = setup_logging(__name__, 'DEBUG')
