@@ -1,5 +1,6 @@
 from typing import List
 
+from selenium.common.exceptions import ElementNotInteractableException
 from selenium.webdriver.common.by import By
 
 from accounts import Account
@@ -37,13 +38,13 @@ class Energa(BaseService):
         for account_id in range(len(accounts_lists)):
             print(f'...account {account_id+1} of {len(accounts_lists)}')
             log.debug("Opening account page")
-            self.browser.wait_for_elment_disappear(By.CSS_SELECTOR, 'div.popup.center')
+            self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             accounts_lists[account_id].click()
             account = self._get_account(
                 self.browser.wait_for_element(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm').text)
             log.debug("Getting payment")
             amount = self.browser.wait_for_element(By.CSS_SELECTOR, 'h1.text.es-text.variant-balance').text
-            self.browser.wait_for_elment_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
+            self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
             self.browser.find_element(By.XPATH, '//a[contains(text(), "Faktury")]').click()
             invoices = self.browser.find_elements(
                 By.XPATH,
