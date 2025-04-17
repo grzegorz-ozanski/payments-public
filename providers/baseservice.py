@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import keyring
@@ -101,3 +101,5 @@ class BaseService:
             self.browser.click_element(self.logout_button.by, self.logout_button.selector)
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
+        except WebDriverException:
+            self.save_error_logs()
