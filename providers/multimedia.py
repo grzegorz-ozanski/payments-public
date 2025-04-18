@@ -14,22 +14,20 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Multimedia(BaseService):
-    def __init__(self, *accounts: Account):
+    def __init__(self, locations: dict[str, Location]):
         user_input = AuthElement(By.ID, "Login_SSO_UserName")
         password_input = AuthElement(By.ID, "Login_SSO_Password")
         url = "https://ebok.multimedia.pl/panel-glowny.aspx"
+        self._locations_map = locations
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, accounts, user_input, password_input, pre_login_delay= 5)
+        locations = cast(tuple[Location, ...], tuple(locations.values()))  # to satisfy static code analyzers
+        super().__init__(url, keystore_service, locations, user_input, password_input, pre_login_delay= 5)
 
-    def _get_account(self, amount: str):
-        # TODO: Better way of account identification
-        if amount.startswith("77,00"):
-            account_name = "Sezamowa"
-        elif amount.startswith("90,00"):
-            account_name = "Hodowlana"
-        else:
-            raise Exception(f"Cannot find suitable account for payment '{amount}'!")
-        return super()._get_account(account_name)
+    def _get_location(self, amount: str):
+        location = [location for value, location in self._locations_map.items() if amount.startswith(value)]
+        if not location:
+            raise Exception(f"Cannot find suitable location for payment '{amount}'!")
+        return location[0]
 
     def get_payments(self):
         log.info("Getting payments...")
