@@ -4,7 +4,7 @@ from typing import List
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from accounts import Account
+from locations import Location
 from payments import Payment, get_amount, get_date
 from .baseservice import AuthElement, BaseService
 from browser import setup_logging
@@ -19,12 +19,12 @@ def _get_invoice_value(columns: List[WebElement]):
 
 
 class Opec(BaseService):
-    def __init__(self, *accounts: Account):
+    def __init__(self, *locations: Location):
         user_input = AuthElement(By.ID, "_58_login")
         password_input = AuthElement(By.ID, "_58_password")
         url = "https://ebok.opecgdy.com.pl/home"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, accounts, user_input, password_input)
+        super().__init__(url, keystore_service, locations, user_input, password_input)
 
     def get_payments(self):
         self.browser.find_element(By.XPATH, '//a[text()="Płatności"]').click()
@@ -43,4 +43,4 @@ class Opec(BaseService):
             date = get_date(columns[4])
             if due_date is None or (date < due_date and value > 0):
                 due_date = date
-        return [Payment(amount if amount > 0 else 0, due_date, self.accounts[0])]
+        return [Payment(amount if amount > 0 else 0, due_date, self.locations[0])]

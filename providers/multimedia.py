@@ -1,14 +1,14 @@
-from typing import List
-
 from selenium.common.exceptions import *
 from selenium.webdriver.common.by import By
 from time import sleep
 
-from accounts import Account
+from locations import Location
 from payments import Payment
 from .baseservice import AuthElement, BaseService
 from browser import setup_logging
 from datetime import date
+
+from typing import cast
 
 log = setup_logging(__name__, 'DEBUG')
 
@@ -39,16 +39,16 @@ class Multimedia(BaseService):
             if invoices is None:
                 today = date.today()
                 due_date = date(today.year, today.month, 20)
-                for account in self.accounts:
-                    payments.append(Payment(0, due_date, account))
+                for location in self.locations:
+                    payments.append(Payment(0, due_date, location))
                 return payments
             for invoice in invoices:
                 try:
                     amount = invoice.find_element(By.CLASS_NAME, "kwota").text
                     due_date = invoice.find_element(By.CLASS_NAME, "platnoscDo")
                     log.debug("Got amount '%s'" % amount)
-                    account = self._get_account(amount)
-                    payments.append(Payment(amount, due_date, account))
+                    location = self._get_location(amount)
+                    payments.append(Payment(amount, due_date, location))
                 except StaleElementReferenceException:
                     log.debug("StaleElementReferenceException occurred, retrying")
                     payments.append(Payment())

@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 
-from accounts import Account
+from locations import Location
 from payments import Payment
 from datetime import date
 from .baseservice import AuthElement, BaseService
@@ -10,13 +10,13 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Pewik(BaseService):
-    def __init__(self, *accounts: Account):
+    def __init__(self, *locations: Location):
         user_input = AuthElement(By.ID, "username")
         password_input = AuthElement(By.ID, "password")
         logout_button = AuthElement(By.CLASS_NAME, 'btn-wyloguj')
         url = "https://ebok.pewik.gdynia.pl/login"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, accounts, user_input, password_input, logout_button)
+        super().__init__(url, keystore_service, locations, user_input, password_input, logout_button)
 
     def get_payments(self):
         payments = []
@@ -30,7 +30,7 @@ class Pewik(BaseService):
         self.browser.trace_click(invoice)
         self.browser.wait_for_page_load_completed()
         while True:
-            account = self._get_account(
+            location = self._get_location(
                 self.browser.find_element(By.CLASS_NAME, 'select2-chosen').find_elements(By.TAG_NAME, 'span')[2].text)
             balances = self.browser.find_element(By.ID, 'saldaWplatyWykaz').\
                 find_element(By.TAG_NAME, 'tbody').\
@@ -38,14 +38,14 @@ class Pewik(BaseService):
             for item in balances:
                 columns = item.find_elements(By.TAG_NAME, 'td')
                 if len(columns) > 1:
-                    payments.append(Payment(columns[5], columns[3], account))
+                    payments.append(Payment(columns[5], columns[3], location))
                 else:
-                    payments.append(Payment(0, date.today(), account))
-            accounts_arrow = self.browser.find_element(By.CLASS_NAME, 'select2-arrow')
-            self.browser.trace_click(accounts_arrow)
-            accounts = self.browser.find_elements(By.CLASS_NAME, 'select2-result')
-            if next_id < len(accounts):
-                self.browser.trace_click(accounts[next_id])
+                    payments.append(Payment(0, date.today(), location))
+            locations_arrow = self.browser.find_element(By.CLASS_NAME, 'select2-arrow')
+            self.browser.trace_click(locations_arrow)
+            locations = self.browser.find_elements(By.CLASS_NAME, 'select2-result')
+            if next_id < len(locations):
+                self.browser.trace_click(locations[next_id])
                 next_id += 1
             else:
                 break

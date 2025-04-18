@@ -18,7 +18,7 @@ class PaymentsManager:
         try:
             print("Processing service %s..." % service.name)
             service.login(self.browser)
-            payments = sorted(service.get_payments(), key=lambda value: value.account.key)
+            payments = sorted(service.get_payments(), key=lambda value: value.location.key)
         except Exception as e:
             print(e)
             print("Cannot get payments for service %s!" % service.name)

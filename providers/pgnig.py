@@ -1,8 +1,6 @@
-from typing import List
-
 from selenium.webdriver.common.by import By
 
-from accounts import Account
+from locations import Location
 from browser import setup_logging
 from payments import Payment, get_amount
 from .baseservice import AuthElement, BaseService
@@ -11,16 +9,16 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Pgnig(BaseService):
-    def __init__(self, *accounts: Account):
+    def __init__(self, *locations: Location):
         user_input = AuthElement(By.NAME, "identificator")
         password_input = AuthElement(By.NAME, "accessPin")
         url = "https://ebok.pgnig.pl"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, accounts, user_input, password_input)
+        super().__init__(url, keystore_service, locations, user_input, password_input)
 
     def get_payments(self):
         log.info("Getting payments...")
-        account = self._get_account(self.browser.wait_for_element(By.CLASS_NAME, 'reading-adress').text)
+        location = self._get_location(self.browser.wait_for_element(By.CLASS_NAME, 'reading-adress').text)
         log.info("Getting invoices menu...")
         invoices_menu = self.browser.find_element(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
         log.info("Opening invoices menu...")
@@ -35,5 +33,5 @@ class Pgnig(BaseService):
             payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(get_amount(columns[3], '.'))
         payments = []
         for date, amount in payments_dict.items():
-            payments.append(Payment(amount, date, account))
+            payments.append(Payment(amount, date, location))
         return payments

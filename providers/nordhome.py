@@ -1,4 +1,4 @@
-from accounts import Account
+from locations import Location
 from browser import setup_logging
 from .iok import IOK
 
@@ -6,7 +6,7 @@ log = setup_logging(__name__, 'DEBUG')
 
 
 class Nordhome(IOK):
-    def __init__(self, *accounts: Account):
+    def __init__(self, *locations: Location):
         url = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
         keystore_service = self.__class__.__name__.lower()
-        super().__init__(10, url, keystore_service, log, accounts)
+        super().__init__(10, url, keystore_service, log, locations)

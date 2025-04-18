@@ -1,0 +1,7 @@
+class Location:
+    next_key: int = 0
+
+    def __init__(self, name: str):
+        self.name = name
+        self.key = Location.next_key
+        Location.next_key += 1

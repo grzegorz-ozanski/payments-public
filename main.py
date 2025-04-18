@@ -6,7 +6,7 @@ import providers
 import logging
 from browser import Browser, setup_logging
 from payments import PaymentsManager
-from accounts import Account
+from locations import Location
 import sys
 import datetime
 import pathlib
@@ -50,7 +50,8 @@ def parse_args() -> Options:
     if args.chromedriver is not None:
         chromedriver = args.chromedriver
 
-    options.browser_options = ["disable-gpu", "window-size=1200,1100"]
+    options.browser_options = ["disable-gpu", "window-size=1200,1100",
+                               "log-level=3", "no-sandbox", "disable-dev-shm-usage", "enable-unsafe-swiftshader"]
 
     if headless:
         options.browser_options.append("headless")
@@ -81,9 +82,9 @@ def main():
     print(f"Starting at {datetime.datetime.now()}")
 
 
-    hodowlana = Account('Hodowlana')
-    bryla = Account('Bryla')
-    sezamowa = Account('Sezamowa')
+    hodowlana = Location('Hodowlana')
+    bryla = Location('Bryla')
+    sezamowa = Location('Sezamowa')
 
     providers_list = [
                 providers.Pgnig(sezamowa),                                # 0
@@ -99,7 +100,7 @@ def main():
     browser = Browser(url=options.url,
                       options=options.browser_options,
                       binary_location=options.binary_location)
-    payments = PaymentsManager(browser, providers_list, options.verbose)
+    payments = PaymentsManager(browser, [providers_list[3]], options.verbose)
     payments.collect()
     payments.print()
 

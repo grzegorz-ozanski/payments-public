@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import keyring
 
-from accounts import Account
+from locations import Location
 from browser import setup_logging
 
 log = setup_logging(__name__, 'DEBUG')
@@ -39,14 +39,14 @@ def _get_caller():
     return f'{class_name}_{method_name}'
 
 class BaseService:
-    def __init__(self, url: str, keystore_service: str, accounts: tuple[Account, ...],
+    def __init__(self, url: str, keystore_service: str, locations: tuple[Location, ...],
                  user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         self.browser = None
         self.url = url
         self.name = keystore_service
         self.keystore_service = keystore_service
-        self.accounts = accounts
+        self.locations = locations
         self.user_input = user_input
         self.password_input = password_input
         if not logout_button:
@@ -59,13 +59,13 @@ class BaseService:
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
 
-    def _get_account(self, name_string: str):
+    def _get_location(self, name_string: str):
         try:
-            return next(account for account in self.accounts if account.name in name_string)
+            return next(location for location in self.locations if location.name in name_string)
         except StopIteration:
-            log.error(f"Cannot find account valid for service {self.name}!\n"
-                      f"Account name string provided: '{name_string}'.\n"
-                      f"Valid service accounts: {','.join([account.name for account in self.accounts])}")
+            log.error(f"Cannot find a valid location for service {self.name}!\n"
+                      f"Location name provided: '{name_string}'.\n"
+                      f"Valid service locations: {','.join([location.name for location in self.locations])}")
             raise
 
     def save_error_logs(self):
