@@ -27,8 +27,8 @@ class Opec(BaseService):
         super().__init__(url, keystore_service, accounts, user_input, password_input)
 
     def get_payments(self):
-        self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Płatności').click()
-        self.browser.find_element_ex(By.TAG_NAME, 'a', 'text=Dokumenty').click()
+        self.browser.find_element(By.XPATH, '//a[text()="Płatności"]').click()
+        self.browser.find_element(By.XPATH, '//a[contains(string(), "Dokumenty")]').click()
         self.browser.wait_for_network_inactive()
         time.sleep(1)
         invoices = self.browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')

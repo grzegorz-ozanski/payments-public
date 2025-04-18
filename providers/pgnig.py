@@ -22,7 +22,7 @@ class Pgnig(BaseService):
         log.info("Getting payments...")
         account = self._get_account(self.browser.wait_for_element(By.CLASS_NAME, 'reading-adress').text)
         log.info("Getting invoices menu...")
-        invoices_menu = self.browser.find_element_ex(By.CLASS_NAME, "menu-element", 'text = Faktury')
+        invoices_menu = self.browser.find_element(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
         log.info("Opening invoices menu...")
         invoices_menu.click()
         log.info("Getting invoices list...")
