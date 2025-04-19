@@ -51,7 +51,8 @@ def parse_args() -> Options:
         chromedriver = args.chromedriver
 
     options.browser_options = ["disable-gpu", "window-size=1200,1100",
-                               "log-level=3", "no-sandbox", "disable-dev-shm-usage", "enable-unsafe-swiftshader"]
+                               "log-level=3", "no-sandbox", "disable-dev-shm-usage", "enable-unsafe-swiftshader",
+                               ]
 
     if headless:
         options.browser_options.append("headless")
