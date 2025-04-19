@@ -69,7 +69,8 @@ jobs:
         git clone https://x-access-token:${{ secrets.BROWSER_REPO_TOKEN }}@github.com/grzegorz-ozanski/browser.git
 
     - name: Install GitHub CLI
-      uses: actions4gh/setup-gh@v1
+      run: |
+        winget install --id GitHub.cli
 
     - name: Download Chrome i Chromedriver from GitHub Release
       run: |
