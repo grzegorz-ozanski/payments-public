@@ -90,4 +90,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: error-logs
-        path: ./
+        path: |
+          ./*.png
+          ./*.html
