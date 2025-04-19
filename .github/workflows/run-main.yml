@@ -68,13 +68,13 @@ jobs:
       run: |
         git clone https://x-access-token:${{ secrets.BROWSER_REPO_TOKEN }}@github.com/grzegorz-ozanski/browser.git
 
-    - name: Download Chrome i Chromedriver from GitHub Release
+    - name: Download Chrome and Chromedriver from GitHub Release
       run: |
-        set CHROMEDRIVER_VERSION=chromedriver-chrome-134.0.6944.0
-        gh release download %CHROMEDRIVER_VERSION% ^
-          --repo grzegorz-ozanski/chrome ^
-          --pattern "%CHROMEDRIVER_VERSION%.zip"
-        powershell -Command "Expand-Archive -Path %CHROMEDRIVER_VERSION%.zip -DestinationPath ."
+        $CHROMEDRIVER_VERSION = "chromedriver-chrome-134.0.6944.0"
+        gh release download $CHROMEDRIVER_VERSION `
+          --repo grzegorz-ozanski/chrome `
+          --pattern "$CHROMEDRIVER_VERSION.zip"
+        Expand-Archive -Path "$CHROMEDRIVER_VERSION.zip" -DestinationPath .
       env:
         GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
 
