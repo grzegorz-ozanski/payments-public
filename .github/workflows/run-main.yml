@@ -68,10 +68,6 @@ jobs:
       run: |
         git clone https://x-access-token:${{ secrets.BROWSER_REPO_TOKEN }}@github.com/grzegorz-ozanski/browser.git
 
-    - name: Install GitHub CLI
-      run: |
-        winget install --id GitHub.cli
-
     - name: Download Chrome i Chromedriver from GitHub Release
       run: |
         set CHROMEDRIVER_VERSION=chromedriver-chrome-134.0.6944.0
