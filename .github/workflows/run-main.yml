@@ -83,3 +83,9 @@ jobs:
 
     - name: Run the script
       run: python main.py
+
+    - name: Upload error logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: error-logs
+        path: ./*.{png,html}
