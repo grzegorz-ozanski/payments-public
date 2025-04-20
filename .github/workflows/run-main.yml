@@ -48,7 +48,7 @@ jobs:
 #
 
   run-windows:
-    runs-on: windows-latest
+    runs-on: [self-hosted, Windows]
 
     steps:
     - name: Checkout current repo
