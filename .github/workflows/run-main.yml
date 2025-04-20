@@ -56,9 +56,12 @@ jobs:
 
     - name: Use system Python 3.11
       run: |
-        echo "***REMOVED***" >> $env:GITHUB_PATH
+        $PYTHONPATH = "***REMOVED***"
+        echo "$PYTHONPATH" >> $env:GITHUB_PATH
+        echo "$PYTHONPATH\\Scripts" >> $env:GITHUB_PATH
         python --version
         where python
+      shell: pwsh
 
     - name: Install dependencies
       run: |
