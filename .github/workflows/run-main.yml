@@ -58,7 +58,7 @@ jobs:
       run: |
         $PYTHONPATH = "***REMOVED***"
         echo "$PYTHONPATH" >> $env:GITHUB_PATH
-        echo "$PYTHONPATH\\Scripts" >> $env:GITHUB_PATH
+        echo "$PYTHONPATH\Scripts" >> $env:GITHUB_PATH
         python --version
         where python
       shell: pwsh
