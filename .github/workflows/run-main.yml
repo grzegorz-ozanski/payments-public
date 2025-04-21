@@ -88,7 +88,6 @@ jobs:
     - name: Run the script
       run: |
         python main.py
-        dir
 
     - name: Upload error logs
       uses: actions/upload-artifact@v4
