@@ -92,18 +92,7 @@ jobs:
 
     - name: Prepare credentials
       run: |
-        $envContent = @"
-        ${{ secrets.CREDENTIALS }}
-        "@ -split "`n"
-    
-        foreach ($line in $envContent) {
-          if ($line -match '^\s*([^=]+)\s*=\s*(.+?)\s*$') {
-            $key = $matches[1].Trim()
-            $val = $matches[2].Trim()
-            Write-Host "Setting $key"
-            ${env:$key} = $val
-          }
-        }
+        echo ${{ secrets.CREDENTIALS }} >> $env:GITHUB_ENV
 
     - name: Run the script
       run: |
