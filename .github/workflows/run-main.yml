@@ -56,6 +56,22 @@ jobs:
     runs-on: [self-hosted, Windows]
 
     steps:
+    - name: Mask sensitive env vars dynamically
+      run: |
+        $patterns = @("_PASSWORD", "_USERNAME", "_TOKEN", "_SECRET", "_KEY")
+        foreach ($key in [System.Environment]::GetEnvironmentVariables().Keys) {
+          foreach ($suffix in $patterns) {
+            if ($key.EndsWith($suffix)) {
+              $val = [System.Environment]::GetEnvironmentVariable($key)
+              if ($val) {
+                Write-Output "::add-mask::$val"
+                Write-Output "Masked $key"
+              }
+            }
+          }
+        }
+      shell: pwsh
+
     - name: Checkout current repo
       uses: actions/checkout@v4
 
