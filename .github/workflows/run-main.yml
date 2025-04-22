@@ -142,8 +142,9 @@ jobs:
           if ($new -ne $old) {
             $oldLines = $old -split "`n"
             $newLines = $new -split "`n"
-            Write-Host "OLD length: $($old.Length), lines: $oldLines.Count"
-            Write-Host "NEW length: $($new.Length), lines: $newLines.Count"
+            Write-Host "OLD length: $($old.Length), lines: $($oldLines.Count)"
+            Write-Host "NEW length: $($new.Length), lines: $($newLines.Count)"
+            Compare-Object $oldLines $newLines | Out-String | Write-Host
             ${new} | Set-Content new.txt
             ${old} | Set-Content old.txt
             echo "changed=true" >> $env:GITHUB_OUTPUT
