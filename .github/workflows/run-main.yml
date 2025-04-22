@@ -101,7 +101,7 @@ jobs:
             $key = $matches[1].Trim()
             $val = $matches[2].Trim()
             Write-Host "Setting $key"
-            $env:$key = $val
+            ${env:$key} = $val
           }
         }
 
