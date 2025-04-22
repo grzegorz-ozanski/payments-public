@@ -133,12 +133,12 @@ jobs:
       id: compare
       shell: pwsh
       run: |
-        if (-not (Test-Path ${REFERENCE_OUTPUT})) {
+        if (-not (Test-Path ${env:REFERENCE_OUTPUT})) {
           Write-Output "Reference not found, assuming change"
           echo "changed=true" >> $env:GITHUB_OUTPUT
         } else {
-          $new = Get-Content ${SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
-          $old = Get-Content ${REFERENCE_OUTPUT}
+          $new = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
+          $old = Get-Content ${env:REFERENCE_OUTPUT}
           if ($new -ne $old) {
             echo "changed=true" >> $env:GITHUB_OUTPUT
           } else {
@@ -151,7 +151,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: changed-output
-        path: ${SCRIPT_OUTPUT}
+        path: ${{ env.SCRIPT_OUTPUT }}
 
     - name: Send email if output changed
       if: steps.compare.outputs.changed == 'true'
@@ -170,4 +170,4 @@ jobs:
           ➤ View artifact and logs:
           https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-          If this was expected, consider updating reference_output.txt
+          If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
