@@ -104,8 +104,6 @@ class BaseService:
             log.info("Logging into service...")
             self.browser.wait_for_page_inactive(2)
             _sleep_with_message(self.pre_login_delay, "Pre-login")
-            self.browser.wait_for_element(By.ID, 'cookiescript_accept').click()
-            self.browser.wait_for_element_disappear(By.XPATH, 'cookiescript_injected')
             input_user = self.browser.wait_for_element(self.user_input.by, self.user_input.selector)
             if input_user is None:
                 print(f"No user input {self.user_input} found!")
