@@ -140,8 +140,8 @@ jobs:
           $new = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
           $old = Get-Content ${env:REFERENCE_OUTPUT}
           if ($new -ne $old) {
-            Write-Output "Script output:`n|${new}|"
-            Write-Output "Reference output:`n|${old}|"
+            Write-Host "OLD length: $($old.Length), lines: $($old -split '\n').Count"
+            Write-Host "NEW length: $($new.Length), lines: $($new -split '\n').Count"
             ${new} | Set-Content new.txt
             ${old} | Set-Content old.txt
             echo "changed=true" >> $env:GITHUB_OUTPUT
