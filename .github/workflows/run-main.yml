@@ -9,6 +9,8 @@ env:
 #  SCRIPT_OUTPUT: script_output.txt
   SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
   REFERENCE_OUTPUT: .\.github\workflows\reference_output.txt
+  REFERENCE_CONTENT: reference.txt
+  ACTUAL_CONTENT: actual.txt
 
 jobs:
 #  run-ubuntu:
@@ -125,6 +127,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: error-logs
+        if-no-files-found: ignore
         path: |
           ./*.png
           ./*.html
@@ -137,18 +140,15 @@ jobs:
           Write-Output "Reference not found, assuming change"
           echo "changed=true" >> $env:GITHUB_OUTPUT
         } else {
-          $new = (Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2) -join "`n"
-          $old = (Get-Content ${env:REFERENCE_OUTPUT}) -join "`n"
-          if ($new -ne $old) {
-            $oldLines = $old -split "`n"
-            $newLines = $new -split "`n"
-            Write-Host "OLD length: $($old.Length), lines: $($oldLines.Count)"
-            Write-Host "NEW length: $($new.Length), lines: $($newLines.Count)"
-            Compare-Object $oldLines $newLines | Out-String | Write-Host
-            ${new} | Set-Content new.txt
-            ${old} | Set-Content old.txt
+          $actual = (Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2) -join "`n"
+          $reference = (Get-Content ${env:REFERENCE_OUTPUT}) -join "`n"
+          if ($actual -ne $reference) {
+            Write-Output "Expected output different than actual"
             echo "changed=true" >> $env:GITHUB_OUTPUT
+            $actual | Set-Content ${env:ACTUAL_CONTENT}
+            $reference | Set-Content ${env:REFERENCE_CONTENT}
           } else {
+            Write-Output "Expected output same as actual"
             echo "changed=false" >> $env:GITHUB_OUTPUT
           }
         }
@@ -160,8 +160,8 @@ jobs:
         name: changed-output
         path: |
           ${{ env.SCRIPT_OUTPUT }}
-          new.txt
-          old.txt
+          ${{ env:ACTUAL_CONTENT }}
+          ${{ env:REFERENCE_CONTENT }}
 
 #    - name: Send email if output changed
 #      if: steps.compare.outputs.changed == 'true'
