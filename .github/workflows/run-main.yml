@@ -56,22 +56,6 @@ jobs:
     runs-on: [self-hosted, Windows]
 
     steps:
-    - name: Mask sensitive env vars dynamically
-      run: |
-        $patterns = @("_PASSWORD", "_USERNAME", "_TOKEN", "_SECRET", "_KEY")
-        foreach ($key in [System.Environment]::GetEnvironmentVariables().Keys) {
-          foreach ($suffix in $patterns) {
-            if ($key.EndsWith($suffix)) {
-              $val = [System.Environment]::GetEnvironmentVariable($key)
-              if ($val) {
-                Write-Output "::add-mask::$val"
-                Write-Output "Masked $key"
-              }
-            }
-          }
-        }
-      shell: pwsh
-
     - name: Checkout current repo
       uses: actions/checkout@v4
 
@@ -114,6 +98,19 @@ jobs:
     - name: Prepare credentials
       run: |
         echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
+        $patterns = @("_PASSWORD", "_USERNAME")
+        foreach ($key in [System.Environment]::GetEnvironmentVariables().Keys) {
+          foreach ($suffix in $patterns) {
+            if ($key.EndsWith($suffix)) {
+              $val = [System.Environment]::GetEnvironmentVariable($key)
+              if ($val) {
+                Write-Output "::add-mask::$val"
+                Write-Output "Masked $key"
+              }
+            }
+          }
+        }
+      shell: pwsh
 
 #    - name: Run the script
 #      shell: pwsh
@@ -153,21 +150,21 @@ jobs:
         name: changed-output
         path: ${{ env.SCRIPT_OUTPUT }}
 
-    - name: Send email if output changed
-      if: steps.compare.outputs.changed == 'true'
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{ secrets.GMAIL_USERNAME }}
-        password: ${{ secrets.GMAIL_APP_PASSWORD }}
-        subject: "⚠️ Output changed - ${{ github.repository }}"
-        to: ${{ secrets.GMAIL_ADDRESS }}
-        from: GitHub Actions <no-reply@github.com>
-        body: |
-          Output has changed.
-
-          ➤ View artifact and logs:
-          https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-          If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
+#    - name: Send email if output changed
+#      if: steps.compare.outputs.changed == 'true'
+#      uses: dawidd6/action-send-mail@v3
+#      with:
+#        server_address: smtp.gmail.com
+#        server_port: 465
+#        username: ${{ secrets.GMAIL_USERNAME }}
+#        password: ${{ secrets.GMAIL_APP_PASSWORD }}
+#        subject: "⚠️ Output changed - ${{ github.repository }}"
+#        to: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
+#        from: GitHub Actions <no-reply@github.com>
+#        body: |
+#          Output has changed.
+#
+#          ➤ View artifact and logs:
+#          https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+#
+#          If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
