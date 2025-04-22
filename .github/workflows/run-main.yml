@@ -140,8 +140,8 @@ jobs:
           $new = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
           $old = Get-Content ${env:REFERENCE_OUTPUT}
           if ($new -ne $old) {
-            Write-Output "Script output:`n${new}"
-            Write-Output "Reference output:`n${old}"
+            Write-Output "Script output:`n$|{new}|"
+            Write-Output "Reference output:`n|${old}|"
             echo "changed=true" >> $env:GITHUB_OUTPUT
           } else {
             echo "changed=false" >> $env:GITHUB_OUTPUT
