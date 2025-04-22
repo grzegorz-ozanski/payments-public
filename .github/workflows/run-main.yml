@@ -92,7 +92,7 @@ jobs:
 
     - name: Prepare credentials
       run: |
-        echo ${{ secrets.CREDENTIALS }} >> $env:GITHUB_ENV
+        echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
 
     - name: Run the script
       run: |
