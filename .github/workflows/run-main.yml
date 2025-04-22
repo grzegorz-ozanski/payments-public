@@ -56,16 +56,14 @@ jobs:
 
     - name: Use system Python 3.11
       run: |
-        $PYTHONPATH = "***REMOVED***"
+        $PYTHONPATH = "$env:USERPROFILE\AppData\Local\Programs\Python\Python311"
         echo "$PYTHONPATH" >> $env:GITHUB_PATH
         echo "$PYTHONPATH\Scripts" >> $env:GITHUB_PATH
 
     - name: Verify system Python 3.11
       run: |
-        echo $env:Path
         python --version
         where python
-      shell: pwsh
 
     - name: Install dependencies
       run: |
