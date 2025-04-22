@@ -137,8 +137,8 @@ jobs:
           Write-Output "Reference not found, assuming change"
           echo "changed=true" >> $env:GITHUB_OUTPUT
         } else {
-          $new = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
-          $old = Get-Content ${env:REFERENCE_OUTPUT}
+          $new = (Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2) -join "`n"
+          $old = (Get-Content ${env:REFERENCE_OUTPUT}) -join "`n"
           if ($new -ne $old) {
             $oldLines = $old -split "`n"
             $newLines = $new -split "`n"
