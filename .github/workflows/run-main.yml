@@ -71,8 +71,11 @@ jobs:
         python -m pip install -r requirements.txt
 
     - name: Clone browser repo
-      run: |
-        git clone https://x-access-token:${{ secrets.BROWSER_REPO_TOKEN }}@github.com/grzegorz-ozanski/browser.git
+      uses: actions/checkout@v4
+      with:
+        repository: grzegorz-ozanski/browser
+        path: browser
+        token: ${{ secrets.BROWSER_REPO_TOKEN }}
 
     - name: Download Chrome and Chromedriver from GitHub Release
       run: |
