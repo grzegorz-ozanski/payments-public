@@ -90,6 +90,21 @@ jobs:
     - name: Add dependency to PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
 
+    - name: Prepare credentials
+      run: |
+        $envContent = @"
+        ${{ secrets.CREDENTIALS }}
+        "@ -split "`n"
+    
+        foreach ($line in $envContent) {
+          if ($line -match '^\s*([^=]+)\s*=\s*(.+?)\s*$') {
+            $key = $matches[1].Trim()
+            $val = $matches[2].Trim()
+            Write-Host "Setting $key"
+            $env:$key = $val
+          }
+        }
+
     - name: Run the script
       run: |
         python main.py
