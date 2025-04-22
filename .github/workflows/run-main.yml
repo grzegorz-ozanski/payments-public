@@ -7,8 +7,8 @@ on:
 
 env:
 #  SCRIPT_OUTPUT: script_output.txt
-  SCRIPT_OUTPUT: .\github\workflows\test_output.txt
-  REFERENCE_OUTPUT: .\github\workflows\reference_output.txt
+  SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
+  REFERENCE_OUTPUT: .\.github\workflows\reference_output.txt
 
 jobs:
 #  run-ubuntu:
