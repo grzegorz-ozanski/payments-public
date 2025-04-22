@@ -98,6 +98,9 @@ jobs:
     - name: Prepare credentials
       run: |
         echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
+
+    - name: Mask sensitive env vars dynamically
+      run: |
         $patterns = @("_PASSWORD", "_USERNAME")
         foreach ($key in [System.Environment]::GetEnvironmentVariables().Keys) {
           foreach ($suffix in $patterns) {
