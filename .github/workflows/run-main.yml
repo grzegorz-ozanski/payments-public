@@ -142,8 +142,7 @@ jobs:
           echo "changed=true" >> $env:GITHUB_OUTPUT
         } else {
           $actual = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
-          $reference = $(Get-Content ${env:REFERENCE_OUTPUT} -Raw) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
-          $reference = ($reference -split "`n" | ForEach-Object { $_.TrimEnd() }) -join "`n"
+          $reference = $(Get-Content ${env:REFERENCE_OUTPUT}) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy") -split "`n"
   
           $diff = @()
           $isDifferent = $False
@@ -181,7 +180,7 @@ jobs:
             Write-Host "🔍 Differences found:"
             $diff | ForEach-Object { Write-Host $_ }
             $actual -join "`n" | Set-Content ${env:ACTUAL_CONTENT} -Encoding UTF8NoBOM
-            $reference -join "`n" | Set-Content ${env:REFERENCE_OUTPUT} -Encoding UTF8NoBOM
+            $reference -join "`n" | Set-Content ${env:REFERENCE_CONTENT} -Encoding UTF8NoBOM
             $diff | Set-Content ${env:DIFF_FILE} -Encoding UTF8NoBOM
             echo "changed=true" >> $env:GITHUB_OUTPUT
           } else {
