@@ -23,6 +23,7 @@ class Pewik(BaseService):
         next_id = 1
         cookies_panel = self.browser.find_element(By.CLASS_NAME, 'panel-cookies')
         if cookies_panel:
+            self.browser.wait_for_element_clickable(By.CLASS_NAME, 'panel-cookies')
             self.browser.trace_click(cookies_panel.find_element(value='cookiesClose'))
         invoice = self.browser.find_element(By.XPATH, '//a[text()="Faktury i salda"]')
         self.browser.trace_click(invoice)
