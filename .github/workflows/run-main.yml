@@ -9,9 +9,9 @@ env:
 #  SCRIPT_OUTPUT: script_output.txt
   SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
   REFERENCE_OUTPUT: .\.github\workflows\reference_output.txt
-  REFERENCE_CONTENT: reference.txt
-  ACTUAL_CONTENT: actual.txt
-  DIFF_FILE: diff.txt
+  REFERENCE_CONTENT: .\reference.txt
+  ACTUAL_CONTENT: .\actual.txt
+  DIFF_FILE: .\diff.txt
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
 
 jobs:
