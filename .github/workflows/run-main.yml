@@ -202,7 +202,7 @@ jobs:
           ${{ env.DIFF_FILE }}
 
     - name: Send email if script output is different than reference
-      if: steps.compare.outputs.changed == 'true'
+      if: github.event_name == 'schedule' && steps.compare.outputs.changed == 'true'
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
