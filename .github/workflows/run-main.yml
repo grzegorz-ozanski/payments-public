@@ -152,7 +152,7 @@ jobs:
           if ($diff) {
             Write-Host "🔍 Differences found:"
             $diff | ForEach-Object { Write-Host $_ }
-            $actual -join "`n" | Set-Content {env:ACTUAL_CONTENT} -Encoding UTF8NoBOM
+            $actual -join "`n" | Set-Content ${env:ACTUAL_CONTENT} -Encoding UTF8NoBOM
             $reference -join "`n" | Set-Content ${env:REFERENCE_OUTPUT} -Encoding UTF8NoBOM
             $diff | Set-Content ${env:DIFF_FILE} -Encoding UTF8NoBOM
             echo "changed=true" >> $env:GITHUB_OUTPUT
