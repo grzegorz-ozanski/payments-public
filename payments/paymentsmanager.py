@@ -9,9 +9,13 @@ from payments import Payment
 @dataclass
 class PaymentsManager:
     browser: Browser
-    services: List[BaseService]
+    services: List[BaseService] | BaseService
     debug_mode: bool
     payments: List[Payment] = field(default_factory=list)
+
+    def __post_init__(self):
+        if not isinstance(self.services, list):
+            self.services = [self.services]
 
     def _get_payments_for_service(self, service: BaseService):
         payments = []
