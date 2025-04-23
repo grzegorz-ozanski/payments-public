@@ -145,12 +145,39 @@ jobs:
           $reference = $(Get-Content ${env:REFERENCE_OUTPUT} -Raw) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
           $reference = ($reference -split "`n" | ForEach-Object { $_.TrimEnd() }) -join "`n"
   
-          $diff = Compare-Object $reference $actual -IncludeEqual -PassThru | ForEach-Object {
-            $prefix = if ($_.SideIndicator -eq '=>') { '➕' } elseif ($_.SideIndicator -eq '<=') { '➖' } else { '✔' }
-            "$prefix $_"
+          $diff = @()
+          $isDifferent = $False
+          $max = [Math]::Max($reference.Count, $actual.Count)
+          
+          for ($i = 0; $i -lt $max; $i++) {
+            $refLine = if ($i -lt $reference.Count) { $reference[$i] } else { $null }
+            $actLine = if ($i -lt $actual.Count) { $actual[$i] } else { $null }
+          
+            if ($refLine -eq $actLine) {
+              $text = "✔ $refLine"
+              $diff += $text
+            }
+            elseif ($refLine -ne $null -and $actLine -ne $null) {
+              $isDifferent = $True
+              $text1 = "➖ $refLine"
+              $text2 = "➕ $actLine"
+              $diff += $text1
+              $diff += $text2
+            }
+            elseif ($refLine -ne $null) {
+              $isDifferent = $True
+              $text = "➖ $refLine"
+              $diff += $text
+            }
+            elseif ($actLine -ne $null) {
+              $isDifferent = $True
+              $text = "➕ $actLine"
+              $diff += $text
+            }
           }
-  
-          if ($diff) {
+          
+         
+          if ($isDifferent) {
             Write-Host "🔍 Differences found:"
             $diff | ForEach-Object { Write-Host $_ }
             $actual -join "`n" | Set-Content ${env:ACTUAL_CONTENT} -Encoding UTF8NoBOM
