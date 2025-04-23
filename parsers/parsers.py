@@ -25,15 +25,10 @@ def get_amount(value, decimal=False):
 
 
 def get_date(value):
-    if type(value) == date:
-        return value
-    if value is None:
-        value = "dzisiaj"
-    elif type(value) == WebElement:
-        value = value.text
-    if "dzisiaj" in value:
-        return date.today().strftime('%d-%m-%Y')
-    try:
-        return parser.parse(value).strftime('%d-%m-%Y')
-    except TypeError:
-        return value.strftime('%d-%m-%Y')
+    if not isinstance(value, date):
+        if isinstance(value, WebElement):
+            value = value.text
+        if value is None or "dzisiaj" in value:
+            value = date.today()
+        value = parser.parse(value)
+    return value.strftime('%d-%m-%Y')
