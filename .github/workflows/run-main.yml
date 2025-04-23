@@ -133,7 +133,7 @@ jobs:
           ./*.png
           ./*.html
 
-    - name: Compare with reference
+    - name: Compare script output with reference
       id: compare
       shell: pwsh
       run: |
@@ -162,7 +162,7 @@ jobs:
           }
         }
 
-    - name: Upload log if output changed
+    - name: Upload log if script output is different than reference
       if: steps.compare.outputs.changed == 'true'
       uses: actions/upload-artifact@v4
       with:
@@ -173,7 +173,7 @@ jobs:
           ${{ env.REFERENCE_CONTENT }}
           ${{ env.DIFF_FILE }}
 
-    - name: Send email if output changed
+    - name: Send email if script output is different than reference
       if: steps.compare.outputs.changed == 'true'
       uses: dawidd6/action-send-mail@v3
       with:
@@ -191,3 +191,10 @@ jobs:
           https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
           If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
+
+    - name: Fail workflow if script output is different than reference
+      if: steps.compare.outputs.changed == 'true'
+      shell: pwsh
+      run: |
+        Write-Error "❌ Output changed – failing the run."
+        exit 1
