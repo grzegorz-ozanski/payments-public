@@ -30,5 +30,6 @@ def get_date(value):
             value = value.text
         if value is None or "dzisiaj" in value:
             value = date.today()
-        value = parser.parse(value)
+        else:
+            value = parser.parse(value)
     return value.strftime('%d-%m-%Y')
