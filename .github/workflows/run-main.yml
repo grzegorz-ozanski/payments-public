@@ -171,7 +171,7 @@ jobs:
           ${{ env.SCRIPT_OUTPUT }}
           ${{ env.ACTUAL_CONTENT }}
           ${{ env.REFERENCE_CONTENT }}
-          ${{ env:DIFF_FILE }}
+          ${{ env.DIFF_FILE }}
 
     - name: Send email if output changed
       if: steps.compare.outputs.changed == 'true'
