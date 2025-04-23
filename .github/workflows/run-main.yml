@@ -142,7 +142,8 @@ jobs:
           echo "changed=true" >> $env:GITHUB_OUTPUT
         } else {
           $actual = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
-          $reference = Get-Content ${env:REFERENCE_OUTPUT}
+          $reference = $(Get-Content ${env:REFERENCE_OUTPUT} -Raw) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
+          $reference = ($reference -split "`n" | ForEach-Object { $_.TrimEnd() }) -join "`n"
   
           $diff = Compare-Object $reference $actual -IncludeEqual -PassThru | ForEach-Object {
             $prefix = if ($_.SideIndicator -eq '=>') { '➕' } elseif ($_.SideIndicator -eq '<=') { '➖' } else { '✔' }
