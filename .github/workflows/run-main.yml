@@ -3,15 +3,17 @@ name: Run payments
 on:
   push:
     branches: [ master ]
+  schedule:
+    - cron: "5 0,6,12,18 * * *"  # 4 times a days
   workflow_dispatch:
 
 env:
-#  SCRIPT_OUTPUT: script_output.txt
-  SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
-  REFERENCE_OUTPUT: .\.github\workflows\reference_output.txt
-  REFERENCE_CONTENT: .\reference.txt
-  ACTUAL_CONTENT: .\actual.txt
-  DIFF_FILE: .\diff.txt
+  SCRIPT_OUTPUT: script_output.txt
+#  SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
+  REFERENCE_OUTPUT: .github\workflows\reference_output.txt
+  REFERENCE_CONTENT: reference.txt
+  ACTUAL_CONTENT: actual.txt
+  DIFF_FILE: diff.txt
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
 
 jobs:
@@ -118,11 +120,9 @@ jobs:
         }
       shell: pwsh
 
-#    - name: Run the script
-#      shell: pwsh
-#      run: |
-#        $output = python main.py
-#        $output | Set-Content script_output.txt
+    - name: Run the script
+      shell: pwsh
+      run: python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
 
     - name: Upload error logs
       uses: actions/upload-artifact@v4
@@ -141,38 +141,26 @@ jobs:
           Write-Output "Reference not found, assuming change"
           echo "changed=true" >> $env:GITHUB_OUTPUT
         } else {
-          $actual = (Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2) -join "`n"
-          $reference = (Get-Content ${env:REFERENCE_OUTPUT}) -join "`n"
-          if ($actual -eq $reference) {
-            Write-Output "Expected output different than actual"
+          $actual = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
+          $reference = Get-Content ${env:REFERENCE_OUTPUT}
+  
+          $diff = Compare-Object $reference $actual -IncludeEqual -PassThru | ForEach-Object {
+            $prefix = if ($_.SideIndicator -eq '=>') { '➕' } elseif ($_.SideIndicator -eq '<=') { '➖' } else { '✔' }
+            "$prefix $_"
+          }
+  
+          if ($diff) {
+            Write-Host "🔍 Differences found:"
+            $diff | ForEach-Object { Write-Host $_ }
+            $actual -join "`n" | Set-Content {env:ACTUAL_CONTENT} -Encoding UTF8NoBOM
+            $reference -join "`n" | Set-Content ${env:REFERENCE_OUTPUT} -Encoding UTF8NoBOM
+            $diff | Set-Content ${env:DIFF_FILE} -Encoding UTF8NoBOM
             echo "changed=true" >> $env:GITHUB_OUTPUT
-            $actual | Set-Content ${env:ACTUAL_CONTENT}
-            $reference | Set-Content ${env:REFERENCE_CONTENT}
           } else {
-            Write-Output "Expected output same as actual"
+            Write-Host "✅ No changes."
             echo "changed=false" >> $env:GITHUB_OUTPUT
           }
         }
-
-#        $actual = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
-#        $reference = Get-Content ${env:REFERENCE_OUTPUT}
-#
-#        $diff = Compare-Object $reference $actual -IncludeEqual -PassThru | ForEach-Object {
-#          $prefix = if ($_.SideIndicator -eq '=>') { '➕' } elseif ($_.SideIndicator -eq '<=') { '➖' } else { '✔' }
-#          "$prefix $_"
-#        }
-#
-#        if ($diff) {
-#          Write-Host "🔍 Differences found:"
-#          $diff | ForEach-Object { Write-Host $_ }
-#          $newLines -join "`n" | Set-Content {env:ACTUAL_CONTENT} -Encoding UTF8NoBOM
-#          $oldLines -join "`n" | Set-Content ${env:REFERENCE_OUTPUT} -Encoding UTF8NoBOM
-#          $diff | Set-Content ${env:DIFF_FILE} -Encoding UTF8NoBOM
-#          echo "changed=true" >> $env:GITHUB_OUTPUT
-#        } else {
-#          Write-Host "✅ No changes."
-#          echo "changed=false" >> $env:GITHUB_OUTPUT
-#        }
 
     - name: Upload log if output changed
       if: steps.compare.outputs.changed == 'true'
@@ -183,7 +171,7 @@ jobs:
           ${{ env.SCRIPT_OUTPUT }}
           ${{ env.ACTUAL_CONTENT }}
           ${{ env.REFERENCE_CONTENT }}
-#          ${{ env:DIFF_FILE }}
+          ${{ env:DIFF_FILE }}
 
     - name: Send email if output changed
       if: steps.compare.outputs.changed == 'true'
@@ -193,11 +181,11 @@ jobs:
         server_port: 465
         username: ${{ secrets.GMAIL_USERNAME }}
         password: ${{ secrets.GMAIL_APP_PASSWORD }}
-        subject: "⚠️ Output changed - ${{ github.repository }}"
+        subject: "⚠️ ${{ github.repository }} - job execution error"
         to: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
         from: GitHub Actions <no-reply@github.com>
         body: |
-          Output has changed.
+          ${{ github.repository }} GitHub Actions job execution error - actual output is diffent than expected one.
 
           ➤ View artifact and logs:
           https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
