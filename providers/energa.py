@@ -42,9 +42,8 @@ class Energa(BaseService):
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             locations_list[location_id].click()
             location = self._get_location(
-                self.browser.wait_for_element(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm').text)
+                self.browser.wait_for_element(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm', 30).text)
             log.debug("Getting payment")
-            amount = self.browser.wait_for_element(By.CSS_SELECTOR, 'h1.text.es-text.variant-balance').text
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
             self.browser.find_element(By.XPATH, '//a[contains(text(), "Faktury")]').click()
             invoices = self.browser.find_elements(
@@ -54,9 +53,11 @@ class Energa(BaseService):
                 due_date = invoices[1].text
             else:
                 due_date = None
+            self.browser.safe_click(By.XPATH, '//a[contains(text(), "Pulpit konta")]')
+            amount = self.browser.wait_for_element(By.CSS_SELECTOR, 'h1.text.es-text.variant-balance').text
             payments.append(Payment(amount, due_date, location))
             log.debug("Moving to the next location")
-            self.browser.find_element(By.XPATH, '//span[contains(text(), "LISTA KONT")]/..').click()
+            self.browser.trace_click(self.browser.wait_for_element_clickable(By.XPATH, '//span[contains(text(), "LISTA KONT")]/..'))
             locations_list = self.browser.wait_for_elements(By.CSS_SELECTOR, 'label')
 
         return payments
