@@ -34,4 +34,4 @@ class Pgnig(BaseService):
         payments = []
         for date, amount in payments_dict.items():
             payments.append(Payment(amount, date, location))
-        return payments
+        return payments if payments else [Payment(location=location)]
