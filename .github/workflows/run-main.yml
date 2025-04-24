@@ -6,7 +6,11 @@ on:
   schedule:
     - cron: "5 0,6,12,18 * * *"  # 4 times a days
   workflow_dispatch:
-
+    inputs:
+      dump:
+        description: 'Dump workspace after job?'
+        required: false
+        default: 'false'
 env:
 #  SCRIPT_OUTPUT: script_output.txt
   SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
@@ -15,7 +19,7 @@ env:
   ACTUAL_CONTENT: actual.txt
   DIFF_FILE: diff.txt
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
-  JOBS_DIR: c:\actions-runner\jobs
+  WORKSPACE_DUMP_DIR: c:\actions-runner\jobs
 
 jobs:
 #  run-ubuntu:
@@ -133,7 +137,7 @@ jobs:
           Write-Output "Reference not found, assuming change"
           echo "changed=true" >> $env:GITHUB_OUTPUT
         } else {
-          $actual = Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2
+          $actual = $((Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
           $reference = $(Get-Content ${env:REFERENCE_OUTPUT}) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy") -split "`n"
   
           $diff = @()
@@ -220,11 +224,11 @@ jobs:
           If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
 
     - name: Copy working directory for inspection
-      if: always()
+      if: github.event.inputs.dump == 'true'
       shell: pwsh
       run: |
         $src = "$env:GITHUB_WORKSPACE"
-        $dst = "${env:JOBS_DIR}\${{ github.run_id }}"
+        $dst = "${env:WORKSPACE_DUMP_DIR}\${{ github.run_id }}"
         mkdir -p $dst 
         Copy-Item -Path $src -Recurse -Destination $dst
 
