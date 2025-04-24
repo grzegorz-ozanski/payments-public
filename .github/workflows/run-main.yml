@@ -218,6 +218,15 @@ jobs:
 
           If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
 
+    - name: Copy working directory for inspection
+      if: always()
+      shell: pwsh
+      run: |
+        $src = "$env:GITHUB_WORKSPACE"
+        $dst = "D:\GitHubJobDumps\${{ github.run_id }}"
+        mkdir -p $dst 
+        Copy-Item -Path $src -Recurse -Destination $dst
+
     - name: Fail workflow if script output is different than reference
       if: steps.compare.outputs.changed == 'true'
       shell: pwsh
