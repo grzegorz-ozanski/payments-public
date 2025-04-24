@@ -104,7 +104,7 @@ jobs:
       run: |
         echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
 
-    - name: Mask sensitive env vars dynamically
+    - name: Mask credentials
       run: |
         $patterns = @("_PASSWORD", "_USERNAME")
         foreach ($key in [System.Environment]::GetEnvironmentVariables().Keys) {
@@ -123,15 +123,6 @@ jobs:
     - name: Run the script
       shell: pwsh
       run: python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
-
-    - name: Upload error logs
-      uses: actions/upload-artifact@v4
-      with:
-        name: error-logs
-        if-no-files-found: ignore
-        path: |
-          ./*.png
-          ./*.html
 
     - name: Compare script output with reference
       id: compare
@@ -174,8 +165,7 @@ jobs:
               $diff += $text
             }
           }
-          
-         
+
           if ($isDifferent) {
             Write-Host "🔍 Differences found:"
             $diff | ForEach-Object { Write-Host $_ }
@@ -188,6 +178,15 @@ jobs:
             echo "changed=false" >> $env:GITHUB_OUTPUT
           }
         }
+
+    - name: Upload error logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: error-logs
+        if-no-files-found: ignore
+        path: |
+          ./*.png
+          ./*.html
 
     - name: Upload log if script output is different than reference
       if: steps.compare.outputs.changed == 'true'
