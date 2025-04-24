@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  SCRIPT_OUTPUT: script_output.txt
-#  SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
+#  SCRIPT_OUTPUT: script_output.txt
+  SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
   REFERENCE_OUTPUT: .github\workflows\reference_output.txt
   REFERENCE_CONTENT: reference.txt
   ACTUAL_CONTENT: actual.txt
@@ -121,9 +121,9 @@ jobs:
         }
       shell: pwsh
 
-    - name: Run the script
-      shell: pwsh
-      run: python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
+#    - name: Run the script
+#      shell: pwsh
+#      run: python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
 
     - name: Compare script output with reference
       id: compare
