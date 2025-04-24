@@ -15,6 +15,7 @@ env:
   ACTUAL_CONTENT: actual.txt
   DIFF_FILE: diff.txt
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
+  JOBS_DIR: c:\actions-runner\jobs
 
 jobs:
 #  run-ubuntu:
@@ -223,7 +224,7 @@ jobs:
       shell: pwsh
       run: |
         $src = "$env:GITHUB_WORKSPACE"
-        $dst = "D:\GitHubJobDumps\${{ github.run_id }}"
+        $dst = "${env:JOBS_DIR}\${{ github.run_id }}"
         mkdir -p $dst 
         Copy-Item -Path $src -Recurse -Destination $dst
 
