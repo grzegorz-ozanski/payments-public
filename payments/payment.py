@@ -6,9 +6,9 @@ from parsers import *
 log = setup_logging(__name__, 'DEBUG')
 
 class Payment:
-    def __init__(self, amount=None, due_date=None, location: Location | None = None):
-        self.amount = get_amount(amount)
-        self.due_date = get_date(due_date)
+    def __init__(self, amount=0, due_date=None, location: Location | None = None):
+        self.amount = parse_amount(amount)
+        self.due_date = parse_date(due_date)
         self.location = location
 
     def __str__(self):

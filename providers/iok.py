@@ -19,7 +19,7 @@ class IOK(BaseService):
         self.log.info("Getting payments...")
         self.browser.wait_for_page_load_completed()
         if len(self.browser.find_elements(By.CSS_SELECTOR, 'a.ng-star-inserted')) <= 1:
-            return [Payment(0, self.due_date, self.locations[0])]
+            return [Payment(due_date=self.due_date, location=self.locations[0])]
         amount = self.browser.wait_for_element(By.CLASS_NAME, 'home-amount')
         due_date = self.browser.wait_for_element(By.CLASS_NAME, 'home-info')
         due_date = due_date.find_element(By.TAG_NAME, 'span')

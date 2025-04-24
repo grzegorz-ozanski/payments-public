@@ -40,7 +40,7 @@ class Multimedia(BaseService):
                 today = date.today()
                 due_date = date(today.year, today.month, 20)
                 for location in self.locations:
-                    payments.append(Payment(0, due_date, location))
+                    payments.append(Payment(due_date=due_date, location=location))
                 return payments
             for invoice in invoices:
                 try:

@@ -5,7 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 from locations import Location
-from payments import Payment, get_amount, get_date
+from payments import Payment
+import parsers
 from .baseservice import AuthElement, BaseService
 from browser import setup_logging
 
@@ -14,8 +15,8 @@ log = setup_logging(__name__, 'DEBUG')
 
 def _get_invoice_value(columns: List[WebElement]):
     if columns[7].text:
-        return get_amount(columns[7], True)
-    return get_amount(columns[5], True)
+        return parsers.parse_amount(columns[7], '.')
+    return parsers.parse_amount(columns[5], '.')
 
 
 class Opec(BaseService):
@@ -40,7 +41,7 @@ class Opec(BaseService):
             if columns[6].text == "Zapłacony" and value > 0:
                     continue
             amount += value
-            date = get_date(columns[4])
+            date = parsers.parse_date(columns[4])
             if due_date is None or (date < due_date and value > 0):
                 due_date = date
         return [Payment(amount if amount > 0 else 0, due_date, self.locations[0])]

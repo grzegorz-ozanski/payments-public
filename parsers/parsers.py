@@ -4,27 +4,20 @@ import re
 from selenium.webdriver.remote.webelement import WebElement
 
 
-def get_amount(value, decimal=False):
-    if value is None:
-        return value
+def parse_amount(value, decimal_separator=','):
     if type(value) == WebElement:
         value = value.text
     try:
         value = re.sub(r"[^\d,.-]", "", value)
     except TypeError:
         value = f'{value:.2f}'
-    value = value.replace(' ', '')
-    if decimal:
-        decimal_sep = '.'
-    else:
-        decimal_sep = ','
-    value = value.replace('.', decimal_sep).replace(',', decimal_sep)
-    if decimal:
+    value = value.replace(' ', '').replace('.', decimal_separator).replace(',', decimal_separator)
+    if decimal_separator == '.':
         return float(value)
     return value
 
 
-def get_date(value):
+def parse_date(value):
     if not isinstance(value, date):
         if isinstance(value, WebElement):
             value = value.text

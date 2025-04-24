@@ -41,7 +41,7 @@ class Pewik(BaseService):
                 if len(columns) > 1:
                     payments.append(Payment(columns[5], columns[3], location))
                 else:
-                    payments.append(Payment(0, date.today(), location))
+                    payments.append(Payment(location=location))
             locations_arrow = self.browser.find_element(By.CLASS_NAME, 'select2-arrow')
             self.browser.trace_click(locations_arrow)
             locations = self.browser.find_elements(By.CLASS_NAME, 'select2-result')

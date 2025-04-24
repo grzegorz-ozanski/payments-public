@@ -2,7 +2,8 @@ from selenium.webdriver.common.by import By
 
 from locations import Location
 from browser import setup_logging
-from payments import Payment, get_amount
+from payments import Payment
+import parsers
 from .baseservice import AuthElement, BaseService
 
 log = setup_logging(__name__, 'DEBUG')
@@ -30,7 +31,7 @@ class Pgnig(BaseService):
         payments_dict = {}
         for invoice in unpaid_invoices:
             columns = invoice.find_elements(By.CLASS_NAME, "columns")
-            payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(get_amount(columns[3], '.'))
+            payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(parsers.parse_amount(columns[3], '.'))
         payments = []
         for date, amount in payments_dict.items():
             payments.append(Payment(amount, date, location))

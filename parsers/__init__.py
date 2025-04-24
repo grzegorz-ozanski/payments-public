@@ -1,6 +1,6 @@
-from .parsers import get_amount, get_date
+from .parsers import parse_amount, parse_date
 
 __all__ = [
-    "get_amount",
-    "get_date"
+    "parse_amount",
+    "parse_date"
 ]
