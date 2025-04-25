@@ -22,7 +22,6 @@ env:
   ACTUAL_CONTENT: actual.txt
   DIFF_FILE: diff.txt
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
-  WORKSPACE_DUMP_DIR: ${{ runner.os == 'Windows' && 'c:/actions-runner/jobs' || '/tmp/actions-runner/jobs' }}
 
 jobs:
 #  run-ubuntu:
@@ -169,6 +168,8 @@ jobs:
     - name: Copy working directory for inspection
       if: github.event.inputs.dump == 'true'
       shell: pwsh
+      env:
+        WORKSPACE_DUMP_DIR: ${{ runner.os == 'Windows' && 'c:/actions-runner/jobs' || '/tmp/actions-runner/jobs' }}
       run: |
         $src = "$env:GITHUB_WORKSPACE"
         $dst = "${env:WORKSPACE_DUMP_DIR}\${{ github.run_id }}"
