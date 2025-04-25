@@ -50,7 +50,7 @@ for ($i = 0; $i -lt [Math]::Max($expected.Count, $_actual.Count); $i++) {
   }
 }
 
-if ($($diff -join "").Match("➖|➕")) {
+if ($($diff -join "") -match "➖|➕") {
   Write-Host "🔍 Differences found:"
   $_diff | Write-Host
   Write-IfExists $_actual $ComparedActual
