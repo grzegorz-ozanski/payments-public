@@ -13,7 +13,7 @@ on:
         default: 'false'
 env:
 #  SCRIPT_OUTPUT: script_output.txt
-  SCRIPT_OUTPUT: .\.github\workflows\test_output.txt
+  SCRIPT_OUTPUT: .github\workflows\test_output.txt
   REFERENCE_OUTPUT: .github\workflows\reference_output.txt
   REFERENCE_CONTENT: reference.txt
   ACTUAL_CONTENT: actual.txt
@@ -137,8 +137,8 @@ jobs:
           Write-Output "Reference not found, assuming change"
           echo "changed=true" >> $env:GITHUB_OUTPUT
         } else {
-          $actual = $((Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
-          $reference = $(Get-Content ${env:REFERENCE_OUTPUT}) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy") -split "`n"
+          $actual = $(Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
+          $reference = $(Get-Content ${env:REFERENCE_OUTPUT}) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
   
           $diff = @()
           $isDifferent = $False
