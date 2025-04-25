@@ -112,7 +112,7 @@ jobs:
       shell: pwsh
       run: pwsh -File $env:MASK_SCRIPT "_USERNAME,_PASSWORD"
 
-    - name: [SKIP REASON] Run the script skipped
+    - name: SKIP REASON Run the script skipped
       if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: echo "::notice ::Skipping 'Run the script' step because 'env.SCRIPT_OUTPUT' contains 'test_."
 
