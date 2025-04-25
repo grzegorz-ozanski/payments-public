@@ -13,6 +13,7 @@ on:
         default: 'false'
 env:
 #  SCRIPT_OUTPUT: script_output.txt
+  COMPARE_SCRIPT: .github\scripts\compare-output.ps1
   SCRIPT_OUTPUT: .github\workflows\test_output.txt
   REFERENCE_OUTPUT: .github\workflows\reference_output.txt
   REFERENCE_CONTENT: reference.txt
@@ -133,56 +134,12 @@ jobs:
       id: compare
       shell: pwsh
       run: |
-        if (-not (Test-Path ${env:REFERENCE_OUTPUT})) {
-          Write-Output "Reference not found, assuming change"
-          echo "changed=true" >> $env:GITHUB_OUTPUT
-        } else {
-          $actual = $(Get-Content ${env:SCRIPT_OUTPUT} | Select-Object -Skip 1 -SkipLast 2) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
-          $reference = $(Get-Content ${env:REFERENCE_OUTPUT}) -replace "{{TODAY}}", $(Get-Date -Format "dd-MM-yyyy")
-  
-          $diff = @()
-          $isDifferent = $False
-          $max = [Math]::Max($reference.Count, $actual.Count)
-          
-          for ($i = 0; $i -lt $max; $i++) {
-            $refLine = if ($i -lt $reference.Count) { $reference[$i] } else { $null }
-            $actLine = if ($i -lt $actual.Count) { $actual[$i] } else { $null }
-          
-            if ($refLine -eq $actLine) {
-              $text = "✔ $refLine"
-              $diff += $text
-            }
-            elseif ($refLine -ne $null -and $actLine -ne $null) {
-              $isDifferent = $True
-              $text1 = "➖ $refLine"
-              $text2 = "➕ $actLine"
-              $diff += $text1
-              $diff += $text2
-            }
-            elseif ($refLine -ne $null) {
-              $isDifferent = $True
-              $text = "➖ $refLine"
-              $diff += $text
-            }
-            elseif ($actLine -ne $null) {
-              $isDifferent = $True
-              $text = "➕ $actLine"
-              $diff += $text
-            }
-          }
-
-          if ($isDifferent) {
-            Write-Host "🔍 Differences found:"
-            $diff | ForEach-Object { Write-Host $_ }
-            $actual -join "`n" | Set-Content ${env:ACTUAL_CONTENT} -Encoding UTF8NoBOM
-            $reference -join "`n" | Set-Content ${env:REFERENCE_CONTENT} -Encoding UTF8NoBOM
-            $diff | Set-Content ${env:DIFF_FILE} -Encoding UTF8NoBOM
-            echo "changed=true" >> $env:GITHUB_OUTPUT
-          } else {
-            Write-Host "✅ No changes."
-            echo "changed=false" >> $env:GITHUB_OUTPUT
-          }
-        }
+        & $env:COMPARE_SCRIPT `
+        ${env:SCRIPT_OUTPUT} `
+        ${env:REFERENCE_OUTPUT} `
+        -ComparedActual ${env:ACTUAL_CONTENT} `
+        -ComparedExpected ${env:REFERENCE_CONTENT} `
+        -Diff ${env:DIFF_FILE}
 
     - name: Upload error logs
       uses: actions/upload-artifact@v4
