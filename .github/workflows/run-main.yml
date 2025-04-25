@@ -110,7 +110,7 @@ jobs:
 
     - name: Mask credentials
       shell: pwsh
-      run: pwsh -File $env:MASK_SCRIPT "_USERNAME", "_PASSWORD"
+      run: pwsh -File $env:MASK_SCRIPT "_USERNAME,_PASSWORD"
 
 #    - name: Run the script
 #      shell: pwsh
