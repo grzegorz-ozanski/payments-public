@@ -13,6 +13,7 @@ on:
         default: 'false'
 env:
   GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
+  LIBRARY: .github/scripts/functions.ps1
   COMPARE_SCRIPT: .github/scripts/compare-output.ps1
   MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
 #  SCRIPT_OUTPUT: script_output.txt
@@ -124,7 +125,9 @@ jobs:
     - name: Compare script output with reference
       id: compare
       shell: pwsh
-      run: pwsh -File $env:COMPARE_SCRIPT `
+      run: |
+        . ${env:LIBRARY}
+        pwsh -File ${env:COMPARE_SCRIPT} `
         ${env:SCRIPT_OUTPUT} `
         ${env:REFERENCE_OUTPUT} `
         -ComparedActual ${env:ACTUAL_CONTENT} `
