@@ -107,13 +107,11 @@ jobs:
       run: echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
 
     - name: Prepare credentials
-      run: |
-        echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
+      run: echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
 
     - name: Mask credentials
-      run: |
-        & $env:MASK_SCRIPT "_USERNAME", "_PASSWORD"
       shell: pwsh
+      run: pwsh -File $env:MASK_SCRIPT "_USERNAME", "_PASSWORD"
 
 #    - name: Run the script
 #      shell: pwsh
@@ -122,8 +120,7 @@ jobs:
     - name: Compare script output with reference
       id: compare
       shell: pwsh
-      run: |
-        & $env:COMPARE_SCRIPT `
+      run: pwsh -File $env:COMPARE_SCRIPT `
         ${env:SCRIPT_OUTPUT} `
         ${env:REFERENCE_OUTPUT} `
         -ComparedActual ${env:ACTUAL_CONTENT} `
