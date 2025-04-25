@@ -6,6 +6,8 @@ param (
   [Parameter(Position=4                 )][string]$Diff
 )
 
+. $(Join-Path $PSScriptRoot "functions.ps1")
+
 if (-not (Test-Path $Expected)) {
   Write-Host "Reference not found, assuming change"
   Write-IfExists "changed=true" ${env:GITHUB_OUTPUT}

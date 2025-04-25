@@ -126,7 +126,6 @@ jobs:
       id: compare
       shell: pwsh
       run: |
-        . ${env:LIBRARY}
         pwsh -File ${env:COMPARE_SCRIPT} `
         ${env:SCRIPT_OUTPUT} `
         ${env:REFERENCE_OUTPUT} `
