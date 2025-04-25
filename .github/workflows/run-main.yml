@@ -14,6 +14,7 @@ on:
 env:
 #  SCRIPT_OUTPUT: script_output.txt
   COMPARE_SCRIPT: .github\scripts\compare-output.ps1
+  MASK_SCRIPT: .github\scripts\mask-env-secrets.ps1
   SCRIPT_OUTPUT: .github\workflows\test_output.txt
   REFERENCE_OUTPUT: .github\workflows\reference_output.txt
   REFERENCE_CONTENT: reference.txt
@@ -112,18 +113,7 @@ jobs:
 
     - name: Mask credentials
       run: |
-        $patterns = @("_PASSWORD", "_USERNAME")
-        foreach ($key in [System.Environment]::GetEnvironmentVariables().Keys) {
-          foreach ($suffix in $patterns) {
-            if ($key.EndsWith($suffix)) {
-              $val = [System.Environment]::GetEnvironmentVariable($key)
-              if ($val) {
-                Write-Output "::add-mask::$val"
-                Write-Output "Masked $key"
-              }
-            }
-          }
-        }
+        & $env:MASK_SCRIPT "_USERNAME", "_PASSWORD"
       shell: pwsh
 
 #    - name: Run the script
