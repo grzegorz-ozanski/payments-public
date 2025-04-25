@@ -12,16 +12,17 @@ on:
         required: false
         default: 'false'
 env:
+  GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
+  COMPARE_SCRIPT: .github/scripts/compare-output.ps1
+  MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
 #  SCRIPT_OUTPUT: script_output.txt
-  COMPARE_SCRIPT: .github\scripts\compare-output.ps1
-  MASK_SCRIPT: .github\scripts\mask-env-secrets.ps1
-  SCRIPT_OUTPUT: .github\workflows\test_output.txt
-  REFERENCE_OUTPUT: .github\workflows\reference_output.txt
+  SCRIPT_OUTPUT: .github/workflows/test_output.txt
+  REFERENCE_OUTPUT: .github/workflows/reference_output.txt
   REFERENCE_CONTENT: reference.txt
   ACTUAL_CONTENT: actual.txt
   DIFF_FILE: diff.txt
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
-  WORKSPACE_DUMP_DIR: c:\actions-runner\jobs
+  WORKSPACE_DUMP_DIR: ${{ runner.os == 'Windows' && 'c:/actions-runner/jobs' || '/tmp/actions-runner/jobs' }}
 
 jobs:
 #  run-ubuntu:
@@ -73,10 +74,10 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Use system Python 3.11
+      if: runner.os == 'Windows'
       run: |
-        $PYTHONPATH = "$env:USERPROFILE\AppData\Local\Programs\Python\Python311"
+        $PYTHONPATH = "$env:USERPROFILE/AppData/Local/Programs/Python/Python311"
         echo "$PYTHONPATH" >> $env:GITHUB_PATH
-        echo "$PYTHONPATH\Scripts" >> $env:GITHUB_PATH
 
     - name: Verify system Python 3.11
       run: |
@@ -101,8 +102,6 @@ jobs:
           --repo grzegorz-ozanski/chrome `
           --pattern "${env:CHROMEDRIVER_VERSION}.zip"
         Expand-Archive -Path "${env:CHROMEDRIVER_VERSION}.zip" -DestinationPath .
-      env:
-        GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
 
     - name: Add dependency to PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
