@@ -140,7 +140,7 @@ jobs:
           ./*.png
           ./*.html
 
-    - name: [SKIP REASON] Upload log skipped
+    - name: SKIP REASON Upload log skipped
       if: steps.compare.outputs.changed != 'true'
       run: echo "::notice ::Skipping 'Upload log if script output is different than reference' step because 'steps.compare.outputs.changed != 'true''."
 
@@ -174,7 +174,7 @@ jobs:
 #
 #          If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
 
-    - name: [SKIP REASON] Copy working directory skipped
+    - name: SKIP REASON Copy working directory skipped
       if: github.event.inputs.dump != 'true'
       run: echo "::notice ::Skipping 'Copy working directory for inspection' step because 'github.event.inputs.dump != 'true''."
 
@@ -189,7 +189,7 @@ jobs:
         mkdir -p $dst 
         Copy-Item -Path $src -Recurse -Destination $dst
 
-    - name: [SKIP REASON] Fail workflow
+    - name: SKIP REASON Fail workflow
       if: steps.compare.outputs.changed != 'true'
       run: echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step because 'steps.compare.outputs.changed != 'true''"
 
