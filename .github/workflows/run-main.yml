@@ -112,9 +112,10 @@ jobs:
       shell: pwsh
       run: pwsh -File $env:MASK_SCRIPT "_USERNAME,_PASSWORD"
 
-#    - name: Run the script
-#      shell: pwsh
-#      run: python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
+    - name: Run the script
+      if: ${{ ! contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
 
     - name: Compare script output with reference
       id: compare
