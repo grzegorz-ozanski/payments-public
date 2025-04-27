@@ -252,7 +252,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: last-status
-        path: ${env:STATUS_FILE}
+        path: ${{ env.STATUS_FILE }}
 
     - name: "[SKIP REASON] Fail workflow"
       if: env.COMPARISON_STATUS == 'unchanged'
