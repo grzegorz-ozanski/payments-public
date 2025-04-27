@@ -163,11 +163,11 @@ jobs:
           ./*.html
 
     - name: "[SKIP REASON] Upload log skipped"
-      if: steps.compare.outputs.changed != 'true'
-      run: echo "::notice ::Skipping 'Upload log if script output is different than reference' step because 'steps.compare.outputs.changed != 'true''."
+      if: env.COMPARISON_STATUS == 'unchanged'
+      run: echo "::notice ::Skipping 'Upload log if script output is different than reference' step because env.COMPARISON_STATUS == 'unchanged''."
 
     - name: Upload log if script output is different than reference
-      if: steps.compare.outputs.changed == 'true'
+      if: env.COMPARISON_STATUS == 'changed'
       uses: actions/upload-artifact@v4
       with:
         name: changed-output
@@ -198,14 +198,14 @@ jobs:
         }
 
     - name: "[SKIP REASON] Send email if script output comparison result changed skipped"
-      if: github.event_name != 'schedule' || steps.statuscheck.outputs.changed != 'true'
+      if: github.event_name != 'schedule' || env.COMPARISON_STATUS == 'changed'
       run: |-
         echo "::notice ::Skipping 'Send email if script output comparison result changed' step because condition " + 
-             "'github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true' is not met'."
+             "'github.event_name == 'schedule' && env.COMPARISON_STATUS == 'changed' is not met'."
 
     # 💌 Send email only on status change
     - name: Send email if script output comparison result changed
-      if: github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true'
+      if: github.event_name == 'schedule' && env.COMPARISON_STATUS == 'changed'
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
@@ -254,11 +254,11 @@ jobs:
         path: ${env:STATUS_FILE}
 
     - name: "[SKIP REASON] Fail workflow"
-      if: env.COMPARISON_FAILED != 'true'
-      run: echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step because 'env.COMPARISON_FAILED != 'true''"
+      if: env.COMPARISON_STATUS == 'unchanged'
+      run: echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step because 'env.COMPARISON_STATUS == 'unchanged''"
 
     - name: Fail workflow if script output is different than reference
-      if: env.COMPARISON_FAILED == 'true'
+      if: env.COMPARISON_STATUS == 'changed'
       shell: pwsh
       run: |
         Write-Error "❌ Output changed – failing the run."
