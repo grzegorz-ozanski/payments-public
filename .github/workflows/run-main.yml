@@ -243,6 +243,7 @@ jobs:
       shell: pwsh
       run: |
         Set-Content -Path .last-status.txt -Value "${{ job.status }}" -Encoding UTF8
+        dir
 
     - name: Upload status snapshot
       if: always()
