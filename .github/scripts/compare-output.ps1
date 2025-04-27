@@ -45,8 +45,8 @@ if ($($diff -join "") -match "➖|➕") {
   Write-IfExists $_actual $ComparedActual
   Write-IfExists $_expected $ComparedExpected
   Write-IfExists $_diff $Diff
-  Write-IfExists "changed=true" ${env:GITHUB_OUTPUT}
+  Write-IfExists "COMPARISON_STATUS=changed" ${env:GITHUB_ENV}
 } else {
   Write-Host "✅ No changes."
-  Write-IfExists "changed=false" ${env:GITHUB_OUTPUT}
+  Write-IfExists "COMPARISON_STATUS=unchanged" ${env:GITHUB_ENV}
 }

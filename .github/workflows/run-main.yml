@@ -73,6 +73,25 @@ jobs:
     - name: Checkout current repo
       uses: actions/checkout@v4
 
+    - name: Download last status snapshot
+      uses: actions/download-artifact@v4
+      with:
+        name: last-status
+        path: snapshot
+      continue-on-error: true
+
+    - name: Read previous status
+      id: readstatus
+      shell: pwsh
+      run: |
+        $file = "snapshot/.last-status.txt"
+        if (Test-Path $file) {
+          $value = Get-Content $file -Raw
+          echo "previous=$value" >> ${env:GITHUB_OUTPUT}
+        } else {
+          echo "previous=none" >> ${env:GITHUB_OUTPUT}
+        }
+
     - name: Use system Python 3.11
       if: runner.os == 'Windows'
       run: |
@@ -157,24 +176,51 @@ jobs:
           ${{ env.REFERENCE_CONTENT }}
           ${{ env.DIFF_FILE }}
 
-#    - name: Send email if script output is different than reference
-#      if: github.event_name == 'schedule' && steps.compare.outputs.changed == 'true'
-#      uses: dawidd6/action-send-mail@v3
-#      with:
-#        server_address: smtp.gmail.com
-#        server_port: 465
-#        username: ${{ secrets.GMAIL_USERNAME }}
-#        password: ${{ secrets.GMAIL_APP_PASSWORD }}
-#        subject: "⚠️ ${{ github.repository }} - job execution error"
-#        to: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
-#        from: GitHub Actions <no-reply@github.com>
-#        body: |
-#          ${{ github.repository }} GitHub Actions job execution error - actual output is diffent than expected one.
-#
-#          ➤ View artifact and logs:
-#          https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-#
-#          If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
+    # 🔁 Compare current workflow status with the previous one
+    - name: Compare workflow status
+      id: statuscheck
+      if: always()
+      shell: pwsh
+      run: |
+        $previous = "${{ steps.readstatus.outputs.previous }}"
+        $current = ${env:COMPARISON_STATUS }
+
+        Write-Host "Previous: $previous"
+        Write-Host "Current: $current"
+
+        if (
+          ($previous -ne $current)
+        ) {
+          "changed=true" >> $env:GITHUB_OUTPUT
+        } else {
+          "changed=false" >> $env:GITHUB_OUTPUT
+        }
+
+    - name: "[SKIP REASON] Send email if script output comparison result changed skipped"
+      if: github.event_name != 'schedule' || steps.statuscheck.outputs.changed != 'true'
+      run: |-
+        echo "::notice ::Skipping 'Send email if script output comparison result changed' step because condition " + 
+             "'github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true' is not met'."
+
+    # 💌 Send email only on status change
+    - name: Send email if script output comparison result changed
+      if: github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true'
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.GMAIL_USERNAME }}
+        password: ${{ secrets.GMAIL_APP_PASSWORD }}
+        subject: "⚠️ ${{ github.repository }} - job execution error"
+        to: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
+        from: GitHub Actions <no-reply@github.com>
+        body: |
+          ${{ github.repository }} GitHub Actions job execution error - actual output is diffent than expected one.
+
+          ➤ View artifact and logs:
+          https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
 
     - name: "[SKIP REASON] Copy working directory skipped"
       if: github.event.inputs.dump != 'true'
@@ -191,13 +237,27 @@ jobs:
         mkdir -p $dst 
         Copy-Item -Path $src -Recurse -Destination $dst
 
+    # 💾 Save current status
+    - name: Save current status
+      if: always()
+      shell: pwsh
+      run: |
+        Set-Content -Path .last-status.txt -Value "${{ job.status }}" -Encoding UTF8
+
+    - name: Upload status snapshot
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: last-status
+        path: .last-status.txt
+
     - name: "[SKIP REASON] Fail workflow"
-      if: steps.compare.outputs.changed != 'true'
-      run: echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step because 'steps.compare.outputs.changed != 'true''"
+      if: env.COMPARISON_FAILED != 'true'
+      run: echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step because 'env.COMPARISON_FAILED != 'true''"
 
     - name: Fail workflow if script output is different than reference
-      if: steps.compare.outputs.changed == 'true'
+      if: env.COMPARISON_FAILED == 'true'
       shell: pwsh
       run: |
         Write-Error "❌ Output changed – failing the run."
-        exit 10
+        Exit 10
