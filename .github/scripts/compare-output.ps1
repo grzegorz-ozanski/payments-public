@@ -39,7 +39,7 @@ for ($i = 0; $i -lt [Math]::Max($expected.Count, $_actual.Count); $i++) {
   }
 }
 
-if ($($diff -join "") -match "➖|➕") {
+if ($($_diff -join "") -match "➖|➕") {
   Write-Host "🔍 Differences found:"
   $_diff | Write-Host
   Write-IfExists $_actual $ComparedActual
