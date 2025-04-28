@@ -12,6 +12,8 @@ on:
         required: false
         default: 'false'
 env:
+  GH_ACTIONS_USER_NAME: "github-actions"
+  GH_ACTIONS_EMAIL: "github-actions@github.com"
   STATUS_FILE: .github/status/last-status.txt
   GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
   LIBRARY: .github/scripts/functions.ps1
@@ -257,13 +259,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        Set-Content -Path ${env:STATUS_FILE} -Value "${{ job.status }}" -Encoding UTF8
-        git config user.name "github-actions"
-        git config user.email "github-actions@github.com"
-        git add .github/status/last-status.txt
+        $job_status = "failure"
+        if (${env.COMPARISON_STATUS} -ne "changed") {
+          $job_status = "success"
+        }
+        Set-Content -Path ${env:STATUS_FILE} -Value "${job_status}" -Encoding UTF8
+        git config user.name "${env:GH_ACTIONS_USER_NAME}"
+        git config user.email "${env:GH_ACTIONS_EMAIL}"
+        git add ${env:STATUS_FILE}
         if (git diff --cached --quiet) {
           Write-Host "No changes to commit."
         } else {
+          Write-Host "Committing modified '${env:STATUS_FILE}' file."
           git commit -m "Update last run status [skip ci]"
           git push
         }
