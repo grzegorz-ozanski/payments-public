@@ -21,7 +21,7 @@ function Write-IfExists {
 
 if (-not (Test-Path $Expected)) {
   Write-Host "Reference not found, assuming change"
-  Write-IfExists "changed=true" ${env:GITHUB_OUTPUT}
+  Write-IfExists "COMPARISON_STATUS=changed" ${env:GITHUB_ENV}
   Exit 0
 }
 

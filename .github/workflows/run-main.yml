@@ -182,8 +182,15 @@ jobs:
       if: always()
       shell: pwsh
       run: |
+        if (${env:COMPARISON_STATUS} -eq "changed") {
+          $current = "failure"
+        } elseif (${env:COMPARISON_STATUS} -eq "unchanged") {
+          $current = "success"
+        } else {
+          $current = "unknown"
+        }
+
         $previous = "${{ steps.readstatus.outputs.previous }}"
-        $current = ${env:COMPARISON_STATUS }
 
         Write-Host "Previous: $previous"
         Write-Host "Current: $current"
@@ -208,17 +215,17 @@ jobs:
         # 🛠️ Workflow summary
         
         - **Previous run status**: $emoji $status
-        - **Current comparison status**: ${{ env.COMPARISON_STATUS }}
+        - **Current comparison status**: ${env:COMPARISON_STATUS}
         "@ | Add-Content -Path $env:GITHUB_STEP_SUMMARY
 
     - name: "[DEBUG] Would send email?"
       run: |
-        if (${env.COMPARISON_STATUS} -eq "changed") {
+        if (${env:COMPARISON_STATUS} -eq "changed") {
           Write-Host "Email would be sent.
-        } elseif (${env.COMPARISON_STATUS} -eq "unchanged") {
+        } elseif (${env:COMPARISON_STATUS} -eq "unchanged") {
           Write-Host "Email would NOT be sent.
         } else {
-          Write-Host "Unrecognized status: '${env.COMPARISON_STATUS}'"
+          Write-Host "Unrecognized status: '${env:COMPARISON_STATUS}'"
         }
 
     - name: "[SKIP REASON] Send email if script output comparison result changed skipped"
@@ -270,7 +277,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         $job_status = "failure"
-        if (${env.COMPARISON_STATUS} -ne "changed") {
+        if (${env:COMPARISON_STATUS} -eq "unchanged") {
           $job_status = "success"
         }
         Set-Content -Path ${env:STATUS_FILE} -Value "${job_status}" -Encoding UTF8
