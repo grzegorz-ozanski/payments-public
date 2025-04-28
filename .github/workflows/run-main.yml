@@ -263,4 +263,4 @@ jobs:
       shell: pwsh
       run: |
         Write-Error "❌ Output changed – failing the run."
-        Exit 10
+        Exit 1
