@@ -6,7 +6,18 @@ param (
   [Parameter(Position=4                 )][string]$Diff
 )
 
-. $(Join-Path $PSScriptRoot "functions.ps1")
+function Write-IfExists {
+  param (
+    [Parameter(Mandatory = $true, Position=0)]
+    [string[]]$Data,
+    [Parameter(Position=1)]
+    [string]$Path
+  )
+
+  if ($Path) {
+    $Data | Set-Content $Path -Encoding UTF8NoBOM
+  }
+}
 
 if (-not (Test-Path $Expected)) {
   Write-Host "Reference not found, assuming change"
