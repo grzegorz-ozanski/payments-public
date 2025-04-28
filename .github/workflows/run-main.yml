@@ -89,8 +89,7 @@ jobs:
           $value = Get-Content $file -Raw
           echo "previous=$value" >> ${env:GITHUB_OUTPUT}
         } else {
-          Write-Host "Previous status file not found in '${env:STATUS_FILE}'!"
-          Exit 20
+          Write-Error "Previous status file not found in '${env:STATUS_FILE}'!"
         }
 
     - name: Use system Python 3.11
@@ -300,5 +299,4 @@ jobs:
       if: env.COMPARISON_STATUS == 'changed'
       shell: pwsh
       run: |
-        Write-Host "❌ Output changed – failing the run."
-        Exit 10
+        Write-Error "❌ Output changed – failing the run."
