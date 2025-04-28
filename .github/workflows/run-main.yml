@@ -133,12 +133,14 @@ jobs:
 
     - name: "[SKIP REASON] Run the script skipped"
       if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
-      run: echo "::notice ::Skipping 'Run the script' step because 'env.SCRIPT_OUTPUT' contains 'test_."
+      run: |
+        echo "::notice ::Skipping 'Run the script' step because 'env.SCRIPT_OUTPUT' contains 'test_."
 
     - name: Run the script
       if: ${{ ! contains(env.SCRIPT_OUTPUT, 'test_') }}
       shell: pwsh
-      run: python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
+      run: |
+        python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
 
     - name: Compare script output with reference
       id: compare
@@ -162,7 +164,8 @@ jobs:
 
     - name: "[SKIP REASON] Upload log skipped"
       if: env.COMPARISON_STATUS == 'unchanged'
-      run: echo "::notice ::Skipping 'Upload log if script output is different than reference' step because env.COMPARISON_STATUS == 'unchanged''."
+      run: |
+        echo "::notice ::Skipping 'Upload log if script output is different than reference' step because env.COMPARISON_STATUS == 'unchanged''."
 
     - name: Upload log if script output is different than reference
       if: env.COMPARISON_STATUS == 'changed'
@@ -255,7 +258,8 @@ jobs:
 
     - name: "[SKIP REASON] Copy working directory skipped"
       if: github.event.inputs.dump != 'true'
-      run: echo "::notice ::Skipping 'Copy working directory for inspection' step because 'github.event.inputs.dump != 'true''."
+      run: |
+        echo "::notice ::Skipping 'Copy working directory for inspection' step because 'github.event.inputs.dump != 'true''."
 
     - name: Copy working directory for inspection
       if: github.event.inputs.dump == 'true'
@@ -293,7 +297,8 @@ jobs:
 
     - name: "[SKIP REASON] Fail workflow"
       if: env.COMPARISON_STATUS == 'unchanged'
-      run: echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step because 'env.COMPARISON_STATUS == 'unchanged''"
+      run: |
+        echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step because 'env.COMPARISON_STATUS == 'unchanged''"
 
     - name: Fail workflow if script output is different than reference
       if: env.COMPARISON_STATUS == 'changed'
