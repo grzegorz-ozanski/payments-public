@@ -211,6 +211,16 @@ jobs:
         - **Current comparison status**: ${{ env.COMPARISON_STATUS }}
         "@ | Add-Content -Path $env:GITHUB_STEP_SUMMARY
 
+    - name: "[DEBUG] Would send email?"
+      run: |
+        if (${env.COMPARISON_STATUS} -eq "changed") {
+          Write-Host "Email would be sent.
+        } elseif (${env.COMPARISON_STATUS} -eq "unchanged") {
+          Write-Host "Email would NOT be sent.
+        } else {
+          Write-Host "Unrecognized status: '${env.COMPARISON_STATUS}'"
+        }
+
     - name: "[SKIP REASON] Send email if script output comparison result changed skipped"
       if: github.event_name != 'schedule' || env.COMPARISON_STATUS == 'changed'
       run: |-
