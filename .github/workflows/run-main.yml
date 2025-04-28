@@ -150,7 +150,6 @@ jobs:
         -ComparedActual ${env:ACTUAL_CONTENT} `
         -ComparedExpected ${env:REFERENCE_CONTENT} `
         -Diff ${env:DIFF_FILE}
-        dir
 
     - name: Upload error logs
       uses: actions/upload-artifact@v4
@@ -195,6 +194,22 @@ jobs:
         } else {
           "changed=false" >> $env:GITHUB_OUTPUT
         }
+
+        if ($previous -eq "failure") {
+          $emoji = "❌"
+        } elseif ($status -eq "success") {
+          $emoji = "✅"
+        } elseif ($status -eq "unknown") {
+          $emoji = "🆕"
+        } else {
+          $emoji = "❔"
+        }
+        @"
+        # 🛠️ Workflow summary
+        
+        - **Previous run status**: $emoji $status
+        - **Current comparison status**: ${{ env.COMPARISON_STATUS }}
+        "@ | Add-Content -Path $env:GITHUB_STEP_SUMMARY
 
     - name: "[SKIP REASON] Send email if script output comparison result changed skipped"
       if: github.event_name != 'schedule' || env.COMPARISON_STATUS == 'changed'
