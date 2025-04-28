@@ -12,7 +12,7 @@ on:
         required: false
         default: 'false'
 env:
-  STATUS_FILE: last-status.txt
+  STATUS_FILE: .github/status/last-status.txt
   GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
   LIBRARY: .github/scripts/functions.ps1
   COMPARE_SCRIPT: .github/scripts/compare-output.ps1
@@ -74,23 +74,17 @@ jobs:
     - name: Checkout current repo
       uses: actions/checkout@v4
 
-    - name: Download last status snapshot
-      uses: actions/download-artifact@v4
-      with:
-        name: last-status
-        path: snapshot
-      continue-on-error: true
-
     - name: Read previous status
       id: readstatus
       shell: pwsh
       run: |
-        $file = "snapshot/${env:STATUS_FILE}"
+        $file = "${env:STATUS_FILE}"
         if (Test-Path $file) {
           $value = Get-Content $file -Raw
           echo "previous=$value" >> ${env:GITHUB_OUTPUT}
         } else {
-          echo "previous=none" >> ${env:GITHUB_OUTPUT}
+          Write-Error "Previous status file not found in '${env:STATUS_FILE}'!"
+          Exit 1
         }
 
     - name: Use system Python 3.11
@@ -243,9 +237,19 @@ jobs:
     - name: Save current status
       if: always()
       shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         Set-Content -Path ${env:STATUS_FILE} -Value "${{ job.status }}" -Encoding UTF8
-        dir
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add .github/status/last-status.txt
+        if (git diff --cached --quiet) {
+          Write-Host "No changes to commit."
+        } else {
+          git commit -m "Update last run status [skip ci]"
+          git push
+        }
 
     - name: Upload status snapshot
       if: always()
