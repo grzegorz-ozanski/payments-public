@@ -194,9 +194,9 @@ jobs:
 
         if ($previous -eq "failure") {
           $emoji = "❌"
-        } elseif ($status -eq "success") {
+        } elseif ($previous -eq "success") {
           $emoji = "✅"
-        } elseif ($status -eq "unknown") {
+        } elseif ($previous -eq "unknown") {
           $emoji = "🆕"
         } else {
           $emoji = "❔"
