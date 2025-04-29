@@ -159,8 +159,14 @@ jobs:
         name: error-logs
         if-no-files-found: ignore
         path: |
-          ./*.png
-          ./*.html
+          ./error/**
+
+    - name: Upload trace logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: trace-logs
+        path: |
+          ./trace/**
 
     - name: "[SKIP REASON] Upload log skipped"
       if: steps.compare.outputs.status == 'unchanged'
