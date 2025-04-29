@@ -40,7 +40,7 @@ $_expected = (Get-Content $Expected) -replace "{{TODAY}}", $_today
 
 $_diff = @()
 
-for ($i = 0; $i -lt [Math]::Max($expected.Count, $_actual.Count); $i++) {
+for ($i = 0; $i -lt [Math]::Max($_expected.Count, $_actual.Count); $i++) {
   $_expLine = if ($i -lt $_expected.Count) { $_expected[$i] } else { $null }
   $_actLine = if ($i -lt $_actual.Count) { $_actual[$i] } else { $null }
 
