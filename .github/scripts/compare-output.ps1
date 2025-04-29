@@ -19,9 +19,18 @@ function Write-IfExists {
   }
 }
 
+function Write-Status {
+  param (
+      [Parameter(Mandatory = $true, Position=0)]
+      [string]$Status
+    )
+
+  Write-IfExists "status=${Status}" ${env:GITHUB_OUTPUT}
+}
+
 if (-not (Test-Path $Expected)) {
   Write-Host "Reference not found, assuming change"
-  Write-IfExists "COMPARISON_STATUS=changed" ${env:GITHUB_ENV}
+  Write-Status "changed"
   Exit 0
 }
 
@@ -56,8 +65,8 @@ if ($($_diff -join "") -match "➖|➕") {
   Write-IfExists $_actual $ComparedActual
   Write-IfExists $_expected $ComparedExpected
   Write-IfExists $_diff $Diff
-  Write-IfExists "COMPARISON_STATUS=changed" ${env:GITHUB_ENV}
+  Write-Status "changed"
 } else {
   Write-Host "✅ No changes."
-  Write-IfExists "COMPARISON_STATUS=unchanged" ${env:GITHUB_ENV}
+  Write-Status "unchanged"
 }

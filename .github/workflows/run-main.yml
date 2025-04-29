@@ -163,12 +163,13 @@ jobs:
           ./*.html
 
     - name: "[SKIP REASON] Upload log skipped"
-      if: env.COMPARISON_STATUS == 'unchanged'
-      run: |
-        echo "::notice ::Skipping 'Upload log if script output is different than reference' step because env.COMPARISON_STATUS == 'unchanged''."
+      if: steps.compare.outputs.status == 'unchanged'
+      run: |-
+        echo "::notice ::Skipping 'Upload log if script output is different than reference' step " + 
+             "because steps.compare.outputs.status == 'unchanged''."
 
     - name: Upload log if script output is different than reference
-      if: env.COMPARISON_STATUS == 'changed'
+      if: steps.compare.outputs.status == 'changed'
       uses: actions/upload-artifact@v4
       with:
         name: changed-output
@@ -184,9 +185,9 @@ jobs:
       if: always()
       shell: pwsh
       run: |
-        if (${env:COMPARISON_STATUS} -eq "changed") {
+        if (${{ steps.compare.outputs.status }} -eq "changed") {
           $current = "failure"
-        } elseif (${env:COMPARISON_STATUS} -eq "unchanged") {
+        } elseif (${{ steps.compare.outputs.status }} -eq "unchanged") {
           $current = "success"
         } else {
           $current = "unknown"
@@ -197,6 +198,8 @@ jobs:
         Write-Host "Previous: $previous"
         Write-Host "Current: $current"
 
+        "current=${current}" >> $env:GITHUB_OUTPUT
+        "previous=${previous}" >> $env:GITHUB_OUTPUT
         if ($previous -ne $current) {
           "changed=true" >> $env:GITHUB_OUTPUT
         } else {
@@ -217,7 +220,7 @@ jobs:
         # 🛠️ Workflow summary
         
         - **Previous run status**: $emoji $previous
-        - **Current comparison status**: ${env:COMPARISON_STATUS}
+        - **Current comparison status**: ${{ steps.compare.outputs.status }}
         "@ | Add-Content -Path $env:GITHUB_STEP_SUMMARY
 
     - name: "[DEBUG] Would send email?"
@@ -227,7 +230,7 @@ jobs:
         } elseif ("${{ steps.statuscheck.outputs.changed }}" -eq "false") {
           Write-Host "Email would NOT be sent."
         } else {
-          Write-Host "Unrecognized status: '${env:COMPARISON_STATUS}'."
+          Write-Host "Unrecognized status: '${{ steps.statuscheck.outputs.changed }}'."
         }
 
     - name: "[SKIP REASON] Send email if workflow result changed"
@@ -245,11 +248,12 @@ jobs:
         server_port: 465
         username: ${{ secrets.GMAIL_USERNAME }}
         password: ${{ secrets.GMAIL_APP_PASSWORD }}
-        subject: "⚠️ ${{ github.repository }} - scheduled job execution error"
+        subject: "⚠️ ${{ github.repository }} - workflow status changed"
         to: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
         from: GitHub Actions <no-reply@github.com>
         body: |
-          ${{ github.repository }} GitHub Actions scheduled job execution error - actual output is diffent than expected one.
+          ${{ github.repository }} GitHub Actions scheduled job execution status changed 
+          from "${{ steps.statuscheck.outputs.previous }}" to "${{ steps.statuscheck.outputs.current }}"
 
           ➤ View artifact and logs:
           https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -279,11 +283,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        $job_status = "failure"
-        if (${env:COMPARISON_STATUS} -eq "unchanged") {
-          $job_status = "success"
-        }
-        Set-Content -Path ${env:STATUS_FILE} -Value "${job_status}" -Encoding UTF8
+        Set-Content -Path ${env:STATUS_FILE} -Value "${{ steps.statuscheck.outputs.current }}" -Encoding UTF8
         git config user.name "${env:GH_ACTIONS_USER_NAME}"
         git config user.email "${env:GH_ACTIONS_EMAIL}"
         git add ${env:STATUS_FILE}
@@ -296,12 +296,13 @@ jobs:
         }
 
     - name: "[SKIP REASON] Fail workflow"
-      if: env.COMPARISON_STATUS == 'unchanged'
-      run: |
-        echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step because 'env.COMPARISON_STATUS == 'unchanged'"
+      if: steps.compare.outputs.status == 'unchanged'
+      run: |-
+        echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step " +
+             "because 'steps.compare.outputs.status == 'unchanged''"
 
     - name: Fail workflow if script output is different than reference
-      if: env.COMPARISON_STATUS == 'changed'
+      if: steps.compare.outputs.status == 'changed'
       shell: pwsh
       run: |
         Write-Error "❌ Output changed – failing the run."
