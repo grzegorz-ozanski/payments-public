@@ -185,9 +185,9 @@ jobs:
       if: always()
       shell: pwsh
       run: |
-        if (${{ steps.compare.outputs.status }} -eq "changed") {
+        if ("${{ steps.compare.outputs.status }}" -eq "changed") {
           $current = "failure"
-        } elseif (${{ steps.compare.outputs.status }} -eq "unchanged") {
+        } elseif ("${{ steps.compare.outputs.status }}" -eq "unchanged") {
           $current = "success"
         } else {
           $current = "unknown"
