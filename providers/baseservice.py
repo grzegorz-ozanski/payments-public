@@ -138,6 +138,7 @@ class BaseService:
         try:
             self.browser.wait_for_page_inactive(2)
             self.browser.click_element(self.logout_button.by, self.logout_button.selector)
+            self.browser.wait_for_page_inactive(2)
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
         except WebDriverException:
