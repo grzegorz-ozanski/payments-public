@@ -257,7 +257,8 @@ jobs:
 
     # 💌 Send email only on status change
     - name: Send email if script output comparison result changed and run was scheduled
-      if: github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true'
+#      if: github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true'
+      if: steps.statuscheck.outputs.changed == 'true'
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
