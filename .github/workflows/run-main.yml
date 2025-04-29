@@ -257,8 +257,7 @@ jobs:
 
     # 💌 Send email only on status change
     - name: Send email if script output comparison result changed and run was scheduled
-#      if: github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true'
-      if: steps.statuscheck.outputs.changed == 'true'
+      if: github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true'
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
@@ -315,8 +314,8 @@ jobs:
     - name: "[SKIP REASON] Fail workflow"
       if: steps.compare.outputs.status == 'unchanged'
       run: |-
-        $msg =  "::notice ::Skipping 'Fail workflow if script output is different than reference' step " +
-                "because 'steps.compare.outputs.status == 'unchanged''"
+        $msg = "::notice ::Skipping 'Fail workflow if script output is different than reference' step " +
+               "because 'steps.compare.outputs.status == 'unchanged''"
         echo $msg
 
     - name: Fail workflow if script output is different than reference
