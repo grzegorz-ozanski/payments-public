@@ -1,4 +1,5 @@
 import inspect
+import os
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -20,12 +21,13 @@ def _sleep_with_message(amount: int, message: str):
         log.debug(f"{message}: sleeping {amount} seconds")
         time.sleep(amount)
 
-def _get_caller():
+
+def _get_caller(level: int = 3) -> str:
     # get callers name of the parent
-    frame = inspect.stack()[2].frame
+    frame = inspect.stack()[level].frame
 
     # get method name
-    method_name = inspect.stack()[2].function
+    method_name = inspect.stack()[level].function
 
     # get class name if available
     class_name = None
@@ -33,6 +35,7 @@ def _get_caller():
         class_name = frame.f_locals['self'].__class__.__name__
 
     return f'{class_name}_{method_name}'
+
 
 @dataclass
 class AuthElement:
@@ -93,11 +96,23 @@ class BaseService:
                       f"Valid service locations: {','.join([location.name for location in self.locations])}")
             raise
 
+    def _save_logs(self, suffix: str = '', path: str = '') -> None:
+        filename = f"{datetime.today().strftime('%Y-%m-%d %H-%M-%S')} {self.name} {_get_caller()}{' ' + suffix if suffix else ''}"
+        if path:
+            path = os.path.join(path, self.name)
+            os.makedirs(path, exist_ok=True)
+            filename = os.path.join(path, filename)
+        self.browser.save_screenshot(f"{filename}.png")
+        with open(f"{filename}.html", "w", encoding="utf-8") as page_source_file:
+            page_source_file.write(self.browser.page_source)
+
     def save_error_logs(self):
-        file_name = f"{datetime.today().strftime('%Y-%m-%d %H-%M-%S')} {self.name} {_get_caller()} error"
-        self.browser.save_screenshot(f"{file_name}.png")
-        with open(f"{file_name}.html", "w", encoding="utf-8") as error_file:
-            error_file.write(self.browser.page_source)
+        self._save_logs("error")
+
+    def save_trace_logs(self, suffix: str=''):
+        # Trace only in CI
+        if os.environ.get("GITHUB_JOB"):
+            self._save_logs(suffix, "trace")
 
     def login(self, browser, load=True):
         self.browser = browser
@@ -107,6 +122,7 @@ class BaseService:
                 self.browser.force_get(self.url)
             log.info("Logging into service...")
             self.browser.wait_for_page_inactive(2)
+            self.save_trace_logs("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
             input_user = self.browser.wait_for_element(self.user_input.by, self.user_input.selector)
             if input_user is None:
@@ -117,14 +133,17 @@ class BaseService:
             assert input_password is not None
             username = self.username.get()
             input_user.send_keys(username)
+            self.save_trace_logs("username-input")
             password = self.password.get()
             if password is not None:
                 input_password.send_keys(password)
             else:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{username}'!")
+            self.save_trace_logs("password-input")
             input_password.send_keys(Keys.ENTER)
             self.browser.wait_for_page_load_completed()
             _sleep_with_message(self.post_login_delay, "Post-login")
+            self.save_trace_logs("post-login")
             log.info("Done.")
         except Exception as e:
             log.info("Cannot login into service: %s" % e)
@@ -137,8 +156,10 @@ class BaseService:
     def logout(self):
         try:
             self.browser.wait_for_page_inactive(2)
+            self.save_trace_logs("pre-logout")
             self.browser.click_element(self.logout_button.by, self.logout_button.selector)
             self.browser.wait_for_page_inactive(2)
+            self.save_trace_logs("post-logout")
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
         except WebDriverException:

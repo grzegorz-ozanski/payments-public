@@ -21,6 +21,7 @@ class Energa(BaseService):
         try:
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             self.browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
+            self.save_trace_logs("pre-logout-click")
             self.browser.find_element(By.XPATH, '//span[contains(text(), "Wyloguj się")]').click()
         except (AttributeError, ElementNotInteractableException) as e:
             self.save_error_logs()
@@ -33,6 +34,7 @@ class Energa(BaseService):
     def get_payments(self):
         log.info("Getting payments...")
         self.browser.wait_for_page_load_completed()
+        self.save_trace_logs("accounts-list")
         locations_list = self.browser.wait_for_elements(By.CSS_SELECTOR, 'label')
         log.debug("Identified %d locations" % len(locations_list))
         payments = []
@@ -40,11 +42,13 @@ class Energa(BaseService):
             print(f'...location {location_id+1} of {len(locations_list)}')
             log.debug("Opening location page")
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
+            self.save_trace_logs("pre-location-click")
             locations_list[location_id].click()
             location = self._get_location(
                 self.browser.wait_for_element(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm', 30).text)
             log.debug("Getting payment")
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
+            self.save_trace_logs("pre-invoices-click")
             self.browser.find_element(By.XPATH, '//a[contains(text(), "Faktury")]').click()
             invoices = self.browser.find_elements(
                 By.XPATH,

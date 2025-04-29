@@ -23,6 +23,7 @@ class Pgnig(BaseService):
         log.info("Getting invoices menu...")
         invoices_menu = self.browser.find_element(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
         log.info("Opening invoices menu...")
+        self.save_trace_logs("pre-invoices-click")
         invoices_menu.click()
         log.info("Getting invoices list...")
         invoices = self.browser.wait_for_elements(By.CLASS_NAME, "main-row-container")

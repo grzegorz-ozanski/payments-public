@@ -28,7 +28,9 @@ class Opec(BaseService):
         super().__init__(url, keystore_service, locations, user_input, password_input)
 
     def get_payments(self):
+        self.save_trace_logs("pre-payments-click")
         self.browser.find_element(By.XPATH, '//a[text()="Płatności"]').click()
+        self.save_trace_logs("pre-documents-click")
         self.browser.find_element(By.XPATH, '//a[contains(string(), "Dokumenty")]').click()
         self.browser.wait_for_network_inactive()
         time.sleep(1)
