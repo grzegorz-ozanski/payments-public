@@ -88,6 +88,7 @@ jobs:
         if (Test-Path $file) {
           $value = Get-Content $file -Raw
           echo "previous=$value" >> ${env:GITHUB_OUTPUT}
+          cat ${env:GITHUB_OUTPUT}
         } else {
           Write-Error "Previous status file not found in '${env:STATUS_FILE}'!"
         }
