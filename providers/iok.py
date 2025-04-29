@@ -11,6 +11,7 @@ class IOK(BaseService):
         user_input = AuthElement(By.CSS_SELECTOR, "[aria-labelledby=login]")
         password_input = AuthElement(By.CSS_SELECTOR, "[aria-labelledby=haslo]")
         self.log = log
+        self.timeout = 0.1
         today = date.today()
         self.due_date = date(today.year, today.month, due_day)
         super().__init__(url, keystore_service, locations, user_input, password_input)
@@ -18,10 +19,9 @@ class IOK(BaseService):
     def get_payments(self):
         self.log.info("Getting payments...")
         self.browser.wait_for_page_inactive()
-        if len(self.browser.find_elements(By.XPATH, '//span[contains(text(), "Brak zaległości")]')) > 0:
+        amount = self.browser.wait_for_element(By.CLASS_NAME, 'home-amount', self.timeout)
+        due_date = self.browser.wait_for_element(By.CLASS_NAME, 'home-info', self.timeout)
+        if amount is None or due_date is None:
             return [Payment(due_date=self.due_date, location=self.locations[0])]
-        amount = self.browser.wait_for_element(By.CLASS_NAME, 'home-amount')
-        due_date = self.browser.find_element(By.CLASS_NAME, 'home-info').find_elements(By.TAG_NAME, 'span')[-1]
-
         self.log.debug(f"Got amount '{amount.text}' of location '{self.locations[0].name}'")
         return [Payment(amount, due_date, self.locations[0])]
