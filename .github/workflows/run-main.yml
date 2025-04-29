@@ -315,8 +315,9 @@ jobs:
     - name: "[SKIP REASON] Fail workflow"
       if: steps.compare.outputs.status == 'unchanged'
       run: |-
-        echo "::notice ::Skipping 'Fail workflow if script output is different than reference' step " +
-             "because 'steps.compare.outputs.status == 'unchanged''"
+        $msg =  "::notice ::Skipping 'Fail workflow if script output is different than reference' step " +
+                "because 'steps.compare.outputs.status == 'unchanged''"
+        echo $msg
 
     - name: Fail workflow if script output is different than reference
       if: steps.compare.outputs.status == 'changed'
