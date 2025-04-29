@@ -17,7 +17,7 @@ class IOK(BaseService):
 
     def get_payments(self):
         self.log.info("Getting payments...")
-        self.browser.wait_for_page_load_completed()
+        self.browser.wait_for_page_inactive()
         if len(self.browser.find_elements(By.CSS_SELECTOR, 'a.ng-star-inserted')) <= 1:
             return [Payment(due_date=self.due_date, location=self.locations[0])]
         amount = self.browser.wait_for_element(By.CLASS_NAME, 'home-amount')
