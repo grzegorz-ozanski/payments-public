@@ -99,7 +99,8 @@ class BaseService:
     def _save_logs(self, suffix: str = '', path: str = '') -> None:
         filename = f"{datetime.today().strftime('%Y-%m-%d %H-%M-%S')} {self.name} {_get_caller()}{' ' + suffix if suffix else ''}"
         if path:
-            path = os.path.join(path, self.name)
+            if path != "error":
+                path = os.path.join(path, self.name)
             os.makedirs(path, exist_ok=True)
             filename = os.path.join(path, filename)
         self.browser.save_screenshot(f"{filename}.png")
@@ -107,7 +108,7 @@ class BaseService:
             page_source_file.write(self.browser.page_source)
 
     def save_error_logs(self):
-        self._save_logs("error")
+        self._save_logs(path="error")
 
     def save_trace_logs(self, suffix: str=''):
         # Trace only in CI
