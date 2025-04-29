@@ -18,7 +18,7 @@ class IOK(BaseService):
     def get_payments(self):
         self.log.info("Getting payments...")
         self.browser.wait_for_page_inactive()
-        if len(self.browser.find_elements(By.CSS_SELECTOR, 'a.ng-star-inserted')) <= 1:
+        if len(self.browser.find_elements(By.XPATH, '//span[contains(text(), "Brak zaległości")]')) > 0:
             return [Payment(due_date=self.due_date, location=self.locations[0])]
         amount = self.browser.wait_for_element(By.CLASS_NAME, 'home-amount')
         due_date = self.browser.find_element(By.CLASS_NAME, 'home-info').find_elements(By.TAG_NAME, 'span')[-1]
