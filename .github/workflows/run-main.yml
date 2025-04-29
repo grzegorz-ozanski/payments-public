@@ -208,12 +208,28 @@ jobs:
 
         if ($previous -eq "failure") {
           $emoji = "❌"
+          if ($current -eq "success") {
+            "transition=FIXED" >> $env:GITHUB_OUTPUT
+          }
         } elseif ($previous -eq "success") {
           $emoji = "✅"
+          if ($current -eq "failure") {
+            "transition=BROKEN" >> $env:GITHUB_OUTPUT
+          }
         } elseif ($previous -eq "unknown") {
           $emoji = "🆕"
+          if ($current -eq "success") {
+            "transition=FIXED" >> $env:GITHUB_OUTPUT
+          } elseif ($current -eq "failure") {
+            "transition=BROKEN" >> $env:GITHUB_OUTPUT
+          }
         } else {
           $emoji = "❔"
+          if ($current -eq "success") {
+            "transition=FIXED" >> $env:GITHUB_OUTPUT
+          } elseif ($current -eq "failure") {
+            "transition=BROKEN" >> $env:GITHUB_OUTPUT
+          }
         }
         
         @"
@@ -248,7 +264,7 @@ jobs:
         server_port: 465
         username: ${{ secrets.GMAIL_USERNAME }}
         password: ${{ secrets.GMAIL_APP_PASSWORD }}
-        subject: "⚠️ ${{ github.repository }} - workflow status changed"
+        subject: "⚠️ ${{ github.repository }} - workflow ${{ steps.statuscheck.outputs.transition }}"
         to: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
         from: GitHub Actions <no-reply@github.com>
         body: |
