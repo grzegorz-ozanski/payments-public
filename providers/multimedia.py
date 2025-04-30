@@ -29,6 +29,16 @@ class Multimedia(BaseService):
             raise Exception(f"Cannot find suitable location for payment '{amount}'!")
         return location[0]
 
+    def login(self, browser, load=True):
+        wait = 10
+        for i in range(10):
+            log.debug(f'Login attempt {i+1}')
+            super().login(browser, load)
+            self.browser.wait_for_page_inactive()
+            if self.browser.wait_for_element(By.CSS_SELECTOR, 'span.logonFailureText'):
+                log.debug(f'Login failed, retrying after {wait} seconds')
+                sleep(wait)
+
     def get_payments(self):
         log.info("Getting payments...")
         payments = []
