@@ -1,3 +1,5 @@
+from time import sleep
+
 from selenium.webdriver.common.by import By
 
 from locations import Location
@@ -26,3 +28,7 @@ class IOK(BaseService):
         due_date = due_date.find_elements(By.TAG_NAME, 'span')[-1]
         self.log.debug(f"Got amount '{amount.text}' of location '{self.locations[0].name}'")
         return [Payment(amount, due_date, self.locations[0])]
+
+    def logout(self):
+        super().logout()
+        sleep(10)
