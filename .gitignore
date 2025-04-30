@@ -4,3 +4,5 @@ __pycache__
 venv*
 chromedriver
 downloads
+trace
+error

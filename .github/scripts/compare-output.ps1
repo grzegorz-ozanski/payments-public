@@ -37,7 +37,7 @@ if (-not (Test-Path $Expected)) {
 $_today = Get-Date -Format "dd-MM-yyyy"
 $_actual = (Get-Content $Actual | Select-Object -Skip 1 -SkipLast 2) -replace "{{TODAY}}", $_today
 $_expected = (Get-Content $Expected) -replace "{{TODAY}}", $_today
-echo $_actual.GetType().FullName
+
 $_diff = @()
 
 for ($i = 0; $i -lt [Math]::Max($_expected.Count, $_actual.Count); $i++) {

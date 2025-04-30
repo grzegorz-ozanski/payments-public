@@ -36,6 +36,15 @@ class Energa(BaseService):
         self.browser.wait_for_page_load_completed()
         self.save_trace_logs("accounts-list")
         locations_list = self.browser.wait_for_elements(By.CSS_SELECTOR, 'label')
+        if not locations_list:
+            button = self.browser.wait_for_element(By.CSS_SELECTOR, 'button.button,secondary')
+            if button:
+                self.browser.trace_click(button)
+                self.browser.wait_for_page_load_completed()
+                self.save_trace_logs("accounts-list-after-overlay")
+                locations_list = self.browser.wait_for_elements(By.CSS_SELECTOR, 'label')
+            else:
+                raise RuntimeError('Locations list is empty and no overlay was found!')
         log.debug("Identified %d locations" % len(locations_list))
         payments = []
         for location_id in range(len(locations_list)):
