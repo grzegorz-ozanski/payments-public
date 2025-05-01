@@ -30,5 +30,8 @@ class IOK(BaseService):
         return [Payment(amount, due_date, self.locations[0])]
 
     def logout(self):
-        super().logout()
-        sleep(10)
+        try:
+            super().logout()
+        finally:
+            sleep(10)
+            self.save_trace_logs("post-logout")

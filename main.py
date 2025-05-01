@@ -101,7 +101,7 @@ def main():
     browser = Browser(url=options.url,
                       options=options.browser_options,
                       binary_location=options.binary_location)
-    payments = PaymentsManager(browser, providers_list, options.verbose)
+    payments = PaymentsManager(browser, providers_list[6], options.verbose)
     payments.collect()
     payments.print()
 
