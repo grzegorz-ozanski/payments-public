@@ -245,6 +245,7 @@ jobs:
         - **Previous run status**: $emoji $previous
         - **Current comparison status**: ${{ steps.compare.outputs.status }}
         "@ | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+        Get-Content -Path ${env:SCRIPT_OUTPUT} | Add-Content -Path $env:GITHUB_STEP_SUMMARY
 
     - name: "[DEBUG] Would send email?"
       run: |
