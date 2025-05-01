@@ -31,13 +31,20 @@ class Multimedia(BaseService):
 
     def login(self, browser, load=True):
         wait = 10
-        for i in range(10):
+        num_retries = 10
+        for i in range(num_retries):
             log.debug(f'Login attempt {i+1}')
-            super().login(browser, load)
+            try:
+                super().login(browser, load)
+            except Exception as ex:
+                if i == num_retries - 1:
+                    raise ex
             self.browser.wait_for_page_inactive()
             if self.browser.wait_for_element(By.CSS_SELECTOR, 'span.logonFailureText'):
                 log.debug(f'Login failed, retrying after {wait} seconds')
-                sleep(wait)
+                self.save_trace_logs(f'failed-login-attempt-{i}')
+            else:
+                return
 
     def get_payments(self):
         log.info("Getting payments...")
