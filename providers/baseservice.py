@@ -3,12 +3,13 @@ import os
 import time
 from dataclasses import dataclass
 from datetime import datetime
+from typing import List
 
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import keyring
-
+from payments import Payment
 from os import environ
 from locations import Location
 from browser import setup_logging
@@ -151,7 +152,7 @@ class BaseService:
             self.save_error_logs()
             raise
 
-    def get_payments(self):
+    def get_payments(self) -> List[Payment]:
         raise NotImplementedError
 
     def logout(self):
