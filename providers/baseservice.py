@@ -78,6 +78,7 @@ class BaseService:
         self.password_input = password_input
         self.username = Credential(keystore_service, 'username')
         self.password = Credential(keystore_service, 'password')
+        self.trace_id = {}
         if not logout_button:
             logout_button = AuthElement(
                 By.XPATH,
@@ -98,7 +99,10 @@ class BaseService:
             raise
 
     def _save_logs(self, suffix: str = '', path: str = '') -> None:
-        filename = f"{datetime.today().strftime('%Y-%m-%d %H-%M-%S')} {self.name} {_get_caller()}{' ' + suffix if suffix else ''}"
+        trace_id = self.trace_id.get(self.name, 1)
+        self.trace_id[self.name] = trace_id + 1
+        timestamp = datetime.today().isoformat(sep=' ', timespec='milliseconds').replace(':', '-')
+        filename = f"{trace_id:0>3} {timestamp} {_get_caller()}{' ' + suffix if suffix else ''}"
         if path:
             if path != "error":
                 path = os.path.join(path, self.name)
