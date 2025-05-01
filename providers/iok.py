@@ -34,4 +34,4 @@ class IOK(BaseService):
             super().logout()
         finally:
             sleep(10)
-            self.save_trace_logs("post-logout")
+            self.save_trace_logs("post-super-logout")
