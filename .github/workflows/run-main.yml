@@ -138,9 +138,10 @@ jobs:
 
     - name: Run the script
       if: ${{ ! contains(env.SCRIPT_OUTPUT, 'test_') }}
+      continue-on-error: true
       shell: pwsh
       run: |
-        python main.py
+        python main.py 2>&1 > ${env:SCRIPT_OUTPUT}
 
     - name: Compare script output with reference
       id: compare
