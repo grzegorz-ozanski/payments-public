@@ -93,8 +93,8 @@ def main():
                 providers.Actum(hodowlana),                               # 2
                 providers.Multimedia({'90': hodowlana, '77': sezamowa}),  # 3
                 providers.Pewik(sezamowa),                                # 4
-                providers.Nordhome(bryla),                                 # 6
                 providers.Opec(sezamowa),                                 # 5
+                providers.Nordhome(bryla)                                 # 6
             ]
 
     options = parse_args()
