@@ -144,7 +144,7 @@ jobs:
         python main.py 2>&1 | ForEach-Object { `
           Write-Host $_ `
           $_ `
-        } | Set-Content program.log ${env:SCRIPT_OUTPUT}"
+        } | Set-Content program.log ${env:SCRIPT_OUTPUT}
 
 
     - name: Compare script output with reference
