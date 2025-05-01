@@ -141,11 +141,12 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python main.py 2>&1 | ForEach-Object { `
-          Write-Host $_ `
-          $_ `
-        } | Set-Content program.log ${env:SCRIPT_OUTPUT}
-
+        Start-Process -FilePath "python" -ArgumentList "main.py" `
+          -RedirectStandardOutput $env:SCRIPT_OUTPUT `
+          -RedirectStandardError $env:SCRIPT_OUTPUT `
+          -NoNewWindow
+        
+        Get-Content $env:SCRIPT_OUTPUT -Wait
 
     - name: Compare script output with reference
       id: compare
