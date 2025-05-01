@@ -141,7 +141,11 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python main.py 2>&1 | Tee-Object -File ${env:SCRIPT_OUTPUT}
+        python main.py 2>&1 | | ForEach-Object { `
+          Write-Host $_ `
+          $_ `
+        } | Set-Content program.log ${env:SCRIPT_OUTPUT}"
+
 
     - name: Compare script output with reference
       id: compare
