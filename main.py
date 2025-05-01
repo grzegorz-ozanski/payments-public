@@ -93,15 +93,15 @@ def main():
                 providers.Actum(hodowlana),                               # 2
                 providers.Multimedia({'90': hodowlana, '77': sezamowa}),  # 3
                 providers.Pewik(sezamowa),                                # 4
+                providers.Nordhome(bryla),                                 # 6
                 providers.Opec(sezamowa),                                 # 5
-                providers.Nordhome(bryla)                                 # 6
             ]
 
     options = parse_args()
     browser = Browser(url=options.url,
                       options=options.browser_options,
                       binary_location=options.binary_location)
-    payments = PaymentsManager(browser, providers_list[6], options.verbose)
+    payments = PaymentsManager(browser, providers_list[5:], options.verbose)
     payments.collect()
     payments.print()
 
