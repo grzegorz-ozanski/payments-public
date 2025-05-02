@@ -19,22 +19,25 @@ class Options:
     url: str = ''
     binary_location: str = ''
     browser_options: List[str] = field(default_factory=list)
+    save_trace_logs: bool = False
 
 
 def parse_args() -> Options:
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-v', '--verbose', default=None, action='store_true', help='verbose')
+    parser.add_argument('-v', '--verbose', default=False, action='store_true', help='verbose')
     parser.add_argument('-l', '--headless', choices=['TRUE', 'FALSE'], nargs='?', help='headless browser')
     parser.add_argument('-c', '--chromedriver', help='chromedriver URL')
+    parser.add_argument('-t', '--trace', default=False, action='store_true', help='trace logs')
 
     args = parser.parse_args()
 
     options = Options()
 
-    if args.verbose is not None:
+    if args.verbose:
         options.verbose = args.verbose
     else:
         options.verbose = sys.gettrace() is not None
+    headless = True
     if args.headless is not None:
         value = args.headless.strip().lower()
         if value == 'true':
@@ -43,8 +46,6 @@ def parse_args() -> Options:
             headless = False
         else:
             raise Exception(f"Unrecognized bool value for '--headless': {value}")
-    else:
-        headless = not options.verbose
 
     chromedriver = None
     if args.chromedriver is not None:
@@ -76,6 +77,7 @@ def parse_args() -> Options:
     else:
         options.url = chromedriver
 
+    options.save_trace_logs = args.trace
     return options
 
 def main():
@@ -100,7 +102,8 @@ def main():
     options = parse_args()
     browser = Browser(url=options.url,
                       options=options.browser_options,
-                      binary_location=options.binary_location)
+                      binary_location=options.binary_location,
+                      save_trace_logs=options.save_trace_logs)
     payments = PaymentsManager(browser, providers_list, options.verbose)
     payments.collect()
     payments.print()

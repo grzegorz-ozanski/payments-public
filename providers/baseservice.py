@@ -115,9 +115,8 @@ class BaseService:
     def save_error_logs(self):
         self._save_logs(path="error")
 
-    def save_trace_logs(self, suffix: str=''):
-        # Trace only in CI
-        if os.environ.get("GITHUB_JOB"):
+    def save_trace_logs(self, suffix: str = ''):
+        if self.browser.save_trace_logs:
             self._save_logs(suffix, "trace")
 
     def login(self, browser, load=True):
