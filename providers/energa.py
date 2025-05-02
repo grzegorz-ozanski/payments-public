@@ -66,11 +66,11 @@ class Energa(BaseService):
                 due_date = invoices[1].text
             else:
                 due_date = None
-            self.browser.safe_click((By.XPATH, '//a[contains(text(), "Pulpit konta")]'))
+            self.browser.safe_click(By.XPATH, '//a[contains(text(), "Pulpit konta")]')
             amount = self.browser.wait_for_element(By.CSS_SELECTOR, 'h1.text.es-text.variant-balance').text
             payments.append(Payment(amount, due_date, location))
             log.debug("Moving to the next location")
-            self.browser.safe_click((By.XPATH, '//span[contains(text(), "LISTA KONT")]/..'))
+            self.browser.safe_click(By.XPATH, '//span[contains(text(), "LISTA KONT")]/..')
             locations_list = self.browser.wait_for_elements(By.CSS_SELECTOR, 'label')
 
         return payments
