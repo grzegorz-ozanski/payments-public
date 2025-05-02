@@ -52,7 +52,7 @@ class Energa(BaseService):
             log.debug("Opening location page")
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             self.save_trace_logs("pre-location-click")
-            self.browser.safe_click(locations_list[location_id], scroll_before_click=True)
+            self.browser.click_element_with_js(locations_list[location_id])
             location = self._get_location(
                 self.browser.wait_for_element(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm', 30).text)
             log.debug("Getting payment")
