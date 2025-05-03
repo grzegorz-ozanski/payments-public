@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import StaleElementReferenceException
 
 from locations import Location
 from browser import setup_logging
@@ -25,13 +26,26 @@ class Pgnig(BaseService):
         log.info("Opening invoices menu...")
         self.save_trace_logs("pre-invoices-click")
         invoices_menu.click()
+        self.browser.wait_for_page_inactive()
         log.info("Getting invoices list...")
         invoices = self.browser.wait_for_elements(By.CLASS_NAME, "main-row-container")
         log.info("Filtering unpaid invoices...")
-        unpaid_invoices = [item for item in invoices if item.find_element(By.CLASS_NAME, 'button').text == "Zapłać"]
+        unpaid_invoices = []
+        for index, item in enumerate(invoices):
+            try:
+                if item.find_element(By.CLASS_NAME, 'button').text == "Zapłać":
+                    unpaid_invoices.append(item)
+            except StaleElementReferenceException:
+                log.warning(f"Stale element encountered during filtering invoices.\n"
+                            f"Element index: {index}\n"
+                            f"Element details:\n{self.browser.dump_element(item)}")
+                continue
+        log.debug("Creating payments dict...")
         payments_dict = {}
         for invoice in unpaid_invoices:
+            log.debug("Iterating over unpaid invoices...")
             columns = invoice.find_elements(By.CLASS_NAME, "columns")
+            log.debug("Adding payment...")
             payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(parsers.parse_amount(columns[3], '.'))
         payments = []
         for date, amount in payments_dict.items():
