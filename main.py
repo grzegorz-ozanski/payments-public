@@ -51,7 +51,7 @@ def parse_args() -> Options:
     if args.chromedriver is not None:
         chromedriver = args.chromedriver
 
-    options.browser_options = ["disable-gpu", "window-size=1200,1100",
+    options.browser_options = ["disable-gpu", "disable-webgl", "window-size=1200,1100",
                                "log-level=3", "no-sandbox", "disable-dev-shm-usage", "enable-unsafe-swiftshader",
                                ]
 
