@@ -35,7 +35,7 @@ if (-not (Test-Path $Expected)) {
 }
 
 $_today = Get-Date -Format "dd-MM-yyyy"
-$_actual = (Get-Content $Actual | Select-Object -Skip 1 -SkipLast 2) -replace "{{TODAY}}", $_today
+$_actual = (Get-Content $Actual | Where-Object { $_ -notmatch '^\s*(DEBUG:|INFO:)' } | Select-Object -Skip 1 -SkipLast 2) -replace "{{TODAY}}", $_today
 $_expected = (Get-Content $Expected) -replace "{{TODAY}}", $_today
 
 $_diff = @()
