@@ -135,6 +135,7 @@ class BaseService:
 
     def login(self, browser, load=True):
         self.browser = browser
+        self.browser.error_log_dir = "error"
         try:
             if load:
                 log.debug("Opening %s" % self.url)
