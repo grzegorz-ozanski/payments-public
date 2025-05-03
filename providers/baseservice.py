@@ -66,6 +66,8 @@ class Credential:
 
 
 class BaseService:
+    root_trace_dir = []
+
     def __init__(self, url: str, keystore_service: str, locations: tuple[Location, ...],
                  user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
@@ -78,7 +80,7 @@ class BaseService:
         self.password_input = password_input
         self.username = Credential(keystore_service, 'username')
         self.password = Credential(keystore_service, 'password')
-        self.trace_id = {}
+        self.trace_id = 0
         if not logout_button:
             logout_button = AuthElement(
                 By.XPATH,
@@ -98,12 +100,24 @@ class BaseService:
                       f"Valid service locations: {','.join([location.name for location in self.locations])}")
             raise
 
+    @classmethod
+    def _path_already_created(cls, path: str) -> bool:
+        if path in cls.root_trace_dir:
+            return True
+        cls.root_trace_dir.append(path)
+        return False
+
     def _save_logs(self, suffix: str = '', path: str = '') -> None:
-        trace_id = self.trace_id.get(self.name, 1)
-        self.trace_id[self.name] = trace_id + 1
+        self.trace_id += 1
         timestamp = datetime.today().isoformat(sep=' ', timespec='milliseconds').replace(':', '-')
-        filename = f"{trace_id:0>3} {timestamp} {_get_caller()}{' ' + suffix if suffix else ''}"
+        filename = f"{self.trace_id:0>3} {timestamp} {_get_caller()}{' ' + suffix if suffix else ''}"
         if path:
+            if not self._path_already_created(path):
+                if os.path.exists(path):
+                    last_number = max([int(d.split('.')[1]) if '.' in d else 0
+                                       for d in os.listdir()
+                                       if d.startswith(f"{path}") and os.path.isdir(d)], default=0)
+                    os.rename(path, f'{path}.{last_number+1:>03}')
             if path != "error":
                 path = os.path.join(path, self.name)
             os.makedirs(path, exist_ok=True)
