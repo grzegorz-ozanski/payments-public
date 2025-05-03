@@ -1,4 +1,4 @@
-from selenium.common.exceptions import *
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from time import sleep
 
