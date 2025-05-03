@@ -24,7 +24,7 @@ class PaymentsManager:
             service.login(self.browser)
             payments = sorted(service.get_payments(), key=lambda value: value.location.key)
         except Exception as e:
-            print(e)
+            print(f"{e.__class__.__name__}:{str(e)}")
             print("Cannot get payments for service %s!" % service.name)
             service.save_error_logs()
         finally:
