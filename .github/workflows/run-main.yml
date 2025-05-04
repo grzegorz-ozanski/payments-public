@@ -143,7 +143,7 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python main.py -v -t 2>&1 > ${env:SCRIPT_OUTPUT}
+        python main.py -v -t -o ${env:SCRIPT_OUTPUT}
 
     - name: Compare script output with reference
       id: compare
@@ -169,6 +169,7 @@ jobs:
       with:
         name: trace-logs
         path: |
+          ${{ env.PAYMENTS_LOG_FILENAME }}
           ./trace/**
 
     - name: "[SKIP REASON] Upload log skipped"
