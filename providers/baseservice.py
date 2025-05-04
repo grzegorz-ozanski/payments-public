@@ -14,7 +14,7 @@ from os import environ
 from locations import Location
 from browser import setup_logging
 
-log = setup_logging(__name__, 'DEBUG')
+log = setup_logging(__name__)
 
 
 def _sleep_with_message(amount: int, message: str):

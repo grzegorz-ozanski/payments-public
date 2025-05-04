@@ -25,6 +25,8 @@ env:
   REFERENCE_CONTENT: reference.txt
   ACTUAL_CONTENT: actual.txt
   DIFF_FILE: diff.txt
+  PAYMENTS_LOG_FILENAME: trace.log
+  PAYMENTS_LOG_TO_CONSOLE: False
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
 
 jobs:

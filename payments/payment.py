@@ -3,7 +3,7 @@ from browser import setup_logging
 
 from parsers import *
 
-log = setup_logging(__name__, 'DEBUG')
+log = setup_logging(__name__)
 
 class Payment:
     def __init__(self, amount=0, due_date=None, location: Location | None = None):

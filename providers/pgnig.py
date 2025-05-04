@@ -7,7 +7,7 @@ from payments import Payment
 import parsers
 from .baseservice import AuthElement, BaseService
 
-log = setup_logging(__name__, 'DEBUG')
+log = setup_logging(__name__)
 
 
 class Pgnig(BaseService):

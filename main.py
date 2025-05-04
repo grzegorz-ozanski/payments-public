@@ -57,7 +57,6 @@ def parse_args() -> Options:
 
     if headless:
         options.browser_options.append("headless")
-    _ = setup_logging(__name__, 'DEBUG')
 
     if not options.verbose:
         logging.disable(logging.CRITICAL)

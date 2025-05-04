@@ -6,7 +6,7 @@ from datetime import date
 from .baseservice import AuthElement, BaseService
 from browser import setup_logging
 
-log = setup_logging(__name__, 'DEBUG')
+log = setup_logging(__name__)
 
 
 class Pewik(BaseService):

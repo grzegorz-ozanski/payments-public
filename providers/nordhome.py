@@ -2,7 +2,7 @@ from locations import Location
 from browser import setup_logging
 from .iok import IOK
 
-log = setup_logging(__name__, 'DEBUG')
+log = setup_logging(__name__)
 
 
 class Nordhome(IOK):

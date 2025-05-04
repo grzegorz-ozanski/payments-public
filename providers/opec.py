@@ -10,7 +10,7 @@ import parsers
 from .baseservice import AuthElement, BaseService
 from browser import setup_logging
 
-log = setup_logging(__name__, 'DEBUG')
+log = setup_logging(__name__)
 
 
 def _get_invoice_value(columns: List[WebElement]):

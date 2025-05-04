@@ -10,7 +10,7 @@ from datetime import date
 
 from typing import cast
 
-log = setup_logging(__name__, 'DEBUG')
+log = setup_logging(__name__)
 
 
 class Multimedia(BaseService):
