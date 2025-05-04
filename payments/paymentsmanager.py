@@ -40,4 +40,9 @@ class PaymentsManager:
 
     def print(self):
         for payment in self.payments:
-            payment.print(True)
+            payment.print()
+
+    def write(self, filename):
+        with open(filename, 'w') as stream:
+            for payment in self.payments:
+                payment.print(stream)

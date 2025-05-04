@@ -12,14 +12,11 @@ class Payment:
         self.location = location
 
     def __str__(self):
-        return "{0} {1} {2}".format(self.location.name, self.due_date, self.amount)
+        return f"{self.location.name} {self.due_date} {self.amount}"
 
     def is_empty(self):
         # log.debug("amount: %s, due_date: %s, acc")
         return self.amount is None or self.due_date is None or self.location is None
 
-    def print(self, long: bool):
-        if long:
-            print("%s %s %s" % (self.amount, self.location.name, self.due_date))
-        else:
-            print("%s %s" % (self.amount, self.due_date))
+    def print(self, stream=None):
+        print(f"{self.amount} {self.location.name} {self.due_date}", file=stream)

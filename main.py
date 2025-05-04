@@ -20,6 +20,7 @@ class Options:
     binary_location: str = ''
     browser_options: List[str] = field(default_factory=list)
     save_trace_logs: bool = False
+    output_file: str = ''
 
 
 def parse_args() -> Options:
@@ -28,6 +29,7 @@ def parse_args() -> Options:
     parser.add_argument('-l', '--headless', choices=['TRUE', 'FALSE'], nargs='?', help='headless browser')
     parser.add_argument('-c', '--chromedriver', help='chromedriver URL')
     parser.add_argument('-t', '--trace', default=False, action='store_true', help='trace logs')
+    parser.add_argument('-o', '--output', help='output file')
 
     args = parser.parse_args()
 
@@ -77,6 +79,7 @@ def parse_args() -> Options:
         options.url = chromedriver
 
     options.save_trace_logs = args.trace
+    options.output_file = args.output
     return options
 
 def main():
@@ -103,9 +106,11 @@ def main():
                       options=options.browser_options,
                       binary_location=options.binary_location,
                       save_trace_logs=options.save_trace_logs)
-    payments = PaymentsManager(browser, providers_list, options.verbose)
+    payments = PaymentsManager(browser, providers_list[0], options.verbose)
     payments.collect()
     payments.print()
+    if options.output_file:
+        payments.write(options.output_file)
 
     end_time = datetime.datetime.now()
     print("Finished at %s" % end_time)
