@@ -106,7 +106,7 @@ def main():
                       options=options.browser_options,
                       binary_location=options.binary_location,
                       save_trace_logs=options.save_trace_logs)
-    payments = PaymentsManager(browser, providers_list[0], options.verbose)
+    payments = PaymentsManager(browser, providers_list, options.verbose)
     payments.collect()
     payments.print()
     if options.output_file:
