@@ -35,15 +35,14 @@ class Opec(BaseService):
         self.browser.wait_for_network_inactive()
         time.sleep(1)
         invoices = self.browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
-        amount = 0
+        amount = parsers.parse_amount(self.browser.find_element(By.NAME, "value"))
         due_date = None
         for invoice in invoices:
             columns = invoice.find_elements(By.TAG_NAME, 'td')
             value = _get_invoice_value(columns)
             if columns[6].text == "Zapłacony" and value > 0:
                     continue
-            amount += value
             date = parsers.parse_date(columns[4])
             if due_date is None or (date < due_date and value > 0):
                 due_date = date
-        return [Payment(amount if amount > 0 else 0, due_date, self.locations[0])]
+        return [Payment(amount, due_date, self.locations[0])]
