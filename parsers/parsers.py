@@ -1,5 +1,5 @@
 from dateutil import parser
-from datetime import date
+from datetime import date, timedelta
 import re
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -18,11 +18,15 @@ def parse_amount(value, decimal_separator=','):
 
 
 def parse_date(value):
+    today = ["dzisiaj", "today"]
+    tomorrow = ["jutro", "tomorrow"]
     if not isinstance(value, date):
         if isinstance(value, WebElement):
             value = value.text
-        if value is None or "dzisiaj" in value:
+        if value is None or any(item in value for item in today):
             value = date.today()
+        elif any(item in value for item in tomorrow):
+            value = date.today() + timedelta(days=1)
         else:
             value = parser.parse(value)
     return value.strftime('%d-%m-%Y')
