@@ -1,10 +1,9 @@
 import platform
 from dataclasses import dataclass, field
-from typing import List
 
 import providers
 import logging
-from browser import Browser, setup_logging
+from browser import Browser
 from payments import PaymentsManager
 from locations import Location
 import sys
@@ -18,7 +17,7 @@ class Options:
     verbose: bool = False
     url: str = ''
     binary_location: str = ''
-    browser_options: List[str] = field(default_factory=list)
+    browser_options: list[str] = field(default_factory=list)
     save_trace_logs: bool = False
     output_file: str = ''
 
