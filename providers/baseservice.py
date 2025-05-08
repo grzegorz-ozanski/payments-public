@@ -175,7 +175,6 @@ class BaseService:
 
     def logout(self):
         try:
-            self.browser.wait_for_page_inactive(2)
             self.save_trace_logs("pre-logout")
             self.browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
             self.browser.wait_for_page_inactive(2)
