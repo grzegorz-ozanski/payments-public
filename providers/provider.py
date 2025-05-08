@@ -3,16 +3,16 @@ import os
 import time
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List
-
-from selenium.common.exceptions import NoSuchElementException, WebDriverException
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-import keyring
-from payments import Payment
 from os import environ
-from locations import Location
+
+import keyring
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
 from browser import setup_logging
+from locations import Location
+from payments import Payment
 
 log = setup_logging(__name__)
 
@@ -65,7 +65,7 @@ class Credential:
                            f'or {self.keyring_service} keyring service!')
 
 
-class BaseService:
+class Provider:
     root_trace_dir = []
 
     def __init__(self, url: str, keystore_service: str, locations: tuple[Location, ...],
@@ -117,7 +117,7 @@ class BaseService:
                     last_number = max([int(d.split('.')[1]) if '.' in d else 0
                                        for d in os.listdir()
                                        if d.startswith(f"{path}") and os.path.isdir(d)], default=0)
-                    os.rename(path, f'{path}.{last_number+1:>03}')
+                    os.rename(path, f'{path}.{last_number + 1:>03}')
             if path != "error":
                 path = os.path.join(path, self.name)
             os.makedirs(path, exist_ok=True)
@@ -170,7 +170,7 @@ class BaseService:
             self.save_error_logs()
             raise
 
-    def get_payments(self) -> List[Payment]:
+    def get_payments(self) -> list[Payment]:
         raise NotImplementedError
 
     def logout(self):

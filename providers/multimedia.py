@@ -1,19 +1,19 @@
+from datetime import date
+from time import sleep
+from typing import cast
+
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
-from time import sleep
 
+from browser import setup_logging
 from locations import Location
 from payments import Payment
-from .baseservice import AuthElement, BaseService
-from browser import setup_logging
-from datetime import date
-
-from typing import cast
+from .provider import AuthElement, Provider
 
 log = setup_logging(__name__)
 
 
-class Multimedia(BaseService):
+class Multimedia(Provider):
     def __init__(self, locations: dict[str, Location]):
         user_input = AuthElement(By.ID, "Login_SSO_UserName")
         password_input = AuthElement(By.ID, "Login_SSO_Password")
@@ -21,7 +21,7 @@ class Multimedia(BaseService):
         self._locations_map = locations
         keystore_service = self.__class__.__name__.lower()
         locations = cast(tuple[Location, ...], tuple(locations.values()))  # to satisfy static code analyzers
-        super().__init__(url, keystore_service, locations, user_input, password_input, pre_login_delay= 5)
+        super().__init__(url, keystore_service, locations, user_input, password_input, pre_login_delay=5)
 
     def _get_location(self, amount: str):
         location = [location for value, location in self._locations_map.items() if amount.startswith(value)]
@@ -33,7 +33,7 @@ class Multimedia(BaseService):
         wait = 10
         num_retries = 10
         for i in range(num_retries):
-            log.debug(f'Login attempt {i+1}')
+            log.debug(f'Login attempt {i + 1}')
             try:
                 super().login(browser, load)
             except Exception as ex:

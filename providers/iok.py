@@ -1,14 +1,13 @@
-from time import sleep
+from datetime import date
 
 from selenium.webdriver.common.by import By
 
 from locations import Location
 from payments import Payment
-from .baseservice import AuthElement, BaseService
-from datetime import date
+from .provider import AuthElement, Provider
 
 
-class IOK(BaseService):
+class IOK(Provider):
     def __init__(self, due_day, url, keystore_service, log, locations: tuple[Location, ...]):
         user_input = AuthElement(By.CSS_SELECTOR, "[aria-labelledby=login]")
         password_input = AuthElement(By.CSS_SELECTOR, "[aria-labelledby=haslo]")

@@ -1,16 +1,16 @@
-from selenium.webdriver.common.by import By
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.webdriver.common.by import By
 
-from locations import Location
-from browser import setup_logging
-from payments import Payment
 import parsers
-from .baseservice import AuthElement, BaseService
+from browser import setup_logging
+from locations import Location
+from payments import Payment
+from .provider import AuthElement, Provider
 
 log = setup_logging(__name__)
 
 
-class Pgnig(BaseService):
+class Pgnig(Provider):
     def __init__(self, *locations: Location):
         user_input = AuthElement(By.NAME, "identificator")
         password_input = AuthElement(By.NAME, "accessPin")
@@ -22,7 +22,8 @@ class Pgnig(BaseService):
         log.info("Getting payments...")
         location = self._get_location(self.browser.wait_for_element(By.CLASS_NAME, 'reading-adress').text)
         log.info("Getting invoices menu...")
-        invoices_menu = self.browser.find_element(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
+        invoices_menu = self.browser.find_element(By.XPATH,
+                                                  '//*[@class="menu-element" and normalize-space()="Faktury"]')
         log.info("Opening invoices menu...")
         self.save_trace_logs("pre-invoices-click")
         invoices_menu.click()
@@ -49,7 +50,8 @@ class Pgnig(BaseService):
             log.debug("Iterating over unpaid invoices...")
             columns = invoice.find_elements(By.CLASS_NAME, "columns")
             log.debug("Adding payment...")
-            payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(parsers.parse_amount(columns[3], '.'))
+            payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(
+                parsers.parse_amount(columns[3], '.'))
         payments = []
         for date, amount in payments_dict.items():
             payments.append(Payment(amount, date, location, self.name))

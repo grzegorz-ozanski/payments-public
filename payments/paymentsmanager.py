@@ -1,23 +1,22 @@
 from dataclasses import dataclass, field
-from typing import List
 
 from browser import Browser
-from providers.baseservice import BaseService
 from payments import Payment
+from providers.provider import Provider
 
 
 @dataclass
 class PaymentsManager:
     browser: Browser
-    services: List[BaseService] | BaseService
+    services: list[Provider] | Provider
     debug_mode: bool
-    payments: List[Payment] = field(default_factory=list)
+    payments: list[Payment] = field(default_factory=list)
 
     def __post_init__(self):
         if not isinstance(self.services, list):
             self.services = [self.services]
 
-    def _get_payments_for_service(self, service: BaseService):
+    def _get_payments_for_service(self, service: Provider):
         payments = []
         try:
             print("Processing service %s..." % service.name)

@@ -1,15 +1,15 @@
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.common.by import By
 
+from browser import setup_logging
 from locations import Location
 from payments import Payment
-from .baseservice import AuthElement, BaseService
-from browser import setup_logging
+from .provider import AuthElement, Provider
 
 log = setup_logging(__name__)
 
 
-class Energa(BaseService):
+class Energa(Provider):
     def __init__(self, *locations: Location):
         user_input = AuthElement(By.ID, "email_login")
         password_input = AuthElement(By.ID, "password")
@@ -30,6 +30,8 @@ class Energa(BaseService):
                     log.debug("Cannot click logout button. Are we even logged in?")
                 else:
                     raise
+        except NoSuchElementException:
+            log.debug("Cannot click logout button. Are we even logged in?")
 
     def get_payments(self):
         log.info("Getting payments...")
@@ -48,7 +50,7 @@ class Energa(BaseService):
         log.debug("Identified %d locations" % len(locations_list))
         payments = []
         for location_id in range(len(locations_list)):
-            print(f'...location {location_id+1} of {len(locations_list)}')
+            print(f'...location {location_id + 1} of {len(locations_list)}')
             log.debug("Opening location page")
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             self.save_trace_logs("pre-location-click")

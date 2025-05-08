@@ -1,5 +1,5 @@
-from locations import Location
 from browser import setup_logging
+from locations import Location
 from .iok import IOK
 
 log = setup_logging(__name__)

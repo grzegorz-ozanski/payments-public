@@ -1,15 +1,14 @@
 from selenium.webdriver.common.by import By
 
+from browser import setup_logging
 from locations import Location
 from payments import Payment
-from datetime import date
-from .baseservice import AuthElement, BaseService
-from browser import setup_logging
+from .provider import AuthElement, Provider
 
 log = setup_logging(__name__)
 
 
-class Pewik(BaseService):
+class Pewik(Provider):
     def __init__(self, *locations: Location):
         user_input = AuthElement(By.ID, "username")
         password_input = AuthElement(By.ID, "password")
@@ -33,8 +32,8 @@ class Pewik(BaseService):
         while True:
             location = self._get_location(
                 self.browser.find_element(By.CLASS_NAME, 'select2-chosen').find_elements(By.TAG_NAME, 'span')[2].text)
-            balances = self.browser.find_element(By.ID, 'saldaWplatyWykaz').\
-                find_element(By.TAG_NAME, 'tbody').\
+            balances = self.browser.find_element(By.ID, 'saldaWplatyWykaz'). \
+                find_element(By.TAG_NAME, 'tbody'). \
                 find_elements(By.TAG_NAME, 'tr')
             for item in balances:
                 columns = item.find_elements(By.TAG_NAME, 'td')

@@ -1,25 +1,24 @@
-import time
-from typing import List
+from time import sleep
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
+import parsers
+from browser import setup_logging
 from locations import Location
 from payments import Payment
-import parsers
-from .baseservice import AuthElement, BaseService
-from browser import setup_logging
+from .provider import AuthElement, Provider
 
 log = setup_logging(__name__)
 
 
-def _get_invoice_value(columns: List[WebElement]):
+def _get_invoice_value(columns: list[WebElement]):
     if columns[7].text:
         return parsers.parse_amount(columns[7], '.')
     return parsers.parse_amount(columns[5], '.')
 
 
-class Opec(BaseService):
+class Opec(Provider):
     def __init__(self, *locations: Location):
         user_input = AuthElement(By.ID, "_58_login")
         password_input = AuthElement(By.ID, "_58_password")
@@ -33,7 +32,7 @@ class Opec(BaseService):
         self.save_trace_logs("pre-documents-click")
         self.browser.find_element(By.XPATH, '//a[contains(string(), "Dokumenty")]').click()
         self.browser.wait_for_network_inactive()
-        time.sleep(1)
+        sleep(1)
         invoices = self.browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
         amount = parsers.parse_amount(self.browser.find_element(By.NAME, "value"))
         due_date = None
@@ -41,7 +40,7 @@ class Opec(BaseService):
             columns = invoice.find_elements(By.TAG_NAME, 'td')
             value = _get_invoice_value(columns)
             if columns[6].text == "Zapłacony" and value > 0:
-                    continue
+                continue
             date = parsers.parse_date(columns[4])
             if due_date is None or (date < due_date and value > 0):
                 due_date = date
