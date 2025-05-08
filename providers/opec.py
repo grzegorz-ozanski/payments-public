@@ -45,4 +45,4 @@ class Opec(BaseService):
             date = parsers.parse_date(columns[4])
             if due_date is None or (date < due_date and value > 0):
                 due_date = date
-        return [Payment(amount, due_date, self.locations[0])]
+        return [Payment(amount, due_date, self.locations[0], self.name)]

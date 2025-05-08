@@ -57,7 +57,7 @@ class Multimedia(BaseService):
                 today = date.today()
                 due_date = date(today.year, today.month, 20)
                 for location in self.locations:
-                    payments.append(Payment(due_date=due_date, location=location))
+                    payments.append(Payment(due_date=due_date, location=location, provider=self.name))
                 return payments
             for invoice in invoices:
                 try:
@@ -65,7 +65,7 @@ class Multimedia(BaseService):
                     due_date = invoice.find_element(By.CLASS_NAME, "platnoscDo")
                     log.debug("Got amount '%s'" % amount)
                     location = self._get_location(amount)
-                    payments.append(Payment(amount, due_date, location))
+                    payments.append(Payment(amount, due_date, location, self.name))
                 except StaleElementReferenceException:
                     log.debug("StaleElementReferenceException occurred, retrying")
                     payments.append(Payment())
