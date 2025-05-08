@@ -92,7 +92,7 @@ def main():
     bryla = Location('Bryla')
     sezamowa = Location('Sezamowa')
 
-    providers_list = [
+    providers_list = providers.ProvidersList([
                 providers.Pgnig(sezamowa),                                # 0
                 providers.Energa(hodowlana, bryla, sezamowa),    # 1
                 providers.Actum(hodowlana),                               # 2
@@ -100,7 +100,7 @@ def main():
                 providers.Pewik(sezamowa),                                # 4
                 providers.Opec(sezamowa),                                 # 5
                 providers.Nordhome(bryla)                                 # 6
-            ]
+            ])
 
     options = parse_args()
     browser = Browser(url=options.url,
