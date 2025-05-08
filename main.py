@@ -35,11 +35,11 @@ def parse_args() -> Options:
 
     options = Options()
 
+    running_under_debugger = sys.gettrace() is not None
     if args.verbose:
         options.verbose = args.verbose
     else:
-        options.verbose = sys.gettrace() is not None
-    headless = True
+        options.verbose = running_under_debugger
     if args.headless is not None:
         value = args.headless.strip().lower()
         if value == 'true':
@@ -48,6 +48,8 @@ def parse_args() -> Options:
             headless = False
         else:
             raise Exception(f"Unrecognized bool value for '--headless': {value}")
+    else:
+        headless = not running_under_debugger
 
     chromedriver = None
     if args.chromedriver is not None:
