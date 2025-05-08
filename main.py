@@ -93,13 +93,13 @@ def main():
     sezamowa = Location('Sezamowa')
 
     providers_list = providers.ProvidersList([
-                providers.Pgnig(sezamowa),                                # 0
-                providers.Energa(hodowlana, bryla, sezamowa),    # 1
-                providers.Actum(hodowlana),                               # 2
-                providers.Multimedia({'90': hodowlana, '77': sezamowa}),  # 3
-                providers.Pewik(sezamowa),                                # 4
-                providers.Opec(sezamowa),                                 # 5
-                providers.Nordhome(bryla)                                 # 6
+                providers.Pgnig(sezamowa),
+                providers.Energa(hodowlana, bryla, sezamowa),
+                providers.Actum(hodowlana),
+                providers.Multimedia({'90': hodowlana, '77': sezamowa}),
+                providers.Pewik(sezamowa),
+                providers.Opec(sezamowa),
+                providers.Nordhome(bryla)
             ])
 
     options = parse_args()
