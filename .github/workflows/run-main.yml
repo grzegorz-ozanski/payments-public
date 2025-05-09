@@ -2,7 +2,7 @@ name: Run payments
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '*' ]
   schedule:
     - cron: "5 0,6,12,18 * * *"  # 4 times a days
   workflow_dispatch:
@@ -18,6 +18,7 @@ env:
   GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
   LIBRARY: .github/scripts/functions.ps1
   COMPARE_SCRIPT: .github/scripts/compare-output.ps1
+  STATUS_SCRIPT: .github/scripts/compare-status.ps1
   MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
   SCRIPT_OUTPUT: script_output.txt
 #  SCRIPT_OUTPUT: .github/data/test_output.txt
@@ -91,7 +92,8 @@ jobs:
           $value = Get-Content $file -Raw
           echo "previous=$value" >> ${env:GITHUB_OUTPUT}
         } else {
-          Write-Error "Previous status file not found in '${env:STATUS_FILE}'!"
+          Write-Error "Previous status file not found in '$file'!"
+          echo "previous=unknown" >> ${env:GITHUB_OUTPUT}
         }
 
     - name: Use system Python 3.11
@@ -195,61 +197,12 @@ jobs:
       if: always()
       shell: pwsh
       run: |
-        if ("${{ steps.compare.outputs.status }}" -eq "changed") {
-          $current = "failure"
-        } elseif ("${{ steps.compare.outputs.status }}" -eq "unchanged") {
-          $current = "success"
-        } else {
-          $current = "unknown"
-        }
-
-        $previous = "${{ steps.readstatus.outputs.previous }}"
-
-        Write-Host "Previous: $previous"
-        Write-Host "Current: $current"
-
-        "current=${current}" >> $env:GITHUB_OUTPUT
-        "previous=${previous}" >> $env:GITHUB_OUTPUT
-        if ($previous -ne $current) {
-          "changed=true" >> $env:GITHUB_OUTPUT
-        } else {
-          "changed=false" >> $env:GITHUB_OUTPUT
-        }
-
-        if ($previous -eq "failure") {
-          $emoji = "❌"
-          if ($current -eq "success") {
-            "transition=FIXED" >> $env:GITHUB_OUTPUT
-          }
-        } elseif ($previous -eq "success") {
-          $emoji = "✅"
-          if ($current -eq "failure") {
-            "transition=BROKEN" >> $env:GITHUB_OUTPUT
-          }
-        } elseif ($previous -eq "unknown") {
-          $emoji = "🆕"
-          if ($current -eq "success") {
-            "transition=FIXED" >> $env:GITHUB_OUTPUT
-          } elseif ($current -eq "failure") {
-            "transition=BROKEN" >> $env:GITHUB_OUTPUT
-          }
-        } else {
-          $emoji = "❔"
-          if ($current -eq "success") {
-            "transition=FIXED" >> $env:GITHUB_OUTPUT
-          } elseif ($current -eq "failure") {
-            "transition=BROKEN" >> $env:GITHUB_OUTPUT
-          }
-        }
-        
-        @"
-        # 🛠️ Workflow summary
-        
-        - **Previous run status**: $emoji $previous
-        - **Current comparison status**: ${{ steps.compare.outputs.status }}
-        - 📃**Script Output**:
-        "@ | Add-Content -Path $env:GITHUB_STEP_SUMMARY
-        Get-Content -Path ${env:SCRIPT_OUTPUT} | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+        pwsh -File ${env:STATUS_SCRIPT} `
+        "${{ steps.readstatus.outputs.previous }}" `
+        "${{ steps.compare.outputs.status }}" `
+        ${env:SCRIPT_OUTPUT} `
+        ${env:GITHUB_OUTPUT} `
+        ${env:GITHUB_STEP_SUMMARY}
 
     - name: "[DEBUG] Would send email?"
       run: |
@@ -269,7 +222,7 @@ jobs:
 
     # 💌 Send email only on status change
     - name: Send email if script output comparison result changed and run was scheduled
-      if: github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true'
+      if: github.event_name == 'schedule' && steps.statuscheck.outputs.transition != 'NONE'
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
