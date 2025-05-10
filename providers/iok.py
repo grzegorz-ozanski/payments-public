@@ -25,6 +25,10 @@ class IOK(Provider):
         due_date = self.browser.wait_for_element(By.CLASS_NAME, 'home-info', self.timeout)
         if amount is None or due_date is None:
             return [Payment(due_date=self.due_date, location=self.locations[0], provider=self.name)]
-        due_date = due_date.find_elements(By.TAG_NAME, 'span')[-1]
+        due_date = due_date.find_elements(By.TAG_NAME, 'span')
+        if due_date:
+            due_date = due_date[-1]
+        else:
+            due_date = None
         self.log.debug(f"Got amount '{amount.text}' of location '{self.locations[0].name}'")
         return [Payment(amount, due_date, self.locations[0], self.name)]
