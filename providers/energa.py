@@ -61,11 +61,12 @@ class Energa(Provider):
             self.browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
             self.save_trace_logs("pre-invoices-click")
             self.browser.find_element(By.XPATH, '//a[contains(text(), "Faktury")]').click()
+            self.browser.wait_for_page_inactive()
             invoices = self.browser.find_elements(
                 By.XPATH,
-                '//span[contains(text(), "Termin płatności")]/../..//*[contains(@class, "variant-body")]')
+                '//span[contains(text(), "Termin płatności")]/../..')
             if invoices:
-                due_date = invoices[1].text
+                due_date = invoices[0].text.split('\n')[1]
             else:
                 due_date = None
             self.browser.safe_click(By.XPATH, '//a[contains(text(), "Pulpit konta")]')
