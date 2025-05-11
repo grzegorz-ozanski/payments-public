@@ -20,6 +20,7 @@ def parse_amount(value, decimal_separator=','):
 def parse_date(value):
     today = ["dzisiaj", "today"]
     tomorrow = ["jutro", "tomorrow"]
+    yesterday = ["wczoraj", "yesterday"]
     if not isinstance(value, date):
         if isinstance(value, WebElement):
             value = value.text
@@ -27,6 +28,8 @@ def parse_date(value):
             value = date.today()
         elif any(item in value for item in tomorrow):
             value = date.today() + timedelta(days=1)
+        elif any(item in value for item in yesterday):
+            value = date.today() + timedelta(days=-1)
         else:
             value = parser.parse(value)
     return value.strftime('%d-%m-%Y')
