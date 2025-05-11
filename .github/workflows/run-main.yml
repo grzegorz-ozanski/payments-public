@@ -204,16 +204,6 @@ jobs:
         ${env:GITHUB_OUTPUT} `
         ${env:GITHUB_STEP_SUMMARY}
 
-    - name: "[DEBUG] Would send email?"
-      run: |
-        if ("${{ steps.statuscheck.outputs.changed }}" -eq "true") {
-          Write-Host "Email would be sent."
-        } elseif ("${{ steps.statuscheck.outputs.changed }}" -eq "false") {
-          Write-Host "Email would NOT be sent."
-        } else {
-          Write-Host "Unrecognized status: '${{ steps.statuscheck.outputs.changed }}'."
-        }
-
     - name: "[SKIP REASON] Send email if workflow result changed"
       if: github.event_name != 'schedule' || steps.statuscheck.outputs.changed != 'true'
       run: |-
@@ -222,7 +212,9 @@ jobs:
 
     # 💌 Send email only on status change
     - name: Send email if script output comparison result changed and run was scheduled
-      if: github.event_name == 'schedule' && steps.statuscheck.outputs.transition != 'NONE'
+      if: |
+        (github.event_name == 'schedule' && steps.statuscheck.outputs.transition != 'NONE')
+        || steps.statuscheck.outputs.transition == 'FIXED'
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
