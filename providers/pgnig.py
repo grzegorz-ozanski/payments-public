@@ -1,10 +1,9 @@
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
-import parsers
 from browser import setup_logging
 from locations import Location
-from payments import Payment
+from payments import Amount, Payment
 from .provider import AuthElement, Provider
 
 log = setup_logging(__name__)
@@ -50,9 +49,8 @@ class Pgnig(Provider):
             log.debug("Iterating over unpaid invoices...")
             columns = invoice.find_elements(By.CLASS_NAME, "columns")
             log.debug("Adding payment...")
-            payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(
-                parsers.parse_amount(columns[3], '.'))
+            payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(Amount(columns[3].text))
         payments = []
         for date, amount in payments_dict.items():
-            payments.append(Payment(amount, date, location, self.name))
+            payments.append(Payment(str(amount), date, location, self.name))
         return payments if payments else [Payment(location=location, provider=self.name)]

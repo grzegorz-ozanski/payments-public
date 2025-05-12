@@ -29,6 +29,6 @@ class IOK(Provider):
         if due_date:
             due_date = due_date[-1]
         else:
-            due_date = None
+            due_date = 'today'
         self.log.debug(f"Got amount '{amount.text}' of location '{self.locations[0].name}'")
-        return [Payment(amount, due_date, self.locations[0], self.name)]
+        return [Payment(amount.text, due_date.text, self.locations[0], self.name)]

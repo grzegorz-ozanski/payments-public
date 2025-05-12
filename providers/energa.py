@@ -68,7 +68,7 @@ class Energa(Provider):
             if invoices:
                 due_date = invoices[0].text.split('\n')[1]
             else:
-                due_date = None
+                due_date = 'today'
             self.browser.safe_click(By.XPATH, '//a[contains(text(), "Pulpit konta")]')
             amount = self.browser.wait_for_element(By.CSS_SELECTOR, 'h1.text.es-text.variant-balance').text
             payments.append(Payment(amount, due_date, location, self.name))

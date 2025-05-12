@@ -1,21 +1,12 @@
 from time import sleep
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webelement import WebElement
-
-import parsers
 from browser import setup_logging
 from locations import Location
-from payments import Payment
+from payments import Amount, DueDate, Payment
 from .provider import AuthElement, Provider
 
 log = setup_logging(__name__)
-
-
-def _get_invoice_value(columns: list[WebElement]):
-    if columns[7].text:
-        return parsers.parse_amount(columns[7], '.')
-    return parsers.parse_amount(columns[5], '.')
 
 
 class Opec(Provider):
@@ -34,14 +25,14 @@ class Opec(Provider):
         self.browser.wait_for_network_inactive()
         sleep(1)
         invoices = self.browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
-        amount = parsers.parse_amount(self.browser.find_element(By.NAME, "value"))
+        amount = self.browser.find_element(By.NAME, "value").text
         due_date = None
         for invoice in invoices:
             columns = invoice.find_elements(By.TAG_NAME, 'td')
-            value = _get_invoice_value(columns)
-            if columns[6].text == "Zapłacony" and value > 0:
+            value = Amount(columns[7].text) if columns[7].text else Amount(columns[5].text)
+            if columns[6].text == "Zapłacony" and float(value) > 0:
                 continue
-            date = parsers.parse_date(columns[4])
-            if due_date is None or (date < due_date and value > 0):
+            date = DueDate(columns[4].text).value
+            if due_date is None or (date < due_date and float(value) > 0):
                 due_date = date
         return [Payment(amount, due_date, self.locations[0], self.name)]

@@ -62,7 +62,7 @@ class Multimedia(Provider):
             for invoice in invoices:
                 try:
                     amount = invoice.find_element(By.CLASS_NAME, "kwota").text
-                    due_date = invoice.find_element(By.CLASS_NAME, "platnoscDo")
+                    due_date = invoice.find_element(By.CLASS_NAME, "platnoscDo").text
                     log.debug("Got amount '%s'" % amount)
                     location = self._get_location(amount)
                     payments.append(Payment(amount, due_date, location, self.name))

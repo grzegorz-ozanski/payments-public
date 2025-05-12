@@ -1,34 +1,100 @@
 """
 Payments module
 """
+import re
 from typing import TextIO
 
-from locations import Location
 from browser import setup_logging
-
-from parsers import *
+from locations import Location
 
 log = setup_logging(__name__)
+
+from dateutil import parser
+from datetime import date, timedelta
+
+
+class Amount:
+    """
+    Payment amount
+    """
+
+    def __init__(self, value: str) -> None:
+        """
+        Constructor
+        :param value: amount value
+        """
+        separator = '|'
+        amount = re.sub(r'[^\d,.-]', '', value)
+        amount = re.sub(r'[,.]', separator, amount)
+        self.whole, self.decimal = amount.split(separator)
+
+    def __str__(self) -> str:
+        """
+        Converts amount to string
+        :return: string value
+        """
+        return ','.join((self.whole, self.decimal))
+
+    def __float__(self) -> float:
+        """
+        Converts amount to float
+        :return: float value
+        """
+        return float('.'.join((self.whole, self.decimal)))
+
+
+class DueDate:
+    """
+    Payment due date
+    """
+    today = ['dzisiaj', 'today']
+    tomorrow = ['jutro', 'tomorrow']
+    yesterday = ['wczoraj', 'yesterday']
+
+    def __init__(self, value: date | str) -> None:
+        """
+        Constuctor
+        :param value: either date object or its string representation
+        """
+        if isinstance(value, str):
+            if any(item in value for item in self.today):
+                value = date.today()
+            elif any(item in value for item in self.tomorrow):
+                value = date.today() + timedelta(days=1)
+            elif any(item in value for item in self.yesterday):
+                value = date.today() + timedelta(days=-1)
+            else:
+                value = parser.parse(value, dayfirst=True)
+        self.value = value
+
+    def __str__(self) -> str:
+        """
+        Converts date to string
+        :return: string representation of the date
+        """
+        return self.value.strftime('%d-%m-%Y')
+
 
 class Payment:
     """
     Single payment
     """
+
     def __init__(self,
-                 amount: int = 0,
-                 due_date: object = None,
+                 amount: str = '0,0',
+                 due_date: date | str = 'today',
                  location: Location | None = None,
                  provider: str = '') -> None:
         """
         Payment constructor
 
-        :param amount: payment amount
-        :param due_date: payment due date
-        :param location: payment location
-        :param provider: payment provider
+        :param amount: amount
+        :param due_date: due date
+        :param location: location
+        :param provider: provider
         """
-        self.amount = parse_amount(amount)
-        self.due_date = parse_date(due_date)
+        self.amount = Amount(amount)
+        self.due_date = DueDate(due_date)
         self.location = location
         self.provider = provider
 
@@ -45,7 +111,7 @@ class Payment:
     def print(self, stream: TextIO = None) -> None:
         """
         Print the object
-        :param stream: Stream to print to ('None' to pring to stdout)
+        :param stream: Stream to print to ('None' to print to stdout)
         """
         print(f'{self.provider + " " if self.provider else ""}'
               f'{self.amount} {self.location.name} {self.due_date}', file=stream)
