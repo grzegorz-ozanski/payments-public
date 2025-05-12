@@ -93,6 +93,7 @@ class Payment:
         :param location: location
         :param provider: provider
         """
+        log.debug(f'Creating payment object: {provider=}, {amount=}, {location=}, {due_date=}')
         self.amount = Amount(amount)
         self.due_date = DueDate(due_date)
         self.location = location
