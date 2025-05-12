@@ -26,21 +26,21 @@ class Amount:
         separator = '|'
         amount = re.sub(r'[^\d,.-]', '', value)
         amount = re.sub(r'[,.]', separator, amount)
-        self.whole, self.decimal = amount.split(separator)
+        self.whole, self.decimal = amount.split(separator) if separator in amount else (amount, '0')
 
     def __str__(self) -> str:
         """
         Converts amount to string
         :return: string value
         """
-        return ','.join((self.whole, self.decimal))
+        return f'{self.whole},{self.decimal:02}'
 
     def __float__(self) -> float:
         """
         Converts amount to float
         :return: float value
         """
-        return float('.'.join((self.whole, self.decimal)))
+        return float(f'{self.whole}.{self.decimal}')
 
 
 class DueDate:
