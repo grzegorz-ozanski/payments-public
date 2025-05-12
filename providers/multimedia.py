@@ -21,6 +21,8 @@ class Multimedia(Provider):
         self._locations_map = locations
         keystore_service = self.__class__.__name__.lower()
         locations = cast(tuple[Location, ...], tuple(locations.values()))  # to satisfy static code analyzers
+        today = date.today()
+        self.default_due_date = date(today.year, today.month, 20)
         super().__init__(url, keystore_service, locations, user_input, password_input, pre_login_delay=5)
 
     def _get_location(self, amount: str):
@@ -54,10 +56,8 @@ class Multimedia(Provider):
             payments = []
             invoices = self.browser.wait_for_elements(By.CLASS_NAME, "invoiceInfo")
             if invoices is None:
-                today = date.today()
-                due_date = date(today.year, today.month, 20)
                 for location in self.locations:
-                    payments.append(Payment(due_date=due_date, location=location, provider=self.name))
+                    payments.append(Payment(due_date=self.default_due_date, location=location, provider=self.name))
                 return payments
             for invoice in invoices:
                 try:
