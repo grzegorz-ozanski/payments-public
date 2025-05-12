@@ -67,10 +67,10 @@ def parse_args() -> Options:
     if chromedriver is None:
         system = platform.system()
         if system == 'Darwin':  # running on macOS
-            options.url = "file://***REMOVED***"
+            options.url = "***REMOVED***"
         elif system == 'Windows' or system == 'Linux':
             chromedriver_root = pathlib.Path(__file__).parent.joinpath('chromedriver').resolve(True)
-            options.url = f"file://{chromedriver_root.joinpath('chromedriver')}"
+            options.url = f"{chromedriver_root.joinpath('chromedriver')}"
             if system == 'Windows':
                 options.url += ".exe"
                 options.binary_location = str(chromedriver_root.joinpath("chrome").joinpath("chrome.exe"))
@@ -103,9 +103,9 @@ def main():
             )
 
     options = parse_args()
-    browser = Browser(url=options.url,
+    browser = Browser(chrome_path=options.url,
                       options=options.browser_options,
-                      binary_location=options.binary_location,
+                      chrome_binary_location=options.binary_location,
                       save_trace_logs=options.save_trace_logs)
     payments = PaymentsManager(browser, providers_list, options.verbose)
     payments.collect()
