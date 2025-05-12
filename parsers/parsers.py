@@ -31,5 +31,5 @@ def parse_date(value):
         elif any(item in value for item in yesterday):
             value = date.today() + timedelta(days=-1)
         else:
-            value = parser.parse(value)
+            value = parser.parse(value, dayfirst=True)
     return value.strftime('%d-%m-%Y')
