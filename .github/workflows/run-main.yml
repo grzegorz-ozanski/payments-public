@@ -171,7 +171,7 @@ jobs:
       with:
         name: trace-logs
         path: |
-          ${{ env.PAYMENTS_LOG_FILENAME }}
+          ${{ env.BROWSER_LOG_FILENAME }}
           ./trace/**
 
     - name: "[SKIP REASON] Upload log skipped"
