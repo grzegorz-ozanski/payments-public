@@ -6,5 +6,5 @@ class Location:
         self.key = Location.next_key
         Location.next_key += 1
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return self.name
