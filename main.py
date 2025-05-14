@@ -71,9 +71,10 @@ def parse_args() -> Options:
         elif system == 'Windows' or system == 'Linux':
             chromedriver_root = pathlib.Path(__file__).parent.joinpath('chromedriver').resolve(True)
             options.url = f"{chromedriver_root.joinpath('chromedriver')}"
+            options.binary_location = str(chromedriver_root.joinpath("chrome").joinpath("chrome"))
             if system == 'Windows':
                 options.url += ".exe"
-                options.binary_location = str(chromedriver_root.joinpath("chrome").joinpath("chrome.exe"))
+                options.binary_location = ".exe"
         else:
             raise NotImplementedError(f"'{system}' is not supported.")
     else:
