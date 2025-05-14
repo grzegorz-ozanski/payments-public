@@ -74,7 +74,7 @@ def parse_args() -> Options:
             options.binary_location = str(chromedriver_root.joinpath("chrome").joinpath("chrome"))
             if system == 'Windows':
                 options.url += ".exe"
-                options.binary_location = ".exe"
+                options.binary_location += ".exe"
         else:
             raise NotImplementedError(f"'{system}' is not supported.")
     else:
