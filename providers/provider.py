@@ -58,7 +58,7 @@ class Credential:
     def get(self) -> str | None:
         if value := environ.get(self.environ):
             return value
-        value = keyring.get_password(self.keyring_service, self.keyring)
+        value = keyring.get_password(self.keyring_service, self.keyring).strip()
         if value:
             return value
         raise RuntimeError(f'"{self.keyring}" cannot be found in ether {self.environ} environment variable '
