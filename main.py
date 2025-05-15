@@ -10,6 +10,7 @@ import sys
 import datetime
 import pathlib
 import argparse
+import os
 
 
 @dataclass
@@ -34,7 +35,7 @@ def parse_args() -> Options:
 
     options = Options()
 
-    running_under_debugger = sys.gettrace() is not None
+    running_under_debugger = sys.gettrace() is not None or "VSCODE_DEBUGPY_ADAPTER_ENDPOINTS" in os.environ
     if args.verbose:
         options.verbose = args.verbose
     else:
@@ -55,7 +56,7 @@ def parse_args() -> Options:
         chromedriver = args.chromedriver
 
     options.browser_options = ["disable-gpu", "disable-webgl", "window-size=1200,1100",
-                               "log-level=3", "no-sandbox", "disable-dev-shm-usage", "enable-unsafe-swiftshader",
+                               "log-level=3", "no-sandbox", "disable-dev-shm-usage", "enable-unsafe-swiftshader"
                                ]
 
     if headless:
