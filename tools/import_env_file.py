@@ -25,7 +25,7 @@ def main() -> None:
     """
     args = parse_args()
     with open(args.input) as file:
-        for provider, cred, value in [re.split('[=_]', item) for item in file.readlines()]:
+        for provider, cred, value in [re.split('[=_]', item.strip()) for item in file.readlines()]:
             keyring.set_password(provider.lower(), cred.lower(), value)
 
 
