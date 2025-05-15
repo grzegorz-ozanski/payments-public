@@ -65,6 +65,7 @@ class Energa(Provider):
             invoices = self.browser.find_elements(
                 By.XPATH,
                 '//span[contains(text(), "Termin płatności")]/../..')
+            self.save_trace_logs("duedate-check")
             if invoices:
                 due_date = invoices[0].text.split('\n')[1]
             else:
