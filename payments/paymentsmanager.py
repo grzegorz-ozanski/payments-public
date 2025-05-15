@@ -15,7 +15,6 @@ class PaymentsManager:
     """
     browser: Browser
     services: list[Provider] | Provider
-    debug_mode: bool
     payments: list[Payment] = field(default_factory=list)
 
     def __post_init__(self) -> None:
