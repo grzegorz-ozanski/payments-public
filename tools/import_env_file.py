@@ -14,7 +14,7 @@ def parse_args() -> argparse.Namespace:
     :return: parsed arguments
     """
     parser = argparse.ArgumentParser(description='Prepare an .env file to be used e.g. in GitHub Secrets')
-    parser.add_argument('-i', '--input', default='.env', help='input env file')
+    parser.add_argument('-i', '--input', default='.credentials', help='input env file')
 
     return parser.parse_args()
 
