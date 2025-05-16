@@ -265,6 +265,7 @@ jobs:
           $status="${{ steps.statuscheck.outputs.current }}"
         } else {
           $status="failure"
+          Write-Error "Empty status check step output, defaulting to $status!"
         }
         Set-Content -Path ${env:STATUS_FILE} -Value "$status" -Encoding UTF8
         git config user.name "${env:GH_ACTIONS_USER_NAME}"
