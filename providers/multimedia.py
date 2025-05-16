@@ -23,6 +23,7 @@ class Multimedia(Provider):
         locations = cast(tuple[Location, ...], tuple(locations.values()))  # to satisfy static code analyzers
         today = date.today()
         self.default_due_date = date(today.year, today.month, 20)
+        self.logged_in = False
         super().__init__(url, keystore_service, locations, user_input, password_input, pre_login_delay=5)
 
     def _get_location(self, amount: str):
@@ -46,11 +47,14 @@ class Multimedia(Provider):
                 log.debug(f'Login failed, retrying after {wait} seconds')
                 self.save_trace_logs(f'failed-login-attempt-{i}')
             else:
+                self.logged_in = True
                 return
 
     def get_payments(self):
         log.info("Getting payments...")
         payments = []
+        if not self.logged_in:
+            raise RuntimeError("Not logged in!")
         while any(item.is_empty() for item in payments) or len(payments) == 0:
             sleep(0.1)
             payments = []
