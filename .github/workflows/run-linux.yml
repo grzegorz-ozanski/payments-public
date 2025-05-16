@@ -27,7 +27,7 @@ env:
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
 
 jobs:
-  run-windows:
+  run-linux:
     runs-on: [self-hosted, Linux]
 
     permissions:
