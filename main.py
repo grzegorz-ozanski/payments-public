@@ -9,10 +9,12 @@ from argparse import Namespace
 from str_to_bool import str_to_bool
 
 import providers
-from browser import Browser, BrowserOptions
+from browser import Browser, BrowserOptions, setup_logging
 from locations import Location
 from payments import PaymentsManager
 from providerslist import ProvidersList
+
+log = setup_logging(__name__)
 
 def parse_args() -> Namespace:
     parser = argparse.ArgumentParser(description='')
@@ -29,6 +31,7 @@ def main():
     print(f"Starting at {datetime.datetime.now()}")
 
     args = parse_args()
+    log.debug(f'Called with arguments: {args}')
     running_under_debugger = sys.gettrace() is not None or "VSCODE_DEBUGPY_ADAPTER_ENDPOINTS" in os.environ
 
     # If -v/--verbose argument was provided, use it to toggle verbosity;
