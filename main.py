@@ -12,6 +12,7 @@ import providers
 from browser import Browser, BrowserOptions
 from locations import Location
 from payments import PaymentsManager
+from providerslist import ProvidersList
 
 
 def parse_args() -> Namespace:
@@ -51,7 +52,7 @@ def main():
     bryla = Location('Bryla')
     sezamowa = Location('Sezamowa')
 
-    providers_list = providers.ProvidersList(
+    providers_list = ProvidersList(
         providers.Pgnig(sezamowa),
         providers.Energa(hodowlana, bryla, sezamowa),
         providers.Actum(hodowlana),
