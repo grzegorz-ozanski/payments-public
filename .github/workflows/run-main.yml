@@ -92,7 +92,9 @@ jobs:
           $value = Get-Content $file -Raw
           if ($value -eq "") {
             $value="failure"
+            Write-Error "Empty data in '$file', defaulting to $value!"
           }
+          echo "Previous run status is: $value"
           echo "previous=$value" >> ${env:GITHUB_OUTPUT}
         } else {
           Write-Error "Previous status file not found in '$file'!"
