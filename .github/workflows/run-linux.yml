@@ -75,6 +75,7 @@ jobs:
         token: ${{ secrets.BROWSER_REPO_TOKEN }}
 
     - name: Prepare environment
+      shell: pwsh
       run: |
         # Add dependency to PYTHONPATH
         echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
