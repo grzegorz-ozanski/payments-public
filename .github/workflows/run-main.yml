@@ -90,6 +90,9 @@ jobs:
         $file = "${env:STATUS_FILE}"
         if (Test-Path $file) {
           $value = Get-Content $file -Raw
+          if ($value -eq "") {
+            $value="failure"
+          }
           echo "previous=$value" >> ${env:GITHUB_OUTPUT}
         } else {
           Write-Error "Previous status file not found in '$file'!"
@@ -256,7 +259,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        Set-Content -Path ${env:STATUS_FILE} -Value "${{ steps.statuscheck.outputs.current }}" -Encoding UTF8
+        if ("${{ steps.statuscheck.outputs.current }}" -ne "") {
+          $status="${{ steps.statuscheck.outputs.current }}"
+        } else {
+          $status="failure"
+        }
+        Set-Content -Path ${env:STATUS_FILE} -Value "$status" -Encoding UTF8
         git config user.name "${env:GH_ACTIONS_USER_NAME}"
         git config user.email "${env:GH_ACTIONS_EMAIL}"
         git add ${env:STATUS_FILE}
