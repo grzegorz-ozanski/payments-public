@@ -21,6 +21,7 @@ def parse_args() -> Namespace:
     parser.add_argument('-v', '--verbose', default=False, action='store_true', help='verbose')
     parser.add_argument('-l', '--headless', default=None, type=str_to_bool, help='headless browser')
     parser.add_argument('-t', '--trace', default=False, action='store_true', help='trace logs')
+    parser.add_argument('-p', '--provider', help='single provider')
     parser.add_argument('-o', '--output', help='output file')
 
     return parser.parse_args()
@@ -64,7 +65,8 @@ def main():
         providers.Nordhome(bryla)
     )
 
-    payments = PaymentsManager(browser, providers_list)
+    provider = args.provider if args.provider else ''
+    payments = PaymentsManager(browser, providers_list[provider] if provider else providers_list)
     payments.collect()
     payments.print()
     if args.output:
