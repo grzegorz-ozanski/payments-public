@@ -14,6 +14,18 @@ from locations import Location
 from payments import PaymentsManager
 from providerslist import ProvidersList
 
+def detect_platform() -> str:
+    system = platform.system()
+    machine = platform.machine().lower()
+
+    if system == "Linux":
+        return "linux64"
+    elif system == "Darwin":
+        return "mac-arm64" if "arm" in machine else "mac-x64"
+    elif system == "Windows":
+        return "win64" if sys.maxsize > 2**32 else "win32"
+    else:
+        raise RuntimeError(f"Unrecognized operating system: {system}, {machine}")
 
 def parse_args() -> Namespace:
     parser = argparse.ArgumentParser(description='')
@@ -40,7 +52,7 @@ def main():
     # otherwise, use headed browser when running under the debugger and headless one when otherwise
     headless = args.headless if args.headless is not None else not running_under_debugger
 
-    options = BrowserOptions(__file__, platform.system(), headless, args.trace)
+    options = BrowserOptions(__file__, detect_platform(), headless, args.trace)
 
     # Turn off logging if verbosity is off
     if not verbose:
