@@ -33,6 +33,6 @@ class Opec(Provider):
             if columns[6].text == "Zapłacony" and float(value) > 0:
                 continue
             date = DueDate(columns[4].text).value
-            if due_date is None or (date < due_date and float(value) > 0):
+            if (due_date is None or date < due_date) and float(value) > 0:
                 due_date = date
-        return [Payment(amount, due_date, self.locations[0], self.name)]
+        return [Payment(amount, due_date if due_date else 'today', self.locations[0], self.name)]
