@@ -90,7 +90,7 @@ jobs:
         $file = "${env:STATUS_FILE}"
         if (Test-Path $file) {
           $value = Get-Content $file -Raw
-          if ($value -eq "") {
+          if ([string]::IsNullOrWhiteSpace($value)) {
             $value="failure"
             Write-Error "Empty data in '$file', defaulting to $value!"
           }
