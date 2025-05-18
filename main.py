@@ -2,7 +2,6 @@ import argparse
 import datetime
 import logging
 import os
-import platform
 import sys
 from argparse import Namespace
 
