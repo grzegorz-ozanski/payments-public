@@ -20,8 +20,8 @@ env:
   COMPARE_SCRIPT: .github/scripts/compare-output.ps1
   STATUS_SCRIPT: .github/scripts/compare-status.ps1
   MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
-#  SCRIPT_OUTPUT: script_output.txt
-  SCRIPT_OUTPUT: .github/data/test_output.txt
+  SCRIPT_OUTPUT: script_output.txt
+#  SCRIPT_OUTPUT: .github/data/test_output.txt
   REFERENCE_OUTPUT: .github/data/reference_output.txt
   REFERENCE_CONTENT: reference.txt
   ACTUAL_CONTENT: actual.txt
