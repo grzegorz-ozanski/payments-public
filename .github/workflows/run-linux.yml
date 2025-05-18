@@ -45,29 +45,42 @@ jobs:
         $file = "${env:STATUS_FILE}"
         if (Test-Path $file) {
           $value = Get-Content $file -Raw
+          if ([string]::IsNullOrWhiteSpace($value)) {
+            $value="failure"
+            Write-Error "Empty data in '$file', defaulting to $value!"
+          }
+          echo "Previous run status is: $value"
           echo "previous=$value" >> ${env:GITHUB_OUTPUT}
         } else {
           Write-Error "Previous status file not found in '$file'!"
           echo "previous=unknown" >> ${env:GITHUB_OUTPUT}
         }
 
+    - name: "[SKIP REASON] Configure and run the script steps skipped"
+      if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
+      run: |
+        echo "::notice ::Skipping all configuration steps and 'Run the script' step because 'env.SCRIPT_OUTPUT' contains 'test_."
+
     - name: Use system Python 3.11
-      if: runner.os == 'Windows'
+      if: ${{ runner.os == 'Windows' && !contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: |
         $PYTHONPATH = "$env:USERPROFILE/AppData/Local/Programs/Python/Python311"
         echo "$PYTHONPATH" >> $env:GITHUB_PATH
 
     - name: Verify system Python 3.11
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: |
         python --version
         where python
 
     - name: Install dependencies
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
 
     - name: Clone browser repo
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       uses: actions/checkout@v4
       with:
         repository: grzegorz-ozanski/browser
@@ -75,6 +88,7 @@ jobs:
         token: ${{ secrets.BROWSER_REPO_TOKEN }}
 
     - name: Prepare environment
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       shell: pwsh
       run: |
         # Add dependency to PYTHONPATH
@@ -84,13 +98,8 @@ jobs:
         # Mask credentials
         pwsh -File $env:MASK_SCRIPT "_USERNAME,_PASSWORD" "${{ secrets.CREDENTIALS }}" 
 
-    - name: "[SKIP REASON] Run the script skipped"
-      if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
-      run: |
-        echo "::notice ::Skipping 'Run the script' step because 'env.SCRIPT_OUTPUT' contains 'test_."
-
     - name: Run the script
-      if: ${{ ! contains(env.SCRIPT_OUTPUT, 'test_') }}
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       continue-on-error: true
       shell: pwsh
       run: |
@@ -109,16 +118,20 @@ jobs:
 
     - name: Upload error logs
       uses: actions/upload-artifact@v4
+      continue-on-error: true
       with:
         name: error-logs
         if-no-files-found: ignore
+        retention-days: 3
         path: |
           ./error/**
 
     - name: Upload trace logs
       uses: actions/upload-artifact@v4
+      continue-on-error: true
       with:
         name: trace-logs
+        retention-days: 3
         path: |
           ${{ env.BROWSER_LOG_FILENAME }}
           ./trace/**
@@ -132,8 +145,10 @@ jobs:
     - name: Upload log if script output is different than reference
       if: steps.compare.outputs.status == 'changed'
       uses: actions/upload-artifact@v4
+      continue-on-error: true
       with:
         name: changed-output
+        retention-days: 3
         path: |
           ${{ env.SCRIPT_OUTPUT }}
           ${{ env.ACTUAL_CONTENT }}
@@ -141,7 +156,7 @@ jobs:
           ${{ env.DIFF_FILE }}
 
     # 🔁 Compare current workflow status with the previous one
-    - name: Compare workflow status
+    - name: Compare workflow status and set workflow summary
       id: statuscheck
       if: always()
       shell: pwsh
@@ -150,6 +165,7 @@ jobs:
         "${{ steps.readstatus.outputs.previous }}" `
         "${{ steps.compare.outputs.status }}" `
         ${env:SCRIPT_OUTPUT} `
+        ${env:DIFF_FILE} `
         ${env:GITHUB_OUTPUT} `
         ${env:GITHUB_STEP_SUMMARY}
 
@@ -205,7 +221,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        Set-Content -Path ${env:STATUS_FILE} -Value "${{ steps.statuscheck.outputs.current }}" -Encoding UTF8
+        if ("${{ steps.statuscheck.outputs.current }}" -ne "") {
+          $status="${{ steps.statuscheck.outputs.current }}"
+        } else {
+          $status="failure"
+          Write-Error "Empty status check step output, defaulting to $status!"
+        }
+        Set-Content -Path ${env:STATUS_FILE} -Value "$status" -Encoding UTF8
         git config user.name "${env:GH_ACTIONS_USER_NAME}"
         git config user.email "${env:GH_ACTIONS_EMAIL}"
         git add ${env:STATUS_FILE}
