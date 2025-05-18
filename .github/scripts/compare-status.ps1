@@ -96,7 +96,7 @@ if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
   Get-Content -Path $ScriptOutput | Append-IfExists -Path $GitHubSummary
 }
-if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "unchanged")) {
+if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
   Append-IfExists "- 🟥🟩**Diff**:" -Path $GitHubSummary
   Get-Content -Path $DiffFile | Append-IfExists -Path $GitHubSummary
 }
