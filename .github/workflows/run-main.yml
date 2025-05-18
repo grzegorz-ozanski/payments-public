@@ -168,6 +168,7 @@ jobs:
       with:
         name: error-logs
         if-no-files-found: ignore
+        retention-days: 3
         path: |
           ./error/**
 
@@ -175,6 +176,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: trace-logs
+        retention-days: 3
         path: |
           ${{ env.BROWSER_LOG_FILENAME }}
           ./trace/**
@@ -190,6 +192,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: changed-output
+        retention-days: 3
         path: |
           ${{ env.SCRIPT_OUTPUT }}
           ${{ env.ACTUAL_CONTENT }}
