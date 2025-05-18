@@ -2,8 +2,9 @@ param (
   [Parameter(Position=0, Mandatory=$true)][string]$PreviousJobStatus,
   [Parameter(Position=1, Mandatory=$true)][string]$CompareStatus,
   [Parameter(Position=2                 )][string]$ScriptOutput,
-  [Parameter(Position=3                 )][string]$GitHubOutput,
-  [Parameter(Position=4                 )][string]$GitHubSummary
+  [Parameter(Position=3                 )][string]$DiffFile,
+  [Parameter(Position=4                 )][string]$GitHubOutput,
+  [Parameter(Position=5                 )][string]$GitHubSummary
 )
 
 function Append-IfExists {
@@ -94,4 +95,8 @@ Append-IfExists "transition=${transition}" $GitHubOutput
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
   Get-Content -Path $ScriptOutput | Append-IfExists -Path $GitHubSummary
+}
+if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
+  Append-IfExists "- 🟥🟩**Diff**:" -Path $GitHubSummary
+  Get-Content -Path $DiffFile | Append-IfExists -Path $GitHubSummary
 }
