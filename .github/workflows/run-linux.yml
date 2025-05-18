@@ -47,12 +47,12 @@ jobs:
           $value = Get-Content $file -Raw
           if ([string]::IsNullOrWhiteSpace($value)) {
             $value="failure"
-            Write-Error "Empty data in '$file', defaulting to $value!"
+            Write-Warning "Empty data in '$file', defaulting to $value!"
           }
           echo "Previous run status is: $value"
           echo "previous=$value" >> ${env:GITHUB_OUTPUT}
         } else {
-          Write-Error "Previous status file not found in '$file'!"
+          Write-Warning "Previous status file not found in '$file'!"
           echo "previous=unknown" >> ${env:GITHUB_OUTPUT}
         }
 
@@ -225,7 +225,7 @@ jobs:
           $status="${{ steps.statuscheck.outputs.current }}"
         } else {
           $status="failure"
-          Write-Error "Empty status check step output, defaulting to $status!"
+          Write-Warning "Empty status check step output, defaulting to $status!"
         }
         Set-Content -Path ${env:STATUS_FILE} -Value "$status" -Encoding UTF8
         git config user.name "${env:GH_ACTIONS_USER_NAME}"

@@ -101,6 +101,7 @@ jobs:
 
     - name: Prepare environment
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
       run: |
         # Add dependency to PYTHONPATH
         echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
