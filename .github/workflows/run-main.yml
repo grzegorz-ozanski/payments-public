@@ -169,6 +169,7 @@ jobs:
         name: error-logs
         if-no-files-found: ignore
         retention-days: 3
+        continue-on-error: true
         path: |
           ./error/**
 
@@ -177,6 +178,7 @@ jobs:
       with:
         name: trace-logs
         retention-days: 3
+        continue-on-error: true
         path: |
           ${{ env.BROWSER_LOG_FILENAME }}
           ./trace/**
@@ -193,6 +195,7 @@ jobs:
       with:
         name: changed-output
         retention-days: 3
+        continue-on-error: true
         path: |
           ${{ env.SCRIPT_OUTPUT }}
           ${{ env.ACTUAL_CONTENT }}
