@@ -107,25 +107,25 @@ jobs:
         echo "::notice ::Skipping all configuration steps and 'Run the script' step because 'env.SCRIPT_OUTPUT' contains 'test_."
 
     - name: Use system Python 3.11
-      if: ${{ runner.os == 'Windows' && contains(env.SCRIPT_OUTPUT, 'test_') }}
+      if: ${{ runner.os == 'Windows' && !contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: |
         $PYTHONPATH = "$env:USERPROFILE/AppData/Local/Programs/Python/Python311"
         echo "$PYTHONPATH" >> $env:GITHUB_PATH
 
     - name: Verify system Python 3.11
-      if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: |
         python --version
         where python
 
     - name: Install dependencies
-      if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
 
     - name: Clone browser repo
-      if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       uses: actions/checkout@v4
       with:
         repository: grzegorz-ozanski/browser
@@ -133,7 +133,7 @@ jobs:
         token: ${{ secrets.BROWSER_REPO_TOKEN }}
 
     - name: Download Chrome and Chromedriver from GitHub Release
-      if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: |
         gh release download ${env:CHROMEDRIVER_VERSION} `
           --repo grzegorz-ozanski/chrome `
@@ -141,7 +141,7 @@ jobs:
         Expand-Archive -Path "${env:CHROMEDRIVER_VERSION}.zip" -DestinationPath .
 
     - name: Prepare environment
-      if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       run: |
         # Add dependency to PYTHONPATH
         echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
