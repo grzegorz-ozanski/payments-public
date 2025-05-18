@@ -200,7 +200,7 @@ jobs:
           ${{ env.DIFF_FILE }}
 
     # 🔁 Compare current workflow status with the previous one
-    - name: Compare workflow status
+    - name: Compare workflow status and set workflow summary
       id: statuscheck
       if: always()
       shell: pwsh
@@ -209,6 +209,7 @@ jobs:
         "${{ steps.readstatus.outputs.previous }}" `
         "${{ steps.compare.outputs.status }}" `
         ${env:SCRIPT_OUTPUT} `
+        ${env:DIFF_FILE} `
         ${env:GITHUB_OUTPUT} `
         ${env:GITHUB_STEP_SUMMARY}
 
