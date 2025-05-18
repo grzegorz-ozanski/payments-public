@@ -85,18 +85,21 @@ if ($PreviousJobStatus -eq "failure") {
   }
 }
 Append-IfExists "transition=${transition}" $GitHubOutput
-
+Write-Host "1"
 @"
 # 🛠️ Workflow summary
 
 - **Previous run status**: $(Get-Emoji $emojis $PreviousJobStatus) $PreviousJobStatus
 - **Current comparison status**: $(Get-Emoji $emojis $current) $CompareStatus
 "@ | Append-IfExists -Path $GitHubSummary
+Write-Host "2"
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
   Get-Content -Path $ScriptOutput | Append-IfExists -Path $GitHubSummary
 }
-if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "unchanged")) {
+Write-Host "3"
+if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
   Append-IfExists "- 🟥🟩**Diff**:" -Path $GitHubSummary
   Get-Content -Path $DiffFile | Append-IfExists -Path $GitHubSummary
 }
+Write-Host "4"
