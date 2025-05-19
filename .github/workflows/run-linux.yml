@@ -58,23 +58,27 @@ jobs:
 
     - name: "[SKIP REASON] Configure and run the script steps skipped"
       if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
       run: |
         echo "::notice ::Skipping all configuration steps and 'Run the script' step because 'env.SCRIPT_OUTPUT' contains 'test_."
 
     - name: Use system Python 3.11
       if: ${{ runner.os == 'Windows' && !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
       run: |
         $PYTHONPATH = "$env:USERPROFILE/AppData/Local/Programs/Python/Python311"
         echo "$PYTHONPATH" >> $env:GITHUB_PATH
 
     - name: Verify system Python 3.11
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
       run: |
         python --version
         where python
 
     - name: Install dependencies
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
@@ -138,6 +142,7 @@ jobs:
 
     - name: "[SKIP REASON] Upload log skipped"
       if: steps.compare.outputs.status == 'unchanged'
+      shell: pwsh
       run: |-
         echo "::notice ::Skipping 'Upload log if script output is different than reference' step " + 
              "because steps.compare.outputs.status == 'unchanged''."
@@ -171,6 +176,7 @@ jobs:
 
     - name: "[SKIP REASON] Send email if workflow result changed"
       if: github.event_name != 'schedule' || steps.statuscheck.outputs.changed != 'true'
+      shell: pwsh
       run: |-
         echo "::notice ::Skipping 'Send email if script output comparison result changed' step because condition " + 
              "'github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true' is not met'."
@@ -200,14 +206,15 @@ jobs:
 
     - name: "[SKIP REASON] Copy working directory skipped"
       if: github.event.inputs.dump != 'true'
+      shell: pwsh
       run: |
         echo "::notice ::Skipping 'Copy working directory for inspection' step because 'github.event.inputs.dump != 'true''."
 
     - name: Copy working directory for inspection
       if: github.event.inputs.dump == 'true'
-      shell: pwsh
       env:
         WORKSPACE_DUMP_DIR: ${{ runner.os == 'Windows' && 'c:/actions-runner/jobs' || '/tmp/actions-runner/jobs' }}
+      shell: pwsh
       run: |
         $src = "$env:GITHUB_WORKSPACE"
         $dst = "${env:WORKSPACE_DUMP_DIR}\${{ github.run_id }}"
@@ -217,9 +224,9 @@ jobs:
     # 💾 Save current status
     - name: Save current status
       if: always()
-      shell: pwsh
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: pwsh
       run: |
         if ("${{ steps.statuscheck.outputs.current }}" -ne "") {
           $status="${{ steps.statuscheck.outputs.current }}"
@@ -241,6 +248,7 @@ jobs:
 
     - name: "[SKIP REASON] Fail workflow"
       if: steps.compare.outputs.status == 'unchanged'
+      shell: pwsh
       run: |-
         $msg = "::notice ::Skipping 'Fail workflow if script output is different than reference' step " +
                "because 'steps.compare.outputs.status == 'unchanged''"
