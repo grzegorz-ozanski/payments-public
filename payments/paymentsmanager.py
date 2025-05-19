@@ -23,7 +23,9 @@ class PaymentsManager:
         if not isinstance(self.providers, list):
             self.providers = [self.providers]
 
-    def collect(self, browser: Browser) -> None:
+    def __repr__(self) -> str:
+        return '\n'.join(map(str, self.providers))
+
     def collect_payments(self, browser: Browser) -> None:
         """
         Collect payments for all providers

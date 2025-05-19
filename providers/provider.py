@@ -91,6 +91,9 @@ class Provider:
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
 
+    def __repr__(self) -> str:
+        return f'{self.name}: [{", ".join(map(str, self.locations))}]'
+
     def _get_location(self, name_string: str):
         try:
             return next(location for location in self.locations if location.name in name_string)
@@ -186,8 +189,6 @@ class Provider:
         finally:
             self.logout()
         return payments
-
-
 
     def logout(self):
         try:
