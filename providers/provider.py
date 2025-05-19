@@ -10,7 +10,7 @@ from selenium.common.exceptions import NoSuchElementException, WebDriverExceptio
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from browser import setup_logging
+from browser import setup_logging, Browser
 from locations import Location
 from payments import Payment
 
@@ -71,7 +71,7 @@ class Provider:
     def __init__(self, url: str, keystore_service: str, locations: tuple[Location, ...],
                  user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
-        self.browser = None
+        self._browser = None
         self.url = url
         self.name = keystore_service
         self.keystore_service = keystore_service
@@ -122,34 +122,34 @@ class Provider:
                 path = os.path.join(path, self.name)
             os.makedirs(path, exist_ok=True)
             filename = os.path.join(path, filename)
-        self.browser.save_screenshot(f"{filename}.png")
+        self._browser.save_screenshot(f"{filename}.png")
         with open(f"{filename}.html", "w", encoding="utf-8") as page_source_file:
-            page_source_file.write(self.browser.page_source)
+            page_source_file.write(self._browser.page_source)
 
     def save_error_logs(self):
         self._save_logs(path="error")
 
     def save_trace_logs(self, suffix: str = ''):
-        if self.browser.save_trace_logs:
+        if self._browser.save_trace_logs:
             self._save_logs(suffix, "trace")
 
     def login(self, browser, load=True):
-        self.browser = browser
-        self.browser.error_log_dir = "error"
+        self._browser = browser
+        self._browser.error_log_dir = "error"
         try:
             if load:
                 log.debug("Opening %s" % self.url)
-                self.browser.force_get(self.url)
+                self._browser.force_get(self.url)
             log.info("Logging into service...")
-            self.browser.wait_for_page_inactive(2)
+            self._browser.wait_for_page_inactive(2)
             self.save_trace_logs("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
-            input_user = self.browser.wait_for_element(self.user_input.by, self.user_input.selector)
+            input_user = self._browser.wait_for_element(self.user_input.by, self.user_input.selector)
             if input_user is None:
                 print(f"No user input {self.user_input} found!")
                 self.save_error_logs()
             assert input_user is not None
-            input_password = self.browser.wait_for_element(self.password_input.by, self.password_input.selector)
+            input_password = self._browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
             username = self.username.get()
             input_user.send_keys(username)
@@ -161,7 +161,7 @@ class Provider:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{username}'!")
             self.save_trace_logs("password-input")
             input_password.send_keys(Keys.ENTER)
-            self.browser.wait_for_page_load_completed()
+            self._browser.wait_for_page_load_completed()
             _sleep_with_message(self.post_login_delay, "Post-login")
             self.save_trace_logs("post-login")
             log.info("Done.")
@@ -170,15 +170,15 @@ class Provider:
             self.save_error_logs()
             raise
 
-    def get_payments(self) -> list[Payment]:
+    def _payments(self) -> list[Payment]:
         raise NotImplementedError
 
-    @property
-    def payments(self) -> list[Payment]:
+    def get_payments(self, browser: Browser) -> list[Payment]:
         try:
             print(f'Processing service {self.name}...')
-            self.login(self.browser)
-            payments = sorted(self.get_payments(), key=lambda value: value.location.key)
+            self._browser = browser
+            self.login(self._browser)
+            payments = sorted(self._payments(), key=lambda value: value.location.key)
         except Exception as e:
             print(f'{e.__class__.__name__}:{str(e)}\n'f'Cannot get payments for service {self.name}!')
             payments = [Payment(location=location, provider=self.name, invalid=True) for location in self.locations]
@@ -192,8 +192,8 @@ class Provider:
     def logout(self):
         try:
             self.save_trace_logs("pre-logout")
-            self.browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
-            self.browser.wait_for_page_inactive(2)
+            self._browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
+            self._browser.wait_for_page_inactive(2)
             self.save_trace_logs("post-logout")
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")

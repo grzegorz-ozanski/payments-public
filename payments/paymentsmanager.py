@@ -13,7 +13,6 @@ class PaymentsManager:
     """
     Payments manager
     """
-    browser: Browser
     providers: list[Provider] | Provider
     payments: list[Payment] = field(default_factory=list)
 
@@ -24,13 +23,13 @@ class PaymentsManager:
         if not isinstance(self.providers, list):
             self.providers = [self.providers]
 
-    def collect(self) -> None:
+    def collect(self, browser: Browser) -> None:
         """
         Collect payments for all providers
         """
         for provider in self.providers:
-            self.payments += provider.payments
-        self.browser.quit()
+            self.payments += provider.get_payments(browser)
+        browser.quit()
 
     def print(self) -> None:
         """

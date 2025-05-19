@@ -65,8 +65,8 @@ def main():
     )
 
     provider = args.provider if args.provider else ''
-    payments = PaymentsManager(browser, providers_list[provider] if provider else providers_list)
-    payments.collect()
+    payments = PaymentsManager(providers_list[provider] if provider else providers_list)
+    payments.collect(browser)
     payments.print()
     if args.output:
         payments.write(args.output)

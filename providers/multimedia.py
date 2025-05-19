@@ -42,15 +42,15 @@ class Multimedia(Provider):
             except Exception as ex:
                 if i == num_retries - 1:
                     raise ex
-            self.browser.wait_for_page_inactive()
-            if self.browser.wait_for_element(By.CSS_SELECTOR, 'span.logonFailureText'):
+            self._browser.wait_for_page_inactive()
+            if self._browser.wait_for_element(By.CSS_SELECTOR, 'span.logonFailureText'):
                 log.debug(f'Login failed, retrying after {wait} seconds')
                 self.save_trace_logs(f'failed-login-attempt-{i}')
             else:
                 self.logged_in = True
                 return
 
-    def get_payments(self):
+    def _payments(self):
         log.info("Getting payments...")
         payments = []
         if not self.logged_in:
@@ -58,7 +58,7 @@ class Multimedia(Provider):
         while any(item.is_empty() for item in payments) or len(payments) == 0:
             sleep(0.1)
             payments = []
-            invoices = self.browser.wait_for_elements(By.CLASS_NAME, "invoiceInfo")
+            invoices = self._browser.wait_for_elements(By.CLASS_NAME, "invoiceInfo")
             if invoices is None:
                 for location in self.locations:
                     payments.append(Payment(due_date=self.default_due_date, location=location, provider=self.name))

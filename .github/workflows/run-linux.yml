@@ -217,7 +217,7 @@ jobs:
       shell: pwsh
       run: |
         $src = "$env:GITHUB_WORKSPACE"
-        $dst = "${env:WORKSPACE_DUMP_DIR}\${{ github.run_id }}"
+        $dst = "${env:WORKSPACE_DUMP_DIR}/${{ github.run_id }}"
         mkdir -p $dst 
         Copy-Item -Path $src -Recurse -Destination $dst
 

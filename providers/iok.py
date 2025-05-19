@@ -18,11 +18,11 @@ class IOK(Provider):
         self.due_date = date(today.year, today.month, due_day)
         super().__init__(url, keystore_service, locations, user_input, password_input, logout_button)
 
-    def get_payments(self):
+    def _payments(self):
         self.log.info("Getting payments...")
-        self.browser.wait_for_page_inactive()
-        amount = self.browser.wait_for_element(By.CLASS_NAME, 'home-amount', self.timeout)
-        due_date = self.browser.wait_for_element(By.CLASS_NAME, 'home-info', self.timeout)
+        self._browser.wait_for_page_inactive()
+        amount = self._browser.wait_for_element(By.CLASS_NAME, 'home-amount', self.timeout)
+        due_date = self._browser.wait_for_element(By.CLASS_NAME, 'home-info', self.timeout)
         if amount is None or due_date is None:
             return [Payment(due_date=self.due_date, location=self.locations[0], provider=self.name)]
         due_date = due_date.find_elements(By.TAG_NAME, 'span')

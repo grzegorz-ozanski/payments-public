@@ -17,15 +17,15 @@ class Opec(Provider):
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input)
 
-    def get_payments(self):
+    def _payments(self):
         self.save_trace_logs("pre-payments-click")
-        self.browser.find_element(By.XPATH, '//a[text()="Płatności"]').click()
+        self._browser.find_element(By.XPATH, '//a[text()="Płatności"]').click()
         self.save_trace_logs("pre-documents-click")
-        self.browser.find_element(By.XPATH, '//a[contains(string(), "Dokumenty")]').click()
-        self.browser.wait_for_network_inactive()
+        self._browser.find_element(By.XPATH, '//a[contains(string(), "Dokumenty")]').click()
+        self._browser.wait_for_network_inactive()
         sleep(1)
-        invoices = self.browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
-        amount = self.browser.find_element(By.NAME, "value").text
+        invoices = self._browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
+        amount = self._browser.find_element(By.NAME, "value").text
         due_date = None
         for invoice in invoices:
             columns = invoice.find_elements(By.TAG_NAME, 'td')
