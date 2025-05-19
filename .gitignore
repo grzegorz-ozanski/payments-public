@@ -5,6 +5,4 @@ __pycache__
 .credentials
 venv*
 chromedriver
-downloads
-trace
-error
+run
