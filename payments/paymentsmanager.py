@@ -14,39 +14,23 @@ class PaymentsManager:
     Payments manager
     """
     browser: Browser
-    services: list[Provider] | Provider
+    providers: list[Provider] | Provider
     payments: list[Payment] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         """
         If single item is provided, change it into one-element list
         """
-        if not isinstance(self.services, list):
-            self.services = [self.services]
-
-    def _get_payments_for_service(self, service: Provider) -> list[Payment]:
-        payments = []
-        try:
-            print(f'Processing service {service.name}...')
-            service.login(self.browser)
-            payments = sorted(service.get_payments(), key=lambda value: value.location.key)
-        except Exception as e:
-            print(f'{e.__class__.__name__}:{str(e)}\n'
-                  f'Cannot get payments for service {service.name}!')
-            service.save_error_logs()
-        finally:
-            service.logout()
-        return payments
+        if not isinstance(self.providers, list):
+            self.providers = [self.providers]
 
     def collect(self) -> None:
         """
         Collect payments for all providers
         """
-        try:
-            for service in self.services:
-                self.payments += self._get_payments_for_service(service)
-        finally:
-            self.browser.quit()
+        for provider in self.providers:
+            self.payments += provider.payments
+        self.browser.quit()
 
     def print(self) -> None:
         """

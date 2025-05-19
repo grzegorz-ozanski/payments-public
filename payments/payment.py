@@ -84,7 +84,8 @@ class Payment:
                  amount: str = '0,0',
                  due_date: date | str = 'today',
                  location: Location | None = None,
-                 provider: str = '') -> None:
+                 provider: str = '',
+                 invalid: bool = False) -> None:
         """
         Payment constructor
 
@@ -94,8 +95,12 @@ class Payment:
         :param provider: provider
         """
         log.debug(f'Creating payment object: {provider=}, {amount=}, {location=}, {due_date=}')
-        self.amount = Amount(amount)
-        self.due_date = DueDate(due_date)
+        if invalid:
+            self.amount = '<unknown>'
+            self.due_date = '<unknown>'
+        else:
+            self.amount = Amount(amount)
+            self.due_date = DueDate(due_date)
         self.location = location
         self.provider = provider
 

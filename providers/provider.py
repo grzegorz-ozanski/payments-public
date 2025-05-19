@@ -173,6 +173,22 @@ class Provider:
     def get_payments(self) -> list[Payment]:
         raise NotImplementedError
 
+    @property
+    def payments(self) -> list[Payment]:
+        try:
+            print(f'Processing service {self.name}...')
+            self.login(self.browser)
+            payments = sorted(self.get_payments(), key=lambda value: value.location.key)
+        except Exception as e:
+            print(f'{e.__class__.__name__}:{str(e)}\n'f'Cannot get payments for service {self.name}!')
+            payments = [Payment(location=location, provider=self.name, invalid=True) for location in self.locations]
+            self.save_error_logs()
+        finally:
+            self.logout()
+        return payments
+
+
+
     def logout(self):
         try:
             self.save_trace_logs("pre-logout")
