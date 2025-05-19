@@ -68,6 +68,7 @@ def main():
     payments = PaymentsManager(providers_list[provider] if provider else providers_list)
     payments.collect(browser)
     payments.print()
+    payments = PaymentsManager(providers_list[args.provider if args.provider else 'energa'])
     if args.output:
         payments.write(args.output)
 
