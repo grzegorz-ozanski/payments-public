@@ -24,6 +24,7 @@ class PaymentsManager:
             self.providers = [self.providers]
 
     def collect(self, browser: Browser) -> None:
+    def collect_payments(self, browser: Browser) -> None:
         """
         Collect payments for all providers
         """
@@ -31,14 +32,14 @@ class PaymentsManager:
             self.payments += provider.get_payments(browser)
         browser.quit()
 
-    def print(self) -> None:
+    def print_payments(self) -> None:
         """
         Print payments for all providers
         """
         for payment in self.payments:
             payment.print()
 
-    def write(self, filename: str) -> None:
+    def export_payments(self, filename: str) -> None:
         """
         Write payments to file
         :param filename: file name

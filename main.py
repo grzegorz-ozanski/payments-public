@@ -64,13 +64,11 @@ def main():
         providers.Nordhome(bryla)
     )
 
-    provider = args.provider if args.provider else ''
-    payments = PaymentsManager(providers_list[provider] if provider else providers_list)
-    payments.collect(browser)
-    payments.print()
     payments = PaymentsManager(providers_list[args.provider if args.provider else 'energa'])
+    payments.collect_payments(browser)
+    payments.print_payments()
     if args.output:
-        payments.write(args.output)
+        payments.export_payments(args.output)
 
     end_time = datetime.datetime.now()
     print("Finished at %s" % end_time)
