@@ -64,7 +64,7 @@ def main():
         providers.Nordhome(bryla)
     )
 
-    payments = PaymentsManager(providers_list[args.provider if args.provider else 'energa'])
+    payments = PaymentsManager(providers_list[args.provider if args.provider else ''])
     payments.collect_payments(browser)
     payments.print_payments()
     if args.output:
