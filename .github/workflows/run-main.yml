@@ -12,23 +12,24 @@ on:
         required: false
         default: 'false'
 env:
-  GH_ACTIONS_USER_NAME: "github-actions"
-  GH_ACTIONS_EMAIL: "github-actions@github.com"
-  STATUS_FILE: .github/status/last-status.txt
-  GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
-  LIBRARY: .github/scripts/functions.ps1
-  COMPARE_SCRIPT: .github/scripts/compare-output.ps1
-  STATUS_SCRIPT: .github/scripts/compare-status.ps1
-  MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
-  SCRIPT_OUTPUT: script_output.txt
-#  SCRIPT_OUTPUT: .github/data/test_output.txt
-  REFERENCE_OUTPUT: .github/data/reference_output.txt
-  REFERENCE_CONTENT: reference.txt
   ACTUAL_CONTENT: actual.txt
-  DIFF_FILE: diff.txt
   BROWSER_LOG_FILENAME: trace.log
   BROWSER_LOG_TO_CONSOLE: False
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
+  COMPARE_SCRIPT: .github/scripts/compare-output.ps1
+  DIFF_FILE: diff.txt
+  GH_ACTIONS_EMAIL: "github-actions@github.com"
+  GH_ACTIONS_USER_NAME: "github-actions"
+  GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
+  LIBRARY: .github/scripts/functions.ps1
+  LOCAL_ARTIFACTS_DIR: Z:/github-runner/artifacts
+  MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
+  REFERENCE_CONTENT: reference.txt
+  REFERENCE_OUTPUT: .github/data/reference_output.txt
+  SCRIPT_OUTPUT: script_output.txt
+#  SCRIPT_OUTPUT: .github/data/test_output.txt
+  STATUS_FILE: .github/status/last-status.txt
+  STATUS_SCRIPT: .github/scripts/compare-status.ps1
 
 jobs:
   run-windows:
@@ -166,6 +167,45 @@ jobs:
           ${{ env.ACTUAL_CONTENT }}
           ${{ env.REFERENCE_CONTENT }}
           ${{ env.DIFF_FILE }}
+
+    - name: Store artifacts locally
+      shell: pwsh
+      run: |
+        $artifactPaths = @(
+          "./error",
+          "$env:BROWSER_LOG_FILENAME",
+          "./trace"
+        )
+        $diffPaths = @(
+          "$env:SCRIPT_OUTPUT",
+          "$env:ACTUAL_CONTENT",
+          "$env:REFERENCE_CONTENT",
+          "$env:DIFF_FILE"
+        )
+        $workflow = $env:GITHUB_WORKFLOW -replace '[^\w\-]', '_'
+        $runNumber = $env:GITHUB_RUN_NUMBER
+        $jobName   = $env:GITHUB_JOB
+        if (Test-Path ${env:LOCAL_ARTIFACTS_DIR} -PathType Container) {
+          $targetDir = "${env:LOCAL_ARTIFACTS_DIR}/$workflow/$jobName/$runNumber"
+          New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+          foreach ($path in $artifactPaths) {
+            if (Test-Path $path) {
+              Write-Host "Storing artifact '$path' locally in '$targetDir'"
+              Copy-Item $path $targetDir -Recurse
+            }
+          }
+          if ($env:COMPARE_STATUS -eq 'changed') {
+            foreach ($path in $diffPaths) {
+              if (Test-Path $path) {
+                Write-Host "Storing artifact '$path' locally in '$targetDir'"
+                Copy-Item $path $targetDir -Recurse
+              }
+            }
+          }
+        } else {
+          Write-Warning "LOCAL_ARTIFACTS_DIR '$env:LOCAL_ARTIFACTS_DIR' not found. Skipping artifact save."
+        }
+
 
     # 🔁 Compare current workflow status with the previous one
     - name: Compare workflow status and set workflow summary
