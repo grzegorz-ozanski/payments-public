@@ -182,7 +182,7 @@ jobs:
           "$env:REFERENCE_CONTENT",
           "$env:DIFF_FILE"
         )
-        $workflow = $env:GITHUB_WORKFLOW -replace '[^\w\-]', '_'
+        $workflow = $($env:GITHUB_WORKFLOW -replace '[^\w\-]', '_').ToLower()
         $runNumber = $env:GITHUB_RUN_NUMBER
         $jobName   = $env:GITHUB_JOB
         if (Test-Path ${env:LOCAL_ARTIFACTS_DIR} -PathType Container) {
