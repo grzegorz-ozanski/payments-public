@@ -173,7 +173,7 @@ class Provider:
             self.save_error_logs()
             raise
 
-    def _payments(self) -> list[Payment]:
+    def _read_payments(self) -> list[Payment]:
         raise NotImplementedError
 
     def get_payments(self, browser: Browser) -> list[Payment]:
@@ -181,7 +181,7 @@ class Provider:
             print(f'Processing service {self.name}...')
             self._browser = browser
             self.login(self._browser)
-            payments = sorted(self._payments(), key=lambda value: value.location.key)
+            payments = sorted(self._read_payments(), key=lambda value: value.location.key)
         except Exception as e:
             print(f'{e.__class__.__name__}:{str(e)}\n'f'Cannot get payments for service {self.name}!')
             payments = [Payment(location=location, provider=self.name, invalid=True) for location in self.locations]

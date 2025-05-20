@@ -17,7 +17,7 @@ class Pewik(Provider):
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input, logout_button)
 
-    def _payments(self):
+    def _read_payments(self):
         payments = []
         next_id = 1
         cookies_panel = self._browser.find_element(By.CLASS_NAME, 'panel-cookies')

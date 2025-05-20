@@ -17,7 +17,7 @@ class Opec(Provider):
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input)
 
-    def _payments(self):
+    def _read_payments(self):
         self.save_trace_logs("pre-payments-click")
         self._browser.find_element(By.XPATH, '//a[text()="Płatności"]').click()
         self.save_trace_logs("pre-documents-click")

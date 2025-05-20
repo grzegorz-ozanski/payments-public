@@ -18,7 +18,7 @@ class IOK(Provider):
         self.due_date = date(today.year, today.month, due_day)
         super().__init__(url, keystore_service, locations, user_input, password_input, logout_button)
 
-    def _payments(self):
+    def _read_payments(self):
         self.log.info("Getting payments...")
         self._browser.wait_for_page_inactive()
         amount = self._browser.wait_for_element(By.CLASS_NAME, 'home-amount', self.timeout)

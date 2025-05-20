@@ -17,7 +17,7 @@ class Pgnig(Provider):
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input)
 
-    def _payments(self):
+    def _read_payments(self):
         log.info("Getting payments...")
         location = self._get_location(self._browser.wait_for_element(By.CLASS_NAME, 'reading-adress').text)
         log.info("Getting invoices menu...")

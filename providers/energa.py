@@ -33,7 +33,7 @@ class Energa(Provider):
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
 
-    def _payments(self):
+    def _read_payments(self):
         log.info("Getting payments...")
         self._browser.wait_for_page_load_completed()
         self.save_trace_logs("accounts-list")

@@ -51,7 +51,7 @@ class Multimedia(Provider):
                 self.logged_in = True
                 return
 
-    def _payments(self):
+    def _read_payments(self):
         log.info("Getting payments...")
         payments = []
         if not self.logged_in:
