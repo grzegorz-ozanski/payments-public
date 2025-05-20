@@ -93,8 +93,9 @@ class Payment:
         :param due_date: due date
         :param location: location
         :param provider: provider
+        :param invalid: 'True' to indicate that payment data could not be retrieved from a provider
         """
-        log.debug(f'Creating payment object: {provider=}, {amount=}, {location=}, {due_date=}')
+        log.debug(f'Creating payment object: {provider=}, {amount=}, {location=}, {due_date=}, {invalid=}')
         if invalid:
             self.amount = '<unknown>'
             self.due_date = '<unknown>'
