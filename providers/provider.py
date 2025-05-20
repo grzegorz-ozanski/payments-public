@@ -7,6 +7,7 @@ from os import environ
 
 import keyring
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
@@ -69,7 +70,8 @@ class Provider:
     root_trace_dir = []
 
     def __init__(self, url: str, keystore_service: str, locations: tuple[Location, ...],
-                 user_input: PageElement, password_input: PageElement, logout_button: PageElement | None = None,
+                 user_input: PageElement, password_input: PageElement,
+                 logout_button: PageElement | None = None, cookies_button: PageElement | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         self._browser = None
         self.url = url
@@ -88,6 +90,7 @@ class Provider:
                 '//*[contains(string(), "Wyloguj") and not(.//*[contains(string(), "Wyloguj")])]'
             )
         self.logout_button = logout_button
+        self.cookies_button = cookies_button
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
 
@@ -136,6 +139,16 @@ class Provider:
         if self._browser.save_trace_logs:
             self._save_logs(suffix, "trace")
 
+    def input(self, control: WebElement, text: str) -> None:
+        time.sleep(0.5)
+        if control.get_attribute('value') != '':
+            control.send_keys(Keys.CONTROL, 'a')
+            time.sleep(0.05)
+            control.send_keys(Keys.DELETE)
+        for character in text:
+            control.send_keys(character)
+            time.sleep(0.05)
+
     def login(self, browser, load=True):
         self._browser = browser
         self._browser.error_log_dir = "error"
@@ -143,8 +156,11 @@ class Provider:
             if load:
                 log.debug("Opening %s" % self.url)
                 self._browser.force_get(self.url)
+                self._browser.wait_for_page_inactive(2)
+                if (self.cookies_button and
+                        self._browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
+                    self._browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
             log.info("Logging into service...")
-            self._browser.wait_for_page_inactive(2)
             self.save_trace_logs("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
             input_user = self._browser.wait_for_element(self.user_input.by, self.user_input.selector)
@@ -155,11 +171,17 @@ class Provider:
             input_password = self._browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
             username = self.username.get()
+            input_user.click()
+            time.sleep(0.5)
             input_user.send_keys(username)
+            # self.input(input_user, username)
             self.save_trace_logs("username-input")
             password = self.password.get()
             if password is not None:
+                input_user.send_keys(Keys.TAB)
                 input_password.send_keys(password)
+                # self.input(input_password, password)
+                time.sleep(0.5)
             else:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{username}'!")
             self.save_trace_logs("password-input")

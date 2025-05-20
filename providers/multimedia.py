@@ -24,7 +24,8 @@ class Multimedia(Provider):
         today = date.today()
         self.default_due_date = date(today.year, today.month, 20)
         self.logged_in = False
-        super().__init__(url, keystore_service, locations, user_input, password_input, pre_login_delay=5)
+        super().__init__(url, keystore_service, locations, user_input, password_input,
+                         cookies_button=cookies_button, pre_login_delay=1)
 
     def _get_location(self, amount: str):
         try:
