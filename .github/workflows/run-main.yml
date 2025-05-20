@@ -10,7 +10,7 @@ on:
       dump:
         description: 'Dump workspace after job?'
         required: false
-        default: 'true'
+        default: 'false'
 env:
   ACTUAL_CONTENT: actual.txt
   BROWSER_LOG_FILENAME: trace.log
@@ -108,7 +108,6 @@ jobs:
         echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
         # Prepare credentials
         echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
-        echo "${{ secrets.CREDENTIALS }}" >> .credentials
         # Mask credentials
         pwsh -File $env:MASK_SCRIPT "_USERNAME,_PASSWORD" "${{ secrets.CREDENTIALS }}" 
 
@@ -171,6 +170,8 @@ jobs:
 
     - name: Store artifacts locally
       shell: pwsh
+      env:
+        COMPARE_STATUS: ${{ steps.compare.outputs.status }}
       run: |
         Get-ChildItem Env: | Sort-Object Name
         $artifactPaths = @(
