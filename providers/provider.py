@@ -139,16 +139,6 @@ class Provider:
         if self._browser.save_trace_logs:
             self._save_logs(suffix, "trace")
 
-    def input(self, control: WebElement, text: str) -> None:
-        time.sleep(0.5)
-        if control.get_attribute('value') != '':
-            control.send_keys(Keys.CONTROL, 'a')
-            time.sleep(0.05)
-            control.send_keys(Keys.DELETE)
-        for character in text:
-            control.send_keys(character)
-            time.sleep(0.05)
-
     def login(self, browser, load=True):
         self._browser = browser
         self._browser.error_log_dir = "error"
@@ -174,13 +164,11 @@ class Provider:
             input_user.click()
             time.sleep(0.5)
             input_user.send_keys(username)
-            # self.input(input_user, username)
             self.save_trace_logs("username-input")
             password = self.password.get()
             if password is not None:
                 input_user.send_keys(Keys.TAB)
                 input_password.send_keys(password)
-                # self.input(input_password, password)
                 time.sleep(0.5)
             else:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{username}'!")
