@@ -8,15 +8,16 @@ from selenium.webdriver.common.by import By
 from browser import setup_logging
 from locations import Location
 from payments import Payment
-from .provider import AuthElement, Provider
+from .provider import PageElement, Provider
 
 log = setup_logging(__name__)
 
 
 class Multimedia(Provider):
     def __init__(self, locations: dict[str, Location]):
-        user_input = AuthElement(By.ID, "Login_SSO_UserName")
-        password_input = AuthElement(By.ID, "Login_SSO_Password")
+        user_input = PageElement(By.ID, "Login_SSO_UserName")
+        password_input = PageElement(By.ID, "Login_SSO_Password")
+        cookies_button = PageElement(By.ID, "cookiescript_accept")
         url = "https://ebok.multimedia.pl/panel-glowny.aspx"
         self._locations_map = locations
         keystore_service = self.__class__.__name__.lower()

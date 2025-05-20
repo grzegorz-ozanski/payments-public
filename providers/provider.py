@@ -39,7 +39,7 @@ def _get_caller(level: int = 3) -> str:
 
 
 @dataclass
-class AuthElement:
+class PageElement:
     by: str
     selector: str
 
@@ -69,7 +69,7 @@ class Provider:
     root_trace_dir = []
 
     def __init__(self, url: str, keystore_service: str, locations: tuple[Location, ...],
-                 user_input: AuthElement, password_input: AuthElement, logout_button: AuthElement | None = None,
+                 user_input: PageElement, password_input: PageElement, logout_button: PageElement | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         self._browser = None
         self.url = url
@@ -82,7 +82,7 @@ class Provider:
         self.password = Credential(keystore_service, 'password')
         self.trace_id = 0
         if not logout_button:
-            logout_button = AuthElement(
+            logout_button = PageElement(
                 By.XPATH,
                 # lowest element in the DOM tree containing 'Wyloguj' string
                 '//*[contains(string(), "Wyloguj") and not(.//*[contains(string(), "Wyloguj")])]'

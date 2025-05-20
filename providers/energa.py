@@ -4,15 +4,15 @@ from selenium.webdriver.common.by import By
 from browser import setup_logging
 from locations import Location
 from payments import Payment
-from .provider import AuthElement, Provider
+from .provider import PageElement, Provider
 
 log = setup_logging(__name__)
 
 
 class Energa(Provider):
     def __init__(self, *locations: Location):
-        user_input = AuthElement(By.ID, "email_login")
-        password_input = AuthElement(By.ID, "password")
+        user_input = PageElement(By.ID, "email_login")
+        password_input = PageElement(By.ID, "password")
         url = "https://24.energa.pl"
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input)

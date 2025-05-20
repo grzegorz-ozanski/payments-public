@@ -3,16 +3,16 @@ from selenium.webdriver.common.by import By
 from browser import setup_logging
 from locations import Location
 from payments import Payment
-from .provider import AuthElement, Provider
+from .provider import PageElement, Provider
 
 log = setup_logging(__name__)
 
 
 class Pewik(Provider):
     def __init__(self, *locations: Location):
-        user_input = AuthElement(By.ID, "username")
-        password_input = AuthElement(By.ID, "password")
-        logout_button = AuthElement(By.CLASS_NAME, 'btn-wyloguj')
+        user_input = PageElement(By.ID, "username")
+        password_input = PageElement(By.ID, "password")
+        logout_button = PageElement(By.CLASS_NAME, 'btn-wyloguj')
         url = "https://ebok.pewik.gdynia.pl/login"
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input, logout_button)

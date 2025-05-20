@@ -4,14 +4,14 @@ from selenium.webdriver.common.by import By
 
 from locations import Location
 from payments import Payment
-from .provider import AuthElement, Provider
+from .provider import PageElement, Provider
 
 
 class IOK(Provider):
     def __init__(self, due_day, url, keystore_service, log, locations: tuple[Location, ...]):
-        user_input = AuthElement(By.CSS_SELECTOR, "[aria-labelledby=login]")
-        password_input = AuthElement(By.CSS_SELECTOR, "[aria-labelledby=haslo]")
-        logout_button = AuthElement(By.CSS_SELECTOR, "button.wcag.bg.navTxtColor")
+        user_input = PageElement(By.CSS_SELECTOR, "[aria-labelledby=login]")
+        password_input = PageElement(By.CSS_SELECTOR, "[aria-labelledby=haslo]")
+        logout_button = PageElement(By.CSS_SELECTOR, "button.wcag.bg.navTxtColor")
         self.log = log
         self.timeout = 0.1
         today = date.today()

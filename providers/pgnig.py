@@ -4,15 +4,15 @@ from selenium.webdriver.common.by import By
 from browser import setup_logging
 from locations import Location
 from payments import Amount, Payment
-from .provider import AuthElement, Provider
+from .provider import PageElement, Provider
 
 log = setup_logging(__name__)
 
 
 class Pgnig(Provider):
     def __init__(self, *locations: Location):
-        user_input = AuthElement(By.NAME, "identificator")
-        password_input = AuthElement(By.NAME, "accessPin")
+        user_input = PageElement(By.NAME, "identificator")
+        password_input = PageElement(By.NAME, "accessPin")
         url = "https://ebok.pgnig.pl"
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input)
