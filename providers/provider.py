@@ -161,7 +161,7 @@ class Provider:
             input_password = self._browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
             username = self.username.get()
-            input_user.click()
+            self._browser.click_element_with_js(input_user)
             time.sleep(0.5)
             input_user.send_keys(username)
             self.save_trace_logs("username-input")
