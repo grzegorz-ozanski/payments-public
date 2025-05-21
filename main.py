@@ -48,8 +48,6 @@ def main():
     if not verbose:
         logging.disable(logging.CRITICAL)
 
-    browser = Browser(options)
-
     hodowlana = Location('Hodowlana')
     bryla = Location('Bryla')
     sezamowa = Location('Sezamowa')
@@ -65,7 +63,7 @@ def main():
     )
 
     payments = PaymentsManager(providers_list[args.provider if args.provider else ''])
-    payments.collect_payments(browser)
+    payments.collect_payments(Browser(options))
     payments.print_payments()
     if args.output:
         payments.export_payments(args.output)
