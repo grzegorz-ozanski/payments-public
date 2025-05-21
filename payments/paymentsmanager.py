@@ -38,8 +38,16 @@ class PaymentsManager:
         """
         Print payments for all providers
         """
+        max_len_provider = 0
+        max_len_amount = 0
+        max_len_location = 0
+
         for payment in self.payments:
-            payment.print()
+            max_len_provider = max(max_len_provider, len(payment.provider))
+            max_len_amount = max(max_len_amount, len(str(payment.amount)))
+            max_len_location = max(max_len_location, len(payment.location.name))
+        for payment in self.payments:
+            payment.print(padding=[max_len_provider, max_len_amount, max_len_location])
 
     def export_payments(self, filename: str) -> None:
         """

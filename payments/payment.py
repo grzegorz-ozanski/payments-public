@@ -35,6 +35,9 @@ class Amount:
         """
         return f'{self.whole},{self.decimal:02}'
 
+    def __format__(self, format_spec: str) -> str:
+        return format(str(self), format_spec)
+
     def __float__(self) -> float:
         """
         Converts amount to float
@@ -118,10 +121,16 @@ class Payment:
         """
         return self.amount is None or self.due_date is None or self.location is None
 
-    def print(self, stream: TextIO = None) -> None:
+    def print(self, stream: TextIO = None, padding: list | None = None) -> None:
         """
         Print the object
         :param stream: Stream to print to ('None' to print to stdout)
+        :param padding: fields padding list
         """
-        print(f'{self.provider + " " if self.provider else ""}'
-              f'{self.amount} {self.location.name} {self.due_date}', file=stream)
+        if padding is None:
+            padding = [0, 0, 0]
+        print(f'{self.provider or "": <{padding[0] + 1}}'
+              f'{self.amount: <{padding[1]}} '
+              f'{self.location.name: <{padding[2]}} '
+              f'{self.due_date}',
+              file=stream)
