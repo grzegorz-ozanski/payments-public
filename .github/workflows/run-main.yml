@@ -268,7 +268,7 @@ jobs:
         GH_EVENT: ${{ github.event_name }}
       run: |
         $src = "$env:GITHUB_WORKSPACE"
-        if ($env:GH_EVENT == 'workflow_dispatch') {
+        if ($env:GH_EVENT -eq 'workflow_dispatch') {
           $dst = "${env:WORKSPACE_DUMP_DIR}\${{ github.run_id }}"
         } else {
           $dst = "${env:WORKSPACE_DUMP_DIR}\last_workspace"
