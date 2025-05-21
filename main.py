@@ -63,7 +63,7 @@ def main():
         providers.Nordhome(bryla)
     )
 
-    payments = PaymentsManager(providers_list[args.provider if args.provider else 'energa'])
+    payments = PaymentsManager(providers_list[args.provider if args.provider else ''])
     output = payments.collect_payments(Browser(options))
     # payments.collect_fake_payments(r'.github\data\test_output.txt', hodowlana, bryla, sezamowa)
     print(output)
