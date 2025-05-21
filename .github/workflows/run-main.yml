@@ -26,8 +26,8 @@ env:
   MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
   REFERENCE_CONTENT: reference.txt
   REFERENCE_OUTPUT: .github/data/reference_output.txt
-  SCRIPT_OUTPUT: script_output.txt
-#  SCRIPT_OUTPUT: .github/data/test_output.txt
+#  SCRIPT_OUTPUT: script_output.txt
+  SCRIPT_OUTPUT: .github/data/test_output.txt
   STATUS_FILE: .github/status/last-status.txt
   STATUS_SCRIPT: .github/scripts/compare-status.ps1
 
