@@ -253,19 +253,30 @@ jobs:
           If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
 
     - name: "[SKIP REASON] Copy working directory skipped"
-      if: github.event.inputs.dump != 'true'
-      run: |
-        echo "::notice ::Skipping 'Copy working directory for inspection' step because 'github.event.inputs.dump != 'true''."
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.dump != 'true'
+      shell: pwsh
+      run: |-
+        $msg = "::notice ::Skipping 'Copy working directory for inspection' step because " + 
+               "'github.event_name == 'workflow_dispatch' && github.event.inputs.dump != 'true''."
+        echo $msg
 
     - name: Copy working directory for inspection
-      if: github.event.inputs.dump == 'true'
+      if: github.event_name != 'workflow_dispatch' || github.event.inputs.dump != 'false'
       shell: pwsh
       env:
         WORKSPACE_DUMP_DIR: ${{ runner.os == 'Windows' && 'c:/actions-runner/jobs' || '/tmp/actions-runner/jobs' }}
+        GH_EVENT: ${{ github.event_name }}
       run: |
         $src = "$env:GITHUB_WORKSPACE"
-        $dst = "${env:WORKSPACE_DUMP_DIR}\${{ github.run_id }}"
-        mkdir -p $dst 
+        if ($env:GH_EVENT == 'workflow_dispatch') {
+          $dst = "${env:WORKSPACE_DUMP_DIR}\${{ github.run_id }}"
+        } else {
+          $dst = "${env:WORKSPACE_DUMP_DIR}\last_workspace"
+          if (Test-Path $dst) {
+            Remove-Item -Path $dst -Recurse -Force
+          }
+        }
+        mkdir -p $dst
         Copy-Item -Path $src -Recurse -Destination $dst
 
     # 💾 Save current status
