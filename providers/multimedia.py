@@ -22,7 +22,6 @@ class Multimedia(Provider):
         keystore_service = self.__class__.__name__.lower()
         locations = cast(tuple[Location, ...], tuple(locations.values()))  # to satisfy static code analyzers
         today = date.today()
-        self.default_due_date = date(today.year, today.month, 20)
         self.logged_in = False
         super().__init__(url, keystore_service, locations, user_input, password_input,
                          cookies_button=cookies_button, pre_login_delay=1)
@@ -57,7 +56,7 @@ class Multimedia(Provider):
     def _read_payments(self):
         log.info("Getting payments...")
         sleep(0.1)
-        payments = [Payment(due_date=self.default_due_date, location=location, provider=self.name) for location in self.locations]
+        payments = [Payment(location=location, provider=self.name) for location in self.locations]
         invoices = self._browser.wait_for_elements(By.CLASS_NAME, "invoiceInfo")
         if invoices is None:
             return payments
