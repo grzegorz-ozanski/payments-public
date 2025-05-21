@@ -2,7 +2,6 @@
 Payments module
 """
 import re
-from typing import TextIO
 
 from browser import setup_logging
 from locations import Location
@@ -121,16 +120,14 @@ class Payment:
         """
         return self.amount is None or self.due_date is None or self.location is None
 
-    def print(self, stream: TextIO = None, padding: list | None = None) -> None:
+    def export(self, padding: list | None = None) -> str:
         """
-        Print the object
-        :param stream: Stream to print to ('None' to print to stdout)
+        Export to string
         :param padding: fields padding list
         """
         if padding is None:
             padding = [0, 0, 0]
-        print(f'{self.provider or "": <{padding[0] + 1}}'
-              f'{self.amount: <{padding[1]}} '
-              f'{self.location.name: <{padding[2]}} '
-              f'{self.due_date}',
-              file=stream)
+        return (f'{self.provider or "": <{padding[0] + 1}}'
+                f'{self.amount: <{padding[1]}} '
+                f'{self.location.name: <{padding[2]}} '
+                f'{self.due_date}\n')

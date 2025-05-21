@@ -4,6 +4,7 @@ Payments manager module
 from dataclasses import dataclass, field
 
 from browser import Browser
+from locations import Location
 from payments import Payment
 from providers.provider import Provider
 
@@ -26,17 +27,31 @@ class PaymentsManager:
     def __repr__(self) -> str:
         return '\n'.join(map(str, self.providers))
 
-    def collect_payments(self, browser: Browser) -> None:
+    def collect_payments(self, browser: Browser) -> str:
         """
-        Collect payments for all providers
+        Collect payments for all providers and return them as string
         """
         for provider in self.providers:
             self.payments += provider.get_payments(browser)
         browser.quit()
+        return self._payments_to_str()
 
-    def print_payments(self) -> None:
+    def collect_fake_payments(self, filename: str, *locations: Location) -> None:
         """
-        Print payments for all providers
+        Collect payments for all providers
+        """
+        with open(filename) as file:
+            for line in file.readlines():
+                provider, amount, location_name, due_date = line.strip().split(' ')
+                if due_date == '{{TODAY}}':
+                    due_date = 'today'
+                self.payments += [Payment(amount, due_date,
+                                          next(location for location in locations if location.name == location_name),
+                                          provider)]
+
+    def _payments_to_str(self) -> str:
+        """
+        Export all payments to string, adding padding
         """
         max_len_provider = 0
         max_len_amount = 0
@@ -46,14 +61,7 @@ class PaymentsManager:
             max_len_provider = max(max_len_provider, len(payment.provider))
             max_len_amount = max(max_len_amount, len(str(payment.amount)))
             max_len_location = max(max_len_location, len(payment.location.name))
+        retval = ''
         for payment in self.payments:
-            payment.print(padding=[max_len_provider, max_len_amount, max_len_location])
-
-    def export_payments(self, filename: str) -> None:
-        """
-        Write payments to file
-        :param filename: file name
-        """
-        with open(filename, 'w') as stream:
-            for payment in self.payments:
-                payment.print(stream)
+            retval += payment.export(padding=[max_len_provider, max_len_amount, max_len_location])
+        return retval[:-1]  # remove excessive newline

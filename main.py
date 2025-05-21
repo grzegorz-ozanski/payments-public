@@ -15,6 +15,7 @@ from providerslist import ProvidersList
 
 log = setup_logging(__name__)
 
+
 def parse_args() -> Namespace:
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('-v', '--verbose', default=False, action='store_true', help='verbose')
@@ -62,11 +63,13 @@ def main():
         providers.Nordhome(bryla)
     )
 
-    payments = PaymentsManager(providers_list[args.provider if args.provider else ''])
-    payments.collect_payments(Browser(options))
-    payments.print_payments()
+    payments = PaymentsManager(providers_list[args.provider if args.provider else 'energa'])
+    output = payments.collect_payments(Browser(options))
+    # payments.collect_fake_payments(r'.github\data\test_output.txt', hodowlana, bryla, sezamowa)
+    print(output)
     if args.output:
-        payments.export_payments(args.output)
+        with open(args.output, 'w', encoding="utf-8") as stream:
+            print(output, file=stream)
 
     end_time = datetime.datetime.now()
     print("Finished at %s" % end_time)
