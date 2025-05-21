@@ -96,14 +96,6 @@ jobs:
         path: browser
         token: ${{ secrets.BROWSER_REPO_TOKEN }}
 
-    - name: Download Chrome and Chromedriver from GitHub Release
-      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
-      run: |
-        gh release download ${env:CHROMEDRIVER_VERSION} `
-          --repo grzegorz-ozanski/chrome `
-          --pattern "${env:CHROMEDRIVER_VERSION}.zip"
-        Expand-Archive -Path "${env:CHROMEDRIVER_VERSION}.zip" -DestinationPath .
-
     - name: Prepare environment
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       shell: pwsh
