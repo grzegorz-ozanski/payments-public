@@ -48,7 +48,8 @@ function HtmlEncode {
               -replace '<', '&lt;' `
               -replace '>', '&gt;' `
               -replace '"', '&quot;' `
-              -replace "'", '&#39;'
+              -replace "'", '&#39;' `
+              -replace ' ', '&nbsp;'
     }
 }
 
