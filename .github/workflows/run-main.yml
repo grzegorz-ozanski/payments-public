@@ -4,7 +4,8 @@ on:
   push:
     branches: [ '*' ]
   schedule:
-    - cron: "5 0,6,12,18 * * *"  # 4 times a days
+    - cron: "5 0,6,12,18 * * *"  # Linux
+    - cron: "5 3 * * *"          # Windows
   workflow_dispatch:
     inputs:
       dump:
@@ -32,8 +33,16 @@ env:
   STATUS_SCRIPT: .github/scripts/compare-status.ps1
 
 jobs:
-  run-linux:
-    runs-on: [self-hosted, Linux]
+  run-script:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    # Determine if should be triggered
+    if: |
+      (matrix.os == 'ubuntu-latest' && (github.event_name != 'schedule' || github.event.schedule != '5 3 * * *')) ||
+      (matrix.os == 'windows-latest' && github.event.schedule == '5 3 * * *')
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
