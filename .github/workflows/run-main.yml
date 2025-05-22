@@ -42,7 +42,11 @@ env:
 
 jobs:
   run-payments:
-    runs-on: ${{ (github.event.schedule == '5 3 * * *') && 'windows-latest' || (github.event_name == 'workflow_dispatch' && github.event.inputs.target_os == 'windows') && 'windows-latest' || 'ubuntu-latest' }}
+    runs-on: ${{ 
+      (github.event.schedule == '5 3 * * *') && 'windows-latest' || 
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.target_os == 'windows') && 'windows-latest' 
+      || 'ubuntu-latest' 
+      }}
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
       contents: write
