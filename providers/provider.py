@@ -202,7 +202,8 @@ class Provider:
             payments = sorted(self._read_payments(), key=lambda value: value.location.key)
         except Exception as e:
             print(f'{e.__class__.__name__}:{str(e)}\n'f'Cannot get payments for service {self.name}!')
-            payments = [Payment(location=location, provider=self.name, invalid=True) for location in self.locations]
+            payments = [Payment(self.name, location, '<unknown>', '<unknown>')
+                        for location in self.locations]
             self.save_error_logs()
         finally:
             self.logout()

@@ -52,5 +52,5 @@ class Pgnig(Provider):
             payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(Amount(columns[3].text))
         payments = []
         for date, amount in payments_dict.items():
-            payments.append(Payment(str(amount), date, location, self.name))
-        return payments if payments else [Payment(location=location, provider=self.name)]
+            payments.append(Payment(self.name, location, date, amount))
+        return payments if payments else [Payment(self.name, location)]

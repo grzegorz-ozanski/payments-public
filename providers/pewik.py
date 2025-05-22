@@ -38,9 +38,9 @@ class Pewik(Provider):
             for item in balances:
                 columns = item.find_elements(By.TAG_NAME, 'td')
                 if len(columns) > 1:
-                    payments.append(Payment(columns[5].text, columns[3].text, location, self.name))
+                    payments.append(Payment(self.name, location, columns[3], columns[5]))
                 else:
-                    payments.append(Payment(location=location, provider=self.name))
+                    payments.append(Payment(self.name, location))
             locations_arrow = self._browser.find_element(By.CLASS_NAME, 'select2-arrow')
             self._browser.trace_click(locations_arrow)
             locations = self._browser.find_elements(By.CLASS_NAME, 'select2-result')

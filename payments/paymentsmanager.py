@@ -1,6 +1,4 @@
-"""
-Payments manager module
-"""
+"""Payments manager module"""
 from dataclasses import dataclass, field
 
 from browser import Browser
@@ -12,7 +10,7 @@ from providers.provider import Provider
 @dataclass
 class PaymentsManager:
     """
-    Payments manager
+    Collect and export all payments as alligned text
     """
     providers: list[Provider] | Provider
     payments: list[Payment] = field(default_factory=list)
@@ -45,9 +43,10 @@ class PaymentsManager:
                 provider, amount, location_name, due_date = line.strip().split(' ')
                 if due_date == '{{TODAY}}':
                     due_date = 'today'
-                self.payments += [Payment(amount, due_date,
+                self.payments += [Payment(provider,
                                           next(location for location in locations if location.name == location_name),
-                                          provider)]
+                                          due_date,
+                                          amount)]
 
     def _payments_to_str(self) -> str:
         """
@@ -61,7 +60,5 @@ class PaymentsManager:
             max_len_provider = max(max_len_provider, len(payment.provider))
             max_len_amount = max(max_len_amount, len(str(payment.amount)))
             max_len_location = max(max_len_location, len(payment.location.name))
-        retval = ''
-        for payment in self.payments:
-            retval += payment.export(padding=[max_len_provider, max_len_amount, max_len_location])
-        return retval[:-1]  # remove excessive newline
+        return '\n'.join([payment.to_padded_string([max_len_provider, max_len_amount, max_len_location])
+                          for payment in self.payments])

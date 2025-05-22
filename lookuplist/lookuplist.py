@@ -28,7 +28,7 @@ class LookupList(list):
 
     def __getitem__(self, key: object) -> Any:
         if isinstance(key, str):
-            if key == '' or key =='*':
+            if key == '' or key == '*':
                 return self
             try:
                 return next(item for item in self if getattr(item, '__class__', None).__name__.lower() == key.lower())
@@ -37,7 +37,7 @@ class LookupList(list):
         if isinstance(key, (int, slice)):
             return super().__getitem__(key)
         raise TypeError(f"Invalid key type: {type(key)}")
-    
+
     def __contains__(self, key: object) -> bool:
         if isinstance(key, str):
             return any(getattr(item, '__class__', None).__name__.lower() == key.lower() for item in self)

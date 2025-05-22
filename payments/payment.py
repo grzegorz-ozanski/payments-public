@@ -1,7 +1,9 @@
-"""
-Payments module
-"""
+"""Payment related classes (Payment, Amount and DueDate)"""
 import re
+from functools import total_ordering
+from typing import TypeVar
+
+from selenium.webdriver.remote.webelement import WebElement
 
 from browser import setup_logging
 from locations import Location
@@ -11,55 +13,60 @@ log = setup_logging(__name__)
 from dateutil import parser
 from datetime import date, timedelta
 
+AmountT = TypeVar("AmountT", str, float, WebElement)
+
+DueDateT = TypeVar("DueDateT", str, date, WebElement, None)
+
 
 class Amount:
     """
-    Payment amount
+        Represents payment amount either as float or decimal value with comma (',') decimal separator
     """
 
-    def __init__(self, value: str) -> None:
+    def __init__(self, value: AmountT) -> None:
         """
         Constructor
-        :param value: amount value
+        :param value: payment value
         """
+        if isinstance(value, WebElement):
+            value = value.text
+        if isinstance(value, float):
+            value = str(value)
         separator = '|'
         amount = re.sub(r'[^\d,.-]', '', value)
         amount = re.sub(r'[,.]', separator, amount)
         self.whole, self.decimal = amount.split(separator) if separator in amount else (amount, '0')
 
-    def __str__(self) -> str:
-        """
-        Converts amount to string
-        :return: string value
-        """
+    def __repr__(self) -> str:
         return f'{self.whole},{self.decimal:02}'
 
     def __format__(self, format_spec: str) -> str:
         return format(str(self), format_spec)
 
     def __float__(self) -> float:
-        """
-        Converts amount to float
-        :return: float value
-        """
         return float(f'{self.whole}.{self.decimal}')
 
 
+@total_ordering
 class DueDate:
     """
-    Payment due date
+    Date object handling special values ('today', 'tomorrow', 'yesterday' in English and Polist)
     """
     today = ['dzisiaj', 'today']
     tomorrow = ['jutro', 'tomorrow']
     yesterday = ['wczoraj', 'yesterday']
 
-    def __init__(self, value: date | str) -> None:
+    def __init__(self, value: DueDateT) -> None:
         """
         Constuctor
         :param value: either date object or its string representation
         """
+        if value is None:
+            value = 'today'
+        if isinstance(value, WebElement):
+            value = value.text
         if isinstance(value, str):
-            if any(item in value for item in self.today):
+            if value == '' or any(item in value for item in self.today):
                 value = date.today()
             elif any(item in value for item in self.tomorrow):
                 value = date.today() + timedelta(days=1)
@@ -69,25 +76,31 @@ class DueDate:
                 value = parser.parse(value, dayfirst=True)
         self.value = value
 
-    def __str__(self) -> str:
-        """
-        Converts date to string
-        :return: string representation of the date
-        """
+    def __repr__(self) -> str:
         return self.value.strftime('%d-%m-%Y')
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, DueDate):
+            return NotImplemented
+        return self.value == other.value
+
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, DueDate):
+            return NotImplemented
+        return self.value < other.value
 
 class Payment:
     """
-    Single payment
+    Payment class. Stores either valid payment properly acquired from a provider's page
+    (with amount and due_date containing actual values),
+    or an invalid one otherwise (amount and due_date set to '<unknown>')
     """
 
     def __init__(self,
-                 amount: str = '0,0',
-                 due_date: date | str = 'today',
-                 location: Location | None = None,
-                 provider: str = '',
-                 invalid: bool = False) -> None:
+                 provider: str,
+                 location: Location | None,
+                 due_date: DueDateT = None,
+                 amount: AmountT = '0,0') -> None:
         """
         Payment constructor
 
@@ -95,39 +108,29 @@ class Payment:
         :param due_date: due date
         :param location: location
         :param provider: provider
-        :param invalid: 'True' to indicate that payment data could not be retrieved from a provider
         """
-        if invalid:
-            log.debug(f'Creating payment object: {provider=}, <unknown>, {location=}, <unknown>')
-        else:
-            log.debug(f'Creating payment object: {provider=}, {amount=}, {location=}, {due_date=}')
-        if invalid:
-            self.amount = '<unknown>'
-            self.due_date = '<unknown>'
-        else:
-            self.amount = Amount(amount)
-            self.due_date = DueDate(due_date)
+
+        self.amount = Amount(amount)
+        self.due_date = DueDate(due_date)
         self.location = location
         self.provider = provider
+        log.debug(f'Created payment object:'
+                  f'{provider=}, {location=}, '
+                  f'{due_date=}, {amount=}, '
+                  f'{self.due_date=}, {self.amount=}')
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f'{self.location.name} {self.due_date} {self.amount}'
 
-    def is_empty(self) -> bool:
-        """
-        Check if object is empty
-        :return: 'True' if object is empty, 'False' otherwise
-        """
-        return self.amount is None or self.due_date is None or self.location is None
-
-    def export(self, padding: list | None = None) -> str:
+    def to_padded_string(self, padding: list | None = None) -> str:
         """
         Export to string
         :param padding: fields padding list
         """
-        if padding is None:
-            padding = [0, 0, 0]
+        if padding is None or len(padding) < 3:
+            padding = padding or []
+            padding += [0] * (3 - len(padding))
         return (f'{self.provider or "": <{padding[0] + 1}}'
                 f'{self.amount: <{padding[1]}} '
                 f'{self.location.name: <{padding[2]}} '
-                f'{self.due_date}\n')
+                f'{self.due_date}')

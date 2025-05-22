@@ -29,10 +29,10 @@ class Opec(Provider):
         due_date = None
         for invoice in invoices:
             columns = invoice.find_elements(By.TAG_NAME, 'td')
-            value = Amount(columns[7].text) if columns[7].text else Amount(columns[5].text)
+            value = Amount(columns[7]) if columns[7].text else Amount(columns[5])
             if columns[6].text == "Zapłacony" and float(value) > 0:
                 continue
-            date = DueDate(columns[4].text).value
+            date = DueDate(columns[4].text)
             if (due_date is None or date < due_date) and float(value) > 0:
                 due_date = date
-        return [Payment(amount, due_date if due_date else 'today', self.locations[0], self.name)]
+        return [Payment(self.name, self.locations[0], due_date, amount)]

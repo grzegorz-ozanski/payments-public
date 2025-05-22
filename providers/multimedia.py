@@ -56,7 +56,7 @@ class Multimedia(Provider):
     def _read_payments(self):
         log.info("Getting payments...")
         sleep(0.1)
-        payments = [Payment(location=location, provider=self.name) for location in self.locations]
+        payments = [Payment(self.name, location) for location in self.locations]
         invoices = self._browser.wait_for_elements(By.CLASS_NAME, "invoiceInfo")
         if invoices is None:
             return payments
@@ -66,5 +66,5 @@ class Multimedia(Provider):
             log.debug("Got amount '%s'" % amount)
             location = self._get_location(amount)
             index = payments.index(next(payment for payment in payments if payment.location == location))
-            payments[index] = Payment(amount, due_date, location, self.name)
+            payments[index] = Payment(self.name, location, due_date, amount)
         return payments
