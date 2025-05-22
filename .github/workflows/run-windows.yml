@@ -1,62 +1,43 @@
-name: Run payments
+name: Run payments on Linux
 
 on:
-  workflow_call:
+  schedule:
+    - cron: "5 3 * * *"          # Windows
+  workflow_dispatch:
     inputs:
-      target_os:
-        required: true
-        type: string
       dump:
+        description: 'Dump workspace after job?'
         required: false
-        type: string
         default: 'false'
-    secrets:
-      CHROME_REPO_TOKEN:
-        required: true
-      BROWSER_REPO_TOKEN:
-        required: true
-      CREDENTIALS:
-        required: true
-      GMAIL_USERNAME:
-        required: true
-      GMAIL_APP_PASSWORD:
-        required: true
-      GMAIL_EMAIL_ADDRESS:
-        required: true
+env:
+  ACTUAL_CONTENT: actual.txt
+  BROWSER_LOG_FILENAME: trace.log
+  BROWSER_LOG_TO_CONSOLE: False
+  CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
+  COMPARE_SCRIPT: .github/scripts/compare-output.ps1
+  DIFF_FILE: diff.txt
+  GH_ACTIONS_EMAIL: "github-actions@github.com"
+  GH_ACTIONS_USER_NAME: "github-actions"
+  GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
+  LIBRARY: .github/scripts/functions.ps1
+  LOCAL_ARTIFACTS_DIR: Z:/github-runner/artifacts
+  MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
+  REFERENCE_CONTENT: reference.txt
+  REFERENCE_OUTPUT: .github/data/reference_output.txt
+  SCRIPT_OUTPUT: script_output.txt
+#  SCRIPT_OUTPUT: .github/data/test_output.txt
+  STATUS_FILE: .github/status/last-status.txt
+  STATUS_SCRIPT: .github/scripts/compare-status.ps1
 
 jobs:
-  run-payments:
-    runs-on: ${{ inputs.target_os == 'windows' && '[self-hosted, Windows]' || '[self-hosted, Linux]' }}
-    env:
-      ACTUAL_CONTENT: actual.txt
-      BROWSER_LOG_FILENAME: trace.log
-      BROWSER_LOG_TO_CONSOLE: False
-      CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
-      COMPARE_SCRIPT: .github/scripts/compare-output.ps1
-      DIFF_FILE: diff.txt
-      GH_ACTIONS_EMAIL: "github-actions@github.com"
-      GH_ACTIONS_USER_NAME: "github-actions"
-      GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
-      LIBRARY: .github/scripts/functions.ps1
-      LOCAL_ARTIFACTS_DIR: Z:/github-runner/artifacts
-      MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
-      REFERENCE_CONTENT: reference.txt
-      REFERENCE_OUTPUT: .github/data/reference_output.txt
-      SCRIPT_OUTPUT: script_output.txt
-      STATUS_FILE: .github/status/last-status.txt
-      STATUS_SCRIPT: .github/scripts/compare-status.ps1
+  run-linux:
+    runs-on: [self-hosted, Linux]
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
       contents: write
 
     steps:
-    - name: Show OS and context
-      run: |
-        echo "Target OS: ${{ inputs.target_os }}"
-        echo "Event: ${{ github.event_name }}"
-        echo "Schedule: ${{ github.event.schedule }}"
-
     - name: Checkout current repo
       uses: actions/checkout@v4
 
