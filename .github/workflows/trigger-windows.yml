@@ -1,8 +1,6 @@
 name: Run on Windows
 
 on:
-  push:
-    branches: [ '*' ]
   schedule:
     - cron: "5 3 * * *"          # Windows
   workflow_dispatch:
