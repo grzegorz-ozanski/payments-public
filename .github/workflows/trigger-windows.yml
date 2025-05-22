@@ -1,0 +1,21 @@
+name: Run on Windows
+
+on:
+  push:
+    branches: [ '*' ]
+  schedule:
+    - cron: "5 3 * * *"          # Windows
+  workflow_dispatch:
+    inputs:
+      dump:
+        description: 'Dump workspace after job'
+        required: false
+        default: 'false'
+
+jobs:
+  trigger:
+    uses: ./.github/workflows/run-main.yml
+    with:
+      target_os: windows
+      dump: ${{ inputs.dump }}
+    secrets: inherit
