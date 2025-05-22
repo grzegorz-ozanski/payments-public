@@ -11,7 +11,7 @@ import providers
 from browser import Browser, BrowserOptions, setup_logging
 from locations import Location
 from payments import PaymentsManager
-from providerslist import ProvidersList
+from lookuplist import LookupList
 
 log = setup_logging(__name__)
 
@@ -53,7 +53,7 @@ def main():
     bryla = Location('Bryla')
     sezamowa = Location('Sezamowa')
 
-    providers_list = ProvidersList(
+    providers_list = LookupList(
         providers.Pgnig(sezamowa),
         providers.Energa(hodowlana, bryla, sezamowa),
         providers.Actum(hodowlana),
