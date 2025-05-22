@@ -11,8 +11,6 @@ on:
         type: string
         default: 'false'
     secrets:
-      GITHUB_TOKEN:
-        required: true
       CHROME_REPO_TOKEN:
         required: true
       BROWSER_REPO_TOKEN:
