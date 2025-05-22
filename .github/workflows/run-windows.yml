@@ -297,6 +297,7 @@ jobs:
         } else {
           Write-Host "Committing modified '${env:STATUS_FILE}' file."
           git commit -m "Update last run status [skip ci]"
+          git pull --rebase
           git push
         }
 
