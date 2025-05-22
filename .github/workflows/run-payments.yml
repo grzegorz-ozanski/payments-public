@@ -26,7 +26,7 @@ on:
 
 jobs:
   run-payments:
-    runs-on: ${{ inputs.target_os == 'windows' && '["self-hosted", "Windows"]' || '["self-hosted", "Linux"]' }}
+    runs-on: ${{ inputs.target_os == 'windows' && '[self-hosted, Windows]' || '[self-hosted, Linux]' }}
     env:
       ACTUAL_CONTENT: actual.txt
       BROWSER_LOG_FILENAME: trace.log
