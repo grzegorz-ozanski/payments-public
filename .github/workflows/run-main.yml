@@ -8,8 +8,16 @@ on:
     - cron: "5 3 * * *"          # Windows
   workflow_dispatch:
     inputs:
+      target_os:
+        description: 'Which OS to run on'
+        required: true
+        default: 'linux'
+        type: choice
+        options:
+        - linux
+        - windows
       dump:
-        description: 'Dump workspace after job?'
+        description: 'Dump workspace after job'
         required: false
         default: 'false'
 env:
@@ -33,17 +41,12 @@ env:
   STATUS_SCRIPT: .github/scripts/compare-status.ps1
 
 jobs:
-  run-script:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-
-    # Determine if should be triggered
-    if:
-      (runner.os == 'Linux' && (github.event_name != 'schedule' || github.event.schedule != '5 3 * * *')) ||
-      (runner.os == 'Windows' && github.event.schedule == '5 3 * * *')
-
+  run-payments:
+    runs-on: ${{ 
+      (github.event.schedule == '0 9 * * *') && 'windows-latest' || 
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.target_os == 'windows') && 'windows-latest' ||
+      'ubuntu-latest'
+    }}
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
       contents: write
