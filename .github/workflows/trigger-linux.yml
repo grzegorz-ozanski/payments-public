@@ -14,7 +14,7 @@ on:
 
 jobs:
   trigger:
-    uses: ./.github/workflows/run-main.yml
+    uses: ./.github/workflows/run-payments.yml
     with:
       target_os: linux
       dump: ${{ inputs.dump }}
