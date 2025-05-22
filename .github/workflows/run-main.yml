@@ -32,8 +32,8 @@ env:
   STATUS_SCRIPT: .github/scripts/compare-status.ps1
 
 jobs:
-  run-windows:
-    runs-on: [self-hosted, Windows]
+  run-linux:
+    runs-on: [self-hosted, Linux]
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
