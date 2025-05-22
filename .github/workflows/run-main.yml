@@ -40,9 +40,9 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     # Determine if should be triggered
-    if: |-
-      (matrix.os == 'ubuntu-latest' && (github.event_name != 'schedule' || github.event.schedule != '5 3 * * *')) ||
-      (matrix.os == 'windows-latest' && github.event.schedule == '5 3 * * *')
+    if:
+      (runner.os == 'Linux' && (github.event_name != 'schedule' || github.event.schedule != '5 3 * * *')) ||
+      (runner.os == 'Windows' && github.event.schedule == '5 3 * * *')
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
