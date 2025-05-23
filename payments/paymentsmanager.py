@@ -2,7 +2,6 @@
 from dataclasses import dataclass, field
 
 from browser import Browser
-from locations import Location
 from payments import Payment
 from providers.provider import Provider
 
@@ -34,7 +33,7 @@ class PaymentsManager:
         browser.quit()
         return self._payments_to_str()
 
-    def collect_fake_payments(self, filename: str, *locations: Location) -> None:
+    def collect_fake_payments(self, filename: str) -> None:
         """
         Collect payments for all providers
         """
@@ -44,7 +43,7 @@ class PaymentsManager:
                 if due_date == '{{TODAY}}':
                     due_date = 'today'
                 self.payments += [Payment(provider,
-                                          next(location for location in locations if location.name == location_name),
+                                          location_name,
                                           due_date,
                                           amount)]
 
@@ -59,6 +58,6 @@ class PaymentsManager:
         for payment in self.payments:
             max_len_provider = max(max_len_provider, len(payment.provider))
             max_len_amount = max(max_len_amount, len(str(payment.amount)))
-            max_len_location = max(max_len_location, len(payment.location.name))
+            max_len_location = max(max_len_location, len(payment.location))
         return '\n'.join([payment.to_padded_string([max_len_provider, max_len_amount, max_len_location])
                           for payment in self.payments])

@@ -2,7 +2,6 @@ from time import sleep
 
 from selenium.webdriver.common.by import By
 from browser import setup_logging
-from locations import Location
 from payments import Amount, DueDate, Payment
 from .provider import PageElement, Provider
 
@@ -10,14 +9,14 @@ log = setup_logging(__name__)
 
 
 class Opec(Provider):
-    def __init__(self, *locations: Location):
+    def __init__(self, *locations: str):
         user_input = PageElement(By.ID, "_58_login")
         password_input = PageElement(By.ID, "_58_password")
         url = "https://ebok.opecgdy.com.pl/home"
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input)
 
-    def _read_payments(self):
+    def _read_payments(self) -> list[Payment]:
         self.save_trace_logs("pre-payments-click")
         self._browser.find_element(By.XPATH, '//a[text()="Płatności"]').click()
         self.save_trace_logs("pre-documents-click")

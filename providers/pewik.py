@@ -1,7 +1,6 @@
 from selenium.webdriver.common.by import By
 
 from browser import setup_logging
-from locations import Location
 from payments import Payment
 from .provider import PageElement, Provider
 
@@ -9,7 +8,7 @@ log = setup_logging(__name__)
 
 
 class Pewik(Provider):
-    def __init__(self, *locations: Location):
+    def __init__(self, *locations: str):
         user_input = PageElement(By.ID, "username")
         password_input = PageElement(By.ID, "password")
         logout_button = PageElement(By.CLASS_NAME, 'btn-wyloguj')
@@ -17,7 +16,7 @@ class Pewik(Provider):
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input, logout_button)
 
-    def _read_payments(self):
+    def _read_payments(self) -> list[Payment]:
         payments = []
         next_id = 1
         cookies_panel = self._browser.find_element(By.CLASS_NAME, 'panel-cookies')

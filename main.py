@@ -9,7 +9,6 @@ from str_to_bool import str_to_bool
 
 import providers
 from browser import Browser, BrowserOptions, setup_logging
-from locations import Location
 from payments import PaymentsManager
 from lookuplist import LookupList
 
@@ -27,7 +26,7 @@ def parse_args() -> Namespace:
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     begin_time = datetime.datetime.now()
     print(f"Starting at {datetime.datetime.now()}")
 
@@ -49,9 +48,9 @@ def main():
     if not verbose:
         logging.disable(logging.CRITICAL)
 
-    hodowlana = Location('Hodowlana')
-    bryla = Location('Bryla')
-    sezamowa = Location('Sezamowa')
+    hodowlana = 'Hodowlana'
+    bryla = 'Bryla'
+    sezamowa = 'Sezamowa'
 
     providers_list = LookupList(
         providers.Pgnig(sezamowa),
@@ -65,7 +64,7 @@ def main():
 
     payments = PaymentsManager(providers_list[args.provider if args.provider else ''])
     output = payments.collect_payments(Browser(options))
-    # payments.collect_fake_payments(r'.github\data\test_output.txt', hodowlana, bryla, sezamowa)
+    # payments.collect_fake_payments(r'.github\data\test_output.txt')
     print(output)
     if args.output:
         with open(args.output, 'w', encoding="utf-8") as stream:

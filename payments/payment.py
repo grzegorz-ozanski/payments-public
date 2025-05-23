@@ -6,7 +6,6 @@ from typing import TypeVar
 from selenium.webdriver.remote.webelement import WebElement
 
 from browser import setup_logging
-from locations import Location
 
 log = setup_logging(__name__)
 
@@ -96,7 +95,7 @@ class Payment:
 
     def __init__(self,
                  provider: str,
-                 location: Location | None,
+                 location: str,
                  due_date: DueDateT | None = '',
                  amount: AmountT | None = '0,0') -> None:
         """
@@ -118,7 +117,7 @@ class Payment:
                   f'{self.due_date=}, {self.amount=}')
 
     def __repr__(self) -> str:
-        return f'{self.location.name} {self.due_date} {self.amount}'
+        return f'{self.location} {self.due_date} {self.amount}'
 
     def to_padded_string(self, padding: list | None = None) -> str:
         """
@@ -130,5 +129,5 @@ class Payment:
             padding += [0] * (3 - len(padding))
         return (f'{self.provider or "": <{padding[0] + 1}}'
                 f'{self.amount: <{padding[1]}} '
-                f'{self.location.name: <{padding[2]}} '
+                f'{self.location: <{padding[2]}} '
                 f'{self.due_date}')

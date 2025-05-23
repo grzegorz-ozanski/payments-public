@@ -2,7 +2,6 @@ from selenium.common.exceptions import ElementNotInteractableException, NoSuchEl
 from selenium.webdriver.common.by import By
 
 from browser import setup_logging
-from locations import Location
 from payments import Payment
 from .provider import PageElement, Provider
 
@@ -10,14 +9,14 @@ log = setup_logging(__name__)
 
 
 class Energa(Provider):
-    def __init__(self, *locations: Location):
+    def __init__(self, *locations: str):
         user_input = PageElement(By.ID, "email_login")
         password_input = PageElement(By.ID, "password")
         url = "https://24.energa.pl"
         keystore_service = self.__class__.__name__.lower()
         super().__init__(url, keystore_service, locations, user_input, password_input)
 
-    def logout(self):
+    def logout(self) -> None:
         try:
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             self._browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
@@ -33,7 +32,7 @@ class Energa(Provider):
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
 
-    def _read_payments(self):
+    def _read_payments(self) -> list[Payment]:
         log.info("Getting payments...")
         self._browser.wait_for_page_load_completed()
         self.save_trace_logs("accounts-list")

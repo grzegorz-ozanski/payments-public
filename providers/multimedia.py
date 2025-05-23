@@ -3,8 +3,7 @@ from typing import cast
 
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging
-from locations import Location
+from browser import setup_logging, Browser
 from payments import Payment
 from .provider import PageElement, Provider
 
@@ -12,9 +11,9 @@ log = setup_logging(__name__)
 
 
 class Multimedia(Provider):
-    def __init__(self, locations: dict[str, Location]):
+    def __init__(self, locations: dict[str, str]):
         self._locations_map = locations
-        locations = cast(tuple[Location, ...], tuple(locations.values()))  # to satisfy static code analyzers
+        locations = cast(tuple[str, ...], tuple(locations.values()))  # to satisfy static code analyzers
         super().__init__("https://ebok.multimedia.pl/panel-glowny.aspx",
                          self.__class__.__name__.lower(),
                          locations,
@@ -30,7 +29,7 @@ class Multimedia(Provider):
         except StopIteration:
             raise Exception(f"Cannot find suitable location for payment '{amount}'!")
 
-    def login(self, browser, load=True):
+    def login(self, browser: Browser, load: bool=True) -> None:
         wait = 5
         num_retries = 10
         for i in range(num_retries):
@@ -51,7 +50,7 @@ class Multimedia(Provider):
             reason = "CAPTCHA required"
         raise RuntimeError(f"Couldn't log in in {num_retries} attempts! Reason: {reason}")
 
-    def _read_payments(self):
+    def _read_payments(self) -> list[Payment]:
         log.info("Getting payments...")
         sleep(0.1)
         payments = [Payment(self.name, location) for location in self.locations]

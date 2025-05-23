@@ -12,7 +12,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
 from browser import setup_logging, Browser
-from locations import Location
 from payments import Payment
 
 log = setup_logging(__name__)
@@ -69,7 +68,7 @@ class Credential:
 class Provider:
     root_trace_dir = []
 
-    def __init__(self, url: str, keystore_service: str, locations: tuple[Location, ...],
+    def __init__(self, url: str, keystore_service: str, locations: tuple[str, ...],
                  user_input: PageElement, password_input: PageElement,
                  logout_button: PageElement | None = None, cookies_button: PageElement | None = None,
                  recaptcha_token: PageElement | None = None, recaptcha_token_prefix: str | None = None,
@@ -79,6 +78,7 @@ class Provider:
         self.name = keystore_service
         self.keystore_service = keystore_service
         self.locations = locations
+        self._location_order = {location: i for i, location in enumerate(self.locations)}
         self.user_input = user_input
         self.password_input = password_input
         self.username = Credential(keystore_service, 'username')
@@ -102,11 +102,11 @@ class Provider:
 
     def _get_location(self, name_string: str):
         try:
-            return next(location for location in self.locations if location.name in name_string)
+            return next(location for location in self.locations if location in name_string)
         except StopIteration:
             log.error(f"Cannot find a valid location for service {self.name}!\n"
                       f"Location name provided: '{name_string}'.\n"
-                      f"Valid service locations: {','.join([location.name for location in self.locations])}")
+                      f"Valid service locations: {','.join(self.locations)}")
             raise
 
     @classmethod
@@ -141,14 +141,15 @@ class Provider:
                 lambda d: d.find_element(self.recaptcha_token.by, self.recaptcha_token.selector).get_attribute(
                     "value").startswith(self.recaptcha_token_prefix))
 
-    def save_error_logs(self):
+    def save_error_logs(self) -> None:
         self._save_logs(path="error")
 
-    def save_trace_logs(self, suffix: str = ''):
+    def save_trace_logs(self, suffix: str = '') -> None:
         if self._browser.save_trace_logs:
             self._save_logs(suffix, "trace")
 
-    def input(self, control: WebElement, text: str) -> None:
+    @staticmethod
+    def input(control: WebElement, text: str) -> None:
         time.sleep(0.5)
         if control.get_attribute('value') != '':
             control.send_keys(Keys.CONTROL, 'a')
@@ -156,7 +157,7 @@ class Provider:
             control.send_keys(Keys.DELETE)
         control.send_keys(text)
 
-    def login(self, browser, load=True):
+    def login(self, browser: Browser, load: bool = True) -> None:
         self._browser = browser
         self._browser.error_log_dir = "error"
         try:
@@ -209,7 +210,8 @@ class Provider:
             print(f'Processing service {self.name}...')
             self._browser = browser
             self.login(self._browser)
-            payments = sorted(self._read_payments(), key=lambda value: value.location.key)
+            payments = sorted(self._read_payments(),
+                              key=lambda value: self._location_order.get(value.location, float('inf')))
         except Exception as e:
             print(f'{e.__class__.__name__}:{str(e)}\n'f'Cannot get payments for service {self.name}!')
             payments = [Payment(self.name, location, None, None)
@@ -219,7 +221,7 @@ class Provider:
             self.logout()
         return payments
 
-    def logout(self):
+    def logout(self) -> None:
         try:
             self.save_trace_logs("pre-logout")
             self._browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
