@@ -43,12 +43,14 @@ class Multimedia(Provider):
             if self._browser.wait_for_element(By.CSS_SELECTOR, 'span.logonFailureText', 2):
                 log.debug(f'Login failed, retrying after {wait} seconds')
                 self.save_trace_logs(f'failed-login-attempt-{i}')
+            elif self._browser.find_elements(By.ID, 'formPassword') and self._browser.find_elements(By.ID, 'formConfirmation'):
+                raise RuntimeError(f"Couldn't login, reason: password change required")
             else:
                 return
         reason = "unknown"
         if self._browser.find_elements(By.ID, "formCaptcha"):
             reason = "CAPTCHA required"
-        raise RuntimeError(f"Couldn't log in in {num_retries} attempts! Reason: {reason}")
+        raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
 
     def _read_payments(self) -> list[Payment]:
         log.info("Getting payments...")
