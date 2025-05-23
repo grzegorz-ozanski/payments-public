@@ -52,7 +52,7 @@ class Energa(Provider):
         for location_id in range(len(locations_list)):
             print(f'...location {location_id + 1} of {len(locations_list)}')
             log.debug("Opening location page")
-            self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
+            self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
             self.save_trace_logs("pre-location-click")
             self._browser.click_element_with_js(locations_list[location_id])
             button = self._browser.wait_for_element(By.CSS_SELECTOR, 'button.button.primary', 1)
@@ -65,6 +65,7 @@ class Energa(Provider):
             self.save_trace_logs("pre-invoices-click")
             self._browser.find_element(By.XPATH, '//a[contains(text(), "Faktury")]').click()
             self._browser.wait_for_page_inactive()
+            self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
             invoices = self._browser.find_elements(
                 By.XPATH,
                 '//span[contains(text(), "Termin płatności")]/../..')
