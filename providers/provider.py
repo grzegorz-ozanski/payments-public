@@ -7,9 +7,9 @@ from os import environ
 
 import keyring
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
-from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webelement import WebElement
 
 from browser import setup_logging, Browser
 from locations import Location
@@ -135,6 +135,12 @@ class Provider:
         with open(f"{filename}.html", "w", encoding="utf-8") as page_source_file:
             page_source_file.write(self._browser.page_source)
 
+    def _wait_for_reCAPTCHA_v3_token(self) -> None:
+        if self.recaptcha_token and self.recaptcha_token_prefix:
+            self._browser.wait_for_condition(
+                lambda d: d.find_element(self.recaptcha_token.by, self.recaptcha_token.selector).get_attribute(
+                    "value").startswith(self.recaptcha_token_prefix))
+
     def save_error_logs(self):
         self._save_logs(path="error")
 
@@ -162,9 +168,7 @@ class Provider:
                         self._browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
                     self._browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
             log.info("Logging into service...")
-            if self.recaptcha_token and self.recaptcha_token_prefix:
-                self._browser.wait_for_reCAPTCHA_v3_token(
-                    self.recaptcha_token.by, self.recaptcha_token.selector, self.recaptcha_token_prefix)
+            self._wait_for_reCAPTCHA_v3_token()
             self.save_trace_logs("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
             input_user = self._browser.wait_for_element(self.user_input.by, self.user_input.selector)
