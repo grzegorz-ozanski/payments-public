@@ -20,10 +20,10 @@ class Energa(Provider):
         try:
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             self._browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
-            self.save_trace_logs("pre-logout-click")
+            self._weblogger.trace("pre-logout-click")
             self._browser.find_element(By.XPATH, '//span[contains(text(), "Wyloguj się")]').click()
         except (AttributeError, ElementNotInteractableException) as e:
-            self.save_error_logs()
+            self._weblogger.error()
             if type(e) is AttributeError:
                 if 'move_to requires a WebElement' in str(e):
                     log.debug("Cannot click logout button. Are we even logged in?")
@@ -35,14 +35,14 @@ class Energa(Provider):
     def _read_payments(self) -> list[Payment]:
         log.info("Getting payments...")
         self._browser.wait_for_page_load_completed()
-        self.save_trace_logs("accounts-list")
+        self._weblogger.trace("accounts-list")
         locations_list = self._browser.wait_for_elements(By.CSS_SELECTOR, 'label')
         if not locations_list:
             button = self._browser.wait_for_element(By.CSS_SELECTOR, 'button.button,secondary')
             if button:
                 self._browser.trace_click(button)
                 self._browser.wait_for_page_load_completed()
-                self.save_trace_logs("accounts-list-after-overlay")
+                self._weblogger.trace("accounts-list-after-overlay")
                 locations_list = self._browser.wait_for_elements(By.CSS_SELECTOR, 'label')
             else:
                 raise RuntimeError('Locations list is empty and no overlay was found!')
@@ -52,7 +52,7 @@ class Energa(Provider):
             print(f'...location {location_id + 1} of {len(locations_list)}')
             log.debug("Opening location page")
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
-            self.save_trace_logs("pre-location-click")
+            self._weblogger.trace("pre-location-click")
             self._browser.click_element_with_js(locations_list[location_id])
             button = self._browser.wait_for_element(By.CSS_SELECTOR, 'button.button.primary', 1)
             if button and button.text != "Zapłać teraz":
@@ -61,14 +61,14 @@ class Energa(Provider):
                 self._browser.wait_for_element(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm', 30).text)
             log.debug("Getting payment")
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
-            self.save_trace_logs("pre-invoices-click")
+            self._weblogger.trace("pre-invoices-click")
             self._browser.find_element(By.XPATH, '//a[contains(text(), "Faktury")]').click()
             self._browser.wait_for_page_inactive()
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup__wrapper')
             invoices = self._browser.find_elements(
                 By.XPATH,
                 '//span[contains(text(), "Termin płatności")]/../..')
-            self.save_trace_logs("duedate-check")
+            self._weblogger.trace("duedate-check")
             if invoices:
                 due_date = invoices[0].text.split('\n')[1]
             else:

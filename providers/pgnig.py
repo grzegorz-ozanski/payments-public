@@ -23,7 +23,7 @@ class Pgnig(Provider):
         invoices_menu = self._browser.find_element(By.XPATH,
                                                   '//*[@class="menu-element" and normalize-space()="Faktury"]')
         log.info("Opening invoices menu...")
-        self.save_trace_logs("pre-invoices-click")
+        self._weblogger.trace("pre-invoices-click")
         invoices_menu.click()
         log.debug("Waiting for page load completed...")
         self._browser.wait_for_page_inactive()

@@ -42,7 +42,7 @@ class Multimedia(Provider):
             self._browser.wait_for_page_inactive(2)
             if self._browser.wait_for_element(By.CSS_SELECTOR, 'span.logonFailureText', 2):
                 log.debug(f'Login failed, retrying after {wait} seconds')
-                self.save_trace_logs(f'failed-login-attempt-{i}')
+                self._weblogger.trace(f'failed-login-attempt-{i}')
             elif self._browser.find_elements(By.ID, 'formPassword') and self._browser.find_elements(By.ID, 'formConfirmation'):
                 raise RuntimeError(f"Couldn't login, reason: password change required")
             else:

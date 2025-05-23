@@ -17,9 +17,9 @@ class Opec(Provider):
         super().__init__(url, keystore_service, locations, user_input, password_input)
 
     def _read_payments(self) -> list[Payment]:
-        self.save_trace_logs("pre-payments-click")
+        self._weblogger.trace("pre-payments-click")
         self._browser.find_element(By.XPATH, '//a[text()="Płatności"]').click()
-        self.save_trace_logs("pre-documents-click")
+        self._weblogger.trace("pre-documents-click")
         self._browser.find_element(By.XPATH, '//a[contains(string(), "Dokumenty")]').click()
         self._browser.wait_for_network_inactive()
         sleep(1)

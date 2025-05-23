@@ -1,8 +1,5 @@
-import inspect
-import os
 import time
 from dataclasses import dataclass
-from datetime import datetime
 from os import environ
 
 import keyring
@@ -11,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import setup_logging, Browser
+from browser import setup_logging, Browser, TraceLogger
 from payments import Payment
 
 log = setup_logging(__name__)
@@ -21,21 +18,6 @@ def _sleep_with_message(amount: int, message: str):
     if amount:
         log.debug(f"{message}: sleeping {amount} seconds")
         time.sleep(amount)
-
-
-def _get_caller(level: int = 3) -> str:
-    # get callers name of the parent
-    frame = inspect.stack()[level].frame
-
-    # get method name
-    method_name = inspect.stack()[level].function
-
-    # get class name if available
-    class_name = None
-    if 'self' in frame.f_locals:
-        class_name = frame.f_locals['self'].__class__.__name__
-
-    return f'{class_name}_{method_name}'
 
 
 @dataclass
@@ -66,8 +48,6 @@ class Credential:
 
 
 class Provider:
-    root_trace_dir = []
-
     def __init__(self, url: str, keystore_service: str, locations: tuple[str, ...],
                  user_input: PageElement, password_input: PageElement,
                  logout_button: PageElement | None = None, cookies_button: PageElement | None = None,
@@ -83,7 +63,7 @@ class Provider:
         self.password_input = password_input
         self.username = Credential(keystore_service, 'username')
         self.password = Credential(keystore_service, 'password')
-        self.trace_id = 0
+        self._weblogger = TraceLogger(self.name)
         if not logout_button:
             logout_button = PageElement(
                 By.XPATH,
@@ -109,44 +89,11 @@ class Provider:
                       f"Valid service locations: {','.join(self.locations)}")
             raise
 
-    @classmethod
-    def _path_already_created(cls, path: str) -> bool:
-        if path in cls.root_trace_dir:
-            return True
-        cls.root_trace_dir.append(path)
-        return False
-
-    def _save_logs(self, suffix: str = '', path: str = '') -> None:
-        self.trace_id += 1
-        timestamp = datetime.today().isoformat(sep=' ', timespec='milliseconds').replace(':', '-')
-        filename = f"{self.trace_id:0>3} {timestamp} {_get_caller()}{' ' + suffix if suffix else ''}"
-        if path:
-            if not self._path_already_created(path):
-                if os.path.exists(path):
-                    last_number = max([int(d.split('.')[1]) if '.' in d else 0
-                                       for d in os.listdir()
-                                       if d.startswith(f"{path}") and os.path.isdir(d)], default=0)
-                    os.rename(path, f'{path}.{last_number + 1:>03}')
-            if path != "error":
-                path = os.path.join(path, self.name)
-            os.makedirs(path, exist_ok=True)
-            filename = os.path.join(path, filename)
-        self._browser.save_screenshot(f"{filename}.png")
-        with open(f"{filename}.html", "w", encoding="utf-8") as page_source_file:
-            page_source_file.write(self._browser.page_source)
-
     def _wait_for_reCAPTCHA_v3_token(self) -> None:
         if self.recaptcha_token and self.recaptcha_token_prefix:
             self._browser.wait_for_condition(
                 lambda d: d.find_element(self.recaptcha_token.by, self.recaptcha_token.selector).get_attribute(
                     "value").startswith(self.recaptcha_token_prefix))
-
-    def save_error_logs(self) -> None:
-        self._save_logs(path="error")
-
-    def save_trace_logs(self, suffix: str = '') -> None:
-        if self._browser.save_trace_logs:
-            self._save_logs(suffix, "trace")
 
     @staticmethod
     def input(control: WebElement, text: str) -> None:
@@ -159,6 +106,7 @@ class Provider:
 
     def login(self, browser: Browser, load: bool = True) -> None:
         self._browser = browser
+        self._weblogger.browser = browser
         self._browser.error_log_dir = "error"
         try:
             if load:
@@ -169,12 +117,12 @@ class Provider:
                         self._browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
                     self._browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
             log.info("Logging into service...")
-            self.save_trace_logs("pre-login")
+            self._weblogger.trace("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
             input_user = self._browser.wait_for_element(self.user_input.by, self.user_input.selector)
             if input_user is None:
                 print(f"No user input {self.user_input} found!")
-                self.save_error_logs()
+                self._weblogger.error()
             assert input_user is not None
             input_password = self._browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
@@ -182,7 +130,7 @@ class Provider:
             self._browser.click_element_with_js(input_user)
             time.sleep(0.5)
             self.input(input_user, username)
-            self.save_trace_logs("username-input")
+            self._weblogger.trace("username-input")
             password = self.password.get()
             if password is not None:
                 input_user.send_keys(Keys.TAB)
@@ -190,16 +138,16 @@ class Provider:
                 time.sleep(0.5)
             else:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{username}'!")
-            self.save_trace_logs("password-input")
+            self._weblogger.trace("password-input")
             self._wait_for_reCAPTCHA_v3_token()
             input_password.send_keys(Keys.ENTER)
             self._browser.wait_for_page_load_completed()
             _sleep_with_message(self.post_login_delay, "Post-login")
-            self.save_trace_logs("post-login")
+            self._weblogger.trace("post-login")
             log.info("Done.")
         except Exception as e:
             log.info("Cannot login into service: %s" % e)
-            self.save_error_logs()
+            self._weblogger.error()
             raise
 
     def _read_payments(self) -> list[Payment]:
@@ -216,18 +164,18 @@ class Provider:
             print(f'{e.__class__.__name__}:{str(e)}\n'f'Cannot get payments for service {self.name}!')
             payments = [Payment(self.name, location, None, None)
                         for location in self.locations]
-            self.save_error_logs()
+            self._weblogger.error()
         finally:
             self.logout()
         return payments
 
     def logout(self) -> None:
         try:
-            self.save_trace_logs("pre-logout")
+            self._weblogger.trace("pre-logout")
             self._browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
             self._browser.wait_for_page_inactive(2)
-            self.save_trace_logs("post-logout")
+            self._weblogger.trace("post-logout")
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
         except WebDriverException:
-            self.save_error_logs()
+            self._weblogger.error()
