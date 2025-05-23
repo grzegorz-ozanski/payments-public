@@ -15,7 +15,7 @@ from datetime import date, timedelta
 
 AmountT = TypeVar("AmountT", str, float, WebElement)
 
-DueDateT = TypeVar("DueDateT", str, date, WebElement, None)
+DueDateT = TypeVar("DueDateT", str, date, WebElement)
 
 
 class Amount:
@@ -61,8 +61,6 @@ class DueDate:
         Constuctor
         :param value: either date object or its string representation
         """
-        if value is None:
-            value = 'today'
         if isinstance(value, WebElement):
             value = value.text
         if isinstance(value, str):
@@ -99,8 +97,8 @@ class Payment:
     def __init__(self,
                  provider: str,
                  location: Location | None,
-                 due_date: DueDateT = None,
-                 amount: AmountT = '0,0') -> None:
+                 due_date: DueDateT | None = '',
+                 amount: AmountT | None = '0,0') -> None:
         """
         Payment constructor
 
@@ -110,8 +108,8 @@ class Payment:
         :param provider: provider
         """
 
-        self.amount = Amount(amount)
-        self.due_date = DueDate(due_date)
+        self.amount = Amount(amount) if amount is not None else '<unknown>'
+        self.due_date = DueDate(due_date) if due_date is not None else '<unknown>'
         self.location = location
         self.provider = provider
         log.debug(f'Created payment object:'

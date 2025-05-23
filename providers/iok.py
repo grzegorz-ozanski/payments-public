@@ -26,9 +26,6 @@ class IOK(Provider):
         if amount is None or due_date is None:
             return [Payment(self.name, self.locations[0], self.due_date)]
         due_date = due_date.find_elements(By.TAG_NAME, 'span')
-        if due_date:
-            due_date = due_date[-1]
-        else:
-            due_date = 'today'
+        due_date = due_date[-1] if due_date else 'today'
         self.log.debug(f"Got amount '{amount.text}' of location '{self.locations[0].name}'")
         return [Payment(self.name, self.locations[0], due_date, amount)]

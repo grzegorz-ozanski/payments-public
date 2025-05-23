@@ -26,13 +26,13 @@ class Opec(Provider):
         sleep(1)
         invoices = self._browser.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
         amount = self._browser.find_element(By.NAME, "value").text
-        due_date = None
+        due_date = ''
         for invoice in invoices:
             columns = invoice.find_elements(By.TAG_NAME, 'td')
             value = Amount(columns[7]) if columns[7].text else Amount(columns[5])
             if columns[6].text == "Zapłacony" and float(value) > 0:
                 continue
             date = DueDate(columns[4].text)
-            if (due_date is None or date < due_date) and float(value) > 0:
+            if (not due_date or date < due_date) and float(value) > 0:
                 due_date = date
         return [Payment(self.name, self.locations[0], due_date, amount)]
