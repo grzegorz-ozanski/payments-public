@@ -168,7 +168,6 @@ class Provider:
                         self._browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
                     self._browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
             log.info("Logging into service...")
-            self._wait_for_reCAPTCHA_v3_token()
             self.save_trace_logs("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
             input_user = self._browser.wait_for_element(self.user_input.by, self.user_input.selector)
@@ -191,6 +190,7 @@ class Provider:
             else:
                 raise Exception(f"No valid password found for service '{self.keystore_service}', user '{username}'!")
             self.save_trace_logs("password-input")
+            self._wait_for_reCAPTCHA_v3_token()
             input_password.send_keys(Keys.ENTER)
             self._browser.wait_for_page_load_completed()
             _sleep_with_message(self.post_login_delay, "Post-login")
