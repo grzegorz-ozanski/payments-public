@@ -72,6 +72,7 @@ class Provider:
     def __init__(self, url: str, keystore_service: str, locations: tuple[Location, ...],
                  user_input: PageElement, password_input: PageElement,
                  logout_button: PageElement | None = None, cookies_button: PageElement | None = None,
+                 recaptcha_token: PageElement | None = None, recaptcha_token_prefix: str | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         self._browser = None
         self.url = url
@@ -91,6 +92,8 @@ class Provider:
             )
         self.logout_button = logout_button
         self.cookies_button = cookies_button
+        self.recaptcha_token = recaptcha_token
+        self.recaptcha_token_prefix = recaptcha_token_prefix
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
 
@@ -159,6 +162,9 @@ class Provider:
                         self._browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
                     self._browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
             log.info("Logging into service...")
+            if self.recaptcha_token and self.recaptcha_token_prefix:
+                self._browser.wait_for_reCAPTCHA_v3_token(
+                    self.recaptcha_token.by, self.recaptcha_token.selector, self.recaptcha_token_prefix)
             self.save_trace_logs("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
             input_user = self._browser.wait_for_element(self.user_input.by, self.user_input.selector)
@@ -202,7 +208,7 @@ class Provider:
             payments = sorted(self._read_payments(), key=lambda value: value.location.key)
         except Exception as e:
             print(f'{e.__class__.__name__}:{str(e)}\n'f'Cannot get payments for service {self.name}!')
-            payments = [Payment(self.name, location, '<unknown>', '<unknown>')
+            payments = [Payment(self.name, location, None, None)
                         for location in self.locations]
             self.save_error_logs()
         finally:

@@ -14,17 +14,16 @@ log = setup_logging(__name__)
 
 class Multimedia(Provider):
     def __init__(self, locations: dict[str, Location]):
-        user_input = PageElement(By.ID, "Login_SSO_UserName")
-        password_input = PageElement(By.ID, "Login_SSO_Password")
-        cookies_button = PageElement(By.ID, "cookiescript_accept")
-        url = "https://ebok.multimedia.pl/panel-glowny.aspx"
         self._locations_map = locations
-        keystore_service = self.__class__.__name__.lower()
         locations = cast(tuple[Location, ...], tuple(locations.values()))  # to satisfy static code analyzers
-        today = date.today()
-        self.logged_in = False
-        super().__init__(url, keystore_service, locations, user_input, password_input,
-                         cookies_button=cookies_button, pre_login_delay=1)
+        super().__init__("https://ebok.multimedia.pl/panel-glowny.aspx",
+                         self.__class__.__name__.lower(),
+                         locations,
+                         PageElement(By.ID, "Login_SSO_UserName"),
+                         PageElement(By.ID, "Login_SSO_Password"),
+                         cookies_button=PageElement(By.ID, "cookiescript_accept"),
+                         recaptcha_token=PageElement("HFreCaptchaToken", "03AFc"),
+                         pre_login_delay=1)
 
     def _get_location(self, amount: str):
         try:
