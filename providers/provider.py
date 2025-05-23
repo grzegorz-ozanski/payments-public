@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import setup_logging, Browser, TraceLogger
+from browser import setup_logging, Browser, WebLogger
 from payments import Payment
 
 log = setup_logging(__name__)
@@ -63,7 +63,7 @@ class Provider:
         self.password_input = password_input
         self.username = Credential(keystore_service, 'username')
         self.password = Credential(keystore_service, 'password')
-        self._weblogger = TraceLogger(self.name)
+        self._weblogger = WebLogger(self.name)
         if not logout_button:
             logout_button = PageElement(
                 By.XPATH,
