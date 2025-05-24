@@ -1,3 +1,6 @@
+"""
+    Energa (power supply) provider module
+"""
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.common.by import By
 
@@ -9,7 +12,35 @@ log = setup_logging(__name__)
 
 
 class Energa(Provider):
+    """
+    Energa is a provider integration class.
+
+    This class provides functionality to interact with the Energa platform for tasks such as logging out and
+    reading payment information associated with various locations. It extends the base `Provider` class and
+    utilizes specific web elements and browser actions to achieve its purpose.
+
+    :ivar user_input: The web element for user email input on the login page.
+    :type user_input: PageElement
+    :ivar password_input: The web element for password input on the login page.
+    :type password_input: PageElement
+    :ivar url: The base URL for Energa's platform.
+    :type url: str
+    :ivar keystore_service: The name of the keystore service derived from the class name.
+    :type keystore_service: str
+    """
     def __init__(self, *locations: str):
+        """
+        Initializes an instance of the derived class with specific configurations
+        including user input fields, a service URL, and keystore service properties.
+        This constructor takes a variable number of location arguments to configure
+        the instance properly.
+
+        :param locations: A list of strings specifying the geographical or logical
+                          locations relevant for the object. The locations help in
+                          determining configurations or behaviors specific to the
+                          designated regions.
+        :type locations: str
+        """
         user_input = PageElement(By.ID, "email_login")
         password_input = PageElement(By.ID, "password")
         url = "https://24.energa.pl"
@@ -17,6 +48,20 @@ class Energa(Provider):
         super().__init__(url, keystore_service, locations, user_input, password_input)
 
     def logout(self) -> None:
+        """
+        Logs out the user from the application by interacting with the browser and UI
+        elements. This involves waiting for certain elements to disappear, navigating
+        to a dropdown menu, and clicking the logout button. Handles exceptions related
+        to interaction with the browser elements.
+
+        :raises AttributeError: If the browser state is inconsistent or if the required
+            WebElement for interaction is missing.
+        :raises ElementNotInteractableException: If a target element is not interactable
+            during interaction attempts.
+        :raises NoSuchElementException: If the logout button or relevant elements are
+            not found in the current browser context.
+        :return: None
+        """
         try:
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, 'div.popup.center')
             self._browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
@@ -33,6 +78,19 @@ class Energa(Provider):
             log.debug("Cannot click logout button. Are we even logged in?")
 
     def _read_payments(self) -> list[Payment]:
+        """
+        Retrieves a list of payments from the user's account.
+
+        This function interacts with a browser instance to navigate through account locations,
+        retrieve payment data, including location, due date, and amount, and returns a list of
+        payments. It ensures that all necessary intermediate UI elements (e.g., overlays,
+        popups) are handled correctly and traces the process using a weblogger.
+
+        :raises RuntimeError: If no locations are available and no alternate overlay is found.
+
+        :return: A list of Payment objects containing location, due date, and amount details.
+        :rtype: list[Payment]
+        """
         log.info("Getting payments...")
         self._browser.wait_for_page_load_completed()
         self._weblogger.trace("accounts-list")

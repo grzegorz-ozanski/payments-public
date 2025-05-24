@@ -1,3 +1,6 @@
+"""
+    Payments module
+"""
 from .payment import Amount, DueDate, Payment
 from .paymentsmanager import PaymentsManager
 

@@ -1,3 +1,6 @@
+"""
+    Main application entry point
+"""
 import argparse
 import datetime
 import logging
@@ -16,17 +19,38 @@ log = setup_logging(__name__)
 
 
 def parse_args() -> Namespace:
+    """
+    Parses command-line arguments and returns a Namespace object containing
+    the parsed arguments and their values. The parser provides options for
+    verbosity, headless mode, trace logging, provider selection, and output
+    file specification, among others. This function is designed to be
+    flexible and robust for handling various runtime configurations.
+
+    :raises SystemExit: If the command-line arguments are invalid or the
+        `-h`/`--help` flag is provided.
+    :return: A Namespace object containing parsed arguments and their values.
+    :rtype: Namespace
+    """
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-v', '--verbose', default=False, action='store_true', help='verbose')
-    parser.add_argument('-l', '--headless', default=None, type=str_to_bool, help='headless browser')
-    parser.add_argument('-t', '--trace', default=False, action='store_true', help='trace logs')
-    parser.add_argument('-p', '--provider', help='single provider')
-    parser.add_argument('-o', '--output', help='output file')
+    parser.add_argument('-v', '--verbose', default=False, action='store_true', help='Enable verbose mode')
+    parser.add_argument('-l', '--headless', default=None, type=str_to_bool, help='Toggle headless browser')
+    parser.add_argument('-t', '--trace', default=False, action='store_true', help='Save trace logs')
+    parser.add_argument('-p', '--provider', help='Run for single provider only')
+    parser.add_argument('-o', '--output', help='Store retrieved payments in output file')
 
     return parser.parse_args()
 
 
 def main() -> None:
+    """
+    This function serves as the main entry point for the application. It initializes
+    the runtime environment, parses command-line arguments, configures logging and
+    debugging settings, processes payment collections via specified providers, and
+    outputs the results to either the console or a file if an output file is specified.
+    The execution is tracked for timing and provides feedback throughout its workflow.
+
+    :return: None
+    """
     begin_time = datetime.datetime.now()
     print(f"Starting at {datetime.datetime.now()}")
 

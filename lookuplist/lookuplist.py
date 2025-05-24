@@ -1,3 +1,6 @@
+"""
+    Lookup list class
+"""
 from typing import Any, overload, Union
 
 
