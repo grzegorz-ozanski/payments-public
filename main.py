@@ -12,31 +12,41 @@ from str_to_bool import str_to_bool
 
 import providers
 from browser import Browser, BrowserOptions, setup_logging
-from payments import PaymentsManager
 from lookuplist import LookupList
+from payments import PaymentsManager
 
 log = setup_logging(__name__)
+
+
+def is_debugger_active() -> bool:
+    return sys.gettrace() is not None or "VSCODE_DEBUGPY_ADAPTER_ENDPOINTS" in os.environ
 
 
 def parse_args() -> Namespace:
     """
     Parses command-line arguments and returns a Namespace object containing
-    the parsed arguments and their values. The parser provides options for
-    verbosity, headless mode, trace logging, provider selection, and output
-    file specification, among others. This function is designed to be
-    flexible and robust for handling various runtime configurations.
-
-    :raises SystemExit: If the command-line arguments are invalid or the
-        `-h`/`--help` flag is provided.
-    :return: A Namespace object containing parsed arguments and their values.
-    :rtype: Namespace
+    the parsed arguments and their values.
     """
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-v', '--verbose', default=False, action='store_true', help='Enable verbose mode')
-    parser.add_argument('-l', '--headless', default=None, type=str_to_bool, help='Toggle headless browser')
-    parser.add_argument('-t', '--trace', default=False, action='store_true', help='Save trace logs')
-    parser.add_argument('-p', '--provider', help='Run for single provider only')
-    parser.add_argument('-o', '--output', help='Store retrieved payments in output file')
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Automatically collects payment information from supported providers' web portals "
+            "using browser automation (Selenium). Supports headless mode, trace logging, "
+            "and output to file."
+        ),
+        epilog=f"Available providers: {', '.join(providers.__all__)}"
+    )
+
+    parser.add_argument('-v', '--verbose', default=False, action='store_true',
+                        help='Enable verbose mode (show debug logs)')
+    parser.add_argument('-l', '--headless', default=None, type=str_to_bool,
+                        help='Toggle headless browser mode (default: auto)')
+    parser.add_argument('-t', '--trace', default=False, action='store_true',
+                        help='Enable trace logging for browser actions')
+    parser.add_argument('-p', '--provider',
+                        help='Run for single provider only (name must match one from the list)')
+    parser.add_argument('-o', '--output',
+                        help='Write retrieved payments to output file (UTF-8)')
 
     return parser.parse_args()
 
@@ -56,7 +66,7 @@ def main() -> None:
 
     args = parse_args()
     log.debug(f'Called with arguments: {args}')
-    running_under_debugger = sys.gettrace() is not None or "VSCODE_DEBUGPY_ADAPTER_ENDPOINTS" in os.environ
+    running_under_debugger = is_debugger_active()
 
     # If -v/--verbose argument was provided, use it to toggle verbosity;
     # otherwise, be turn verbosity on when running under the debugger, and off when otherwise
@@ -72,6 +82,9 @@ def main() -> None:
     if not verbose:
         logging.disable(logging.CRITICAL)
 
+    if args.trace and not verbose:
+        print("ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console")
+
     hodowlana = 'Hodowlana'
     bryla = 'Bryla'
     sezamowa = 'Sezamowa'
@@ -86,8 +99,9 @@ def main() -> None:
         providers.Nordhome(bryla)
     )
 
-    payments = PaymentsManager(providers_list[args.provider if args.provider else ''])
-    output = payments.collect_payments(Browser(options))
+    payments = PaymentsManager(providers_list[args.provider.lower() or ''])
+    payments.collect_payments(Browser(options))
+    output = payments.to_string()
     # payments.collect_fake_payments(r'.github\data\test_output.txt')
     print(output)
     if args.output:

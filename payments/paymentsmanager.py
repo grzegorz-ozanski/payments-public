@@ -24,14 +24,15 @@ class PaymentsManager:
     def __repr__(self) -> str:
         return '\n'.join(map(str, self.providers))
 
-    def collect_payments(self, browser: Browser) -> str:
+    def collect_payments(self, browser: Browser) -> None:
         """
         Collect payments for all providers and return them as string
+        :param browser: Browser instance
+        :return:
         """
         for provider in self.providers:
             self.payments += provider.get_payments(browser)
         browser.quit()
-        return self._payments_to_str()
 
     def collect_fake_payments(self, filename: str) -> None:
         """
@@ -47,7 +48,7 @@ class PaymentsManager:
                                           due_date,
                                           amount)]
 
-    def _payments_to_str(self) -> str:
+    def to_string(self) -> str:
         """
         Export all payments to string, adding padding
         """
