@@ -39,8 +39,8 @@ class Opec(Provider):
         user_input = PageElement(By.ID, "_58_login")
         password_input = PageElement(By.ID, "_58_password")
         url = "https://ebok.opecgdy.com.pl/home"
-        keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, locations, user_input, password_input)
+        name = self.__class__.__name__.lower()
+        super().__init__(url, name, locations, user_input, password_input)
 
     def _read_payments(self) -> list[Payment]:
         """

@@ -40,8 +40,9 @@ class Multimedia(Provider):
         """
         self._locations_map = locations
         locations = cast(tuple[str, ...], tuple(locations.values()))  # to satisfy static code analyzers
+        name = self.__class__.__name__.lower()
         super().__init__("https://ebok.multimedia.pl/panel-glowny.aspx",
-                         self.__class__.__name__.lower(),
+                         name,
                          locations,
                          PageElement(By.ID, "Login_SSO_UserName"),
                          PageElement(By.ID, "Login_SSO_Password"),

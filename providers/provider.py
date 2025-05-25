@@ -134,8 +134,6 @@ class Provider:
     :type url: str
     :ivar name: Provider name.
     :type name: str
-    :ivar keystore_service: Name of the keystore service which stores service credentials.
-    :type keystore_service: str
     :ivar locations: List of the names of the locations for the service.
     :type locations: tuple[str, ...]
     :ivar user_input: Input element for the username.
@@ -159,7 +157,7 @@ class Provider:
     :ivar post_login_delay: Delay in seconds after the login process completes.
     :type post_login_delay: int
     """
-    def __init__(self, url: str, keystore_service: str, locations: tuple[str, ...],
+    def __init__(self, url: str, name: str, locations: tuple[str, ...],
                  user_input: PageElement, password_input: PageElement,
                  logout_button: PageElement | None = None, cookies_button: PageElement | None = None,
                  recaptcha_token: PageElement | None = None, recaptcha_token_prefix: str | None = None,
@@ -173,9 +171,8 @@ class Provider:
 
         :param url: The URL of the web application to interact with.
         :type url: str
-        :param keystore_service: The identifier to retrieve credential information from a
-            keystore service.
-        :type keystore_service: str
+        :param name: Provider name.
+        :type name: str
         :param locations: A tuple of location identifiers specifying areas of interaction or
             navigation in the web application.
         :type locations: tuple[str, ...]
@@ -204,14 +201,13 @@ class Provider:
         """
         self._browser = None
         self.url = url
-        self.name = keystore_service
-        self.keystore_service = keystore_service
+        self.name = name
         self.locations = locations
         self._location_order = {location: i for i, location in enumerate(self.locations)}
         self.user_input = user_input
         self.password_input = password_input
-        self.username = Credential(keystore_service, 'username')
-        self.password = Credential(keystore_service, 'password')
+        self.username = Credential(name, 'username')
+        self.password = Credential(name, 'password')
         self._weblogger = WebLogger(self.name)
         if not logout_button:
             logout_button = PageElement(
@@ -333,7 +329,7 @@ class Provider:
                 self.input(input_password, password)
                 time.sleep(0.5)
             else:
-                raise Exception(f"No valid password found for service '{self.keystore_service}', user '{username}'!")
+                raise Exception(f"No valid password found for service '{self.name}', user '{username}'!")
             self._weblogger.trace("password-input")
             self._wait_for_reCAPTCHA_v3_token()
             input_password.send_keys(Keys.ENTER)

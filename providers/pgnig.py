@@ -43,8 +43,8 @@ class Pgnig(Provider):
         user_input = PageElement(By.NAME, "identificator")
         password_input = PageElement(By.NAME, "accessPin")
         url = "https://ebok.pgnig.pl"
-        keystore_service = self.__class__.__name__.lower()
-        super().__init__(url, keystore_service, locations, user_input, password_input)
+        name = self.__class__.__name__.lower()
+        super().__init__(url, name, locations, user_input, password_input)
 
     def _read_payments(self) -> list[Payment]:
         """

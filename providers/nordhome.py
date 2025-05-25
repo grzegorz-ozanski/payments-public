@@ -27,5 +27,5 @@ class Nordhome(IOK):
         :type location: str
         """
         url = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
-        keystore_service = self.__class__.__name__.lower()
-        super().__init__(10, url, keystore_service, log, location)
+        name = self.__class__.__name__.lower()
+        super().__init__(10, url, name, log, location)

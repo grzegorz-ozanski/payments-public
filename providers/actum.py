@@ -31,5 +31,5 @@ class Actum(IOK):
         :type location: str
         """
         url = "https://iok.actum.pl/InetObsKontr/LoginPage"
-        keystore_service = self.__class__.__name__.lower()
-        super().__init__(20, url, keystore_service, log, location)
+        name = self.__class__.__name__.lower()
+        super().__init__(20, url, name, log, location)

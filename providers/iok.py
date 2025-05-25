@@ -24,7 +24,7 @@ class IOK(Provider):
     :ivar timeout: Timeout duration in seconds for waiting for elements to load on the page.
     :type timeout: float
     """
-    def __init__(self, due_day, url, keystore_service, log, location: str):
+    def __init__(self, due_day, url, name, log, location: str):
         """
         Initialize the class with the provided parameters.
 
@@ -35,7 +35,7 @@ class IOK(Provider):
         :param due_day: The day of the current month when the task is due. Must be a valid
             day of the month.
         :param url: The URL that the system will interact with for data operations.
-        :param keystore_service: Service object responsible for managing secure key storage.
+        :param name: Service object responsible for managing secure key storage.
         :param log: Logger instance used for logging system events and messages.
         :param location: The geographic or operational location associated with the object.
         """
@@ -46,7 +46,7 @@ class IOK(Provider):
         self.timeout = 0.1
         today = date.today()
         self.due_date = date(today.year, today.month, due_day)
-        super().__init__(url, keystore_service, (location,), user_input, password_input, logout_button)
+        super().__init__(url, name, (location,), user_input, password_input, logout_button)
 
     def _read_payments(self) -> list[Payment]:
         """
