@@ -51,9 +51,9 @@ class DueDate:
     """
     Date object handling special values ('today', 'tomorrow', 'yesterday' in English and Polist)
     """
-    today = ['dzisiaj', 'today']
-    tomorrow = ['jutro', 'tomorrow']
-    yesterday = ['wczoraj', 'yesterday']
+    _today = ['dzisiaj', 'today']
+    _tomorrow = ['jutro', 'tomorrow']
+    _yesterday = ['wczoraj', 'yesterday']
 
     def __init__(self, value: DueDateT) -> None:
         """
@@ -63,11 +63,11 @@ class DueDate:
         if isinstance(value, WebElement):
             value = value.text
         if isinstance(value, str):
-            if value == '' or any(item in value for item in self.today):
+            if value == '' or any(item in value for item in self._today):
                 value = date.today()
-            elif any(item in value for item in self.tomorrow):
+            elif any(item in value for item in self._tomorrow):
                 value = date.today() + timedelta(days=1)
-            elif any(item in value for item in self.yesterday):
+            elif any(item in value for item in self._yesterday):
                 value = date.today() + timedelta(days=-1)
             else:
                 value = parser.parse(value, dayfirst=True)
@@ -85,6 +85,17 @@ class DueDate:
         if not isinstance(other, DueDate):
             return NotImplemented
         return self.value < other.value
+
+    @classmethod
+    @property
+    def today(cls) -> str:
+        """
+        Returns a magic string allowing to create a DueDate object with today's date.
+
+        :return: The current day's date
+        :rtype: str
+        """
+        return cls._today[0]
 
 class Payment:
     """
