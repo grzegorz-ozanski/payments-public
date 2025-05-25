@@ -43,7 +43,7 @@ def parse_args() -> Namespace:
                         help='Toggle headless browser mode (default: auto)')
     parser.add_argument('-t', '--trace', default=False, action='store_true',
                         help='Enable trace logging for browser actions')
-    parser.add_argument('-p', '--provider',
+    parser.add_argument('-p', '--provider', default='',
                         help='Run for single provider only (name must match one from the list)')
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')

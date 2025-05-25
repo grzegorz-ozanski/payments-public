@@ -1,6 +1,7 @@
 """
-    Nordhome estate manager provider module
+    Nordhome estate manager provider.
 """
+
 from browser import setup_logging
 from .iok import IOK
 
@@ -8,23 +9,13 @@ log = setup_logging(__name__)
 
 
 class Nordhome(IOK):
-    """
-    Represents the Nordhome subclass inheriting from IOK.
+    """Nordhome provider for estate management, based on the IOK system."""
 
-    This class is specifically designed to be used with the IOK system and
-    initializes the necessary attributes for the Nordhome instance. It constructs
-    with parameters related to configuration like URL, keystore service name,
-    log, and location, and passes them to the parent class via super.
-
-    """
     def __init__(self, location: str):
         """
-        Initializes the class with specified location and initializes the parent class
-        with additional parameters.
+        Initialize Nordhome provider with given location.
 
-        :param location: The geographical or logical location to be used by
-            the object initialization.
-        :type location: str
+        :param location: Location name for this provider instance.
         """
         url = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
         name = self.__class__.__name__.lower()

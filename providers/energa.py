@@ -59,7 +59,7 @@ class Energa(Provider):
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
 
-    def _read_payments(self) -> list[Payment]:
+    def _fetch_payments(self) -> list[Payment]:
         """
         Read and return payment data for all user locations.
         """

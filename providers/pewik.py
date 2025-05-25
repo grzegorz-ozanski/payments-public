@@ -45,7 +45,7 @@ class Pewik(Provider):
         name = self.__class__.__name__.lower()
         super().__init__(url, name, locations, user_input, password_input, logout_button)
 
-    def _read_payments(self) -> list[Payment]:
+    def _fetch_payments(self) -> list[Payment]:
         """
         Parses payment data from a web page and returns a list of `Payment` objects.
 

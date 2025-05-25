@@ -42,7 +42,7 @@ class Opec(Provider):
         name = self.__class__.__name__.lower()
         super().__init__(url, name, locations, user_input, password_input)
 
-    def _read_payments(self) -> list[Payment]:
+    def _fetch_payments(self) -> list[Payment]:
         """
         Reads and processes payment-related information from a web page. The function performs actions
         such as opening relevant sections on the page, extracting invoice details, and determining

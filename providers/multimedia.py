@@ -110,7 +110,7 @@ class Multimedia(Provider):
             reason = "CAPTCHA required"
         raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
 
-    def _read_payments(self) -> list[Payment]:
+    def _fetch_payments(self) -> list[Payment]:
         """
         Reads and retrieves a list of payments associated with the current instance.
 

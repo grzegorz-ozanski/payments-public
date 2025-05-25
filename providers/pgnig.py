@@ -46,7 +46,7 @@ class Pgnig(Provider):
         name = self.__class__.__name__.lower()
         super().__init__(url, name, locations, user_input, password_input)
 
-    def _read_payments(self) -> list[Payment]:
+    def _fetch_payments(self) -> list[Payment]:
         """
         Retrieves a list of unpaid payments based on retrieved invoice information by interacting
         with a browser automation tool. Filters invoices to identify only unpaid ones and generates

@@ -1,5 +1,7 @@
 """
-    Base module for providers using IOK-based websites.
+    Base module for providers using IOK-based customer service portals (eBOK).
+
+    IOK is a common framework used by utility providers to build online customer portals.
 """
 from datetime import date
 
@@ -48,7 +50,7 @@ class IOK(Provider):
         self.due_date = date(today.year, today.month, due_day)
         super().__init__(url, name, (location,), user_input, password_input, logout_button)
 
-    def _read_payments(self) -> list[Payment]:
+    def _fetch_payments(self) -> list[Payment]:
         """
         Reads payment details by interacting with the browser interface. This method uses
         the configured browser instance to retrieve the visible payment amount and due
