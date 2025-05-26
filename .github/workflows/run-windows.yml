@@ -112,6 +112,16 @@ jobs:
       run: |
         python main.py -v -t -o ${env:SCRIPT_OUTPUT}
 
+    - name: Download reference output from private repo
+      env:
+        GH_TOKEN: ${{ secrets.TESTDATA_PAT }}
+      shell: pwsh
+      run: |
+        git clone https://$GH_TOKEN@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
+        New-Item -ItemType Directory -Path .github/data -Force | Out-Null
+        Copy-Item -Path temp_testdata/* -Destination .github/data -Recurse -Force
+        Remove-Item -Recurse -Force temp_testdata
+
     - name: Compare script output with reference
       id: compare
       shell: pwsh
@@ -264,6 +274,8 @@ jobs:
         GH_EVENT: ${{ github.event_name }}
       run: |
         $src = "$env:GITHUB_WORKSPACE"
+        # Store current workspace either if it was requested during manual workflow trigger,
+        # or this is a scheduled workflow, but only keep the most recent one
         if ($env:GH_EVENT -eq 'workflow_dispatch') {
           $dst = "${env:WORKSPACE_DUMP_DIR}/${{ github.run_id }}"
         } else {
