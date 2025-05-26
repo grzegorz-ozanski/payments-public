@@ -25,11 +25,10 @@ DEFAULT_TIMEOUT = 0.1
 class IOK(Provider):
     """Base provider for IOK-based portals."""
 
-    def __init__(self, due_day, url, name, log, location: str):
+    def __init__(self, due_day, url, log, location: str):
         """
         :param due_day: Day of month for default due date.
         :param url: Login URL for the service.
-        :param name: Provider name.
         :param log: Logger instance.
         :param location: Single location this provider handles.
         """
@@ -37,7 +36,7 @@ class IOK(Provider):
         self.timeout = DEFAULT_TIMEOUT
         today = date.today()
         self.due_date = date(today.year, today.month, due_day)
-        super().__init__(url, name, (location,), USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
+        super().__init__(url, (location,), USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
 
     def _fetch_payments(self) -> list[Payment]:
         """Extract payment info from the page. Return fallback if missing."""

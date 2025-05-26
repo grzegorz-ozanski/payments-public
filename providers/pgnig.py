@@ -43,8 +43,7 @@ class Pgnig(Provider):
         user_input = PageElement(By.NAME, "identificator")
         password_input = PageElement(By.NAME, "accessPin")
         url = "https://ebok.pgnig.pl"
-        name = self.__class__.__name__.lower()
-        super().__init__(url, name, locations, user_input, password_input)
+        super().__init__(url, locations, user_input, password_input)
 
     def _fetch_payments(self) -> list[Payment]:
         """

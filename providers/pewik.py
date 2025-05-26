@@ -42,8 +42,7 @@ class Pewik(Provider):
         password_input = PageElement(By.ID, "password")
         logout_button = PageElement(By.CLASS_NAME, 'btn-wyloguj')
         url = "https://ebok.pewik.gdynia.pl/login"
-        name = self.__class__.__name__.lower()
-        super().__init__(url, name, locations, user_input, password_input, logout_button)
+        super().__init__(url, locations, user_input, password_input, logout_button)
 
     def _fetch_payments(self) -> list[Payment]:
         """

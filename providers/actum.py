@@ -18,5 +18,4 @@ class Actum(IOK):
         :param location: Location name for this provider instance.
         """
         url = "https://iok.actum.pl/InetObsKontr/LoginPage"
-        name = self.__class__.__name__.lower()
-        super().__init__(20, url, name, log, location)
+        super().__init__(20, url, log, location)

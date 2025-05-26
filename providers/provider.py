@@ -65,7 +65,7 @@ class Provider:
 
     Handles login, logout, credential input and payment extraction.
     """
-    def __init__(self, url: str, name: str, locations: tuple[str, ...],
+    def __init__(self, url: str, locations: tuple[str, ...],
                  user_input: PageElement, password_input: PageElement,
                  logout_button: PageElement | None = None, cookies_button: PageElement | None = None,
                  recaptcha_token: PageElement | None = None, recaptcha_token_prefix: str | None = None,
@@ -85,13 +85,13 @@ class Provider:
         """
         self._browser = None
         self.url = url
-        self.name = name
+        self.name = self.__class__.__name__.lower()
         self.locations = locations
         self._location_order = {location: i for i, location in enumerate(self.locations)}
         self.user_input = user_input
         self.password_input = password_input
-        self.username = Credential(name, 'username')
-        self.password = Credential(name, 'password')
+        self.username = Credential(self.name, 'username')
+        self.password = Credential(self.name, 'password')
         self._weblogger = WebLogger(self.name)
 
         if not logout_button:

@@ -37,8 +37,7 @@ class Energa(Provider):
         """
         user_input = PageElement(By.ID, "email_login")
         password_input = PageElement(By.ID, "password")
-        name = self.__class__.__name__.lower()
-        super().__init__(URL, name, locations, user_input, password_input)
+        super().__init__(URL, locations, user_input, password_input)
 
     def logout(self) -> None:
         """

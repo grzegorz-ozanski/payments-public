@@ -18,5 +18,4 @@ class Nordhome(IOK):
         :param location: Location name for this provider instance.
         """
         url = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
-        name = self.__class__.__name__.lower()
-        super().__init__(10, url, name, log, location)
+        super().__init__(10, url, log, location)
