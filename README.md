@@ -95,6 +95,7 @@ The CI logic covers:
 - Secret masking in logs via custom PowerShell scripts
 
 > See [.github/](.github/) for full CI configuration details.
+> Reference output used in CI is downloaded from a private repository to avoid publishing sensitive data.
 
 ### Unittesting
 🟡 *TODO — test suite coming soon*
