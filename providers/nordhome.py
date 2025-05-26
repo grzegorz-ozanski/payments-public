@@ -1,9 +1,10 @@
 """
     Nordhome estate manager provider.
 """
-
 from browser import setup_logging
 from .iok import IOK
+
+SERVICE_URL = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
 
 log = setup_logging(__name__)
 
@@ -17,5 +18,4 @@ class Nordhome(IOK):
 
         :param location: Location name for this provider instance.
         """
-        url = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
-        super().__init__(10, url, log, location)
+        super().__init__(10, SERVICE_URL, log, location)

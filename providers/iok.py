@@ -3,7 +3,6 @@
 
     IOK is a common framework used by utility providers to build online customer portals.
 """
-
 from datetime import date
 
 from selenium.webdriver.common.by import By

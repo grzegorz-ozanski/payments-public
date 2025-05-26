@@ -1,5 +1,5 @@
 """
-Energa provider module for reading payments via Selenium automation.
+    Energa provider module for reading payments via Selenium automation.
 """
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -10,8 +10,10 @@ from .provider import PageElement, Provider
 
 log = setup_logging(__name__)
 
-# ---  Energa specific constants - URLs, selectors and texts---
-URL = "https://24.energa.pl"
+# === Energa specific constants - URLs, selectors and texts ===
+
+SERVICE_URL = "https://24.energa.pl"
+
 LOGOUT_TEXT = "Wyloguj się"
 SKIP_PAYMENT_BUTTON_TEXT = "Zapłać teraz"
 INVOICES_TAB_TEXT = "Faktury"
@@ -31,13 +33,14 @@ class Energa(Provider):
     """
     Provider integration for the Energa electricity platform.
     """
+
     def __init__(self, *locations: str):
         """
         Initialize provider with login fields and locations.
         """
         user_input = PageElement(By.ID, "email_login")
         password_input = PageElement(By.ID, "password")
-        super().__init__(URL, locations, user_input, password_input)
+        super().__init__(SERVICE_URL, locations, user_input, password_input)
 
     def logout(self) -> None:
         """

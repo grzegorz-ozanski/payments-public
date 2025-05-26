@@ -21,6 +21,12 @@ from payments import Payment
 
 log = setup_logging(__name__)
 
+# === Shared constants ===
+
+DEFAULT_LOGOUT_XPATH = (
+    '//*[contains(string(), "Wyloguj") and not(.//*[contains(string(), "Wyloguj")])]'
+)
+
 
 def _sleep_with_message(amount: int, message: str):
     """Sleep for `amount` seconds, logging a debug message first."""
@@ -60,11 +66,8 @@ class Credential:
 
 
 class Provider:
-    """
-    Base class for a payment provider using Selenium.
+    """Base class for a payment provider using Selenium."""
 
-    Handles login, logout, credential input and payment extraction.
-    """
     def __init__(self, url: str, locations: tuple[str, ...],
                  user_input: PageElement, password_input: PageElement,
                  logout_button: PageElement | None = None, cookies_button: PageElement | None = None,
@@ -72,7 +75,6 @@ class Provider:
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         """
         :param url: URL of the login page
-        :param name: Provider name (used in logs and credentials)
         :param locations: List of location names handled by this provider
         :param user_input: Locator for username input field
         :param password_input: Locator for password input field
@@ -95,10 +97,7 @@ class Provider:
         self._weblogger = WebLogger(self.name)
 
         if not logout_button:
-            logout_button = PageElement(
-                By.XPATH,
-                '//*[contains(string(), "Wyloguj") and not(.//*[contains(string(), "Wyloguj")])]'
-            )
+            logout_button = PageElement(By.XPATH, DEFAULT_LOGOUT_XPATH)
         self.logout_button = logout_button
         self.cookies_button = cookies_button
         self.recaptcha_token = recaptcha_token
@@ -138,11 +137,7 @@ class Provider:
         control.send_keys(text)
 
     def login(self, browser: Browser, load: bool = True) -> None:
-        """
-        Perform login in the web application.
-
-        Opens page, accepts cookies, fills credentials, handles reCAPTCHA.
-        """
+        """Perform login in the web application."""
         self._browser = browser
         self._weblogger.browser = browser
         self._browser.error_log_dir = "error"
@@ -197,14 +192,10 @@ class Provider:
 
     def _fetch_payments(self) -> list[Payment]:
         """Must be overridden in subclasses to return actual payments."""
-        raise NotImplementedError
+        raise NotImplementedError(f"{self.__class__.__name__} must override _fetch_payments().")
 
     def get_payments(self, browser: Browser) -> list[Payment]:
-        """
-        Log in and fetch payments.
-
-        Returns a sorted list, fallback to default Payment() objects on error.
-        """
+        """Log in and fetch payments, return fallback on failure."""
         try:
             print(f'Processing service {self.name}...')
             self._browser = browser

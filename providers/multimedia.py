@@ -1,4 +1,6 @@
-"""Multimedia (TV) provider module."""
+"""
+    Multimedia (TV) provider module.
+"""
 from time import sleep
 from typing import cast
 
@@ -10,7 +12,9 @@ from .provider import PageElement, Provider
 
 log = setup_logging(__name__)
 
-# === Module-level constants ===
+# === Multimedia specific constants - URLs, selectors and texts ===
+
+SERVICE_URL = "https://ebok.multimedia.pl/panel-glowny.aspx"
 
 USER_INPUT = PageElement(By.ID, "Login_SSO_UserName")
 PASSWORD_INPUT = PageElement(By.ID, "Login_SSO_Password")
@@ -35,7 +39,7 @@ class Multimedia(Provider):
         """
         self._locations_map = locations
         locations = cast(tuple[str, ...], tuple(locations.values()))
-        super().__init__("https://ebok.multimedia.pl/panel-glowny.aspx",
+        super().__init__(SERVICE_URL,
                          locations,
                          USER_INPUT,
                          PASSWORD_INPUT,

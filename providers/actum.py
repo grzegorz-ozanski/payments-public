@@ -1,11 +1,12 @@
 """
     Actum estate manager provider.
 """
-
 from browser import setup_logging
 from .iok import IOK
 
 log = setup_logging(__name__)
+
+SERVICE_URL = "https://iok.actum.pl/InetObsKontr/LoginPage"
 
 
 class Actum(IOK):
@@ -17,5 +18,5 @@ class Actum(IOK):
 
         :param location: Location name for this provider instance.
         """
-        url = "https://iok.actum.pl/InetObsKontr/LoginPage"
-        super().__init__(20, url, log, location)
+        super().__init__(20, SERVICE_URL
+                         , log, location)
