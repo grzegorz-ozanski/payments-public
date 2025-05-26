@@ -19,6 +19,9 @@ log = setup_logging(__name__)
 
 
 def is_debugger_active() -> bool:
+    """
+    Return True if a debugger is currently attached.
+    """
     return sys.gettrace() is not None or "VSCODE_DEBUGPY_ADAPTER_ENDPOINTS" in os.environ
 
 

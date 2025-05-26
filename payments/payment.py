@@ -37,12 +37,21 @@ class Amount:
         self.whole, self.decimal = amount.split(separator) if separator in amount else (amount, '0')
 
     def __repr__(self) -> str:
+        """
+            Return string representation of the Amount.
+        """
         return f'{self.whole},{self.decimal:02}'
 
     def __format__(self, format_spec: str) -> str:
+        """
+            Format amount for aligned output (e.g., currency alignment).
+        """
         return format(str(self), format_spec)
 
     def __float__(self) -> float:
+        """
+            Convert amount to float for numeric operations.
+        """
         return float(f'{self.whole}.{self.decimal}')
 
     @classmethod
@@ -82,14 +91,23 @@ class DueDate:
         self.value = value
 
     def __repr__(self) -> str:
+        """
+            Return string representation of the DueDate.
+        """
         return self.value.strftime('%d-%m-%Y')
 
     def __eq__(self, other: object) -> bool:
+        """
+            Compare dates for equality.
+        """
         if not isinstance(other, DueDate):
             return NotImplemented
         return self.value == other.value
 
     def __lt__(self, other: object) -> bool:
+        """
+            Compare dates for sorting (less than).
+        """
         if not isinstance(other, DueDate):
             return NotImplemented
         return self.value < other.value
