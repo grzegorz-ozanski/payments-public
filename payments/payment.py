@@ -21,7 +21,7 @@ class Amount:
     """
         Represents payment amount either as float or decimal value with comma (',') decimal separator
     """
-
+    _zero = '0,00'
     def __init__(self, value: AmountT) -> None:
         """
         Constructor
@@ -45,6 +45,14 @@ class Amount:
     def __float__(self) -> float:
         return float(f'{self.whole}.{self.decimal}')
 
+    @classmethod
+    def is_zero(cls, value: str) -> bool:
+        """
+        Checks if the given value evaluates into zero.
+        :param value: amount value
+        :return: True if provided value evaluates into zero, False otherwise
+        """
+        return value.strip().startswith(cls._zero)
 
 @total_ordering
 class DueDate:

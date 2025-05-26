@@ -5,7 +5,7 @@ from selenium.common.exceptions import ElementNotInteractableException, NoSuchEl
 from selenium.webdriver.common.by import By
 
 from browser import setup_logging
-from payments import Payment, DueDate
+from payments import Amount, DueDate, Payment
 from .provider import PageElement, Provider
 
 log = setup_logging(__name__)
@@ -98,7 +98,7 @@ class Energa(Provider):
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
             self._weblogger.trace("pre-invoices-click")
             self._browser.find_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]').click()
-            self._browser.wait_for_page_inactive()
+            self._browser.wait_for_element_appear(By.CSS_SELECTOR, POPUP_SELECTOR)
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
             invoices = self._browser.wait_for_elements(
                 By.XPATH,
@@ -107,9 +107,14 @@ class Energa(Provider):
             if invoices:
                 due_date = invoices[0].text.split('\n')[1]
             else:
-                due_date = DueDate.today
+                due_date = None
             self._browser.safe_click(By.XPATH, f'//a[contains(text(), "{DASHBOARD_TEXT}")]')
             amount = self._browser.wait_for_element(By.CSS_SELECTOR, AMOUNT_SELECTOR).text
+            if due_date is None:
+                if Amount.is_zero(amount):
+                    due_date = DueDate.today
+                else:
+                    log.error(f"Could not retrieve due date for non-zero payment '{amount}'.")
             payments.append(Payment(self.name, location, due_date, amount))
             log.debug("Moving to the next location")
             self._browser.safe_click(By.XPATH, f'//span[contains(text(), "{ACCOUNTS_LIST_TEXT}")]/..')
