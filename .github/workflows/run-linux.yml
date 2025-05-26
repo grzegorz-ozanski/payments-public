@@ -81,20 +81,20 @@ jobs:
         python --version
         where python
 
-    - name: Install dependencies
-      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
-      shell: pwsh
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install -r requirements.txt
-
-    - name: Clone browser repo
+    - name: Clone required browser repo
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       uses: actions/checkout@v4
       with:
         repository: grzegorz-ozanski/browser
         path: browser
         token: ${{ secrets.BROWSER_REPO_TOKEN }}
+
+    - name: Install dependencies
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
 
     - name: Prepare environment
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
