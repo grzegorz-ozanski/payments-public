@@ -98,9 +98,9 @@ class Energa(Provider):
             self._browser.find_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]').click()
             self._browser.wait_for_page_inactive()
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
-            invoices = self._browser.find_elements(
+            invoices = self._browser.wait_for_elements(
                 By.XPATH,
-                f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
+                f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..', 1)
             self._weblogger.trace("duedate-check")
             if invoices:
                 due_date = invoices[0].text.split('\n')[1]
