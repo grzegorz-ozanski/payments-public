@@ -63,7 +63,8 @@ class Amount:
         :param value: amount value
         :return: True if provided value evaluates into zero, False otherwise
         """
-        return value.strip().startswith(cls._zero)
+        return re.search(r"^\D*\b0,00\b", value) is not None
+
 
 @total_ordering
 class DueDate:
