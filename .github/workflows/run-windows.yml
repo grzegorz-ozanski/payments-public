@@ -30,7 +30,7 @@ env:
   STATUS_SCRIPT: .github/scripts/compare-status.ps1
 
 jobs:
-  run-linux:
+  run-windows:
     runs-on: [self-hosted, Linux]
 
     permissions:
@@ -117,7 +117,7 @@ jobs:
         GH_TOKEN: ${{ secrets.TESTDATA_PAT }}
       shell: pwsh
       run: |
-        git clone https://$GH_TOKEN@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
+        git clone https://${env:GH_TOKEN}@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
         New-Item -ItemType Directory -Path .github/data -Force | Out-Null
         Copy-Item -Path temp_testdata/* -Destination .github/data -Recurse -Force
         Remove-Item -Recurse -Force temp_testdata
