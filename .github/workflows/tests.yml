@@ -5,9 +5,6 @@ on:
     branches: [ '*' ]
   pull_request:
 
-env:
-  LOCAL_ARTIFACTS_DIR: /runner/artifacts
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -40,19 +37,3 @@ jobs:
         with:
           name: htmlcov
           path: htmlcov.zip
-
-      - name: Store artifacts locally
-        shell: pwsh
-        env:
-          COMPARE_STATUS: ${{ steps.compare.outputs.status }}
-          LOCAL_ARTIFACTS_DIR: ${{ runner.os == 'Windows' && env.LOCAL_ARTIFACTS_WINDOWS || env.LOCAL_ARTIFACTS_LINUX }}
-        run: |
-          $artifactPaths = @(
-            "./htmlcov.zip"
-          )
-          pwsh -File .github/scripts/store-artifacts-locally.ps1 `
-          -WorkflowName $env:GITHUB_WORKFLOW `
-          -RunNumber $env:GITHUB_RUN_NUMBER `
-          -JobName $env:GITHUB_JOB `
-          -Artifacts "$artifactPaths" `
-          -TargetDir $env:LOCAL_ARTIFACTS_DIR
