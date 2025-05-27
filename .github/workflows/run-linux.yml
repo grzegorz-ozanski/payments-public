@@ -181,9 +181,6 @@ jobs:
           "$env:REFERENCE_CONTENT",
           "$env:DIFF_FILE"
         )
-        $env:GITHUB_WORKFLOW 
-        $env:GITHUB_RUN_NUMBER
-        $env:GITHUB_JOB
         pwsh -File .github/scripts/store-artifacts-locally.ps1 `
           -WorkflowName $env:GITHUB_WORKFLOW `
           -RunNumber $env:GITHUB_RUN_NUMBER `
