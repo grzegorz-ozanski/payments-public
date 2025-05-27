@@ -6,7 +6,7 @@
 
 Automation tool for retrieving outstanding payment information from various utility providers' online portals.
 
-## ✨ Features
+## ✨ Featuress
 
 - ✅ Modular provider system (Energa, PGNiG, Multimedia, etc.)
 - ✅ Selenium automation with headless Chrome
