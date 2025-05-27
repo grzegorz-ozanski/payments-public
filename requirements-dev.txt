@@ -1,1 +1,2 @@
-pytest-cov==pytest-cov
+-r requirements.txt
+pytest-cov==6.1.1

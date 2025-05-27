@@ -9,7 +9,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+
+      - name: Clone required browser repo
+        uses: actions/checkout@v4
+        with:
+          repository: grzegorz-ozanski/browser
+          path: browser
+          token: ${{ secrets.BROWSER_REPO_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -18,8 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
+          pip install -r requirements-dev.txt
 
       - name: Run tests with coverage
         run: |
