@@ -127,6 +127,7 @@ class DueDate:
         """
         return cls._today[0]
 
+
 class Payment:
     """
     Payment class. Stores either valid payment properly acquired from a provider's page
@@ -148,8 +149,8 @@ class Payment:
         :param provider: provider
         """
 
-        self.amount = Amount(amount) if amount is not None else '<unknown>'
-        self.due_date = DueDate(due_date) if due_date is not None else '<unknown>'
+        self.amount = Amount(amount) if amount is not None else Amount.unknown
+        self.due_date = DueDate(due_date) if due_date is not None else DueDate.unknown
         self.location = location
         self.provider = provider
         log.debug(f'Created payment object:'

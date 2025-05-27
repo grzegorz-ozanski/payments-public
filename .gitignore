@@ -1,9 +1,12 @@
-__pycache__
 .idea
+.venv*
 .vscode
-.env
-.credentials
-venv*
+__pycache__
+browser
 chromedriver
+htmlcov
 run
+.coverage
+.credentials
+.env
 output.txt

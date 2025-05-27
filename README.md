@@ -98,7 +98,26 @@ The CI logic covers:
 > Reference output used in CI is downloaded from a private repository to avoid publishing sensitive data.
 
 ### Unittesting
-🟡 *TODO — test suite coming soon*
+#### Test Coverage
+
+The codebase achieves **58% total test coverage**, focused on core logic:
+
+- ✅ Business logic modules (`payments`, `lookuplist`) are tested above 90%
+- ✅ Application entrypoint (`main.py`) is tested with mocks
+- ⚠️ Web provider integrations (`providers/*`) are not tested in depth, 
+as they require real pages and Selenium interactions, which are better suited for manual or functional testing
+
+We prioritize tests that cover:
+- data parsing and validation
+- sorting, grouping, formatting
+- fallback logic and error handling
+
+To check coverage locally:
+
+```bash
+pytest --cov=payments --cov=providers --cov=lookuplist --cov-report=term --cov-report=html
+```
+📂 Detailed HTML report: htmlcov/index.html
 
 ## 🗂️ Project Structure
 
