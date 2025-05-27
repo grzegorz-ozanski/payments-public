@@ -22,12 +22,13 @@ env:
   GH_ACTIONS_USER_NAME: "github-actions"
   GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
   LIBRARY: .github/scripts/functions.ps1
-  LOCAL_ARTIFACTS_DIR: Z:/github-runner/artifacts
+  LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
+  LOCAL_ARTIFACTS_LINUX: /runner/artifacts
   MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
   REFERENCE_CONTENT: reference.txt
   REFERENCE_OUTPUT: .github/data/reference_output.txt
-  SCRIPT_OUTPUT: script_output.txt
-#  SCRIPT_OUTPUT: .github/data/test_output.txt
+#  SCRIPT_OUTPUT: script_output.txt
+  SCRIPT_OUTPUT: .github/data/test_output.txt
   STATUS_FILE: .github/status/last-status.txt
   STATUS_SCRIPT: .github/scripts/compare-status.ps1
 
@@ -167,6 +168,7 @@ jobs:
       shell: pwsh
       env:
         COMPARE_STATUS: ${{ steps.compare.outputs.status }}
+        LOCAL_ARTIFACTS_DIR: ${{ runner.os == 'Windows' && env.LOCAL_ARTIFACTS_WINDOWS || env.LOCAL_ARTIFACTS_LINUX }}
       run: |
         $artifactPaths = @(
           "./error",
