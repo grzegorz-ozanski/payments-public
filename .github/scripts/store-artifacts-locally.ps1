@@ -2,31 +2,21 @@ param (
   [Parameter(Mandatory = $true)][string]$WorkflowName,
   [Parameter(Mandatory = $true)][string]$RunNumber,
   [Parameter(Mandatory = $true)][string]$JobName,
-  [Parameter(Mandatory = $true)][string[]]$ArtifactPaths,
-  [Parameter(Mandatory = $true)][string[]]$DiffPaths,
-  [Parameter(Mandatory = $true)][string]$CompareStatus,
-  [Parameter(Mandatory = $true)][string]$LocalDir
+  [Parameter(Mandatory = $true)][string[]]$Artifacts,
+  [Parameter(Mandatory = $true)][string]$TargetDir
 )
 
 $workflow = $($WorkflowName -replace '[^\w\-]', '_').ToLower()
-$targetDir = "$LocalDir/$workflow/$JobName/$RunNumber"
+$target = "$TargetDir/$workflow/$JobName/$RunNumber"
 
-if (Test-Path $LocalDir -PathType Container) {
-  New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
-  foreach ($path in $ArtifactPaths) {
+if (Test-Path $TargetDir -PathType Container) {
+  New-Item -ItemType Directory -Path $target -Force | Out-Null
+  foreach ($path in $Artifacts) {
     if (Test-Path $path) {
-      Write-Host "Storing artifact '$path' locally in '$targetDir'"
-      Copy-Item $path $targetDir -Recurse
-    }
-  }
-  if ($CompareStatus -eq 'changed') {
-    foreach ($path in $DiffPaths) {
-      if (Test-Path $path) {
-        Write-Host "Storing artifact '$path' locally in '$targetDir'"
-        Copy-Item $path $targetDir -Recurse
-      }
+      Write-Host "Storing artifact '$path' locally in '$target'"
+      Copy-Item $path $target -Recurse
     }
   }
 } else {
-  Write-Warning "LOCAL_ARTIFACTS_DIR '$LocalDir' not found. Skipping artifact save."
+  Write-Warning "LOCAL_ARTIFACTS_DIR '$TargetDir' not found. Skipping artifact save."
 }

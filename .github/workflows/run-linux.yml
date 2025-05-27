@@ -175,20 +175,20 @@ jobs:
           "$env:BROWSER_LOG_FILENAME",
           "./trace"
         )
-        $diffPaths = @(
-          "$env:SCRIPT_OUTPUT",
-          "$env:ACTUAL_CONTENT",
-          "$env:REFERENCE_CONTENT",
-          "$env:DIFF_FILE"
-        )
+        if ($env:COMPARE_STATUS -eq 'changed') {
+          $artifactPaths += @(
+            "$env:SCRIPT_OUTPUT",
+            "$env:ACTUAL_CONTENT",
+            "$env:REFERENCE_CONTENT",
+            "$env:DIFF_FILE"
+          )
+        }
         pwsh -File .github/scripts/store-artifacts-locally.ps1 `
           -WorkflowName $env:GITHUB_WORKFLOW `
           -RunNumber $env:GITHUB_RUN_NUMBER `
           -JobName $env:GITHUB_JOB `
-          -ArtifactPaths "$artifactPaths" `
-          -DiffPaths "$diffPaths" `
-          -CompareStatus $env:COMPARE_STATUS `
-          -LocalDir $env:LOCAL_ARTIFACTS_DIR
+          -Artifacts "$artifactPaths" `
+          -TargetDir $env:LOCAL_ARTIFACTS_DIR
 
     # 🔁 Compare current workflow status with the previous one
     - name: Compare workflow status and set workflow summary
