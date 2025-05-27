@@ -1,5 +1,9 @@
 # 💰 Payments Collector
 
+![CI Linux](https://github.com/grzegorz-ozanski/payments/actions/workflows/linux.yml/badge.svg)
+![CI Windows](https://github.com/grzegorz-ozanski/payments/actions/workflows/windows.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-58%25-yellow)
+
 Automation tool for retrieving outstanding payment information from various utility providers' online portals.
 
 ## ✨ Features
@@ -22,19 +26,26 @@ Automation tool for retrieving outstanding payment information from various util
 git clone https://github.com/grzegorz-ozanski/payments.git
 cd payments
 git clone https://github.com/grzegorz-ozanski/browser.git
+# Create Python virtual environment (recommended)
+python -m venv .venv
+# Activate .venv for your platform, e.g.:
+#   source .venv/bin/activate      (Linux/macOS)
+#   .venv\Scripts\activate.bat     (Windows cmd)
+#   .venv\Scripts\Activate.ps1     (Windows PowerShell)
+python -m pip install --upgrade pip
 pip install -r requirements.txt  # includes browser dependencies
-cp cp hooks/pre-push .git/hooks/pre-push
+cp hooks/pre-push .git/hooks/pre-push
 chmod +x .git/hooks/pre-push
 ```
 
 ## ⚙️ Configuration
 
-You can configure logging behavior via environment variables.  
+You can configure logging and browser behavior via environment variables.  
 See [`browser/README.md`](browser/README.md) for full details.
 
 ## 🔐 Credentials
 
-Each provider requires its own credentials. These can be read from the **system keyring** (recommended) or from **environment variables** (unsafe, use only for development).
+Each provider requires its own credentials. These can be read from the **system keyring** (recommended) or from **environment variables** (not secure, use only for development).
 
 ### 🔑 Keyring (preferred)
 
@@ -62,7 +73,7 @@ SERVICE_NAME_PASSWORD='your_password'
 
 ### 🛠 Credential management helpers
 
-You can use the helper scripts from the `tools/` directory to import/export credentials between `.credentials` file and system keyring:
+You can use the helper scripts from the `tools/` directory to import/export credentials between a `.credentials` file and the system keyring:
 
 ```bash
 python tools/export_credentials.py
@@ -84,30 +95,22 @@ python main.py                         # Print payment data to console
 python main.py -o output.txt           # Also write output to a file
 ```
 
+## 📊 Example Output
+
+```
+pgnig   12,34  Dom   02-06-2025
+energa  567,86 Biuro 26-05-2025
+```
+
 ## 🧪 Testing
 
-### CI
-This project includes CI workflows for both **Linux** and **Windows**, powered by GitHub Actions.
-
-The CI logic covers:
-
-- Automated test runs with Selenium
-- Output verification via reference snapshots
-- Status tracking (detecting changes like FAILED → PASSED)
-- Secret masking in logs via custom PowerShell scripts
-
-> See [.github/](.github/) for full CI configuration details.
-> Reference output used in CI is downloaded from a private repository to avoid publishing sensitive data.
-
-### Unittesting
-#### Test Coverage
+### ✅ Unit Testing
 
 The codebase achieves **58% total test coverage**, focused on core logic:
 
 - ✅ Business logic modules (`payments`, `lookuplist`) are tested above 90%
 - ✅ Application entrypoint (`main.py`) is tested with mocks
-- ⚠️ Web provider integrations (`providers/*`) are not tested in depth, 
-as they require real pages and Selenium interactions, which are better suited for manual or functional testing
+- ⚠️ Web provider integrations (`providers/*`) are not tested in depth, as they require real Selenium sessions and are better suited for functional testing
 
 We prioritize tests that cover:
 - data parsing and validation
@@ -117,21 +120,36 @@ We prioritize tests that cover:
 To check coverage locally:
 
 ```bash
-pip install -r requirements-dev.txt  # coverage module
+pip install -r requirements-dev.txt
 pytest --cov=payments --cov=providers --cov=lookuplist --cov-report=term --cov-report=html
 ```
-📂 Detailed HTML report: htmlcov/index.html
+
+📂 Detailed HTML report: `htmlcov/index.html`
+
+### 🤖 Continuous Integration (CI)
+
+This project includes CI workflows for both **Linux** and **Windows**, powered by GitHub Actions.
+
+CI covers:
+
+- Automated Selenium test runs
+- Output verification via reference snapshots
+- Status tracking (e.g. FAILED → PASSED transitions)
+- Secret masking in logs via PowerShell filters
+
+> See [.github/](.github/) for full workflow logic.  
+> Reference output used in CI is downloaded from a private repo to avoid exposing sensitive data. Any change to output must be explicitly reviewed and committed.
 
 ## 🗂️ Project Structure
 
-```text
+```
 payments/
 ├── browser/        # Reusable Chrome automation components
 ├── lookuplist/     # Fallback-capable key-value store
-├── payments/       # Payment model, manager logic
+├── payments/       # Payment model and manager logic
 ├── providers/      # Provider-specific logic (e.g. login, scraping)
 ├── tools/          # Scripts for credential import/export
-├── main.py         # Entry point
+├── main.py         # Entrypoint
 └── README.md       # This file
 ```
 
