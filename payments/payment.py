@@ -91,7 +91,7 @@ class DueDate:
             elif any(item in value for item in self._yesterday):
                 value = date.today() + timedelta(days=-1)
             else:
-                value = parser.parse(value, dayfirst=True)
+                value = parser.parse(value, dayfirst=True).date()
         self.value = value
 
     def __repr__(self) -> str:
