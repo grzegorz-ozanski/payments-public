@@ -22,6 +22,8 @@ class Amount:
         Represents payment amount either as float or decimal value with comma (',') decimal separator
     """
     _zero = '0,00'
+    unknown = '<unknown>'
+
     def __init__(self, value: AmountT) -> None:
         """
         Constructor
@@ -71,6 +73,7 @@ class DueDate:
     _today = ['dzisiaj', 'today']
     _tomorrow = ['jutro', 'tomorrow']
     _yesterday = ['wczoraj', 'yesterday']
+    unknown = '<unknown>'
 
     def __init__(self, value: DueDateT) -> None:
         """
