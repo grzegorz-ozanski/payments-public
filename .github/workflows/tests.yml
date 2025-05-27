@@ -1,0 +1,38 @@
+name: Run unit tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=payments --cov=providers --cov=lookuplist --cov-report=term
+
+      - name: Generate HTML coverage report
+        if: always()
+        run: |
+          pytest --cov=payments --cov=providers --cov=lookuplist --cov-report=html
+          zip -r htmlcov.zip htmlcov/
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: htmlcov
+          path: htmlcov.zip

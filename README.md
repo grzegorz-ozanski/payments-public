@@ -23,6 +23,8 @@ git clone https://github.com/grzegorz-ozanski/payments.git
 cd payments
 git clone https://github.com/grzegorz-ozanski/browser.git
 pip install -r requirements.txt  # includes browser dependencies
+cp cp hooks/pre-push .git/hooks/pre-push
+chmod +x .git/hooks/pre-push
 ```
 
 ## ⚙️ Configuration
@@ -115,6 +117,7 @@ We prioritize tests that cover:
 To check coverage locally:
 
 ```bash
+pip install -r requirements-dev.txt  # coverage module
 pytest --cov=payments --cov=providers --cov=lookuplist --cov-report=term --cov-report=html
 ```
 📂 Detailed HTML report: htmlcov/index.html
