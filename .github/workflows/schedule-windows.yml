@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: '0 6 * * *'
   push:
-    branches: [ 'workflows' ]
+    branches: [ 'none' ]
 
 jobs:
   call:
