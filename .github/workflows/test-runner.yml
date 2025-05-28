@@ -1,0 +1,16 @@
+# .github/workflows/test-runner.yml
+name: Test Ubuntu Runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-runner
+    steps:
+      - name: Show runner info
+        shell: pwsh
+        run: |
+          Write-Host "Runner name: $env:RUNNER_NAME"
+          Write-Host "Runner OS: $env:RUNNER_OS"
+          Write-Host "Runner arch: $env:RUNNER_ARCH"
