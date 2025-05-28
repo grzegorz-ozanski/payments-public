@@ -137,7 +137,7 @@ CI covers:
 - Status tracking (e.g. FAILED → PASSED transitions)
 - Secret masking in logs via PowerShell filters
 
-> See [.github/](.github/) for full workflow logic.  
+> See [README_actions.md](.github/README_actions.md) for full workflow logic.  
 > Reference output used in CI is downloaded from a private repo to avoid exposing sensitive data. Any change to output must be explicitly reviewed and committed.
 
 ### 🏃 Dynamic runner selection in reusable workflows
