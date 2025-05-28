@@ -1,0 +1,323 @@
+#  This workflow runs the payment script, compares results, and handles errors and reporting.
+#  It is intended to be used via workflow_call from scheduled or manual dispatch workflows.
+name: Run payments
+
+on:
+  workflow_call:
+    inputs:
+      dump:
+        description: 'Dump workspace after job?'
+        required: false
+        default: 'false'
+        type: string
+      event_name:
+        description: 'Event name (push/schedule/etc)'
+        required: false
+        type: string
+    secrets:
+      GMAIL_USERNAME:
+        required: true
+      GMAIL_APP_PASSWORD:
+        required: true
+      GMAIL_EMAIL_ADDRESS:
+        required: true
+      BROWSER_REPO_TOKEN:
+        required: true
+      CHROME_REPO_TOKEN:
+        required: true
+      TESTDATA_PAT:
+        required: true
+      CREDENTIALS:
+        required: true
+
+env:
+  ACTUAL_CONTENT: actual.txt
+  BROWSER_LOG_FILENAME: trace.log
+  BROWSER_LOG_TO_CONSOLE: False
+  CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
+  COMPARE_SCRIPT: .github/scripts/compare-output.ps1
+  DIFF_FILE: diff.txt
+  GH_ACTIONS_EMAIL: "github-actions@github.com"
+  GH_ACTIONS_USER_NAME: "github-actions"
+  GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
+  LIBRARY: .github/scripts/functions.ps1
+  LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
+  LOCAL_ARTIFACTS_LINUX: /runner/artifacts
+  MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
+  REFERENCE_CONTENT: reference.txt
+  REFERENCE_OUTPUT: .github/data/reference_output.txt
+  SCRIPT_OUTPUT: script_output.txt
+#  SCRIPT_OUTPUT: .github/data/test_output.txt
+  STATUS_FILE: .github/status/last-status.txt
+  STATUS_SCRIPT: .github/scripts/compare-status.ps1
+
+jobs:
+  run-payments:
+    runs-on: ${{ fromJson(inputs.runner-label) }}
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
+
+    steps:
+    - name: Checkout current repo
+      uses: actions/checkout@v4
+
+    - name: Read previous status
+      id: readstatus
+      shell: pwsh
+      run: |
+        pwsh -File .github/scripts/read-previous-status.ps1 "${env:STATUS_FILE}" "${env:GITHUB_OUTPUT}"
+
+    - name: "[SKIP REASON] Configure and run the script steps skipped"
+      if: ${{ contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        echo "::notice ::Skipping all configuration steps and 'Run the script' step because 'env.SCRIPT_OUTPUT' contains 'test_."
+
+    - name: Use system Python 3.11
+      if: ${{ runner.os == 'Windows' && !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        $PYTHONPATH = "$env:USERPROFILE/AppData/Local/Programs/Python/Python311"
+        echo "$PYTHONPATH" >> $env:GITHUB_PATH
+
+    - name: Verify system Python 3.11
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        python --version
+        where python
+
+    - name: Clone required browser repo
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      uses: actions/checkout@v4
+      with:
+        repository: grzegorz-ozanski/browser
+        path: browser
+        token: ${{ secrets.BROWSER_REPO_TOKEN }}
+
+    - name: Install dependencies
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+
+    - name: Prepare environment
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        # Add dependency to PYTHONPATH
+        echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
+        # Prepare credentials
+        echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
+        # Mask credentials
+        pwsh -File $env:MASK_SCRIPT "_USERNAME,_PASSWORD" "${{ secrets.CREDENTIALS }}" 
+
+    - name: Run the script
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      continue-on-error: true
+      shell: pwsh
+      run: |
+        python main.py -v -t -o ${env:SCRIPT_OUTPUT}
+
+    - name: Download reference output from private repo
+      env:
+        GH_TOKEN: ${{ secrets.TESTDATA_PAT }}
+      shell: pwsh
+      run: |
+        git clone https://${env:GH_TOKEN}@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
+        New-Item -ItemType Directory -Path .github/data -Force | Out-Null
+        Copy-Item -Path temp_testdata/* -Destination .github/data -Recurse -Force
+        Remove-Item -Recurse -Force temp_testdata
+
+    - name: Compare script output with reference
+      id: compare
+      shell: pwsh
+      run: |
+        pwsh -File ${env:COMPARE_SCRIPT} `
+        ${env:SCRIPT_OUTPUT} `
+        ${env:REFERENCE_OUTPUT} `
+        -ComparedActual ${env:ACTUAL_CONTENT} `
+        -ComparedExpected ${env:REFERENCE_CONTENT} `
+        -Diff ${env:DIFF_FILE}
+
+    - name: Upload error logs
+      uses: actions/upload-artifact@v4
+      continue-on-error: true
+      with:
+        name: error-logs
+        if-no-files-found: ignore
+        retention-days: 3
+        path: |
+          ./error/**
+
+    - name: Upload trace logs
+      uses: actions/upload-artifact@v4
+      continue-on-error: true
+      with:
+        name: trace-logs
+        retention-days: 3
+        path: |
+          ${{ env.BROWSER_LOG_FILENAME }}
+          ./trace/**
+
+    - name: "[SKIP REASON] Upload log skipped"
+      if: steps.compare.outputs.status == 'unchanged'
+      shell: pwsh
+      run: |-
+        echo "::notice ::Skipping 'Upload log if script output is different than reference' step " + 
+             "because steps.compare.outputs.status == 'unchanged''."
+
+    - name: Upload log if script output is different than reference
+      if: steps.compare.outputs.status == 'changed'
+      uses: actions/upload-artifact@v4
+      continue-on-error: true
+      with:
+        name: changed-output
+        retention-days: 3
+        path: |
+          ${{ env.SCRIPT_OUTPUT }}
+          ${{ env.ACTUAL_CONTENT }}
+          ${{ env.REFERENCE_CONTENT }}
+          ${{ env.DIFF_FILE }}
+
+    - name: Store artifacts locally
+      shell: pwsh
+      env:
+        COMPARE_STATUS: ${{ steps.compare.outputs.status }}
+        LOCAL_ARTIFACTS_DIR: ${{ runner.os == 'Windows' && env.LOCAL_ARTIFACTS_WINDOWS || env.LOCAL_ARTIFACTS_LINUX }}
+      run: |
+        $artifactPaths = @(
+          "./error",
+          "$env:BROWSER_LOG_FILENAME",
+          "./trace"
+        )
+        if ($env:COMPARE_STATUS -eq 'changed') {
+          $artifactPaths += @(
+            "$env:SCRIPT_OUTPUT",
+            "$env:ACTUAL_CONTENT",
+            "$env:REFERENCE_CONTENT",
+            "$env:DIFF_FILE"
+          )
+        }
+        pwsh -File .github/scripts/store-artifacts-locally.ps1 `
+          -WorkflowName $env:GITHUB_WORKFLOW `
+          -RunNumber $env:GITHUB_RUN_NUMBER `
+          -JobName $env:GITHUB_JOB `
+          -Artifacts "$artifactPaths" `
+          -TargetDir $env:LOCAL_ARTIFACTS_DIR
+
+    # 🔁 Compare current workflow status with the previous one
+    - name: Compare workflow status and set workflow summary
+      id: statuscheck
+      if: always()
+      shell: pwsh
+      run: |
+        pwsh -File ${env:STATUS_SCRIPT} `
+        "${{ steps.readstatus.outputs.previous }}" `
+        "${{ steps.compare.outputs.status }}" `
+        ${env:SCRIPT_OUTPUT} `
+        ${env:DIFF_FILE} `
+        ${env:GITHUB_OUTPUT} `
+        ${env:GITHUB_STEP_SUMMARY}
+
+    - name: "[SKIP REASON] Send email if workflow result changed"
+      if: inputs.event_name != 'schedule' || steps.statuscheck.outputs.changed != 'true'
+      shell: pwsh
+      run: |-
+        echo "::notice ::Skipping 'Send email if script output comparison result changed' step because condition " + 
+             "'github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true' is not met'."
+
+    # 💌 Send email only on status change
+    - name: Send email if script output comparison result changed and run was scheduled
+      if: |
+        (inputs.event_name == 'schedule' && steps.statuscheck.outputs.transition != 'NONE')
+        || steps.statuscheck.outputs.transition == 'FIXED'
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.GMAIL_USERNAME }}
+        password: ${{ secrets.GMAIL_APP_PASSWORD }}
+        subject: "⚠️ ${{ github.repository }} - workflow ${{ steps.statuscheck.outputs.transition }}"
+        to: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
+        from: GitHub Actions <no-reply@github.com>
+        body: |
+          ${{ github.repository }} GitHub Actions scheduled job execution status changed 
+          from "${{ steps.statuscheck.outputs.previous }}" to "${{ steps.statuscheck.outputs.current }}"
+
+          ➤ View artifact and logs:
+          https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
+
+    - name: "[SKIP REASON] Copy working directory skipped"
+      if: inputs.event_name == 'workflow_dispatch' && inputs.dump != 'true'
+      shell: pwsh
+      run: |-
+        $msg = "::notice ::Skipping 'Copy working directory for inspection' step because " + 
+               "'inputs.event_name == 'workflow_dispatch' && inputs.dump != 'true''."
+        echo $msg
+
+    - name: Copy working directory for inspection
+      if: inputs.event_name != 'workflow_dispatch' || inputs.dump != 'false'
+      shell: pwsh
+      env:
+        WORKSPACE_DUMP_DIR: ${{ runner.os == 'Windows' && 'c:/actions-runner/jobs' || '/tmp/actions-runner/jobs' }}
+        GH_EVENT: ${{ inputs.event_name }}
+      run: |
+        $src = "$env:GITHUB_WORKSPACE"
+        # Store current workspace either if it was requested during manual workflow trigger,
+        # or this is a scheduled workflow, but only keep the most recent one
+        if ($env:GH_EVENT -eq 'workflow_dispatch') {
+          $dst = "${env:WORKSPACE_DUMP_DIR}/${{ github.run_id }}"
+        } else {
+          $dst = "${env:WORKSPACE_DUMP_DIR}/last_workspace"
+          if (Test-Path $dst) {
+            Remove-Item -Path $dst -Recurse -Force
+          }
+        }
+        mkdir -p $dst
+        Copy-Item -Path $src -Recurse -Destination $dst
+
+    # 💾 Save current status
+    - name: Save current status
+      if: always()
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if ("${{ steps.statuscheck.outputs.current }}" -ne "") {
+          $status="${{ steps.statuscheck.outputs.current }}"
+        } else {
+          $status="failure"
+          Write-Warning "Empty status check step output, defaulting to $status!"
+        }
+        Set-Content -Path ${env:STATUS_FILE} -Value "$status" -Encoding UTF8
+        git config user.name "${env:GH_ACTIONS_USER_NAME}"
+        git config user.email "${env:GH_ACTIONS_EMAIL}"
+        git add ${env:STATUS_FILE}
+        if (git diff --cached --quiet) {
+          Write-Host "No changes to commit."
+        } else {
+          Write-Host "Committing modified '${env:STATUS_FILE}' file."
+          git commit -m "Update last run status [skip ci]"
+          git pull --rebase
+          git push
+        }
+
+    - name: "[SKIP REASON] Fail workflow"
+      if: steps.compare.outputs.status == 'unchanged'
+      shell: pwsh
+      run: |-
+        $msg = "::notice ::Skipping 'Fail workflow if script output is different than reference' step " +
+               "because 'steps.compare.outputs.status == 'unchanged''"
+        echo $msg
+
+    - name: Fail workflow if script output is different than reference
+      if: steps.compare.outputs.status == 'changed'
+      shell: pwsh
+      run: |
+        Write-Error "❌ Output changed – failing the run."

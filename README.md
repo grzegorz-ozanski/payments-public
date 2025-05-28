@@ -140,6 +140,36 @@ CI covers:
 > See [.github/](.github/) for full workflow logic.  
 > Reference output used in CI is downloaded from a private repo to avoid exposing sensitive data. Any change to output must be explicitly reviewed and committed.
 
+### 🏃 Dynamic runner selection in reusable workflows
+
+CI schedulers for Linux and Windows use a shared reusable workflow defined in `run-tests.yml`.  
+The runner is passed via the `runner-label` input, allowing flexible execution on different platforms.
+
+Due to GitHub Actions limitations, this input must be a **JSON-formatted string array**, which is then converted to a real list using `fromJson()`:
+
+✅ **Correct usage:**
+```
+with:
+  runner-label: '["self-hosted", "Linux"]'
+```
+
+❌ **Invalid:**
+```
+with:
+  runner-label: self-hosted, Linux
+```
+
+In the reusable workflow:
+```
+runs-on: ${{ fromJson(inputs.runner-label) }}
+```
+
+This allows you to use multi-label runners like:
+- `["self-hosted", "Linux"]`
+- `["self-hosted", "Windows"]`
+
+Make sure your self-hosted runners are registered with appropriate labels.
+
 ## 🗂️ Project Structure
 
 ```
