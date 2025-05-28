@@ -1,0 +1,12 @@
+name: GH Actions Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sanity check
+        shell: pwsh
+        run: Write-Host "GitHub Actions works 🎉"
