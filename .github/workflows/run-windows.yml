@@ -18,3 +18,11 @@ jobs:
       runner_label: '["self-hosted", "Windows"]'
       dump: ${{ inputs.dump }}
       event_name: ${{ github.event_name }}
+    secrets:
+      GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+      GMAIL_EMAIL_ADDRESS: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
+      BROWSER_REPO_TOKEN: ${{ secrets.BROWSER_REPO_TOKEN }}
+      CHROME_REPO_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
+      TESTDATA_PAT: ${{ secrets.TESTDATA_PAT }}
+      CREDENTIALS: ${{ secrets.CREDENTIALS }}
