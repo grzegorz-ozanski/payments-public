@@ -100,8 +100,11 @@ class DueDate:
     _today = ['dzisiaj', 'today']
     _tomorrow = ['jutro', 'tomorrow']
     _yesterday = ['wczoraj', 'yesterday']
-    unknown = '<unknown>'
+    _unknown_str = '<unknown>'
+    unknown = date.min
 
+
+    # we actually want this decorator class to be lowercase
     # noinspection PyPep8Naming
     class classproperty(property):
         """
@@ -139,7 +142,7 @@ class DueDate:
         """
         if isinstance(value, WebElement):
             value = value.text
-        if isinstance(value, str) and value != self.unknown:
+        if isinstance(value, str):
             if value == '' or any(item in value for item in self._today):
                 value = date.today()
             elif any(item in value for item in self._tomorrow):
@@ -154,15 +157,15 @@ class DueDate:
         """
             Return string representation of the DueDate.
         """
-        return self.value if isinstance(self.value, str) else self.value.strftime('%d-%m-%Y')
+        return self._unknown_str if self.value == date.min else self.value.strftime('%d-%m-%Y')
 
     def __eq__(self, other: object) -> bool:
         """
             Compare dates for equality.
         """
+        if isinstance(other, date):
+            return self.value == other
         if not isinstance(other, DueDate):
-            if isinstance(other, str):
-                return self.value == other
             return NotImplemented
         return self.value == other.value
 
@@ -170,11 +173,11 @@ class DueDate:
         """
             Compare dates for sorting (less than).
         """
+        if isinstance(other, date):
+            return self.value < other
         if not isinstance(other, DueDate):
-            if isinstance(other, str):
-                return NotImplemented
             return NotImplemented
-        return self.value < other.value  # type: ignore[operator]
+        return self.value < other.value
 
     @classproperty
     def today(self) -> str:
@@ -194,7 +197,7 @@ class DueDate:
         :return: Proper DueDate object
         """
         if value is None:
-            return DueDate(DueDate.unknown)
+            return DueDate(date.min)
         if isinstance(value, DueDate):
             return value
         return DueDate(value)

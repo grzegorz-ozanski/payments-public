@@ -30,6 +30,7 @@ LOCATIONS_ARROW_CLASS = "select2-arrow"
 LOCATION_RESULT_CLASS = "select2-result"
 
 
+# for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
 # noinspection PyArgumentEqualDefault
 class Pewik(Provider):
     """PEWiK Gdynia provider."""

@@ -116,6 +116,7 @@ class Provider:
             log.error(f"Cannot find location for {self.name} (input: '{name_string}')")
             raise RuntimeError(f"Cannot find a valid location for service {self.name}!")
 
+    # we want this method name to include reCAPTCHA name as is, not in lower case
     # noinspection PyPep8Naming
     def _wait_for_reCAPTCHA_v3_token(self, browser: Browser) -> None:
         """Wait until reCAPTCHA v3 token appears and matches expected prefix."""

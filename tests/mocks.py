@@ -57,6 +57,7 @@ class DummyProvider(Provider):
         ]
 
 
+# we do want not to invoke an actual constructor for this mock
 # noinspection PyMissingConstructor
 class MockBrowser(Browser):
     """Simplified mock of the Browser interface."""

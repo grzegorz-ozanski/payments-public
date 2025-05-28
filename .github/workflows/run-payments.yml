@@ -35,6 +35,7 @@ on:
       CREDENTIALS:
         required: true
 
+# Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
 # noinspection GrazieInspection
 env:
   ACTUAL_CONTENT: actual.txt

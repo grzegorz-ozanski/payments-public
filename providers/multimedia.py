@@ -29,7 +29,7 @@ LOGIN_ERROR_TEXT = "span.logonFailureText"
 PASSWORD_CHANGE_IDS = ("formPassword", "formConfirmation")
 CAPTCHA_FORM_ID = "formCaptcha"
 
-
+# for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
 # noinspection PyArgumentEqualDefault
 class Multimedia(Provider):
     """Multimedia TV provider."""
