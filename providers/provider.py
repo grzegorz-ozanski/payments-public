@@ -85,7 +85,7 @@ class Provider:
         :param pre_login_delay: Sleep before login form fill
         :param post_login_delay: Sleep after login submit
         """
-        self._browser = None
+        self._browser: Browser | None = None
         self.url = url
         self.name = self.__class__.__name__.lower()
         self.locations = locations
@@ -117,6 +117,7 @@ class Provider:
             log.error(f"Cannot find location for {self.name} (input: '{name_string}')")
             raise RuntimeError(f"Cannot find a valid location for service {self.name}!")
 
+    # noinspection PyPep8Naming
     def _wait_for_reCAPTCHA_v3_token(self) -> None:
         """Wait until reCAPTCHA v3 token appears and matches expected prefix."""
         if self.recaptcha_token and self.recaptcha_token_prefix:
