@@ -1,3 +1,6 @@
+"""
+    PaymentsManager class unittests
+"""
 from mocks import DummyProvider, MockBrowser
 from payments.payment import Payment
 from payments.paymentsmanager import PaymentsManager
@@ -21,7 +24,7 @@ def test_collect_payments_combines_results() -> None:
     assert "456" in result
 
 
-def test_payments_to_str_padding():
+def test_payments_to_str_padding() -> None:
     from payments.paymentsmanager import PaymentsManager
     from payments.payment import Payment
 

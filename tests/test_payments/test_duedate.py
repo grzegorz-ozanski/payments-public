@@ -1,3 +1,6 @@
+"""
+    DueDate class unittests
+"""
 from datetime import date, timedelta
 from unittest.mock import Mock
 

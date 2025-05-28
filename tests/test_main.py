@@ -1,3 +1,7 @@
+"""
+    Application entrypoint unittests
+"""
+
 import argparse
 import sys
 import tempfile

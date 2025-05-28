@@ -1,3 +1,6 @@
+"""
+    Amount class unittests
+"""
 import pytest
 from selenium.webdriver.remote.webelement import WebElement
 

@@ -1,3 +1,6 @@
+"""
+    Payment class unittests
+"""
 from unittest.mock import patch
 
 from payments.payment import Payment
