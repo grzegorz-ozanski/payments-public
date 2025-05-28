@@ -1,0 +1,15 @@
+name: Schedule – Linux
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * *'
+  push:
+    branches: [ '*' ]
+
+jobs:
+  call:
+    uses: ./.github/workflows/run-tests.yml
+    with:
+      runner-label: ubuntu-runner
+
