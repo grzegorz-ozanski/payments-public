@@ -30,6 +30,7 @@ PASSWORD_CHANGE_IDS = ("formPassword", "formConfirmation")
 CAPTCHA_FORM_ID = "formCaptcha"
 
 
+# noinspection PyArgumentEqualDefault
 class Multimedia(Provider):
     """Multimedia TV provider."""
 

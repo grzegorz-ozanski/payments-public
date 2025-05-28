@@ -30,6 +30,7 @@ LOCATIONS_ARROW_CLASS = "select2-arrow"
 LOCATION_RESULT_CLASS = "select2-result"
 
 
+# noinspection PyArgumentEqualDefault
 class Pewik(Provider):
     """PEWiK Gdynia provider."""
 
