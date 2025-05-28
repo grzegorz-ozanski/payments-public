@@ -1,16 +1,24 @@
-# .github/workflows/test-runner.yml
-name: Test Ubuntu Runner
+name: Reusable workflow – Run tests
 
 on:
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      runner-label:
+        description: 'Label of the runner to use'
+        required: true
+        type: string
 
 jobs:
-  test:
-    runs-on: ubuntu-runner
+  run:
+    runs-on: ${{ inputs.runner-label }}
+
     steps:
-      - name: Show runner info
+      - name: Show runner environment
         shell: pwsh
         run: |
           Write-Host "Runner name: $env:RUNNER_NAME"
           Write-Host "Runner OS: $env:RUNNER_OS"
           Write-Host "Runner arch: $env:RUNNER_ARCH"
+          Write-Host "GitHub ref: $env:GITHUB_REF"
+          Write-Host "Workflow: $env:GITHUB_WORKFLOW"
+          Write-Host "Job: $env:GITHUB_JOB"
