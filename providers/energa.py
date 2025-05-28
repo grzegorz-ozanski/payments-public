@@ -100,6 +100,7 @@ class Energa(Provider):
             self._browser.find_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]').click()
             self._browser.wait_for_element_appear(By.CSS_SELECTOR, POPUP_SELECTOR)
             self._browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
+            self._browser.wait_for_page_inactive()
             invoices = self._browser.wait_for_elements(
                 By.XPATH,
                 f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..', 1)
