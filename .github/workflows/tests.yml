@@ -2,7 +2,7 @@ name: Run unit tests
 
 on:
   push:
-    branches: [ '*' ]
+    branches: [ 'master' ]
   pull_request:
 
 jobs:
