@@ -3,7 +3,7 @@
 """
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging
+from browser import setup_logging, Browser
 from payments import Payment
 from .provider import PageElement, Provider
 
@@ -38,28 +38,28 @@ class Pewik(Provider):
         """Initialize provider with given locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
 
-    def _fetch_payments(self) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Extract payments from balances table, switching between locations."""
         payments = []
         next_id = 1
 
-        cookies_panel = self._browser.find_element(By.CLASS_NAME, COOKIES_PANEL_CLASS)
+        cookies_panel = browser.find_element(By.CLASS_NAME, COOKIES_PANEL_CLASS)
         if cookies_panel:
-            self._browser.wait_for_element_clickable(By.CLASS_NAME, COOKIES_PANEL_CLASS)
-            self._browser.click_element_with_js(cookies_panel.find_element(value=COOKIES_CLOSE_ID))
+            browser.wait_for_element_clickable(By.CLASS_NAME, COOKIES_PANEL_CLASS)
+            browser.click_element_with_js(cookies_panel.find_element(value=COOKIES_CLOSE_ID))
 
-        self._browser.trace_click(self._browser.find_element(By.XPATH, INVOICES_TAB))
-        self._browser.trace_click(self._browser.find_element(By.XPATH, BALANCES_TAB))
-        self._browser.wait_for_page_load_completed()
+        browser.trace_click(browser.find_element(By.XPATH, INVOICES_TAB))
+        browser.trace_click(browser.find_element(By.XPATH, BALANCES_TAB))
+        browser.wait_for_page_load_completed()
 
         while True:
             location = self._get_location(
-                self._browser.find_element(By.CLASS_NAME, LOCATION_CLASS)
+                browser.find_element(By.CLASS_NAME, LOCATION_CLASS)
                     .find_elements(By.TAG_NAME, "span")[2].text
             )
 
             balances = (
-                self._browser.find_element(By.ID, BALANCE_TABLE_ID)
+                browser.find_element(By.ID, BALANCE_TABLE_ID)
                 .find_element(By.TAG_NAME, "tbody")
                 .find_elements(By.TAG_NAME, "tr")
             )
@@ -71,12 +71,12 @@ class Pewik(Provider):
                 else:
                     payments.append(Payment(self.name, location))
 
-            locations_arrow = self._browser.find_element(By.CLASS_NAME, LOCATIONS_ARROW_CLASS)
-            self._browser.trace_click(locations_arrow)
-            locations = self._browser.find_elements(By.CLASS_NAME, LOCATION_RESULT_CLASS)
+            locations_arrow = browser.find_element(By.CLASS_NAME, LOCATIONS_ARROW_CLASS)
+            browser.trace_click(locations_arrow)
+            locations = browser.find_elements(By.CLASS_NAME, LOCATION_RESULT_CLASS)
 
             if next_id < len(locations):
-                self._browser.trace_click(locations[next_id])
+                browser.trace_click(locations[next_id])
                 next_id += 1
             else:
                 break

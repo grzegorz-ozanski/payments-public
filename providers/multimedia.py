@@ -39,9 +39,9 @@ class Multimedia(Provider):
         :param locations: Mapping from partial strings in amount fields to location names.
         """
         self._locations_map = locations
-        locations = cast(tuple[str, ...], tuple(locations.values()))
+        locations_tuple = cast(tuple[str, ...], tuple(locations.values()))
         super().__init__(SERVICE_URL,
-                         locations,
+                         locations_tuple,
                          USER_INPUT,
                          PASSWORD_INPUT,
                          cookies_button=COOKIES_BUTTON,
@@ -66,27 +66,27 @@ class Multimedia(Provider):
             except Exception as ex:
                 if i == num_retries - 1:
                     raise ex
-            self._browser.wait_for_page_inactive(2)
+            browser.wait_for_page_inactive(2)
 
-            if self._browser.wait_for_element(By.CSS_SELECTOR, LOGIN_ERROR_TEXT, 2):
+            if browser.wait_for_element(By.CSS_SELECTOR, LOGIN_ERROR_TEXT, 2):
                 log.debug(f'Login failed, retrying after {wait} seconds')
                 self._weblogger.trace(f'failed-login-attempt-{i}')
-            elif all(self._browser.find_elements(By.ID, id_) for id_ in PASSWORD_CHANGE_IDS):
+            elif all(browser.find_elements(By.ID, id_) for id_ in PASSWORD_CHANGE_IDS):
                 raise RuntimeError("Couldn't login, reason: password change required")
             else:
                 return
 
         reason = "unknown"
-        if self._browser.find_elements(By.ID, CAPTCHA_FORM_ID):
+        if browser.find_elements(By.ID, CAPTCHA_FORM_ID):
             reason = "CAPTCHA required"
         raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
 
-    def _fetch_payments(self) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Extracts payment records from the invoice list."""
         log.info("Getting payments...")
         sleep(0.1)
         payments = [Payment(self.name, location) for location in self.locations]
-        invoices = self._browser.wait_for_elements(By.CLASS_NAME, INVOICE_CLASS)
+        invoices = browser.wait_for_elements(By.CLASS_NAME, INVOICE_CLASS)
         if invoices is None:
             return payments
         for invoice in invoices:

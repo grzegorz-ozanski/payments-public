@@ -85,7 +85,6 @@ class Provider:
         :param pre_login_delay: Sleep before login form fill
         :param post_login_delay: Sleep after login submit
         """
-        self._browser: Browser | None = None
         self.url = url
         self.name = self.__class__.__name__.lower()
         self.locations = locations
@@ -118,10 +117,10 @@ class Provider:
             raise RuntimeError(f"Cannot find a valid location for service {self.name}!")
 
     # noinspection PyPep8Naming
-    def _wait_for_reCAPTCHA_v3_token(self) -> None:
+    def _wait_for_reCAPTCHA_v3_token(self, browser: Browser) -> None:
         """Wait until reCAPTCHA v3 token appears and matches expected prefix."""
         if self.recaptcha_token and self.recaptcha_token_prefix:
-            self._browser.wait_for_condition(
+            browser.wait_for_condition(
                 lambda d: d.find_element(self.recaptcha_token.by, self.recaptcha_token.selector)
                           .get_attribute("value")
                           .startswith(self.recaptcha_token_prefix)
@@ -139,35 +138,36 @@ class Provider:
 
     def login(self, browser: Browser, load: bool = True) -> None:
         """Perform login in the web application."""
-        self._browser = browser
         self._weblogger.browser = browser
-        self._browser.error_log_dir = "error"
         try:
             if load:
                 log.debug("Opening %s" % self.url)
-                self._browser.force_get(self.url)
-                self._browser.wait_for_page_inactive(2)
+                browser.force_get(self.url)
+                browser.wait_for_page_inactive(2)
                 if (self.cookies_button and
-                        self._browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
-                    self._browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
+                        browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
+                    browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
 
             log.info("Logging into service...")
             self._weblogger.trace("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
 
-            input_user = self._browser.wait_for_element(self.user_input.by, self.user_input.selector)
+            input_user = browser.wait_for_element(self.user_input.by, self.user_input.selector)
             if input_user is None:
                 print(f"No user input {self.user_input} found!")
                 self._weblogger.error()
             assert input_user is not None
 
-            input_password = self._browser.wait_for_element(self.password_input.by, self.password_input.selector)
+            input_password = browser.wait_for_element(self.password_input.by, self.password_input.selector)
             assert input_password is not None
 
             username = self.username.get()
-            self._browser.click_element_with_js(input_user)
-            time.sleep(0.5)
-            self.input(input_user, username)
+            if username is not None:
+                browser.click_element_with_js(input_user)
+                time.sleep(0.5)
+                self.input(input_user, username)
+            else:
+                raise RuntimeError(f"No valid username found for service '{self.name}'!")
             self._weblogger.trace("username-input")
 
             password = self.password.get()
@@ -176,13 +176,13 @@ class Provider:
                 self.input(input_password, password)
                 time.sleep(0.5)
             else:
-                raise Exception(f"No valid password found for service '{self.name}', user '{username}'!")
+                raise RuntimeError(f"No valid password found for service '{self.name}', user '{username}'!")
 
             self._weblogger.trace("password-input")
-            self._wait_for_reCAPTCHA_v3_token()
+            self._wait_for_reCAPTCHA_v3_token(browser)
             input_password.send_keys(Keys.ENTER)
 
-            self._browser.wait_for_page_load_completed()
+            browser.wait_for_page_load_completed()
             _sleep_with_message(self.post_login_delay, "Post-login")
             self._weblogger.trace("post-login")
             log.info("Done.")
@@ -191,7 +191,7 @@ class Provider:
             self._weblogger.error()
             raise
 
-    def _fetch_payments(self) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Must be overridden in subclasses to return actual payments."""
         raise NotImplementedError(f"{self.__class__.__name__} must override _fetch_payments().")
 
@@ -199,24 +199,23 @@ class Provider:
         """Log in and fetch payments, return fallback on failure."""
         try:
             print(f'Processing service {self.name}...')
-            self._browser = browser
-            self.login(self._browser)
-            payments = sorted(self._fetch_payments(),
+            self.login(browser)
+            payments = sorted(self._fetch_payments(browser),
                               key=lambda value: self._location_order.get(value.location, float('inf')))
         except Exception as e:
             print(f'{e.__class__.__name__}:{str(e)}\nCannot get payments for service {self.name}!')
             payments = [Payment(self.name, location, None, None) for location in self.locations]
             self._weblogger.error()
         finally:
-            self.logout()
+            self.logout(browser)
         return payments
 
-    def logout(self) -> None:
+    def logout(self, browser: Browser) -> None:
         """Click the logout button and wait for the page to finish logging out."""
         try:
             self._weblogger.trace("pre-logout")
-            self._browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
-            self._browser.wait_for_page_inactive(2)
+            browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
+            browser.wait_for_page_inactive(2)
             self._weblogger.trace("post-logout")
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")

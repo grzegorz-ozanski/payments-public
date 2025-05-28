@@ -1,15 +1,18 @@
 """
     Mocks for PyTesting
 """
-from selenium.webdriver.common.by import By
+from typing import Any
 
-from browser import Browser
+from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
+
+from browser import Browser, WebLogger
 from payments.payment import Payment
 from providers.provider import PageElement
 from providers.provider import Provider
 
 
-class MockWeblogger:
+class MockWeblogger(WebLogger):
     """Mock implementation of a weblogger for testing."""
 
     def trace(self, suffix: str) -> None:
@@ -38,12 +41,12 @@ class DummyProvider(Provider):
         )
         self.name = name
         self._test_payments = payments
-        self._weblogger = MockWeblogger()
+        self._weblogger = MockWeblogger('')
 
     def login(self, browser: Browser, load: bool = True) -> None:
         pass
 
-    def _fetch_payments(self) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Return predefined payments or static defaults."""
         if self._test_payments is not None:
             return self._test_payments
@@ -53,22 +56,30 @@ class DummyProvider(Provider):
             Payment(self.name, "Nieznana", "2025-06-03", "300"),
         ]
 
-class MockBrowser:
+
+# noinspection PyMissingConstructor
+class MockBrowser(Browser):
     """Simplified mock of the Browser interface."""
 
-    def force_get(self, url: str) -> None:
+    def __init__(self) -> None:
+        self.user_data_dir = None
+        # library variable: out of scope
+        self.session_id = 'testsession'  # type: ignore[assignment]
+        pass
+
+    def force_get(self, url: str, close_old_tab: bool = True) -> None:
         """Mock force_get method."""
         pass
 
-    def wait_for_page_inactive(self, timeout: int = 2) -> None:
+    def wait_for_page_inactive(self, timeout: int | None = None) -> Any:
         """Mock wait_for_page_inactive method."""
         pass
 
-    def wait_for_element(self, *args, **kwargs) -> "MockWebElement":
+    def wait_for_element(self, by: str, value: str, timeout=None) -> WebElement | None:
         """Mock wait_for_element method."""
         assert self is not None
-        assert args is not None
-        assert kwargs is not None
+        assert by is not None
+        assert value is not None
         return MockWebElement()
 
     def click_element_with_js(self, elem: object) -> None:
@@ -85,9 +96,9 @@ class MockBrowser:
 
     save_trace_logs: bool = False
 
-    def save_screenshot(self, path: str) -> None:
+    def save_screenshot(self, path: str) -> bool:
         """Mock save_screenshot method."""
-        pass
+        return True
 
     @property
     def page_source(self) -> str:
@@ -99,8 +110,12 @@ class MockBrowser:
         pass
 
 
-class MockWebElement:
+class MockWebElement(WebElement):
     """Mock of a Selenium WebElement."""
+
+    def __init__(self) -> None:
+        super().__init__('','')
+
 
     def get_attribute(self, key: str) -> str:
         """Mock get_attribute method."""

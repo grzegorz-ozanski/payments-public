@@ -4,7 +4,7 @@
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging
+from browser import setup_logging, Browser
 from payments import Amount, Payment
 from .provider import PageElement, Provider
 
@@ -32,21 +32,23 @@ class Pgnig(Provider):
         """Initialize PGNiG provider with input elements and locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
 
-    def _fetch_payments(self) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Return list of unpaid invoices from PGNiG eBOK portal."""
         log.info("Getting payments...")
-        location = self._get_location(
-            self._browser.wait_for_element(By.CLASS_NAME, READING_ADDRESS_CLASS).text
-        )
+        location_element = browser.wait_for_element(By.CLASS_NAME, READING_ADDRESS_CLASS)
+        if location_element:
+            location = self._get_location(location_element.text)
+        else:
+            raise RuntimeError(f"Cannot find location element '{READING_ADDRESS_CLASS}'!")
 
         log.info("Getting invoices menu...")
-        invoices_menu = self._browser.find_element(By.XPATH, INVOICES_MENU_XPATH)
+        invoices_menu = browser.find_element(By.XPATH, INVOICES_MENU_XPATH)
         log.info("Opening invoices menu...")
         self._weblogger.trace("pre-invoices-click")
         invoices_menu.click()
 
         log.debug("Waiting for page load completed...")
-        self._browser.wait_for_page_inactive()
+        browser.wait_for_page_inactive()
 
         unpaid_invoices = None
         for i in range(10):
@@ -55,17 +57,20 @@ class Pgnig(Provider):
             try:
                 log.info("Getting filtered invoices list...")
                 unpaid_invoices = []
-                for index, item in enumerate(self._browser.wait_for_elements(By.CLASS_NAME, INVOICE_ROW_CLASS)):
+                elements = browser.wait_for_elements(By.CLASS_NAME, INVOICE_ROW_CLASS)
+                if elements is None:
+                    raise RuntimeError("Cannot get invoices list!")
+                for index, item in enumerate(browser.safe_list(elements)):
                     if item.find_element(By.CLASS_NAME, INVOICE_BUTTON_CLASS).text == "Zapłać":
                         unpaid_invoices.append(item)
                 break
             except StaleElementReferenceException:
                 log.warning(f"Stale element encountered during filtering invoices.\n"
                             f"Element index: {index}\n"
-                            f"Element details:\n{self._browser.dump_element(item)}")
+                            f"Element details:\n{browser.dump_element(item)}")
 
         log.debug("Creating payments dict...")
-        payments_dict = {}
+        payments_dict: dict[str, float] = {}
         for invoice in unpaid_invoices:
             log.debug("Iterating over unpaid invoices...")
             columns = invoice.find_elements(By.CLASS_NAME, INVOICE_COLUMN_CLASS)

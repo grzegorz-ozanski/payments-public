@@ -43,7 +43,7 @@ def test_typeerror_for_invalid_key_type() -> None:
     lst = LookupList(TestClass1(), TestClass2())
     with pytest.raises(TypeError, match="Invalid key type: <class 'float'>"):
         # noinspection PyTypeChecker
-        _ = lst[3.14]
+        _ = lst[3.14] # type: ignore[call-overload]
 
 
 def test_slice_access() -> None:

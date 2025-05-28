@@ -102,7 +102,7 @@ def main() -> None:
         providers.Nordhome(bryla)
     )
 
-    payments = PaymentsManager(providers_list[args.provider.lower() or ''])
+    payments = PaymentsManager(providers_list[args.provider.lower() or 'energa'])
     payments.collect_payments(Browser(options))
     output = payments.to_string()
     # payments.collect_fake_payments(r'.github\data\test_output.txt')

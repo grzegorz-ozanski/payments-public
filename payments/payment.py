@@ -1,7 +1,9 @@
 """Payment related classes (Payment, Amount and DueDate)"""
+from __future__ import annotations
+
 import re
 from functools import total_ordering
-from typing import TypeVar, Any
+from typing import Any
 
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -12,9 +14,9 @@ log = setup_logging(__name__)
 from dateutil import parser
 from datetime import date, timedelta
 
-AmountT = TypeVar("AmountT", str, float, WebElement)
+AmountT = str | float | WebElement
 
-DueDateT = TypeVar("DueDateT", str, date, WebElement)
+DueDateT = str | date | WebElement
 
 
 class Amount:
@@ -33,16 +35,28 @@ class Amount:
             value = value.text
         if isinstance(value, float):
             value = str(value)
-        separator = '|'
-        amount = re.sub(r'[^\d,.-]', '', value)
-        amount = re.sub(r'[,.]', separator, amount)
-        self.whole, self.decimal = amount.split(separator) if separator in amount else (amount, '0')
+        self.value = value
+        if self.value != self.unknown:
+            separator = '|'
+            amount = re.sub(r'[^\d,.-]', '', value)
+            amount = re.sub(r'[,.]', separator, amount)
+            self.whole, self.decimal = amount.split(separator) if separator in amount else (amount, '0')
 
     def __repr__(self) -> str:
         """
             Return string representation of the Amount.
         """
-        return f'{self.whole},{self.decimal:02}'
+        return f'{self.whole},{self.decimal:02}' if self.value != self.unknown else self.value
+
+    def __eq__(self, other: object) -> bool:
+        """
+            Compare amounts for equality.
+        """
+        if not isinstance(other, Amount):
+            if isinstance(other, str):
+                return self.value == other
+            return NotImplemented
+        return self.whole == other.whole and self.decimal == other.decimal
 
     def __format__(self, format_spec: str) -> str:
         """
@@ -65,6 +79,18 @@ class Amount:
         """
         return re.search(r"^\D*\b0,00\b", value) is not None
 
+    @staticmethod
+    def create_from(value: AmountT | Amount | None) -> 'Amount':
+        """
+        Creates DueDate object from any compatible value
+        :param value: source value
+        :return: Proper DueDate object
+        """
+        if value is None:
+            return Amount(Amount.unknown)
+        if isinstance(value, Amount):
+            return value
+        return Amount(value)
 
 @total_ordering
 class DueDate:
@@ -103,6 +129,7 @@ class DueDate:
             :param owner: The class the property was accessed on.
             :return: The result of calling the decorated method.
             """
+            assert self.fget is not None
             return self.fget(owner)
 
     def __init__(self, value: DueDateT) -> None:
@@ -112,7 +139,7 @@ class DueDate:
         """
         if isinstance(value, WebElement):
             value = value.text
-        if isinstance(value, str):
+        if isinstance(value, str) and value != self.unknown:
             if value == '' or any(item in value for item in self._today):
                 value = date.today()
             elif any(item in value for item in self._tomorrow):
@@ -127,13 +154,15 @@ class DueDate:
         """
             Return string representation of the DueDate.
         """
-        return self.value.strftime('%d-%m-%Y')
+        return self.value if isinstance(self.value, str) else self.value.strftime('%d-%m-%Y')
 
     def __eq__(self, other: object) -> bool:
         """
             Compare dates for equality.
         """
         if not isinstance(other, DueDate):
+            if isinstance(other, str):
+                return self.value == other
             return NotImplemented
         return self.value == other.value
 
@@ -142,8 +171,10 @@ class DueDate:
             Compare dates for sorting (less than).
         """
         if not isinstance(other, DueDate):
+            if isinstance(other, str):
+                return NotImplemented
             return NotImplemented
-        return self.value < other.value
+        return self.value < other.value  # type: ignore[operator]
 
     @classproperty
     def today(self) -> str:
@@ -154,6 +185,19 @@ class DueDate:
         :rtype: str
         """
         return self._today[0]
+
+    @staticmethod
+    def create_from(value: DueDateT | 'DueDate' | None) -> 'DueDate':
+        """
+        Creates DueDate object from any compatible value
+        :param value: source value
+        :return: Proper DueDate object
+        """
+        if value is None:
+            return DueDate(DueDate.unknown)
+        if isinstance(value, DueDate):
+            return value
+        return DueDate(value)
 
 
 class Payment:
@@ -166,8 +210,8 @@ class Payment:
     def __init__(self,
                  provider: str,
                  location: str,
-                 due_date: DueDateT | None = '',
-                 amount: AmountT | None = '0,0') -> None:
+                 due_date: DueDate | DueDateT | None = '',
+                 amount: Amount | AmountT | None = '0,0') -> None:
         """
         Payment constructor
 
@@ -177,8 +221,8 @@ class Payment:
         :param provider: provider
         """
 
-        self.amount = Amount(amount) if amount is not None else Amount.unknown
-        self.due_date = DueDate(due_date) if due_date is not None else DueDate.unknown
+        self.amount = Amount.create_from(amount)
+        self.due_date = DueDate.create_from(due_date)
         self.location = location
         self.provider = provider
         log.debug(f'Created payment object:'

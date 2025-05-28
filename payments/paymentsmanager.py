@@ -1,25 +1,27 @@
 """Payments manager module"""
-from dataclasses import dataclass, field
+from typing import Sequence
 
 from browser import Browser
 from payments import Payment
 from providers.provider import Provider
+from lookuplist import LookupList
 
 
-@dataclass
 class PaymentsManager:
     """
     Collect and export all payments as alligned text
     """
-    providers: list[Provider] | Provider
-    payments: list[Payment] = field(default_factory=list)
-
-    def __post_init__(self) -> None:
+    def __init__(self, providers: Sequence[Provider] | LookupList[Provider] | Provider) -> None:
         """
         If single item is provided, change it into one-element list
         """
-        if not isinstance(self.providers, list):
-            self.providers = [self.providers]
+        self.payments: list[Payment] = []
+        if isinstance(providers, Provider):
+            self.providers = LookupList[Provider](providers)
+        elif isinstance(providers, Sequence) and not isinstance(providers, str):
+            self.providers = LookupList[Provider](*providers)
+        else:
+            self.providers = providers
 
     def __repr__(self) -> str:
         return '\n'.join(map(str, self.providers))
