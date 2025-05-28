@@ -1,0 +1,14 @@
+name: Schedule – Windows
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+  push:
+    branches: [ '*' ]
+
+jobs:
+  call:
+    uses: ./.github/workflows/run-tests.yml
+    with:
+      runner-label: windows11-vm-blackview
