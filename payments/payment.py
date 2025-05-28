@@ -1,7 +1,7 @@
 """Payment related classes (Payment, Amount and DueDate)"""
 import re
 from functools import total_ordering
-from typing import TypeVar
+from typing import TypeVar, Any
 
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -76,6 +76,35 @@ class DueDate:
     _yesterday = ['wczoraj', 'yesterday']
     unknown = '<unknown>'
 
+    # noinspection PyPep8Naming
+    class classproperty(property):
+        """
+        A decorator that behaves like @property, but works on classes instead of instances.
+
+        Allows accessing a method as a read-only attribute from the class level:
+
+            class MyClass:
+                _value = 42
+
+                @classproperty
+                def value(cls):
+                    return cls._value
+
+            MyClass.value  # -> 42
+
+        Cannot be set or deleted, just like @property.
+        """
+
+        def __get__(self, instance, owner=None) -> Any:
+            """
+            Return the computed property value for the class.
+
+            :param instance: Ignored. Required by descriptor protocol.
+            :param owner: The class the property was accessed on.
+            :return: The result of calling the decorated method.
+            """
+            return self.fget(owner)
+
     def __init__(self, value: DueDateT) -> None:
         """
         Constuctor
@@ -116,16 +145,15 @@ class DueDate:
             return NotImplemented
         return self.value < other.value
 
-    @classmethod
-    @property
-    def today(cls) -> str:
+    @classproperty
+    def today(self) -> str:
         """
         Returns a magic string allowing to create a DueDate object with today's date.
 
         :return: The current day's date
         :rtype: str
         """
-        return cls._today[0]
+        return self._today[0]
 
 
 class Payment:
