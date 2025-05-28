@@ -14,6 +14,11 @@ on:
         description: 'Event name (push/schedule/etc)'
         required: false
         type: string
+      runner_label:
+        description: 'Label of the runner to use'
+        required: true
+        default: '["self-hosted", "Linux"]'
+        type: string
     secrets:
       GMAIL_USERNAME:
         required: true
@@ -53,7 +58,7 @@ env:
 
 jobs:
   run-payments:
-    runs-on: ${{ fromJson(inputs.runner-label) }}
+    runs-on: ${{ fromJson(inputs.runner_label) }}
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.

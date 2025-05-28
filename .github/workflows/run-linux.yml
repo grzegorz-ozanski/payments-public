@@ -18,6 +18,6 @@ jobs:
     permissions:
       contents: write
     with:
-      runner-label: '["self-hosted", "Linux"]'
+      runner_label: '["self-hosted", "Linux"]'
       dump: ${{ inputs.dump }}
       event_name: ${{ github.event_name }}
