@@ -1,13 +1,13 @@
 """
     Payment class unittests
 """
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 from payments.payment import Payment
 
 
 @patch("payments.payment.log.debug")
-def test_payment_initialization(mock_log_debug) -> None:
+def test_payment_initialization(mock_log_debug: MagicMock) -> None:
     """Test initialization of Payment with valid and invalid values."""
     payment = Payment(provider="TestProvider", location="TestLocation", due_date="12-10-2023", amount="123,45")
     assert payment.provider == "TestProvider"

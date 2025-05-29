@@ -2,6 +2,7 @@
     Amount class unittests
 """
 import pytest
+from pytest_mock import MockerFixture
 from selenium.webdriver.remote.webelement import WebElement
 
 from payments.payment import Amount
@@ -29,7 +30,7 @@ def test_amount_init_with_malformed_string() -> None:
         assert not hasattr(amount, "decimal")
 
 
-def test_amount_init_with_webelement(mocker) -> None:
+def test_amount_init_with_webelement(mocker: MockerFixture) -> None:
     """Test initializing Amount with a WebElement value."""
     web_element_mock = mocker.Mock(spec=WebElement)
     web_element_mock.text = "1 234.56"

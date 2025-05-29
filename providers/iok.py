@@ -4,6 +4,7 @@
     IOK is a common framework used by utility providers to build online customer portals.
 """
 from datetime import date
+from logging import Logger
 
 from selenium.webdriver.common.by import By
 
@@ -19,13 +20,13 @@ LOGOUT_BUTTON = PageElement(By.CSS_SELECTOR, "button.wcag.bg.navTxtColor")
 
 AMOUNT_CLASS = 'home-amount'
 DUE_DATE_CLASS = 'home-info'
-DEFAULT_TIMEOUT = 0.1
+DEFAULT_TIMEOUT = 1
 
 
 class IOK(Provider):
     """Base provider for IOK-based portals."""
 
-    def __init__(self, due_day, url, log, location: str):
+    def __init__(self, due_day: int, url: str, log: Logger, location: str) -> None:
         """
         :param due_day: Day of month for default due date.
         :param url: Login URL for the service.

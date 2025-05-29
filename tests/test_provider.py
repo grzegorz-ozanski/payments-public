@@ -1,9 +1,11 @@
 """
     Basic unittests for the provider module.
 """
+from typing import Any
 from unittest.mock import patch
 
 import pytest
+from _pytest.capture import CaptureFixture
 from selenium.webdriver.common.by import By
 
 from mocks import DummyProvider, MockBrowser
@@ -13,7 +15,7 @@ from providers.provider import Provider
 
 
 @patch("providers.provider.Credential.get", return_value="dummy")
-def test_payment_sorting(mock_cred) -> None:
+def test_payment_sorting(mock_cred: Any) -> None:
     """Test whether payments are sorted according to known locations."""
     assert mock_cred is not None
     provider = DummyProvider(
@@ -24,7 +26,7 @@ def test_payment_sorting(mock_cred) -> None:
 
 
 @patch("providers.provider.Credential.get", return_value="dummy")
-def test_payments_fetch_error(mock_cred, capsys) -> None:
+def test_payments_fetch_error(mock_cred: Any, capsys: CaptureFixture[str]) -> None:
     """Test whether payments are sorted according to known locations."""
     assert mock_cred is not None
     provider = DummyProvider(

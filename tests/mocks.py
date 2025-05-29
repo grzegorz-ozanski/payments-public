@@ -32,11 +32,12 @@ class MockWeblogger(WebLogger):
 class DummyProvider(Provider):
     """Flexible test provider that returns hardcoded or injected payments."""
     default_name = "dummyprovider"
+
     def __init__(
-        self,
-        name: str = default_name,
-        locations: tuple[str, ...] = ("Sezamowa", "Bryla", "Hodowlana"),
-        payments: list[Payment] | None = None,
+            self,
+            name: str = default_name,
+            locations: tuple[str, ...] = ("Sezamowa", "Bryla", "Hodowlana"),
+            payments: list[Payment] | None = None,
     ):
         super().__init__(
             url='',
@@ -81,7 +82,7 @@ class MockBrowser(Browser):
         """Mock wait_for_page_inactive method."""
         pass
 
-    def wait_for_element(self, by: str, value: str, timeout=None) -> WebElement | None:
+    def wait_for_element(self, by: str, value: str, timeout: int | None = None) -> WebElement | None:
         """Mock wait_for_element method."""
         assert self is not None
         assert by is not None
@@ -96,7 +97,7 @@ class MockBrowser(Browser):
         """Mock wait_for_page_load_completed method."""
         pass
 
-    def find_and_click_element_with_js(self, *args, **kwargs) -> None:
+    def find_and_click_element_with_js(self, by: str, value: str) -> None:
         """Mock find_and_click_element_with_js method."""
         pass
 
@@ -120,14 +121,12 @@ class MockWebElement(WebElement):
     """Mock of a Selenium WebElement."""
 
     def __init__(self) -> None:
-        super().__init__('','')
-
+        super().__init__('', '')
 
     def get_attribute(self, name: str) -> str:
         """Mock get_attribute method."""
         return ""
 
-    def send_keys(self, *args) -> None:
+    def send_keys(self, *value: str) -> None:
         """Mock send_keys method."""
         pass
-

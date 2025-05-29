@@ -29,7 +29,7 @@ class LookupList(Sequence[T]):
         ...
 
     @overload
-    def __getitem__(self, key: str) -> Union[T, 'LookupList']:
+    def __getitem__(self, key: str) -> Union[T, 'LookupList[T]']:
         ...
 
     def __getitem__(self, key: object) -> Union[T, list[T], 'LookupList[T]']:

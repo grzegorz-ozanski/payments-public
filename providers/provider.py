@@ -28,7 +28,7 @@ DEFAULT_LOGOUT_XPATH = (
 )
 
 
-def _sleep_with_message(amount: int, message: str):
+def _sleep_with_message(amount: int, message: str) -> None:
     """Sleep for `amount` seconds, logging a debug message first."""
     if amount:
         log.debug(f"{message}: sleeping {amount} seconds")
@@ -48,7 +48,7 @@ class Credential:
 
     Priority: environment variable > keyring service.
     """
-    def __init__(self, service_name, name, env_upper: bool = True):
+    def __init__(self, service_name: str, name: str, env_upper: bool = True):
         self.keyring_service = service_name
         self.keyring = name
         self.environ = f'{service_name}_{name}'

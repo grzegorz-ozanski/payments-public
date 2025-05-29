@@ -7,10 +7,13 @@ import sys
 import tempfile
 from unittest.mock import patch, MagicMock
 
+from _pytest.capture import CaptureFixture
+from _pytest.monkeypatch import MonkeyPatch
+
 import main
 
 
-def test_parse_args_defaults(monkeypatch) -> None:
+def test_parse_args_defaults(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "argv", ["prog"])
     args = main.parse_args()
     assert args.verbose is False
@@ -18,7 +21,7 @@ def test_parse_args_defaults(monkeypatch) -> None:
     assert args.provider == ''
 
 
-def test_main_prints_output(monkeypatch, capsys) -> None:
+def test_main_prints_output(monkeypatch: MonkeyPatch, capsys: CaptureFixture[str]) -> None:
     monkeypatch.setattr("sys.argv", ["prog"])
     monkeypatch.setattr(main, "parse_args", lambda: argparse.Namespace(
         verbose=False, headless=True, trace=False, provider='', output=None
@@ -36,7 +39,7 @@ def test_main_prints_output(monkeypatch, capsys) -> None:
         assert "TEST_OUTPUT" in out
 
 
-def test_main_writes_to_file(monkeypatch) -> None:
+def test_main_writes_to_file(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr("sys.argv", ["prog"])
     dummy_file = tempfile.NamedTemporaryFile(delete=False)
     dummy_path = dummy_file.name
