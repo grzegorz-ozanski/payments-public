@@ -1,4 +1,11 @@
 #!/bin/bash
+echo "✅ Static analysis"
+ruff check .
+status=$?
+if [ $status -ne 0 ]; then
+  echo "❌ Static analysis failed, push aborted."
+  exit $status
+fi
 echo "🧪 Running tests before push..."
 pytest --quiet
 status=$?

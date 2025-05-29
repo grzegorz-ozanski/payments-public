@@ -203,7 +203,7 @@ class Payment:
     def __repr__(self) -> str:
         return f'{self.location} {self.due_date} {self.amount}'
 
-    def to_padded_string(self, padding: list | None = None) -> str:
+    def to_padded_string(self, padding: list[int] | None = None) -> str:
         """
         Export to string
         :param padding: fields padding list
