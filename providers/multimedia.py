@@ -6,7 +6,7 @@ from typing import cast
 
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser
+from browser import setup_logging, Browser, WebLogger
 from payments import Payment
 from .provider import PageElement, Provider
 
@@ -55,14 +55,14 @@ class Multimedia(Provider):
         except StopIteration:
             raise Exception(f"Cannot find suitable location for payment '{amount}'!")
 
-    def login(self, browser: Browser, load: bool = True) -> None:
+    def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
         """Retryable login with detection of CAPTCHA and password change."""
         wait = 5
         num_retries = 10
         for i in range(num_retries):
             log.debug(f'Login attempt {i + 1}')
             try:
-                super().login(browser, load if i == 0 else False)
+                super().login(browser, weblogger, load if i == 0 else False)
             except Exception as ex:
                 if i == num_retries - 1:
                     raise ex
@@ -70,7 +70,7 @@ class Multimedia(Provider):
 
             if browser.wait_for_element(By.CSS_SELECTOR, LOGIN_ERROR_TEXT, 2):
                 log.debug(f'Login failed, retrying after {wait} seconds')
-                self._weblogger.trace(f'failed-login-attempt-{i}')
+                weblogger.trace(f'failed-login-attempt-{i}')
             elif all(browser.find_elements(By.ID, id_) for id_ in PASSWORD_CHANGE_IDS):
                 raise RuntimeError("Couldn't login, reason: password change required")
             else:
@@ -81,7 +81,7 @@ class Multimedia(Provider):
             reason = "CAPTCHA required"
         raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
 
-    def _fetch_payments(self, browser: Browser) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Extracts payment records from the invoice list."""
         log.info("Getting payments...")
         sleep(0.1)

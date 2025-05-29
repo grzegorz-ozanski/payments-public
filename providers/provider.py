@@ -93,7 +93,6 @@ class Provider:
         self.password_input = password_input
         self.username = Credential(self.name, 'username')
         self.password = Credential(self.name, 'password')
-        self._weblogger = WebLogger(self.name)
 
         if not logout_button:
             logout_button = PageElement(By.XPATH, DEFAULT_LOGOUT_XPATH)
@@ -137,9 +136,8 @@ class Provider:
             control.send_keys(Keys.DELETE)
         control.send_keys(text)
 
-    def login(self, browser: Browser, load: bool = True) -> None:
+    def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
         """Perform login in the web application."""
-        self._weblogger.browser = browser
         try:
             if load:
                 log.debug("Opening %s" % self.url)
@@ -150,13 +148,13 @@ class Provider:
                     browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
 
             log.info("Logging into service...")
-            self._weblogger.trace("pre-login")
+            weblogger.trace("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
 
             input_user = browser.wait_for_element(self.user_input.by, self.user_input.selector)
             if input_user is None:
                 print(f"No user input {self.user_input} found!")
-                self._weblogger.error()
+                weblogger.error()
             assert input_user is not None
 
             input_password = browser.wait_for_element(self.password_input.by, self.password_input.selector)
@@ -169,7 +167,7 @@ class Provider:
                 self.input(input_user, username)
             else:
                 raise RuntimeError(f"No valid username found for service '{self.name}'!")
-            self._weblogger.trace("username-input")
+            weblogger.trace("username-input")
 
             password = self.password.get()
             if password is not None:
@@ -179,46 +177,47 @@ class Provider:
             else:
                 raise RuntimeError(f"No valid password found for service '{self.name}', user '{username}'!")
 
-            self._weblogger.trace("password-input")
+            weblogger.trace("password-input")
             self._wait_for_reCAPTCHA_v3_token(browser)
             input_password.send_keys(Keys.ENTER)
 
             browser.wait_for_page_load_completed()
             _sleep_with_message(self.post_login_delay, "Post-login")
-            self._weblogger.trace("post-login")
+            weblogger.trace("post-login")
             log.info("Done.")
         except Exception as e:
             log.info("Cannot login into service: %s" % e)
-            self._weblogger.error()
+            weblogger.error()
             raise
 
-    def _fetch_payments(self, browser: Browser) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Must be overridden in subclasses to return actual payments."""
         raise NotImplementedError(f"{self.__class__.__name__} must override _fetch_payments().")
 
     def get_payments(self, browser: Browser) -> list[Payment]:
         """Log in and fetch payments, return fallback on failure."""
+        weblogger = WebLogger(self.name, browser)
         try:
             print(f'Processing service {self.name}...')
-            self.login(browser)
-            payments = sorted(self._fetch_payments(browser),
+            self.login(browser, weblogger)
+            payments = sorted(self._fetch_payments(browser, weblogger),
                               key=lambda value: self._location_order.get(value.location, float('inf')))
         except Exception as e:
             print(f'{e.__class__.__name__}:{str(e)}\nCannot get payments for service {self.name}!')
             payments = [Payment(self.name, location, None, None) for location in self.locations]
-            self._weblogger.error()
+            weblogger.error()
         finally:
-            self.logout(browser)
+            self.logout(browser, weblogger)
         return payments
 
-    def logout(self, browser: Browser) -> None:
+    def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """Click the logout button and wait for the page to finish logging out."""
         try:
-            self._weblogger.trace("pre-logout")
+            weblogger.trace("pre-logout")
             browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
             browser.wait_for_page_inactive(2)
-            self._weblogger.trace("post-logout")
+            weblogger.trace("post-logout")
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
         except WebDriverException:
-            self._weblogger.error()
+            weblogger.error()

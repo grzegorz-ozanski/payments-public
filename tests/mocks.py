@@ -15,6 +15,11 @@ from providers.provider import Provider
 class MockWeblogger(WebLogger):
     """Mock implementation of a weblogger for testing."""
 
+    # we do want not to invoke an actual constructor for this mock
+    # noinspection PyMissingConstructor
+    def __init__(self) -> None:
+        pass
+
     def trace(self, suffix: str) -> None:
         """Mock trace method."""
         pass
@@ -41,12 +46,12 @@ class DummyProvider(Provider):
         )
         self.name = name
         self._test_payments = payments
-        self._weblogger = MockWeblogger('')
+        self._weblogger = MockWeblogger()
 
-    def login(self, browser: Browser, load: bool = True) -> None:
+    def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
         pass
 
-    def _fetch_payments(self, browser: Browser) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Return predefined payments or static defaults."""
         if self._test_payments is not None:
             return self._test_payments

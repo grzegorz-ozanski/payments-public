@@ -4,7 +4,7 @@
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser
+from browser import setup_logging, Browser, WebLogger
 from payments import Amount, Payment
 from .provider import PageElement, Provider
 
@@ -32,7 +32,7 @@ class Pgnig(Provider):
         """Initialize PGNiG provider with input elements and locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
 
-    def _fetch_payments(self, browser: Browser) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Return list of unpaid invoices from PGNiG eBOK portal."""
         log.info("Getting payments...")
         location_element = browser.wait_for_element(By.CLASS_NAME, READING_ADDRESS_CLASS)
@@ -44,7 +44,7 @@ class Pgnig(Provider):
         log.info("Getting invoices menu...")
         invoices_menu = browser.find_element(By.XPATH, INVOICES_MENU_XPATH)
         log.info("Opening invoices menu...")
-        self._weblogger.trace("pre-invoices-click")
+        weblogger.trace("pre-invoices-click")
         invoices_menu.click()
 
         log.debug("Waiting for page load completed...")

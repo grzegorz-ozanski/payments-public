@@ -1,3 +1,4 @@
+#file: noinspection GrazieInspection
 #  This workflow runs the payment script, compares results, and handles errors and reporting.
 #  It is intended to be used via workflow_call from scheduled or manual dispatch workflows.
 name: Run payments
@@ -35,8 +36,8 @@ on:
       CREDENTIALS:
         required: true
 
-# Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
 # noinspection GrazieInspection
+# Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
 env:
   ACTUAL_CONTENT: actual.txt
   BROWSER_LOG_FILENAME: trace.log

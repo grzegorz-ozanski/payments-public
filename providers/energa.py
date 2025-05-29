@@ -4,7 +4,7 @@
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser
+from browser import setup_logging, Browser, WebLogger
 from payments import Amount, DueDate, Payment
 from .provider import PageElement, Provider
 
@@ -42,17 +42,17 @@ class Energa(Provider):
         password_input = PageElement(By.ID, "password")
         super().__init__(SERVICE_URL, locations, user_input, password_input)
 
-    def logout(self, browser: Browser) -> None:
+    def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """
         Log out the user from the Energa web portal.
         """
         try:
             browser.wait_for_element_disappear(By.CSS_SELECTOR, OVERLAY_SELECTOR)
             browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
-            self._weblogger.trace("pre-logout-click")
+            weblogger.trace("pre-logout-click")
             browser.find_element(By.XPATH, f'//span[contains(text(), "{LOGOUT_TEXT}")]').click()
         except (AttributeError, ElementNotInteractableException) as e:
-            self._weblogger.error()
+            weblogger.error()
             if type(e) is AttributeError:
                 if 'move_to requires a WebElement' in str(e):
                     log.debug("Cannot click logout button. Are we even logged in?")
@@ -61,20 +61,20 @@ class Energa(Provider):
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
 
-    def _fetch_payments(self, browser: Browser) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """
         Read and return payment data for all user locations.
         """
         log.info("Getting payments...")
         browser.wait_for_page_load_completed()
-        self._weblogger.trace("accounts-list")
+        weblogger.trace("accounts-list")
         locations_list_or_none = browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR)
         if not locations_list_or_none:
             button = browser.wait_for_element(By.CSS_SELECTOR, OVERLAY_BUTTON_SELECTOR)
             if button:
                 browser.trace_click(button)
                 browser.wait_for_page_load_completed()
-                self._weblogger.trace("accounts-list-after-overlay")
+                weblogger.trace("accounts-list-after-overlay")
                 locations_list_or_none = browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR)
             else:
                 raise RuntimeError('Locations list is empty and no overlay was found!')
@@ -88,7 +88,7 @@ class Energa(Provider):
             print(f'...location {location_id + 1} of {len(locations_list)}')
             log.debug("Opening location page")
             browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
-            self._weblogger.trace("pre-location-click")
+            weblogger.trace("pre-location-click")
             browser.click_element_with_js(locations_list[location_id])
             # If a 'button.primary' exists, there is probably a message displayed that needs to be dismissed before continuing —
             # unless its text is "Zapłać teraz", which indicates we're already on the target page
@@ -104,7 +104,7 @@ class Energa(Provider):
                 continue
             log.debug("Getting payment")
             browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
-            self._weblogger.trace("pre-invoices-click")
+            weblogger.trace("pre-invoices-click")
             browser.find_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]').click()
             browser.wait_for_element_appear(By.CSS_SELECTOR, POPUP_SELECTOR)
             browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
@@ -112,7 +112,7 @@ class Energa(Provider):
             invoices = browser.wait_for_elements(
                 By.XPATH,
                 f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..', 1)
-            self._weblogger.trace("duedate-check")
+            weblogger.trace("duedate-check")
             if invoices:
                 due_date = invoices[0].text.split('\n')[1]
             else:

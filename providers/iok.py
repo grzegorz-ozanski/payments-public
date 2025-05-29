@@ -7,7 +7,7 @@ from datetime import date
 
 from selenium.webdriver.common.by import By
 
-from browser import Browser
+from browser import Browser, WebLogger
 from payments import Payment
 from .provider import PageElement, Provider
 
@@ -38,7 +38,7 @@ class IOK(Provider):
         self.due_date = date(today.year, today.month, due_day)
         super().__init__(url, (location,), USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
 
-    def _fetch_payments(self, browser: Browser) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Extract payment info from the page. Return fallback if missing."""
         self.log.info("Getting payments...")
         browser.wait_for_page_inactive()

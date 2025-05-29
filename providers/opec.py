@@ -5,7 +5,7 @@ from time import sleep
 
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser
+from browser import setup_logging, Browser, WebLogger
 from payments import Amount, DueDate, DueDateT, Payment
 from .provider import PageElement, Provider
 
@@ -34,11 +34,11 @@ class Opec(Provider):
         """Initialize OPEC service with given locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
 
-    def _fetch_payments(self, browser: Browser) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Click through the UI and return earliest unpaid invoice."""
-        self._weblogger.trace("pre-payments-click")
+        weblogger.trace("pre-payments-click")
         browser.find_element(By.XPATH, PAYMENTS_TAB).click()
-        self._weblogger.trace("pre-documents-click")
+        weblogger.trace("pre-documents-click")
         browser.find_element(By.XPATH, DOCUMENTS_TAB).click()
         browser.wait_for_network_inactive()
         sleep(1)

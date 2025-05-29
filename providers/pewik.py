@@ -3,7 +3,7 @@
 """
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser
+from browser import setup_logging, Browser, WebLogger
 from payments import Payment
 from .provider import PageElement, Provider
 
@@ -39,7 +39,7 @@ class Pewik(Provider):
         """Initialize provider with given locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
 
-    def _fetch_payments(self, browser: Browser) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Extract payments from balances table, switching between locations."""
         payments = []
         next_id = 1
