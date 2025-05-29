@@ -48,7 +48,7 @@ class Multimedia(Provider):
                          recaptcha_token=RECAPTCHA_TOKEN,
                          pre_login_delay=1)
 
-    def _get_location(self, amount: str) -> str:
+    def _get_location_by_amount(self, amount: str) -> str:
         """Find first matching location for the given amount prefix."""
         try:
             return next(location for value, location in self._locations_map.items() if amount.startswith(value))
@@ -93,7 +93,7 @@ class Multimedia(Provider):
             amount = invoice.find_element(By.CLASS_NAME, AMOUNT_CLASS).text
             due_date = invoice.find_element(By.CLASS_NAME, DUE_DATE_CLASS).text
             log.debug("Got amount '%s'" % amount)
-            location = self._get_location(amount)
+            location = self._get_location_by_amount(amount)
             index = payments.index(next(payment for payment in payments if payment.location == location))
             payments[index] = Payment(self.name, location, due_date, amount)
         return payments

@@ -88,7 +88,7 @@ class MockBrowser(Browser):
         assert value is not None
         return MockWebElement()
 
-    def click_element_with_js(self, elem: object) -> None:
+    def click_element_with_js(self, element: object) -> None:
         """Mock click_element_with_js method."""
         pass
 
@@ -102,7 +102,7 @@ class MockBrowser(Browser):
 
     save_trace_logs: bool = False
 
-    def save_screenshot(self, path: str) -> bool:
+    def save_screenshot(self, filename: str) -> bool:
         """Mock save_screenshot method."""
         return True
 
@@ -123,10 +123,8 @@ class MockWebElement(WebElement):
         super().__init__('','')
 
 
-    def get_attribute(self, key: str) -> str:
+    def get_attribute(self, name: str) -> str:
         """Mock get_attribute method."""
-        assert self is not None
-        assert key is not None
         return ""
 
     def send_keys(self, *args) -> None:

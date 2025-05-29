@@ -126,7 +126,7 @@ class Energa(Provider):
                 amount = Amount.unknown
             if due_date is None:
                 if Amount.is_zero(amount):
-                    due_date = DueDate.today
+                    due_date = DueDate.today()
                 else:
                     log.error(f"Could not retrieve due date for non-zero payment '{amount}', location '{location}'.")
             payments.append(Payment(self.name, location, due_date, amount))

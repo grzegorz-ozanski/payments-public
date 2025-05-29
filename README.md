@@ -126,6 +126,22 @@ pytest --cov=payments --cov=providers --cov=lookuplist --cov-report=term --cov-r
 
 📂 Detailed HTML report: `htmlcov/index.html`
 
+### ✅ Static analysis
+Codebase is compliant with static code checking with both PyCharm and mypy tools.
+All exceptions are explicitly documented.
+
+#### mypy
+To run mypy check, use:
+```bash
+pip install types-requests types-python-dateutil
+mypy . --ignore-missing-imports --exclude run
+```
+#### ruff
+To run ruff check, use:
+```bash
+ruff check .
+```
+
 ### 🤖 Continuous Integration (CI)
 
 This project includes CI workflows for both **Linux** and **Windows**, powered by GitHub Actions.

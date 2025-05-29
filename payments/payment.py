@@ -2,17 +2,15 @@
 from __future__ import annotations
 
 import re
+from datetime import date, timedelta
 from functools import total_ordering
-from typing import Any
 
+from dateutil import parser
 from selenium.webdriver.remote.webelement import WebElement
 
 from browser import setup_logging
 
 log = setup_logging(__name__)
-
-from dateutil import parser
-from datetime import date, timedelta
 
 AmountT = str | float | WebElement
 
@@ -35,10 +33,10 @@ class Amount:
             value = value.text
         if isinstance(value, float):
             value = str(value)
-        self.value = value
+        self.value = str(value)
         if self.value != self.unknown:
             separator = '|'
-            amount = re.sub(r'[^\d,.-]', '', value)
+            amount = re.sub(r'[^\d,.-]', '', self.value)
             amount = re.sub(r'[,.]', separator, amount)
             self.whole, self.decimal = amount.split(separator) if separator in amount else (amount, '0')
 
@@ -92,6 +90,7 @@ class Amount:
             return value
         return Amount(value)
 
+
 @total_ordering
 class DueDate:
     """
@@ -103,41 +102,9 @@ class DueDate:
     _unknown_str = '<unknown>'
     unknown = date.min
 
-
-    # we actually want this decorator class to be lowercase
-    # noinspection PyPep8Naming
-    class classproperty(property):
-        """
-        A decorator that behaves like @property, but works on classes instead of instances.
-
-        Allows accessing a method as a read-only attribute from the class level:
-
-            class MyClass:
-                _value = 42
-
-                @classproperty
-                def value(cls):
-                    return cls._value
-
-            MyClass.value  # -> 42
-
-        Cannot be set or deleted, just like @property.
-        """
-
-        def __get__(self, instance, owner=None) -> Any:
-            """
-            Return the computed property value for the class.
-
-            :param instance: Ignored. Required by descriptor protocol.
-            :param owner: The class the property was accessed on.
-            :return: The result of calling the decorated method.
-            """
-            assert self.fget is not None
-            return self.fget(owner)
-
     def __init__(self, value: DueDateT) -> None:
         """
-        Constuctor
+        Constructor
         :param value: either date object or its string representation
         """
         if isinstance(value, WebElement):
@@ -179,15 +146,15 @@ class DueDate:
             return NotImplemented
         return self.value < other.value
 
-    @classproperty
-    def today(self) -> str:
+    @classmethod
+    def today(cls) -> str:
         """
         Returns a magic string allowing to create a DueDate object with today's date.
 
         :return: The current day's date
         :rtype: str
         """
-        return self._today[0]
+        return cls._today[0]
 
     @staticmethod
     def create_from(value: DueDateT | 'DueDate' | None) -> 'DueDate':

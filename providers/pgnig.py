@@ -51,7 +51,8 @@ class Pgnig(Provider):
         browser.wait_for_page_inactive()
 
         unpaid_invoices = None
-        for i in range(10):
+        attempts = 10
+        for i in range(attempts):
             index = 0
             item = None
             try:
@@ -71,6 +72,8 @@ class Pgnig(Provider):
 
         log.debug("Creating payments dict...")
         payments_dict: dict[str, float] = {}
+        if unpaid_invoices is None:
+            raise RuntimeError(f"Failed to collect invoices after {attempts} attempts!")
         for invoice in unpaid_invoices:
             log.debug("Iterating over unpaid invoices...")
             columns = invoice.find_elements(By.CLASS_NAME, INVOICE_COLUMN_CLASS)

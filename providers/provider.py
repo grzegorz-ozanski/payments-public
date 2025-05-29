@@ -120,8 +120,9 @@ class Provider:
     def _wait_for_reCAPTCHA_v3_token(self, browser: Browser) -> None:
         """Wait until reCAPTCHA v3 token appears and matches expected prefix."""
         if self.recaptcha_token and self.recaptcha_token_prefix:
+            token = self.recaptcha_token
             browser.wait_for_condition(
-                lambda d: d.find_element(self.recaptcha_token.by, self.recaptcha_token.selector)
+                lambda d: d.find_element(token.by, token.selector)
                           .get_attribute("value")
                           .startswith(self.recaptcha_token_prefix)
             )

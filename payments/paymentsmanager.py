@@ -16,12 +16,15 @@ class PaymentsManager:
         If single item is provided, change it into one-element list
         """
         self.payments: list[Payment] = []
+        self.providers: LookupList[Provider]
         if isinstance(providers, Provider):
             self.providers = LookupList[Provider](providers)
         elif isinstance(providers, Sequence) and not isinstance(providers, str):
             self.providers = LookupList[Provider](*providers)
-        else:
+        elif isinstance(providers, LookupList):
             self.providers = providers
+        else:
+            raise TypeError(f'Invalid type "{type(providers)}" for argument "providers"')
 
     def __repr__(self) -> str:
         return '\n'.join(map(str, self.providers))
