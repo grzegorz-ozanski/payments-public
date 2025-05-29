@@ -134,7 +134,7 @@ All exceptions are explicitly documented.
 To run mypy check, use:
 ```bash
 pip install types-requests types-python-dateutil
-mypy . --ignore-missing-imports --exclude run
+mypy . --strict --ignore-missing-imports --exclude run
 ```
 #### ruff
 To run ruff check, use:
