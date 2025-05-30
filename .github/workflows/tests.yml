@@ -110,7 +110,7 @@ jobs:
             exit 0
           }
           $columns = $totalLine -split '\s+'
-          $percent = $columns[-1] -replace '%', '
+          $percent = $columns[-1] -replace '%', ''
 
           if ([int]$percent -ge 90) {
             $color = 'brightgreen'
