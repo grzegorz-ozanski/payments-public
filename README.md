@@ -141,6 +141,37 @@ To run ruff check, use:
 ```bash
 ruff check .
 ```
+#### pyright
+
+To use Pyright:
+1. Install globally:
+   * Linux/macOS:
+   ```bash
+   npm install -g pyright
+   ```
+   * Windows (cmd/PowerShell):
+   ```bash
+   npm install -g pyright
+   ```
+2. Run from project root:
+```bash
+pyright
+```
+Documentation: https://github.com/microsoft/pyright
+
+npm install -g pyright
+
+Windows (cmd/PowerShell):
+
+npm install -g pyright
+
+(requires Node.js - https://nodejs.org/)
+
+Run from project root:
+
+pyright
+
+Documentation: https://github.com/microsoft/pyright
 
 ### 🤖 Continuous Integration (CI)
 
