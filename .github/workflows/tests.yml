@@ -5,6 +5,10 @@ on:
     branches: [ '*' ]
   pull_request:
 
+env:
+  COVERAGE_FILE: coverage.txt
+  MASTER_BRANCH: refs/heads/main
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -45,7 +49,7 @@ jobs:
         if: always()
         run: |
           coverage html
-          coverage report >> coverage.txt
+          coverage report >> ${env:COVERAGE_FILE}
           zip -r htmlcov.zip htmlcov/
 
       - name: Upload coverage artifact
@@ -60,7 +64,7 @@ jobs:
         run: |
           echo '### 🧪 Test Coverage Summary' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          cat coverage.txt >> $GITHUB_STEP_SUMMARY
+          cat ${env:COVERAGE_FILE} >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Add mypy results to summary
@@ -79,11 +83,19 @@ jobs:
           pyright >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-      - name: Update coverage badge in README (pwsh)
-        if: github.ref == 'refs/heads/main'
+      - name: "[SKIP REASON] Update coverage badge in README"
+        if: github.ref != ${{ env.MASTER_BRANCH }}
+        shell: pwsh
+        run: |-
+          $msg = "::notice ::Skipping 'Update coverage badge in README' step " +
+                 "because 'github.ref != ${{ env.MASTER_BRANCH }}'"
+          echo $msg
+
+      - name: Update coverage badge in README
+        if: github.ref == ${{ env.MASTER_BRANCH }}
         shell: pwsh
         run: |
-          $lines = Get-Content coverage.txt 
+          $lines = Get-Content ${env:COVERAGE_FILE} 
           $totalLine = $lines | Where-Object { $_ -match '^TOTAL\s' }
           if (-not $totalLine) {
             Write-Warning "No TOTAL line found in coverage report"
@@ -108,8 +120,16 @@ jobs:
 
           (Get-Content $readmePath) -replace $badgePattern, $newBadge | Set-Content $readmePath
 
+      - name: "[SKIP REASON] Commit updated README"
+        if: github.ref != ${{ env.MASTER_BRANCH }}
+        shell: pwsh
+        run: |-
+          $msg = "::notice ::Skipping 'Commit updated README' step " +
+                 "because 'github.ref != ${{ env.MASTER_BRANCH }}'"
+          echo $msg
+
       - name: Commit updated README
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == ${{ env.MASTER_BRANCH }}
         shell: pwsh
         run: |
           git config user.name "github-actions"
