@@ -54,10 +54,10 @@ jobs:
           coverage report >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
-      - name: Run mypy tests
+      - name: Add mypy tests results to summary
         if: always()
         run: |
-          echo '### 🧪 Test Coverage Summary' >> $GITHUB_STEP_SUMMARY
+          echo '### ✅ Static Analysis Summary' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          coverage report >> $GITHUB_STEP_SUMMARY
+          mypy . --strict --ignore-missing-imports --exclude run >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
