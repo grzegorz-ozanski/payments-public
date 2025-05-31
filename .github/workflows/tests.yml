@@ -7,7 +7,7 @@ on:
 
 env:
   COVERAGE_FILE: coverage.txt
-  MASTER_BRANCH: refs/heads/main
+  MASTER_BRANCH: refs/heads/master
   README_PATH: README.md
 
 jobs:
@@ -74,31 +74,31 @@ jobs:
         if: always()
         shell: pwsh
         run: |
-          echo '### 🧪 Test Coverage Summary' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat ${env:COVERAGE_FILE} >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '### 🧪 Test Coverage Summary' >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+          cat ${env:COVERAGE_FILE} >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
       - name: Add mypy results to summary
         if: always()
         shell: pwsh
         run: |
-          echo '### ✅ Static Analysis Summary' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          mypy . --strict --ignore-missing-imports >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '### ✅ Static Analysis Summary' >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+          mypy . --strict --ignore-missing-imports >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
       - name: Add pyright results to summary
         if: always()
         shell: pwsh
         run: |
-          echo '### ✅ Pyright Summary' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          pyright >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '### ✅ Pyright Summary' >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+          pyright >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
       - name: "[SKIP REASON] Update coverage badge in README"
-        if: github.ref != ${{ env.MASTER_BRANCH }}
+        if: github.ref != env.MASTER_BRANCH
         shell: pwsh
         run: |-
           $msg = "::notice ::Skipping 'Update coverage badge in README' step " +
@@ -106,7 +106,7 @@ jobs:
           echo $msg
 
       - name: Update coverage badge in README
-        if: github.ref == ${{ env.MASTER_BRANCH }}
+        if: github.ref == env.MASTER_BRANCH
         shell: pwsh
         run: |
           $lines = Get-Content ${env:COVERAGE_FILE} 
@@ -134,7 +134,7 @@ jobs:
           (Get-Content ${env:README_PATH}) -replace $badgePattern, $newBadge | Set-Content ${env:README_PATH}
 
       - name: "[SKIP REASON] Commit updated README"
-        if: github.ref != ${{ env.MASTER_BRANCH }}
+        if: github.ref != env.MASTER_BRANCH
         shell: pwsh
         run: |-
           $msg = "::notice ::Skipping 'Commit updated README' step " +
@@ -142,7 +142,7 @@ jobs:
           echo $msg
 
       - name: Commit updated README
-        if: github.ref == ${{ env.MASTER_BRANCH }}
+        if: github.ref == env.MASTER_BRANCH
         shell: pwsh
         run: |
           if (git diff --quiet) {
