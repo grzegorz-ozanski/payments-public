@@ -57,7 +57,7 @@ jobs:
         if: always()
         run: |
           coverage html
-          coverage report >> ${env:COVERAGE_FILE}
+          coverage report >> ${COVERAGE_FILE}
           zip -r htmlcov.zip htmlcov/
 
       - name: Upload coverage artifact
@@ -72,7 +72,7 @@ jobs:
         run: |
           echo '### 🧪 Test Coverage Summary' >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          cat ${env:COVERAGE_FILE} >> $GITHUB_STEP_SUMMARY
+          cat ${COVERAGE_FILE} >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Add mypy results to summary
