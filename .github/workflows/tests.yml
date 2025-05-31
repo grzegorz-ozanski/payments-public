@@ -51,14 +51,13 @@ jobs:
       - name: Run tests with coverage
         run: |
           coverage run -m pytest
-          coverage report
+          coverage report > coverage.txt
+          cat coverage.txt
 
       - name: Generate HTML coverage report
         if: always()
         run: |
           coverage html
-          coverage report > coverage.txt
-          cat coverage.txt
           zip -r htmlcov.zip htmlcov/
 
       - name: Upload coverage artifact
