@@ -43,22 +43,6 @@ function Get-Emoji {
     return $Hashtable[$Key] ? $Hashtable[$Key] : $Hashtable["default"]
 }
 
-function HtmlEncode {
-    [CmdletBinding()]
-    param (
-        [Parameter(ValueFromPipeline = $true)]
-        [string] $Text
-    )
-    process {
-        $Text -replace '&', '&amp;' `
-              -replace '<', '&lt;' `
-              -replace '>', '&gt;' `
-              -replace '"', '&quot;' `
-              -replace "'", '&#39;' `
-              -replace ' ', '&nbsp;'
-    }
-}
-
 if ($CompareStatus -eq "changed") {
   $current = "failure"
 } elseif ($CompareStatus -eq "unchanged") {
@@ -116,9 +100,9 @@ Append-IfExists "transition=${transition}" $GitHubOutput
 "@ | Append-IfExists -Path $GitHubSummary
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
-  Get-Content -Path $ScriptOutput | HtmlEncode | Append-IfExists -Path $GitHubSummary -Blockquote $true
+  Get-Content -Path $ScriptOutput | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
 if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
   Append-IfExists "- 🟥🟩**Diff**:" -Path $GitHubSummary
-  Get-Content -Path $DiffFile | HtmlEncode | Append-IfExists -Path $GitHubSummary -Blockquote $true
+  Get-Content -Path $DiffFile | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
