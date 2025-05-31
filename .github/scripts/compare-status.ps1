@@ -23,13 +23,16 @@ function Append-IfExists {
     $text = $Data -join "`n"
     if ($Path) {
       if ($Blockquote) {
-        Add-Content $Path -Encoding UTF8NoBOM -Value '```'
+        '```' | Out-File -FilePath $Path -Append -Encoding utf8
       }
-      Add-Content $Path -Encoding UTF8NoBOM -Value $text
+
+      foreach ($line in $Data) {
+        $line | Out-File -FilePath $Path -Append -Encoding utf8
+      }
+
       if ($Blockquote) {
-        Add-Content $Path -Encoding UTF8NoBOM -Value '```'
-      }
-    } else {
+        '```' | Out-File -FilePath $Path -Append -Encoding utf8
+      }    } else {
       Write-Host $text
     }
   }
