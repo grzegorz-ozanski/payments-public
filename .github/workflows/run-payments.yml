@@ -213,11 +213,11 @@ jobs:
           )
         }
         pwsh -File ${STORE_LOCALLY_SCRIPT} `
-          -WorkflowName $env:GITHUB_WORKFLOW `
-          -RunNumber $env:GITHUB_RUN_NUMBER `
-          -JobName $env:GITHUB_JOB `
-          -Artifacts "$artifactPaths" `
-          -TargetDir $env:LOCAL_ARTIFACTS_DIR
+        -WorkflowName $env:GITHUB_WORKFLOW `
+        -RunNumber $env:GITHUB_RUN_NUMBER `
+        -JobName $env:GITHUB_JOB `
+        -Artifacts "$artifactPaths" `
+        -TargetDir $env:LOCAL_ARTIFACTS_DIR
 
     # 🔁 Compare current workflow status with the previous one
     - name: Compare workflow status and set workflow summary
