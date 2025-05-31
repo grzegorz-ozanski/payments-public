@@ -13,10 +13,16 @@ function Append-IfExists {
     [Object[]]$Data,
 
     [Parameter(Position=1)]
-    [string]$Path
+    [string]$Path,
+
+    [Parameter(Position=2)]
+    [bool]$Blockquote = $false
   )
 
   process {
+    if ($Blockquote) {
+      $Data = @('```') + $Data + '```'
+    }
     if ($Path) {
       $Data | Add-Content $Path -Encoding UTF8NoBOM
     } else {
@@ -110,9 +116,9 @@ Append-IfExists "transition=${transition}" $GitHubOutput
 "@ | Append-IfExists -Path $GitHubSummary
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
-  Get-Content -Path $ScriptOutput | HtmlEncode | Append-IfExists -Path $GitHubSummary
+  Get-Content -Path $ScriptOutput | HtmlEncode | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
 if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
   Append-IfExists "- 🟥🟩**Diff**:" -Path $GitHubSummary
-  Get-Content -Path $DiffFile | HtmlEncode | Append-IfExists -Path $GitHubSummary
+  Get-Content -Path $DiffFile | HtmlEncode | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
