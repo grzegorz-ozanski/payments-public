@@ -6,7 +6,6 @@ on:
   pull_request:
 
 env:
-  COVERAGE_FILE: coverage.txt
   GH_ACTIONS_EMAIL: "github-actions@github.com"
   GH_ACTIONS_USER_NAME: "github-actions"
   MASTER_BRANCH: refs/heads/master
