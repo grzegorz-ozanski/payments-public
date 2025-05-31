@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  COVERAGE_FILE: coverage.txt
+  COVERAGE_FILE: coverage-report.txt
   GH_ACTIONS_EMAIL: "github-actions@github.com"
   GH_ACTIONS_USER_NAME: "github-actions"
   MASTER_BRANCH: refs/heads/master
@@ -63,7 +63,7 @@ jobs:
         run: |
           coverage html
           coverage report > ${env:COVERAGE_FILE}
-          Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip
+          Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip -Force
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
