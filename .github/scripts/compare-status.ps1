@@ -106,7 +106,8 @@ Append-IfExists "transition=${transition}" $GitHubOutput
 "@ | Append-IfExists -Path $GitHubSummary
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
-  Get-Content -Path $ScriptOutput -Raw | Append-IfExists -Path $GitHubSummary -Blockquote $true
+  $text = $(Get-Content -Path $ScriptOutput)
+  Append-IfExists "$text" -Path $GitHubSummary -Blockquote $true
 }
 if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
   Append-IfExists "- 🟥🟩**Diff**:" -Path $GitHubSummary
