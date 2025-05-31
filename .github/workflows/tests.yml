@@ -55,14 +55,14 @@ jobs:
         shell: pwsh
         run: |
           coverage run -m pytest
-          coverage report
+          coverage report > ${env:COVERAGE_FILE}
+          cat ${env:COVERAGE_FILE}
 
       - name: Generate HTML coverage report
         if: always()
         shell: pwsh
         run: |
           coverage html
-          coverage report > ${env:COVERAGE_FILE}
           Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip -Force
 
       - name: Upload coverage artifact
