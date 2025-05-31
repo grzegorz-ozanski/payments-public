@@ -20,16 +20,14 @@ function Append-IfExists {
   )
 
   process {
+    $text = $Data -join "`n"
     if ($Blockquote) {
-      $joined = @()
-      $joined += '```'
-      $joined += ($Data -join "`n")
-      $joined += '```'
-      $Data = $joined    }
+      $text = '```' + $text + '```'
+    }
     if ($Path) {
-      $Data | Add-Content $Path -Encoding UTF8NoBOM
+      Add-Content $Path -Encoding UTF8NoBOM -Value $text
     } else {
-      Write-Host $Data
+      Write-Host $text
     }
   }
 }

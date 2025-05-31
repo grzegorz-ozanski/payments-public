@@ -56,9 +56,10 @@ env:
   STATUS_FILE: .github/status/last-status.txt
   # Scripts
   COMPARE_SCRIPT: .github/scripts/compare-output.ps1
+  GIT_PUSH_SCRIPT: .github/scripts/git-push.ps1
   MASK_SCRIPT: .github/scripts/mask-env-secrets.ps1
-  STATUS_SCRIPT: .github/scripts/compare-status.ps1
   READ_STATUS_SCRIPT: .github/scripts/read-previous-status.ps1
+  STATUS_SCRIPT: .github/scripts/compare-status.ps1
   STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
 
 jobs:
