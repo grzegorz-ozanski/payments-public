@@ -51,8 +51,8 @@ env:
   LOCAL_ARTIFACTS_LINUX: /runner/artifacts
   REFERENCE_CONTENT: reference.txt
   REFERENCE_OUTPUT: .github/data/reference_output.txt
-  SCRIPT_OUTPUT: script_output.txt
-#  SCRIPT_OUTPUT: .github/data/test_output.txt
+#  SCRIPT_OUTPUT: script_output.txt
+  SCRIPT_OUTPUT: .github/data/test_output.txt
   STATUS_FILE: .github/status/last-status.txt
   # Scripts
   COMPARE_SCRIPT: .github/scripts/compare-output.ps1
@@ -212,7 +212,7 @@ jobs:
             "$env:DIFF_FILE"
           )
         }
-        pwsh -File ${STORE_LOCALLY_SCRIPT} `
+        pwsh -File ${env:STORE_LOCALLY_SCRIPT} `
         -WorkflowName $env:GITHUB_WORKFLOW `
         -RunNumber $env:GITHUB_RUN_NUMBER `
         -JobName $env:GITHUB_JOB `

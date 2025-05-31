@@ -21,8 +21,11 @@ function Append-IfExists {
 
   process {
     if ($Blockquote) {
-      $Data = @('```') + ($Data -join "`n") + '```'
-    }
+      $joined = @()
+      $joined += '```'
+      $joined += ($Data -join "`n")
+      $joined += '```'
+      $Data = $joined    }
     if ($Path) {
       $Data | Add-Content $Path -Encoding UTF8NoBOM
     } else {
