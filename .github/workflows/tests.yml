@@ -6,6 +6,7 @@ on:
   pull_request:
 
 env:
+  COVERAGE_REPORT_FILE: coverage.txt
   GH_ACTIONS_EMAIL: "github-actions@github.com"
   GH_ACTIONS_USER_NAME: "github-actions"
   MASTER_BRANCH: refs/heads/master
@@ -41,23 +42,28 @@ jobs:
           node-version: 'lts/*'
 
       - name: Install dependencies
+        shell: pwsh
         run: |
           pip install -r requirements-dev.txt
 
       - name: Install Pyright
-        run: npm install -g pyright
+        shell: pwsh
+        run: |
+          npm install -g pyright
 
       - name: Run tests with coverage
+        shell: pwsh
         run: |
           coverage run -m pytest
-          coverage report > coverage.txt
-          cat coverage.txt
+          coverage report
 
       - name: Generate HTML coverage report
         if: always()
+        shell: pwsh
         run: |
           coverage html
-          zip -r htmlcov.zip htmlcov/
+          coverage report > ${env:COVERAGE_REPORT_FILE}
+          Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
@@ -68,27 +74,30 @@ jobs:
 
       - name: Add coverage report to summary
         if: always()
+        shell: pwsh
         run: |
-          echo '### 🧪 Test Coverage Summary' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat coverage.txt >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '### 🧪 Test Coverage Summary' >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+          cat ${env:COVERAGE_REPORT_FILE} >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
       - name: Add mypy results to summary
         if: always()
+        shell: pwsh
         run: |
-          echo '### ✅ Static Analysis Summary' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          mypy . --strict --ignore-missing-imports >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '### ✅ Static Analysis Summary' >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+          mypy . --strict --ignore-missing-imports >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
       - name: Add pyright results to summary
         if: always()
+        shell: pwsh
         run: |
-          echo '### ✅ Pyright Summary' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          pyright >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo '### ✅ Pyright Summary' >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+          pyright >> ${env:GITHUB_STEP_SUMMARY}
+          echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
       - name: "[SKIP REASON] Update coverage badge in README"
         if: github.ref != env.MASTER_BRANCH
@@ -102,7 +111,7 @@ jobs:
         if: github.ref == env.MASTER_BRANCH
         shell: pwsh
         run: |
-          $lines = Get-Content ${env:COVERAGE_FILE} 
+          $lines = Get-Content ${env:COVERAGE_REPORT_FILE} 
           $totalLine = $lines | Where-Object { $_ -match '^TOTAL\s' }
           if (-not $totalLine) {
             Write-Warning "No TOTAL line found in coverage report"
@@ -121,14 +130,13 @@ jobs:
             $color = 'red'
           }
 
-          $readmePath = "README.md"
           $badgePattern = '!\[Coverage\]\(https://img\.shields\.io/badge/coverage-[0-9]+%25-[a-z]+\)'
           $newBadge = "![Coverage](https://img.shields.io/badge/coverage-${percent}%25-${color})"
 
-          (Get-Content $readmePath) -replace $badgePattern, $newBadge | Set-Content $readmePath
+          (Get-Content ${env:README_PATH}) -replace $badgePattern, $newBadge | Set-Content ${env:README_PATH}
 
       - name: "[SKIP REASON] Commit updated README"
-        if: github.ref != ${{ env.MASTER_BRANCH }}
+        if: github.ref != env.MASTER_BRANCH
         shell: pwsh
         run: |-
           $msg = "::notice ::Skipping 'Commit updated README' step " +
@@ -136,11 +144,16 @@ jobs:
           echo $msg
 
       - name: Commit updated README
-        if: github.ref == ${{ env.MASTER_BRANCH }}
+        if: github.ref == env.MASTER_BRANCH
+        shell: pwsh
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git diff --quiet && echo "No changes to commit" || (
-            git commit -am "Update coverage badge [skip ci]"
+          if (git diff --quiet) {
+            echo "No changes to commit"
+          } else {
+            git config user.name "${env:GH_ACTIONS_USER_NAME}"
+            git config user.email "${env:GH_ACTIONS_EMAIL}"
+            git add ${env:README_PATH}
+            git commit -m "Update coverage badge [skip ci]"
+            git pull --rebase
             git push
-          )
+          }
