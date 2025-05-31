@@ -20,7 +20,6 @@ function Append-IfExists {
   )
 
   process {
-    $text = $Data -join "`n"
     if ($Path) {
       if ($Blockquote) {
         echo '```' >> $Path
@@ -32,7 +31,7 @@ function Append-IfExists {
         echo '```' >> $Path
       }
     } else {
-      Write-Host $text
+      Write-Host $Data
     }
   }
 }
@@ -106,9 +105,9 @@ Append-IfExists "transition=${transition}" $GitHubOutput
 "@ | Append-IfExists -Path $GitHubSummary
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
-  Get-Content -Path $ScriptOutput | Append-IfExists -Path $GitHubSummary -Blockquote $true
+  Get-Content -Path $ScriptOutput -Raw | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
 if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
   Append-IfExists "- 🟥🟩**Diff**:" -Path $GitHubSummary
-  Get-Content -Path $DiffFile | Append-IfExists -Path $GitHubSummary -Blockquote $true
+  Get-Content -Path $DiffFile -Raw | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
