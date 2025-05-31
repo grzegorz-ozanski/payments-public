@@ -55,7 +55,7 @@ jobs:
         shell: pwsh
         run: |
           coverage run -m pytest
-          coverage report > ${env:COVERAGE_FILE}
+          coverage report | Out-File -FilePath ${env:COVERAGE_FILE}
           cat ${env:COVERAGE_FILE}
 
       - name: Generate HTML coverage report
