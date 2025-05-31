@@ -23,16 +23,15 @@ function Append-IfExists {
     $text = $Data -join "`n"
     if ($Path) {
       if ($Blockquote) {
-        '```' | Out-File -FilePath $Path -Append -Encoding utf8
+        echo '```' >> $Path
       }
-
       foreach ($line in $Data) {
-        $line | Out-File -FilePath $Path -Append -Encoding utf8
+        echo $line >> $Path
       }
-
       if ($Blockquote) {
-        '```' | Out-File -FilePath $Path -Append -Encoding utf8
-      }    } else {
+        echo '```' >> $Path
+      }
+    } else {
       Write-Host $text
     }
   }
@@ -107,13 +106,9 @@ Append-IfExists "transition=${transition}" $GitHubOutput
 "@ | Append-IfExists -Path $GitHubSummary
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
-  echo '```' >> ${env:GITHUB_STEP_SUMMARY}
-  cat $ScriptOutput >> ${env:GITHUB_STEP_SUMMARY}
-  echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+  Get-Content -Path $ScriptOutput | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
 if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
   Append-IfExists "- 🟥🟩**Diff**:" -Path $GitHubSummary
-  echo '```' >> ${env:GITHUB_STEP_SUMMARY}
-  cat $DiffFile >> ${env:GITHUB_STEP_SUMMARY}
-  echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+  Get-Content -Path $DiffFile | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
