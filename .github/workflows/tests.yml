@@ -7,6 +7,8 @@ on:
 
 env:
   COVERAGE_FILE: coverage.txt
+  GH_ACTIONS_EMAIL: "github-actions@github.com"
+  GH_ACTIONS_USER_NAME: "github-actions"
   MASTER_BRANCH: refs/heads/master
   README_PATH: README.md
 
@@ -60,8 +62,8 @@ jobs:
         shell: pwsh
         run: |
           coverage html
-          coverage report >> ${env:COVERAGE_FILE}
-          zip -r htmlcov.zip htmlcov/
+          coverage report > ${env:COVERAGE_FILE}
+          Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
