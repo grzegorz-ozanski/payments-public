@@ -35,8 +35,9 @@ if (-not (Test-Path $Expected)) {
 }
 
 $_today = Get-Date -Format "dd-MM-yyyy"
-$_actual = (Get-Content $Actual) -replace "{{TODAY}}", $_today
-$_expected = (Get-Content $Expected) -replace "{{TODAY}}", $_today
+$_current_month = ($_today -split '-')[1]
+$_actual = ((Get-Content $Actual) -replace "{{TODAY}}", $_today) -replace "{{CURRENT MONTH}}", $_current_month
+$_expected = ((Get-Content $Expected) -replace "{{TODAY}}", $_today) -replace "{{CURRENT MONTH}}", $_current_month
 
 $_diff = @()
 
