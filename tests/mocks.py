@@ -89,7 +89,8 @@ class MockBrowser(Browser):
         assert value is not None
         return MockWebElement()
 
-    def click_element_with_js(self, element: object) -> None:
+    def click_element_with_js(self, element: WebElement, by: str = '', value: str = '',
+                              timeout: int | None = None) -> None:
         """Mock click_element_with_js method."""
         pass
 
