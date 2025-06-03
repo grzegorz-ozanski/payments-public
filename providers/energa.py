@@ -61,12 +61,24 @@ class Energa(Provider):
         except NoSuchElementException:
             log.debug("Cannot click logout button. Are we even logged in?")
 
+    @staticmethod
+    def _wait_for_load_completed(browser: Browser, by: str, value: str) -> None:
+        """
+        Wait for a page load to complete by veryfing if the specified element appearead and disappearead.
+        :param browser: browser instance
+        :param by: locator strategy as provided in selenium.webdriver.common.by.By class
+        :param value: locator value
+        """
+
+        browser.wait_for_element_appear(by, value)
+        browser.wait_for_element_disappear(by, value)
+
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """
         Read and return payment data for all user locations.
         """
         log.info("Getting payments...")
-        browser.wait_for_page_load_completed()
+        self._wait_for_load_completed(browser, By.CSS_SELECTOR, POPUP_SELECTOR)
         weblogger.trace("accounts-list")
         locations_list_or_none = browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR)
         if not locations_list_or_none:
@@ -87,7 +99,7 @@ class Energa(Provider):
         for location_id in range(len(locations_list)):
             print(f'...location {location_id + 1} of {len(locations_list)}')
             log.debug("Opening location page")
-            browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
+            self._wait_for_load_completed(browser, By.CSS_SELECTOR, POPUP_SELECTOR)
             weblogger.trace("pre-location-click")
             browser.click_element_with_js(locations_list[location_id])
             # If a 'button.primary' exists, there is probably a message displayed that needs to be dismissed before continuing —
@@ -103,12 +115,10 @@ class Energa(Provider):
                 log.error(f"Could not retrieve location #{location_id}!")
                 continue
             log.debug("Getting payment")
-            browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
+            self._wait_for_load_completed(browser, By.CSS_SELECTOR, POPUP_SELECTOR)
             weblogger.trace("pre-invoices-click")
             browser.find_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]').click()
-            browser.wait_for_element_appear(By.CSS_SELECTOR, POPUP_SELECTOR)
-            browser.wait_for_element_disappear(By.CSS_SELECTOR, POPUP_SELECTOR)
-            browser.wait_for_page_inactive()
+            self._wait_for_load_completed(browser, By.CSS_SELECTOR, POPUP_SELECTOR)
             invoices = browser.wait_for_elements(
                 By.XPATH,
                 f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..', 1)
