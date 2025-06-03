@@ -3,7 +3,7 @@
 [![CI Linux](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-linux.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-linux.yml)
 [![CI Windows](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-windows.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-windows.yml)
 [![Unit tests](https://github.com/grzegorz-ozanski/payments/actions/workflows/tests.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/tests.yml)
-![Coverage](https://img.shields.io/badge/coverage-69%25-yellow)  
+![Coverage](https://img.shields.io/badge/coverage-68%25-yellow)  
 Automation tool for retrieving outstanding payment information from various utility providers' online portals.
 
 ## ✨ Featuress
