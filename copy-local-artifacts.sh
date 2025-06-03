@@ -13,8 +13,8 @@ if [ -z "${RUN_NUMBER}" ]; then
 fi
 JOB_NAME=${JOB_NAME:-${DEFAULT_JOB}}
 SRC="${ARTIFACTS_HOST_USER}@${ARTIFACTS_HOST_NAME}:${ARTIFACTS_HOST_ROOT}/${JOB_NAME}/${RUN_NUMBER}"
-DST="${TARGET_ROOT}/${JOB_NAME}"
-mkdir -p "${DST}"
 DST="${TARGET_ROOT}/${JOB_NAME}/${RUN_NUMBER}"
+rm -rf "${DST}"
+mkdir -p "${DST}"
 echo "Copyinng ${JOB_NAME} run #${RUN_NUMBER} artifacts from ${SRC} to ${DST}"
 scp -r "${SRC}" "${DST}"

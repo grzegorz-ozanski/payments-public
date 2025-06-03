@@ -21,5 +21,7 @@ ssh -t "${SSH_HOST}" "
     rm -f ${ARCHIVE_NAME} && 
     tar -c ${LAST_WORKSPACE} | pv -s \$(du -sb ${LAST_WORKSPACE} | awk '{print \$1}') | ${PACKER} ${ARCHIVE_NAME}
 "
+mkdir -p "${TARGET_ROOT}"
+rm -rf "${TARGET_ROOT:?}/${LAST_WORKSPACE}"
 scp -r "${SSH_HOST}:${LAST_WORKSPACE_ROOT}/${ARCHIVE_NAME}" "${TARGET_ROOT}/${ARCHIVE_NAME}"
 bash -c "cd ${TARGET_ROOT} && tar -xf ${ARCHIVE_NAME} && rm -f ${ARCHIVE_NAME}"
