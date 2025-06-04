@@ -72,11 +72,12 @@ class Energa(Provider):
         weblogger.trace("wait-for-load-completed-appear")
         log.debug(f"Waiting for element ({by}, {value}) to appear")
         browser.wait_for_element_appear(by, value)
-        weblogger.trace("wait-for-load-completed-disappear")
-        log.debug(f"Element ({by}, {value}) visiblle. Waiting for element to disappear")
-        browser.wait_for_element_disappear(by, value)
-        weblogger.trace("wait-for-load-completed-done")
-        log.debug(f"Element ({by}, {value}) not visiblle")
+        while browser.wait_for_element(by, value, 1):
+            weblogger.trace("wait-for-load-completed-disappear")
+            log.debug(f"Element ({by}, {value}) visiblle. Waiting for element to disappear")
+            browser.wait_for_element_disappear(by, value)
+            weblogger.trace("wait-for-load-completed-done")
+            log.debug(f"Element ({by}, {value}) not visiblle")
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """
