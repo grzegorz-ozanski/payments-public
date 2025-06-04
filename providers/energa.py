@@ -36,7 +36,7 @@ class Energa(Provider):
 
     def __init__(self, *locations: str):
         """
-        Initialize provider with login fields and locations.
+        Initialize the provider with login fields and locations.
         """
         user_input = PageElement(By.ID, "email_login")
         password_input = PageElement(By.ID, "password")
@@ -62,30 +62,35 @@ class Energa(Provider):
             log.debug("Cannot click logout button. Are we even logged in?")
 
     @staticmethod
-    def _wait_for_load_completed(browser: Browser, by: str, value: str) -> None:
+    def _wait_for_load_completed(browser: Browser, weblogger: WebLogger, by: str, value: str) -> None:
         """
         Wait for a page load to complete by veryfing if the specified element appearead and disappearead.
         :param browser: browser instance
         :param by: locator strategy as provided in selenium.webdriver.common.by.By class
         :param value: locator value
         """
-
+        weblogger.trace("wait-for-load-completed-appear")
+        log.debug(f"Waiting for element ({by}, {value}) to appear")
         browser.wait_for_element_appear(by, value)
+        weblogger.trace("wait-for-load-completed-disappear")
+        log.debug(f"Element ({by}, {value}) visiblle. Waiting for element to disappear")
         browser.wait_for_element_disappear(by, value)
+        weblogger.trace("wait-for-load-completed-done")
+        log.debug(f"Element ({by}, {value}) not visiblle")
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """
         Read and return payment data for all user locations.
         """
         log.info("Getting payments...")
-        self._wait_for_load_completed(browser, By.CSS_SELECTOR, POPUP_SELECTOR)
+        self._wait_for_load_completed(browser, weblogger, By.CSS_SELECTOR, POPUP_SELECTOR)
         weblogger.trace("accounts-list")
         locations_list_or_none = browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR)
         if not locations_list_or_none:
             button = browser.wait_for_element(By.CSS_SELECTOR, OVERLAY_BUTTON_SELECTOR)
             if button:
                 browser.trace_click(button)
-                browser.wait_for_page_load_completed()
+                self._wait_for_load_completed(browser, weblogger, By.CSS_SELECTOR, POPUP_SELECTOR)
                 weblogger.trace("accounts-list-after-overlay")
                 locations_list_or_none = browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR)
             else:
@@ -99,9 +104,9 @@ class Energa(Provider):
         for location_id in range(len(locations_list)):
             print(f'...location {location_id + 1} of {len(locations_list)}')
             log.debug("Opening location page")
-            self._wait_for_load_completed(browser, By.CSS_SELECTOR, POPUP_SELECTOR)
             weblogger.trace("pre-location-click")
             browser.click_element_with_js(locations_list[location_id])
+            self._wait_for_load_completed(browser, weblogger, By.CSS_SELECTOR, POPUP_SELECTOR)
             # If a 'button.primary' exists, there is probably a message displayed that needs to be dismissed before continuing —
             # unless its text is "Zapłać teraz", which indicates we're already on the target page
             button = browser.wait_for_element(By.CSS_SELECTOR, 'button.button.primary', 1)
@@ -115,10 +120,10 @@ class Energa(Provider):
                 log.error(f"Could not retrieve location #{location_id}!")
                 continue
             log.debug("Getting payment")
-            self._wait_for_load_completed(browser, By.CSS_SELECTOR, POPUP_SELECTOR)
+            self._wait_for_load_completed(browser, weblogger, By.CSS_SELECTOR, POPUP_SELECTOR)
             weblogger.trace("pre-invoices-click")
             browser.find_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]').click()
-            self._wait_for_load_completed(browser, By.CSS_SELECTOR, POPUP_SELECTOR)
+            self._wait_for_load_completed(browser, weblogger, By.CSS_SELECTOR, POPUP_SELECTOR)
             invoices = browser.wait_for_elements(
                 By.XPATH,
                 f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..', 1)
