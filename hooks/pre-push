@@ -13,4 +13,5 @@ if [ $status -ne 0 ]; then
   echo "❌ Tests failed, push aborted."
   exit $status
 fi
+rm -rf error
 echo "✅ Tests passed, pushing..."
