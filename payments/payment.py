@@ -117,7 +117,8 @@ class DueDate:
             elif any(item in value for item in self._yesterday):
                 value = date.today() + timedelta(days=-1)
             else:
-                value = parser.parse(value, dayfirst=True).date()
+                # day is first only if a 4-digit year is last
+                value = parser.parse(value, dayfirst=re.match(r'.*\d\d\d\d$', value)).date()
         self.value = value
 
     def __repr__(self) -> str:
