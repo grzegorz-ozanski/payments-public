@@ -13,7 +13,7 @@ ARCHIVE_NAME="${LAST_WORKSPACE}.tar.zst"
 RUNNER_NAME=github-runner
 RUNNER_ROOT=/tmp/actions-runner/jobs/
 
-echo "Copyinng ${JOB_NAME} run #${RUN_NUMBER} artifacts from ${SRC} to ${DST}"
+echo "Copyinng ${JOB_NAME} last run artifacts from ${SRC} to ${DST}"
 ssh -t "${SSH_HOST}" "
     rm -rf ${SRC} && 
     docker cp ${RUNNER_NAME}:${RUNNER_ROOT}/${LAST_WORKSPACE} ${LAST_WORKSPACE_ROOT} && 
