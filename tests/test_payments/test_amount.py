@@ -39,22 +39,10 @@ def test_amount_init_with_webelement(mocker: MockerFixture) -> None:
     assert amount.decimal == "56"
 
 
-def test_amount_repr() -> None:
-    """Test the string representation of the Amount."""
-    amount = Amount("1 234.56")
-    assert repr(amount) == "1234,56"
-
-
 def test_amount_format() -> None:
     """Test formatting of Amount."""
     amount = Amount("1 234.56")
     assert format(amount, ">10") == "   1234,56"
-
-
-def test_amount_to_float() -> None:
-    """Test conversion of Amount to float."""
-    amount = Amount("1234,56")
-    assert float(amount) == 1234.56
 
 
 def test_amount_is_zero() -> None:
@@ -63,3 +51,15 @@ def test_amount_is_zero() -> None:
     assert Amount.is_zero("0,00 zł") is True
     assert Amount.is_zero("Płatność 0,00 zł") is True
     assert Amount.is_zero("123,45") is False
+
+
+def test_amount_repr() -> None:
+    """Test the string representation of the Amount."""
+    amount = Amount("1 234.56")
+    assert repr(amount) == "1234,56"
+
+
+def test_amount_to_float() -> None:
+    """Test conversion of Amount to float."""
+    amount = Amount("1234,56")
+    assert float(amount) == 1234.56

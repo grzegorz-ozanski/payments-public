@@ -10,7 +10,33 @@ from payments.payment import DueDate
 
 DATE_STRING = '05-10-2023'
 
+
 # Tests for DueDate class
+def test_duedate_equality_comparison() -> None:
+    """Test equality comparison between two DueDates."""
+    due_date_1 = DueDate(DATE_STRING)
+    due_date_2 = DueDate(DATE_STRING)
+    assert due_date_1 == due_date_2
+
+
+def test_duedate_less_than_comparison() -> None:
+    """Test less-than comparison between two DueDates."""
+    due_date_1 = DueDate(DATE_STRING)
+    due_date_2 = DueDate("2023-10-10")
+    assert due_date_1 < due_date_2
+
+
+def test_duedate_repr() -> None:
+    """Test the string representation of DueDate."""
+    due_date = DueDate(DATE_STRING)
+    assert repr(due_date) == "05-10-2023"
+
+
+def test_duedate_today_property() -> None:
+    """Test the today class property of DueDate."""
+    assert "today" in DueDate._today
+
+
 def test_duedate_with_today_string() -> None:
     """Test initializing DueDate with 'today' string."""
     due_date = DueDate("today")
@@ -41,28 +67,3 @@ def test_duedate_with_webelement_value() -> None:
     web_element_mock.text = DATE_STRING
     due_date = DueDate(web_element_mock)
     assert due_date.value == date(2023, 10, 5)
-
-
-def test_duedate_repr() -> None:
-    """Test the string representation of DueDate."""
-    due_date = DueDate(DATE_STRING)
-    assert repr(due_date) == "05-10-2023"
-
-
-def test_duedate_equality_comparison() -> None:
-    """Test equality comparison between two DueDates."""
-    due_date_1 = DueDate(DATE_STRING)
-    due_date_2 = DueDate(DATE_STRING)
-    assert due_date_1 == due_date_2
-
-
-def test_duedate_less_than_comparison() -> None:
-    """Test less-than comparison between two DueDates."""
-    due_date_1 = DueDate(DATE_STRING)
-    due_date_2 = DueDate("2023-10-10")
-    assert due_date_1 < due_date_2
-
-
-def test_duedate_today_property() -> None:
-    """Test the today class property of DueDate."""
-    assert "today" in DueDate._today

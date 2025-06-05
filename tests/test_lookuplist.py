@@ -19,6 +19,24 @@ def test_lookup_by_class_name() -> None:
     assert isinstance(lst["testclass1"], TestClass1)
 
 
+def test_lookup_contains_by_class_name() -> None:
+    """Test that LookupList `in` works for class names."""
+    lst = LookupList(TestClass1(), TestClass2())
+    assert "testclass1" in lst
+    assert "testclass2" in lst
+    assert "invalidclass" not in lst
+
+
+def test_lookup_contains_by_instance() -> None:
+    """Test that LookupList `in` works for instances."""
+    instance_1 = TestClass1()
+    instance_2 = TestClass2()
+    lst = LookupList(instance_1, instance_2)
+    assert instance_1 in lst
+    assert instance_2 in lst
+    assert TestClass1() not in lst  # Different instance
+
+
 def test_lookup_with_empty_string() -> None:
     """Test that LookupList returns itself when indexed with an empty string."""
     lst = LookupList(TestClass1(), TestClass2())
@@ -47,6 +65,13 @@ def test_typeerror_for_invalid_key_type() -> None:
         _ = lst[3.14] # type: ignore[call-overload]
 
 
+def test_repr_output() -> None:
+    """Test the string representation of LookupList."""
+    lst = LookupList(TestClass1(), TestClass2())
+    expected_repr = "<LookupList[TestClass1, TestClass2]>"
+    assert repr(lst) == expected_repr
+
+
 def test_slice_access() -> None:
     """Test that LookupList supports slicing."""
     lst = LookupList(TestClass1(), TestClass2())
@@ -54,28 +79,3 @@ def test_slice_access() -> None:
     assert isinstance(sliced_lst, list)
     assert len(sliced_lst) == 1
     assert isinstance(sliced_lst[0], TestClass1)
-
-
-def test_lookup_contains_by_class_name() -> None:
-    """Test that LookupList `in` works for class names."""
-    lst = LookupList(TestClass1(), TestClass2())
-    assert "testclass1" in lst
-    assert "testclass2" in lst
-    assert "invalidclass" not in lst
-
-
-def test_lookup_contains_by_instance() -> None:
-    """Test that LookupList `in` works for instances."""
-    instance_1 = TestClass1()
-    instance_2 = TestClass2()
-    lst = LookupList(instance_1, instance_2)
-    assert instance_1 in lst
-    assert instance_2 in lst
-    assert TestClass1() not in lst  # Different instance
-
-
-def test_repr_output() -> None:
-    """Test the string representation of LookupList."""
-    lst = LookupList(TestClass1(), TestClass2())
-    expected_repr = "<LookupList[TestClass1, TestClass2]>"
-    assert repr(lst) == expected_repr

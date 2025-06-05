@@ -48,13 +48,6 @@ class Multimedia(Provider):
                          recaptcha_token=RECAPTCHA_TOKEN,
                          pre_login_delay=1)
 
-    def _get_location_by_amount(self, amount: str) -> str:
-        """Find first matching location for the given amount prefix."""
-        try:
-            return next(location for value, location in self._locations_map.items() if amount.startswith(value))
-        except StopIteration:
-            raise Exception(f"Cannot find suitable location for payment '{amount}'!")
-
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
         """Retryable login with detection of CAPTCHA and password change."""
         wait = 5
@@ -80,6 +73,13 @@ class Multimedia(Provider):
         if browser.find_elements(By.ID, CAPTCHA_FORM_ID):
             reason = "CAPTCHA required"
         raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
+
+    def _get_location_by_amount(self, amount: str) -> str:
+        """Find first matching location for the given amount prefix."""
+        try:
+            return next(location for value, location in self._locations_map.items() if amount.startswith(value))
+        except StopIteration:
+            raise Exception(f"Cannot find suitable location for payment '{amount}'!")
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Extracts payment records from the invoice list."""

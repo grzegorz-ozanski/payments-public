@@ -20,12 +20,12 @@ class MockWeblogger(WebLogger):
     def __init__(self) -> None:
         pass
 
-    def trace(self, suffix: str) -> None:
-        """Mock trace method."""
-        pass
-
     def error(self) -> None:
         """Mock error method."""
+        pass
+
+    def trace(self, suffix: str) -> None:
+        """Mock trace method."""
         pass
 
 
@@ -67,6 +67,7 @@ class DummyProvider(Provider):
 # noinspection PyMissingConstructor
 class MockBrowser(Browser):
     """Simplified mock of the Browser interface."""
+    save_trace_logs: bool = False
 
     def __init__(self) -> None:
         self.user_data_dir = None
@@ -74,9 +75,31 @@ class MockBrowser(Browser):
         self.session_id = 'testsession'  # type: ignore[assignment]
         pass
 
+    @property
+    def page_source(self) -> str:
+        """Mock page_source property."""
+        return "<html></html>"
+
+    def click_element_with_js(self, element: WebElement, by: str = '', value: str = '',
+                              timeout: int | None = None) -> None:
+        """Mock click_element_with_js method."""
+        pass
+
+    def find_and_click_element_with_js(self, by: str, value: str) -> None:
+        """Mock find_and_click_element_with_js method."""
+        pass
+
     def force_get(self, url: str, close_old_tab: bool = True) -> None:
         """Mock force_get method."""
         pass
+
+    def quit(self) -> None:
+        """ Mock quit method. """
+        pass
+
+    def save_screenshot(self, filename: str) -> bool:
+        """Mock save_screenshot method."""
+        return True
 
     def wait_for_page_inactive(self, timeout: int | None = None) -> Any:
         """Mock wait_for_page_inactive method."""
@@ -89,32 +112,8 @@ class MockBrowser(Browser):
         assert value is not None
         return MockWebElement()
 
-    def click_element_with_js(self, element: WebElement, by: str = '', value: str = '',
-                              timeout: int | None = None) -> None:
-        """Mock click_element_with_js method."""
-        pass
-
     def wait_for_page_load_completed(self) -> None:
         """Mock wait_for_page_load_completed method."""
-        pass
-
-    def find_and_click_element_with_js(self, by: str, value: str) -> None:
-        """Mock find_and_click_element_with_js method."""
-        pass
-
-    save_trace_logs: bool = False
-
-    def save_screenshot(self, filename: str) -> bool:
-        """Mock save_screenshot method."""
-        return True
-
-    @property
-    def page_source(self) -> str:
-        """Mock page_source property."""
-        return "<html></html>"
-
-    def quit(self) -> None:
-        """ Mock quit method. """
         pass
 
 

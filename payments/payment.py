@@ -40,12 +40,6 @@ class Amount:
             amount = re.sub(r'[,.]', separator, amount)
             self.whole, self.decimal = amount.split(separator) if separator in amount else (amount, '0')
 
-    def __repr__(self) -> str:
-        """
-            Return string representation of the Amount.
-        """
-        return f'{self.whole},{self.decimal:02}' if self.value != self.unknown else self.value
-
     def __eq__(self, other: object) -> bool:
         """
             Compare amounts for equality.
@@ -56,17 +50,23 @@ class Amount:
             return NotImplemented
         return self.whole == other.whole and self.decimal == other.decimal
 
+    def __float__(self) -> float:
+        """
+            Convert amount to float for numeric operations.
+        """
+        return float(f'{self.whole}.{self.decimal}')
+
     def __format__(self, format_spec: str) -> str:
         """
             Format amount for aligned output (e.g., currency alignment).
         """
         return format(str(self), format_spec)
 
-    def __float__(self) -> float:
+    def __repr__(self) -> str:
         """
-            Convert amount to float for numeric operations.
+            Return string representation of the Amount.
         """
-        return float(f'{self.whole}.{self.decimal}')
+        return f'{self.whole},{self.decimal:02}' if self.value != self.unknown else self.value
 
     @classmethod
     def is_zero(cls, value: str) -> bool:
@@ -121,12 +121,6 @@ class DueDate:
                 value = parser.parse(value, dayfirst=re.match(r'.*\d\d\d\d$', value) is not None).date()
         self.value = value
 
-    def __repr__(self) -> str:
-        """
-            Return string representation of the DueDate.
-        """
-        return self._unknown_str if self.value == date.min else self.value.strftime('%d-%m-%Y')
-
     def __eq__(self, other: object) -> bool:
         """
             Compare dates for equality.
@@ -146,6 +140,12 @@ class DueDate:
         if not isinstance(other, DueDate):
             return NotImplemented
         return self.value < other.value
+
+    def __repr__(self) -> str:
+        """
+            Return string representation of the DueDate.
+        """
+        return self._unknown_str if self.value == date.min else self.value.strftime('%d-%m-%Y')
 
     @classmethod
     def today(cls) -> str:

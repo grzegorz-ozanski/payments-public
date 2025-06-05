@@ -42,25 +42,6 @@ class Energa(Provider):
         password_input = PageElement(By.ID, "password")
         super().__init__(SERVICE_URL, locations, user_input, password_input)
 
-    def logout(self, browser: Browser, weblogger: WebLogger) -> None:
-        """
-        Log out the user from the Energa web portal.
-        """
-        try:
-            browser.wait_for_element_disappear(By.CSS_SELECTOR, OVERLAY_SELECTOR)
-            browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
-            weblogger.trace("pre-logout-click")
-            browser.find_element(By.XPATH, f'//span[contains(text(), "{LOGOUT_TEXT}")]').click()
-        except (AttributeError, ElementNotInteractableException) as e:
-            weblogger.error()
-            if type(e) is AttributeError:
-                if 'move_to requires a WebElement' in str(e):
-                    log.debug("Cannot click logout button. Are we even logged in?")
-                else:
-                    raise
-        except NoSuchElementException:
-            log.debug("Cannot click logout button. Are we even logged in?")
-
     @staticmethod
     def _wait_for_load_completed(browser: Browser, weblogger: WebLogger, by: str, value: str) -> None:
         """
@@ -78,6 +59,25 @@ class Energa(Provider):
             browser.wait_for_element_disappear(by, value)
             weblogger.trace("wait-for-load-completed-done")
             log.debug(f"Element ({by}, {value}) not visiblle")
+
+    def logout(self, browser: Browser, weblogger: WebLogger) -> None:
+        """
+        Log out the user from the Energa web portal.
+        """
+        try:
+            browser.wait_for_element_disappear(By.CSS_SELECTOR, OVERLAY_SELECTOR)
+            browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
+            weblogger.trace("pre-logout-click")
+            browser.find_element(By.XPATH, f'//span[contains(text(), "{LOGOUT_TEXT}")]').click()
+        except (AttributeError, ElementNotInteractableException, TimeoutError) as e:
+            weblogger.error()
+            if type(e) is AttributeError:
+                if 'move_to requires a WebElement' in str(e):
+                    log.debug("Cannot click logout button. Are we even logged in?")
+                else:
+                    raise
+        except NoSuchElementException:
+            log.debug("Cannot click logout button. Are we even logged in?")
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """
@@ -122,7 +122,7 @@ class Energa(Provider):
                 continue
             log.debug("Getting payment")
             weblogger.trace("pre-invoices-click")
-            invoices_button = browser.wait_for_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]')
+            invoices_button = browser.wait_for_element(By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
             if not invoices_button:
                 raise RuntimeError(f"Could not find invoices button for location {location}!")
             invoices_button.click()
@@ -135,7 +135,7 @@ class Energa(Provider):
                 due_date = invoices[0].text.split('\n')[1]
             else:
                 due_date = None
-            browser.safe_click(By.XPATH, f'//a[contains(text(), "{DASHBOARD_TEXT}")]')
+            browser.safe_click(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
             amount_element = browser.wait_for_element(By.CSS_SELECTOR, AMOUNT_SELECTOR)
             if amount_element:
                 amount = amount_element.text
@@ -149,7 +149,7 @@ class Energa(Provider):
                     log.error(f"Could not retrieve due date for non-zero payment '{amount}', location '{location}'.")
             payments.append(Payment(self.name, location, due_date, amount))
             log.debug("Moving to the next location")
-            browser.safe_click(By.XPATH, f'//span[contains(text(), "{ACCOUNTS_LIST_TEXT}")]/..')
+            browser.safe_click(By.XPATH, f'//span[contains(., "{ACCOUNTS_LIST_TEXT}")]/..')
             locations_list = browser.safe_list(browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR))
 
         return payments

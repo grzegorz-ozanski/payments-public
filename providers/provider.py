@@ -107,26 +107,6 @@ class Provider:
         """Provider name and list of supported locations."""
         return f'{self.name}: [{", ".join(map(str, self.locations))}]'
 
-    def _get_location(self, name_string: str) -> str:
-        """Return first matching location from name_string or raise."""
-        try:
-            return next(location for location in self.locations if location in name_string)
-        except StopIteration:
-            log.error(f"Cannot find location for {self.name} (input: '{name_string}')")
-            raise RuntimeError(f"Cannot find a valid location for service {self.name}!")
-
-    # we want this method name to include reCAPTCHA name as is, not in lower case
-    # noinspection PyPep8Naming
-    def _wait_for_reCAPTCHA_v3_token(self, browser: Browser) -> None:
-        """Wait until reCAPTCHA v3 token appears and matches expected prefix."""
-        if self.recaptcha_token and self.recaptcha_token_prefix:
-            token = self.recaptcha_token
-            browser.wait_for_condition(
-                lambda d: d.find_element(token.by, token.selector)
-                          .get_attribute("value")
-                          .startswith(self.recaptcha_token_prefix)
-            )
-
     @staticmethod
     def input(control: WebElement, text: str) -> None:
         """Clear the input field and type the given text."""
@@ -136,6 +116,24 @@ class Provider:
             time.sleep(0.05)
             control.send_keys(Keys.DELETE)
         control.send_keys(text)
+
+    def get_payments(self, browser: Browser) -> list[Payment]:
+        """Log in and fetch payments, return fallback on failure."""
+        weblogger = WebLogger(self.name, browser)
+        try:
+            print(f'Processing service {self.name}...')
+            self.login(browser, weblogger)
+            payments = sorted(self._fetch_payments(browser, weblogger),
+                              key=lambda value: self._location_order.get(value.location, float('inf')))
+        except Exception as e:
+            msg = f'{e.__class__.__name__}:{str(e)}\nCannot get payments for service {self.name}!'
+            log.exception(msg)
+            print(msg)
+            payments = [Payment(self.name, location, None, None) for location in self.locations]
+            weblogger.error()
+        finally:
+            self.logout(browser, weblogger)
+        return payments
 
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
         """Perform login in the web application."""
@@ -191,28 +189,6 @@ class Provider:
             weblogger.error()
             raise
 
-    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
-        """Must be overridden in subclasses to return actual payments."""
-        raise NotImplementedError(f"{self.__class__.__name__} must override _fetch_payments().")
-
-    def get_payments(self, browser: Browser) -> list[Payment]:
-        """Log in and fetch payments, return fallback on failure."""
-        weblogger = WebLogger(self.name, browser)
-        try:
-            print(f'Processing service {self.name}...')
-            self.login(browser, weblogger)
-            payments = sorted(self._fetch_payments(browser, weblogger),
-                              key=lambda value: self._location_order.get(value.location, float('inf')))
-        except Exception as e:
-            msg = f'{e.__class__.__name__}:{str(e)}\nCannot get payments for service {self.name}!'
-            log.exception(msg)
-            print(msg)
-            payments = [Payment(self.name, location, None, None) for location in self.locations]
-            weblogger.error()
-        finally:
-            self.logout(browser, weblogger)
-        return payments
-
     def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """Click the logout button and wait for the page to finish logging out."""
         try:
@@ -224,3 +200,27 @@ class Provider:
             log.debug("Cannot click logout button. Are we even logged in?")
         except WebDriverException:
             weblogger.error()
+
+    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
+        """Must be overridden in subclasses to return actual payments."""
+        raise NotImplementedError(f"{self.__class__.__name__} must override _fetch_payments().")
+
+    def _get_location(self, name_string: str) -> str:
+        """Return first matching location from name_string or raise."""
+        try:
+            return next(location for location in self.locations if location in name_string)
+        except StopIteration:
+            log.error(f"Cannot find location for {self.name} (input: '{name_string}')")
+            raise RuntimeError(f"Cannot find a valid location for service {self.name}!")
+
+    # we want this method name to include reCAPTCHA name as is, not in lower case
+    # noinspection PyPep8Naming
+    def _wait_for_reCAPTCHA_v3_token(self, browser: Browser) -> None:
+        """Wait until reCAPTCHA v3 token appears and matches expected prefix."""
+        if self.recaptcha_token and self.recaptcha_token_prefix:
+            token = self.recaptcha_token
+            browser.wait_for_condition(
+                lambda d: d.find_element(token.by, token.selector)
+                          .get_attribute("value")
+                          .startswith(self.recaptcha_token_prefix)
+            )
