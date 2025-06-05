@@ -113,6 +113,7 @@ class Energa(Provider):
             button = browser.wait_for_element(By.CSS_SELECTOR, 'button.button.primary', 1)
             if button and button.text != SKIP_PAYMENT_BUTTON_TEXT:
                 browser.click_element_with_js(button)
+                self._wait_for_load_completed(browser, weblogger, By.CSS_SELECTOR, POPUP_SELECTOR)
 
             location_element = browser.wait_for_element(By.CSS_SELECTOR, LOCATION_NAME_SELECTOR, 30)
             if location_element:
