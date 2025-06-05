@@ -121,9 +121,11 @@ class Energa(Provider):
                 log.error(f"Could not retrieve location #{location_id}!")
                 continue
             log.debug("Getting payment")
-            self._wait_for_load_completed(browser, weblogger, By.CSS_SELECTOR, POPUP_SELECTOR)
             weblogger.trace("pre-invoices-click")
-            browser.find_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]').click()
+            invoices_button = browser.wait_for_element(By.XPATH, f'//a[contains(text(), "{INVOICES_TAB_TEXT}")]')
+            if not invoices_button:
+                raise RuntimeError(f"Could not find invoices button for location {location}!")
+            invoices_button.click()
             self._wait_for_load_completed(browser, weblogger, By.CSS_SELECTOR, POPUP_SELECTOR)
             invoices = browser.wait_for_elements(
                 By.XPATH,
