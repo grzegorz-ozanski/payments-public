@@ -59,6 +59,7 @@ class Energa(Provider):
             browser.wait_for_element_disappear(by, value)
             weblogger.trace("wait-for-load-completed-done")
             log.debug(f"Element ({by}, {value}) not visiblle")
+        browser.wait_for_page_stable(1)
 
     def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """
