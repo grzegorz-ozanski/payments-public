@@ -6,7 +6,7 @@
 ![Coverage](https://img.shields.io/badge/coverage-67%25-yellow)  
 Automation tool for retrieving outstanding payment information from various utility providers' online portals.
 
-## ✨ Featuress
+## ✨ Features
 
 - ✅ Modular provider system (Energa, PGNiG, Multimedia, etc.)
 - ✅ Selenium automation with headless Chrome
