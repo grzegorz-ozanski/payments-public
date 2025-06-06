@@ -32,10 +32,19 @@ class LookupList(Sequence[T]):
     def __getitem__(self, key: str) -> Union[T, 'LookupList[T]']:
         ...
 
+    @overload
+    def __getitem__(self, key: tuple[str,...]) -> Union[T, 'LookupList[T]']:
+        ...
+
     def __getitem__(self, key: object) -> Union[T, list[T], 'LookupList[T]']:
         """
             Return item by key or fallback logic if key not found.
         """
+        if isinstance(key, tuple):
+            result = []
+            for item in key:
+                result.append(self[item])
+            return result
         if isinstance(key, str):
             if key == '' or key == '*':
                 return self
