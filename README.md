@@ -185,7 +185,8 @@ CI covers:
 - Secret masking in logs via PowerShell filters
 
 > See [README_actions.md](.github/README_actions.md) for full workflow logic.  
-> Reference output used in CI is downloaded from a private repo to avoid exposing sensitive data. Any change to output must be explicitly reviewed and committed.
+> Reference output used in CI is downloaded from a private repo to avoid exposing sensitive data. Any change to output must be explicitly reviewed and committed.  
+> For security reasons, CI tests are run only in private repo copy
 
 ### 🏃 Dynamic runner selection in reusable workflows
 

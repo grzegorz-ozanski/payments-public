@@ -11,6 +11,7 @@ on:
         default: 'false'
 jobs:
   windows:
+    if: github.repository == 'grzegorz-ozanski/payments'
     uses: ./.github/workflows/run-payments.yml
     permissions:
       contents: write
