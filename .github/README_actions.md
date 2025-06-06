@@ -19,7 +19,7 @@ Located in `scripts/`, these PowerShell scripts are used in the CI process:
 
 ## 🔐 Reference Data
 
-To avoid publishing sensitive payment amounts, reference test output is stored in a **private repository** and downloaded during CI using a GitHub token (`TESTDATA_PAT` secret).  
+To avoid publishing sensitive payment amounts, reference test output is stored in a **private repository** and downloaded during CI using a GitHub token (`PAYMENTS_TESTDATA_REPO_TOKEN` secret).  
 This token must grant `read` access to the private testdata repository.
 
 Temporary files such as `test_output.txt` are created during workflow runs and compared against the reference snapshot.

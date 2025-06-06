@@ -1,8 +1,8 @@
 # 💰 Payments Collector
 
-[![CI Linux](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-linux.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-linux.yml)
-[![CI Windows](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-windows.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-windows.yml)
-[![Unit tests](https://github.com/grzegorz-ozanski/payments/actions/workflows/tests.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/tests.yml)
+[![CI Linux](https://github.com/grzegorz-ozanski/payments-public/actions/workflows/run-linux.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-linux.yml)
+[![CI Windows](https://github.com/grzegorz-ozanski/payments-public/actions/workflows/run-windows.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/run-windows.yml)
+[![Unit tests](https://github.com/grzegorz-ozanski/payments-public/actions/workflows/tests.yml/badge.svg)](https://github.com/grzegorz-ozanski/payments/actions/workflows/tests.yml)
 ![Coverage](https://img.shields.io/badge/coverage-67%25-yellow)  
 Automation tool for retrieving outstanding payment information from various utility providers' online portals.
 
@@ -23,7 +23,7 @@ Automation tool for retrieving outstanding payment information from various util
 ## 📦 Installation
 
 ```bash
-git clone https://github.com/grzegorz-ozanski/payments.git
+git clone https://github.com/grzegorz-ozanski/payments-public.git
 cd payments
 git clone https://github.com/grzegorz-ozanski/browser.git
 # Create Python virtual environment (recommended)

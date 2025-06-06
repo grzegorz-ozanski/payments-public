@@ -31,7 +31,7 @@ on:
         required: true
       CHROME_REPO_TOKEN:
         required: true
-      TESTDATA_PAT:
+      PAYMENTS_TESTDATA_REPO_TOKEN:
         required: true
       CREDENTIALS:
         required: true
@@ -135,7 +135,7 @@ jobs:
 
     - name: Download reference output from private repo
       env:
-        GH_TOKEN: ${{ secrets.TESTDATA_PAT }}
+        GH_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
       shell: pwsh
       run: |
         git clone https://${env:GH_TOKEN}@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
