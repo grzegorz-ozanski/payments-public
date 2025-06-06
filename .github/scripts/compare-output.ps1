@@ -33,7 +33,9 @@ function Is-Equal {
       [Parameter(Mandatory = $true, Position=0)]
       [string]$Left,
       [Parameter(Mandatory = $true, Position=1)]
-      [string]$Right
+      [string]$Right,
+      [Parameter(                 , Position=2)]
+      [bool]$IgnoreWhitespace = $false
     )
 
     $pattern = '^(\S+\s+)(\S+\s+)(\S+\s+)(\S+)$'
@@ -50,6 +52,10 @@ function Is-Equal {
       $rval = $rightMatch.Groups[$i].Value
       if ($lval.Contains('{{IGNORE}}') -or $rval.Contains('{{IGNORE}}')) {
         continue
+      }
+      if ($IgnoreWhitespace) {
+        $lval = $lval.Trim()
+        $rval = $rval.Trim()
       }
       if ($lval -ne $rval) {
         return $false
@@ -68,6 +74,7 @@ $_today = Get-Date -Format "dd-MM-yyyy"
 $_current_month = ($_today -split '-')[1]
 $_actual = ((Get-Content $Actual) -replace "{{TODAY}}", $_today) -replace "{{CURRENT MONTH}}", $_current_month
 $_expected = ((Get-Content $Expected) -replace "{{TODAY}}", $_today) -replace "{{CURRENT MONTH}}", $_current_month
+$_ignore_whitespace = [bool]($_actual -match '<unknown>')
 
 $_diff = @()
 
@@ -75,7 +82,7 @@ for ($i = 0; $i -lt [Math]::Max($_expected.Count, $_actual.Count); $i++) {
   $_expLine = if ($i -lt $_expected.Count) { $_expected[$i] } else { $null }
   $_actLine = if ($i -lt $_actual.Count) { $_actual[$i] } else { $null }
 
-  if (Is-Equal $_expLine $_actLine) {
+  if (Is-Equal $_expLine $_actLine $_ignore_whitespace) {
     $_diff += "✔ $_expLine"
   }
   elseif ($_expLine -ne $null -and $_actLine -ne $null) {
