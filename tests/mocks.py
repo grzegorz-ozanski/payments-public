@@ -12,23 +12,6 @@ from providers.provider import PageElement
 from providers.provider import Provider
 
 
-class MockWeblogger(WebLogger):
-    """Mock implementation of a weblogger for testing."""
-
-    # we do want not to invoke an actual constructor for this mock
-    # noinspection PyMissingConstructor
-    def __init__(self) -> None:
-        pass
-
-    def error(self) -> None:
-        """Mock error method."""
-        pass
-
-    def trace(self, suffix: str) -> None:
-        """Mock trace method."""
-        pass
-
-
 class DummyProvider(Provider):
     """Flexible test provider that returns hardcoded or injected payments."""
     default_name = "dummyprovider"
@@ -47,7 +30,6 @@ class DummyProvider(Provider):
         )
         self.name = name
         self._test_payments = payments
-        self._weblogger = MockWeblogger()
 
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
         pass
@@ -130,3 +112,21 @@ class MockWebElement(WebElement):
     def send_keys(self, *value: str) -> None:
         """Mock send_keys method."""
         pass
+
+class MockWeblogger(WebLogger):
+    """Mock implementation of a weblogger for testing."""
+
+    # we do want not to invoke an actual constructor for this mock
+    # noinspection PyMissingConstructor
+    def __init__(self, _: str, __: MockBrowser) -> None:
+        pass
+
+    def error(self) -> None:
+        """Mock error method."""
+        pass
+
+    def trace(self, suffix: str) -> None:
+        """Mock trace method."""
+        pass
+
+
