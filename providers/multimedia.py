@@ -59,6 +59,7 @@ class Multimedia(Provider):
             except Exception as ex:
                 if i == num_retries - 1:
                     raise ex
+                continue
             browser.wait_for_page_inactive(2)
 
             if browser.wait_for_element(By.CSS_SELECTOR, LOGIN_ERROR_TEXT, 2):
