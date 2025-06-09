@@ -163,7 +163,7 @@ class Provider:
 
             username = self.username.get()
             if username is not None:
-                browser.click_element_with_js(input_user)
+                browser.click_element_with_js(input_user, self.user_input.by, self.user_input.selector)
                 time.sleep(0.5)
                 self.input(input_user, username)
             else:
