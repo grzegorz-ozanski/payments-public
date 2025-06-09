@@ -121,7 +121,9 @@ class Provider:
         """Log in and fetch payments, return fallback on failure."""
         weblogger = WebLogger(self.name, browser)
         try:
-            print(f'Processing service {self.name}...')
+            message = f'Processing service {self.name}...'
+            print(message)
+            log.debug(message)
             self.login(browser, weblogger)
             payments = sorted(self._fetch_payments(browser, weblogger),
                               key=lambda value: self._location_order.get(value.location, float('inf')))
