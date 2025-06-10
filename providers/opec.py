@@ -35,7 +35,7 @@ class Opec(Provider):
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
-        """Click through the UI and return earliest unpaid invoice."""
+        """Click through the UI and return the earliest unpaid invoice."""
         weblogger.trace("pre-payments-click")
         browser.find_element(By.XPATH, PAYMENTS_TAB).click()
         weblogger.trace("pre-documents-click")

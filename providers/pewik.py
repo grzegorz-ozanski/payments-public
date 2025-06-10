@@ -36,7 +36,7 @@ class Pewik(Provider):
     """PEWiK Gdynia provider."""
 
     def __init__(self, *locations: str):
-        """Initialize provider with given locations."""
+        """Initialize the provider with given locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:

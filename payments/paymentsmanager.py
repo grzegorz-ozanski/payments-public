@@ -13,7 +13,7 @@ class PaymentsManager:
     """
     def __init__(self, providers: Sequence[Provider] | LookupList[Provider] | Provider) -> None:
         """
-        If single item is provided, change it into one-element list
+        If a single item is provided, change it into the one-element list
         """
         self.payments: list[Payment] = []
         self.providers: LookupList[Provider]

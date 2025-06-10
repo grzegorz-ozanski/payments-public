@@ -14,7 +14,7 @@ Both verify cross-platform compatibility and ensure headless browser automation 
 Located in `scripts/`, these PowerShell scripts are used in the CI process:
 
 - `compare-output.ps1` — Compares test output with reference data
-- `compare-status.ps1` — Detects if job status has changed (e.g. FAILED → PASSED)
+- `compare-status.ps1` — Detects if job status has changed (e.g., FAILED → PASSED)
 - `mask-env-secrets.ps1` — Hides sensitive data from logs
 
 ## 🔐 Reference Data

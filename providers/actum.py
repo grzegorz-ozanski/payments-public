@@ -14,7 +14,7 @@ class Actum(IOK):
 
     def __init__(self, location: str):
         """
-        Initialize Actum provider with given location.
+        Initialize Actum provider with a given location.
 
         :param location: Location name for this provider instance.
         """

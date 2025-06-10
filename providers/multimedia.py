@@ -76,7 +76,7 @@ class Multimedia(Provider):
         raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
 
     def _get_location_by_amount(self, amount: str) -> str:
-        """Find first matching location for the given amount prefix."""
+        """Find the first matching location for the given amount prefix."""
         try:
             return next(location for value, location in self._locations_map.items() if amount.startswith(value))
         except StopIteration:

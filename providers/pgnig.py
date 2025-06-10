@@ -29,11 +29,11 @@ class Pgnig(Provider):
     """PGNiG provider for gas bill retrieval."""
 
     def __init__(self, *locations: str):
-        """Initialize PGNiG provider with input elements and locations."""
+        """Initialize the PGNiG provider with input elements and locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
-        """Return list of unpaid invoices from PGNiG eBOK portal."""
+        """Return the list of unpaid invoices from the PGNiG eBOK portal."""
         log.info("Getting payments...")
         location_element = browser.wait_for_element(By.CLASS_NAME, READING_ADDRESS_CLASS)
         if location_element:

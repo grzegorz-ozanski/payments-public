@@ -56,7 +56,7 @@ class Credential:
             self.environ = self.environ.upper()
 
     def get(self) -> str | None:
-        """Return the credential value, or raise if not found."""
+        """Return the credential value or raise if not found."""
         if value := environ.get(self.environ):
             return value
         value = keyring.get_password(self.keyring_service, self.keyring)
@@ -82,8 +82,8 @@ class Provider:
         :param cookies_button: Optional locator for cookie consent
         :param recaptcha_token: Optional locator for reCAPTCHA v3 token
         :param recaptcha_token_prefix: Prefix required in reCAPTCHA value
-        :param pre_login_delay: Sleep before login form fill
-        :param post_login_delay: Sleep after login submit
+        :param pre_login_delay: Sleep before the login form fill
+        :param post_login_delay: Sleep after the login form submitted
         """
         self.url = url
         self.name = self.__class__.__name__.lower()
@@ -208,17 +208,17 @@ class Provider:
         raise NotImplementedError(f"{self.__class__.__name__} must override _fetch_payments().")
 
     def _get_location(self, name_string: str) -> str:
-        """Return first matching location from name_string or raise."""
+        """Return the first matching location from name_string or raise."""
         try:
             return next(location for location in self.locations if location in name_string)
         except StopIteration:
             log.error(f"Cannot find location for {self.name} (input: '{name_string}')")
             raise RuntimeError(f"Cannot find a valid location for service {self.name}!")
 
-    # we want this method name to include reCAPTCHA name as is, not in lower case
+    # we want this method name to include reCAPTCHA name as is, not in the lower case
     # noinspection PyPep8Naming
     def _wait_for_reCAPTCHA_v3_token(self, browser: Browser) -> None:
-        """Wait until reCAPTCHA v3 token appears and matches expected prefix."""
+        """Wait until reCAPTCHA v3 token appears and matches an expected prefix."""
         if self.recaptcha_token and self.recaptcha_token_prefix:
             token = self.recaptcha_token
             browser.wait_for_condition(

@@ -153,7 +153,7 @@ To use Pyright:
    ```bash
    npm install -g pyright
    ```
-2. Run from project root:
+2. Run from the project root:
 ```bash
 pyright
 ```
@@ -167,7 +167,7 @@ npm install -g pyright
 
 (requires Node.js - https://nodejs.org/)
 
-Run from project root:
+Run from the project root:
 
 pyright
 
@@ -181,7 +181,7 @@ CI covers:
 
 - Automated Selenium test runs
 - Output verification via reference snapshots
-- Status tracking (e.g. FAILED → PASSED transitions)
+- Status tracking (e.g., FAILED → PASSED transitions)
 - Secret masking in logs via PowerShell filters
 
 > See [README_actions.md](.github/README_actions.md) for full workflow logic.  
@@ -234,7 +234,8 @@ payments/
 ## 🙋 Author
 
 Created with ❤️ by [**Grzegorz Ożański**](https://github.com/grzegorz-ozanski)  
-with a little help from [ChatGPT](https://chat.openai.com/) — for structure, suggestions & sleepless debugging sessions 😉
+
+with a little help from [ChatGPT](https://chat.openai.com/) — for structure, suggestions and sleepless debugging sessions 😉
 
 This project is part of my public portfolio — feel free to explore, learn from it, or reach out.
 

@@ -1,4 +1,6 @@
-"""Payment related classes (Payment, Amount and DueDate)"""
+"""
+    Payment-related classes (Payment, Amount and DueDate)
+"""
 from __future__ import annotations
 
 import re

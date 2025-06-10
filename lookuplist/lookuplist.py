@@ -17,7 +17,7 @@ class LookupList(Sequence[T]):
     """
 
     def __init__(self, *items: T) -> None:
-        """Initialize LookupList with optional fallback items."""
+        """Initialize the LookupList with optional fallback items."""
         self._items = list(items)
 
     @overload
@@ -38,7 +38,7 @@ class LookupList(Sequence[T]):
 
     def __getitem__(self, key: object) -> Union[T, list[T], 'LookupList[T]']:
         """
-            Return item by key or fallback logic if key not found.
+            Return an item by key or fallback logic if key not found.
         """
         if isinstance(key, tuple):
             result = []
