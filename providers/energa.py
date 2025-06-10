@@ -104,7 +104,7 @@ class Energa(Provider):
             invoices_button = browser.wait_for_element(By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
             if not invoices_button:
                 raise RuntimeError(f"Could not find invoices button for location {location}!")
-            browser.force_click(invoices_button, By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
+            browser.click_with_retry(invoices_button, By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
             invoices = browser.wait_for_elements(
                 By.XPATH,
                 f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
