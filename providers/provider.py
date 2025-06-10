@@ -187,6 +187,9 @@ class Provider:
             weblogger.trace("post-login")
             log.info("Done.")
         except Exception as e:
+            if "Timed out receiving message from renderer" in str(e):
+                # Let the further code decide if the page really failed to load
+                pass
             log.info("Cannot login into service: %s" % e)
             weblogger.error()
             raise
