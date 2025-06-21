@@ -102,6 +102,7 @@ class Provider:
         self.recaptcha_token_prefix = recaptcha_token_prefix
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
+        self.logged_in = False
 
     def __repr__(self) -> str:
         """Provider name and list of supported locations."""
@@ -186,6 +187,7 @@ class Provider:
             _sleep_with_message(self.post_login_delay, "Post-login")
             weblogger.trace("post-login")
             log.info("Done.")
+            self.logged_in = True
         except Exception as e:
             if "Timed out receiving message from renderer" in str(e):
                 # Let the further code decide if the page really failed to load
@@ -196,6 +198,9 @@ class Provider:
 
     def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """Click the logout button and wait for the page to finish logging out."""
+        if not self.logged_in:
+            log.debug(f"Not logged in into service '{self.name}', skipping logout")
+            return
         try:
             weblogger.trace("pre-logout")
             browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
