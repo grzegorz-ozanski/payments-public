@@ -64,6 +64,12 @@ function Is-Equal {
     return $true
 }
 
+if (-not (Test-Path $Actual)) {
+  Write-Host "Actual not found, assuming change"
+  Write-Status "changed"
+  Exit 0
+}
+
 if (-not (Test-Path $Expected)) {
   Write-Host "Reference not found, assuming change"
   Write-Status "changed"
