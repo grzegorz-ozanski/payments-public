@@ -118,6 +118,17 @@ class Provider:
             control.send_keys(Keys.DELETE)
         control.send_keys(text)
 
+    # we want this method name to include reCAPTCHA name as is, not in the lower case
+    # noinspection PyPep8Naming
+    @staticmethod
+    def _wait_for_reCAPTCHA_v3_token(browser: Browser, token: PageElement, token_prefix: str) -> None:
+        """Wait until reCAPTCHA v3 token appears and matches an expected prefix."""
+        browser.wait_for_condition(
+            lambda d: d.find_element(token.by, token.selector)
+                      .get_attribute("value")
+                      .startswith(token_prefix)
+        )
+
     def get_payments(self, browser: Browser) -> list[Payment]:
         """Log in and fetch payments, return fallback on failure."""
         weblogger = WebLogger(self.name, browser)
@@ -181,7 +192,7 @@ class Provider:
 
             weblogger.trace("password-input")
             if self.recaptcha_token and self.recaptcha_token_prefix:
-                self._wait_for_reCAPTCHA_v3_token(browser)
+                self._wait_for_reCAPTCHA_v3_token(browser, self.recaptcha_token, self.recaptcha_token_prefix)
                 log.debug("reCAPTCHA_v3 token acquired")
             input_password.send_keys(Keys.ENTER)
             log.debug("Form submitted")
@@ -225,14 +236,3 @@ class Provider:
         except StopIteration:
             log.error(f"Cannot find location for {self.name} (input: '{name_string}')")
             raise RuntimeError(f"Cannot find a valid location for service {self.name}!")
-
-    # we want this method name to include reCAPTCHA name as is, not in the lower case
-    # noinspection PyPep8Naming
-    def _wait_for_reCAPTCHA_v3_token(self, browser: Browser) -> None:
-        """Wait until reCAPTCHA v3 token appears and matches an expected prefix."""
-        token = self.recaptcha_token
-        browser.wait_for_condition(
-            lambda d: d.find_element(token.by, token.selector)
-                      .get_attribute("value")
-                      .startswith(self.recaptcha_token_prefix)
-        )
