@@ -180,8 +180,11 @@ class Provider:
                 raise RuntimeError(f"No valid password found for service '{self.name}', user '{username}'!")
 
             weblogger.trace("password-input")
-            self._wait_for_reCAPTCHA_v3_token(browser)
+            if self.recaptcha_token and self.recaptcha_token_prefix:
+                self._wait_for_reCAPTCHA_v3_token(browser)
+                log.debug("reCAPTCHA_v3 token acquired")
             input_password.send_keys(Keys.ENTER)
+            log.debug("Form submitted")
 
             browser.wait_for_page_load_completed()
             _sleep_with_message(self.post_login_delay, "Post-login")
@@ -227,10 +230,9 @@ class Provider:
     # noinspection PyPep8Naming
     def _wait_for_reCAPTCHA_v3_token(self, browser: Browser) -> None:
         """Wait until reCAPTCHA v3 token appears and matches an expected prefix."""
-        if self.recaptcha_token and self.recaptcha_token_prefix:
-            token = self.recaptcha_token
-            browser.wait_for_condition(
-                lambda d: d.find_element(token.by, token.selector)
-                          .get_attribute("value")
-                          .startswith(self.recaptcha_token_prefix)
-            )
+        token = self.recaptcha_token
+        browser.wait_for_condition(
+            lambda d: d.find_element(token.by, token.selector)
+                      .get_attribute("value")
+                      .startswith(self.recaptcha_token_prefix)
+        )

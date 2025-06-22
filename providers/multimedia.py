@@ -68,7 +68,8 @@ class Multimedia(Provider):
             elif all(browser.find_elements(By.ID, id_) for id_ in PASSWORD_CHANGE_IDS):
                 raise RuntimeError("Couldn't login, reason: password change required")
             else:
-                return
+                if self.logged_in:
+                    return
 
         reason = "unknown"
         if browser.find_elements(By.ID, CAPTCHA_FORM_ID):
