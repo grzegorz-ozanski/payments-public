@@ -29,6 +29,7 @@ LOGIN_ERROR_TEXT = "span.logonFailureText"
 PASSWORD_CHANGE_IDS = ("formPassword", "formConfirmation")
 CAPTCHA_FORM_ID = "formCaptcha"
 
+
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
 # noinspection PyArgumentEqualDefault
 class Multimedia(Provider):
@@ -50,26 +51,33 @@ class Multimedia(Provider):
 
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
         """Retryable login with detection of CAPTCHA and password change."""
-        wait = 5
         num_retries = 10
         for i in range(num_retries):
             log.debug(f'Login attempt {i + 1}')
             try:
                 super().login(browser, weblogger, load if i == 0 else False)
             except Exception as ex:
+                log.debug(f"Unexpectedly unhandled exception in {self.__class__.__bases__[0].__name__}.login(): {ex}")
                 if i == num_retries - 1:
                     raise ex
                 continue
             browser.wait_for_page_inactive(2)
 
             if browser.wait_for_element(By.CSS_SELECTOR, LOGIN_ERROR_TEXT, 2):
-                log.debug(f'Login failed, retrying after {wait} seconds')
+                log.debug('Login failure detected, retrying...')
                 weblogger.trace(f'failed-login-attempt-{i}')
             elif all(browser.find_elements(By.ID, id_) for id_ in PASSWORD_CHANGE_IDS):
                 raise RuntimeError("Couldn't login, reason: password change required")
             else:
-                if self.logged_in:
+                # Either super().login() ended with success, or due to some misterious ways
+                # we ended up here with page correctly logged in (i.e. no login elements are present)
+                if self.logged_in or not any(
+                        browser.wait_for_element(elem.by, elem.selector, 1)
+                        for elem in [USER_INPUT, PASSWORD_INPUT]
+                ):
                     return
+                log.debug('Undetected login failure, retrying...')
+                weblogger.trace(f'failed-login-attempt-unknown-{i}')
 
         reason = "unknown"
         if browser.find_elements(By.ID, CAPTCHA_FORM_ID):
