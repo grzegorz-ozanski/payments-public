@@ -19,7 +19,8 @@ SERVICE_URL = "https://ebok.multimedia.pl/panel-glowny.aspx"
 USER_INPUT = PageElement(By.ID, "Login_SSO_UserName")
 PASSWORD_INPUT = PageElement(By.ID, "Login_SSO_Password")
 COOKIES_BUTTON = PageElement(By.ID, "cookiescript_accept")
-RECAPTCHA_TOKEN = PageElement("HFreCaptchaToken", "03AFc")
+RECAPTCHA_TOKEN = PageElement(By.ID, "HFreCaptchaToken")
+RECAPTCHA_TOKEN_PREFIX = "03AFc"
 
 INVOICE_CLASS = "invoiceInfo"
 AMOUNT_CLASS = "kwota"
@@ -47,6 +48,7 @@ class Multimedia(Provider):
                          PASSWORD_INPUT,
                          cookies_button=COOKIES_BUTTON,
                          recaptcha_token=RECAPTCHA_TOKEN,
+                         recaptcha_token_prefix=RECAPTCHA_TOKEN_PREFIX,
                          pre_login_delay=1)
 
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
