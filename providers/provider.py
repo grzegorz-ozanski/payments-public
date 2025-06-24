@@ -98,8 +98,6 @@ class Provider:
             logout_button = PageElement(By.XPATH, DEFAULT_LOGOUT_XPATH)
         self.logout_button = logout_button
         self.cookies_button = cookies_button
-        self.recaptcha_token = recaptcha_token
-        self.recaptcha_token_prefix = recaptcha_token_prefix
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
         self.logged_in = False
@@ -117,17 +115,6 @@ class Provider:
             time.sleep(0.05)
             control.send_keys(Keys.DELETE)
         control.send_keys(text)
-
-    # we want this method name to include reCAPTCHA name as is, not in the lower case
-    # noinspection PyPep8Naming
-    @staticmethod
-    def _wait_for_reCAPTCHA_v3_token(browser: Browser, token: PageElement, token_prefix: str) -> None:
-        """Wait until reCAPTCHA v3 token appears and matches an expected prefix."""
-        browser.wait_for_condition(
-            lambda d: d.find_element(token.by, token.selector)
-                      .get_attribute("value")
-                      .startswith(token_prefix)
-        )
 
     def get_payments(self, browser: Browser) -> list[Payment]:
         """Log in and fetch payments, return fallback on failure."""
@@ -191,9 +178,6 @@ class Provider:
                 raise RuntimeError(f"No valid password found for service '{self.name}', user '{username}'!")
 
             weblogger.trace("password-input")
-            if self.recaptcha_token and self.recaptcha_token_prefix:
-                self._wait_for_reCAPTCHA_v3_token(browser, self.recaptcha_token, self.recaptcha_token_prefix)
-                log.debug("reCAPTCHA_v3 token acquired")
             input_password.send_keys(Keys.ENTER)
             log.debug("Form submitted")
 
