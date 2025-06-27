@@ -141,7 +141,7 @@ class Provider:
         try:
             if load:
                 log.debug("Opening %s" % self.url)
-                browser.force_get(self.url)
+                browser.open_in_new_tab(self.url)
                 browser.wait_for_page_inactive(2)
                 if (self.cookies_button and
                         browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
@@ -178,7 +178,7 @@ class Provider:
                 raise RuntimeError(f"No valid password found for service '{self.name}', user '{username}'!")
 
             weblogger.trace("password-input")
-            token = browser.find_element(By.NAME, "__RequestVerificationToken")
+            token = browser.wait_for_element(By.NAME, "__RequestVerificationToken", 2)
             if token:
                 log.debug(f"RequestVerificationToken found: {token}")
             else:

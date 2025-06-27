@@ -71,7 +71,7 @@ class MockBrowser(Browser):
         """Mock find_and_click_element_with_js method."""
         pass
 
-    def force_get(self, url: str, close_old_tab: bool = True) -> None:
+    def open_in_new_tab(self, url: str, close_old_tab: bool = True) -> None:
         """Mock force_get method."""
         pass
 
