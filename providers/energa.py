@@ -121,10 +121,15 @@ class Energa(Provider):
             browser.click_with_retry(invoices_button, By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
             invoices = browser.wait_for_element(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
             weblogger.trace("duedate-check")
+            due_date = None
             if invoices:
                 due_date = invoices.text
             else:
-                due_date = None
+                invoices = browser.wait_for_elements(
+                    By.XPATH,
+                    f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
+                if invoices:
+                    due_date = invoices[0].text.split('\n')[1]
             browser.wait_for_element(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
             browser.safe_click(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
             amount_element = browser.wait_for_element(By.CSS_SELECTOR, AMOUNT_SELECTOR)
