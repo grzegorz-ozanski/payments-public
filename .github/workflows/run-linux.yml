@@ -2,7 +2,7 @@ name: Run payments on Linux
 
 on:
   push:
-    branches: [ '*' ]
+    branches: [ 'master' ]
   schedule:
     - cron: "5 0,6,12,18 * * *"  # 4 times a day
   workflow_dispatch:
