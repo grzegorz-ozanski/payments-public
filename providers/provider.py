@@ -183,11 +183,6 @@ class Provider:
                 raise RuntimeError(f"No valid password found for service '{self.name}', user '{username}'!")
 
             weblogger.trace("password-input")
-            token = browser.wait_for_element(By.NAME, "__RequestVerificationToken", 2)
-            if token:
-                log.debug(f"RequestVerificationToken found: {token}")
-            else:
-                log.warning("Could not find RequestVerificationToken!")
             input_password.send_keys(Keys.ENTER)
             log.debug("Form submitted")
 
