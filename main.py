@@ -50,6 +50,8 @@ def parse_args() -> Namespace:
                         help='Run for single provider only (name must match one from the list)')
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
+    parser.add_argument('--chrome-path',
+                        help='Use provided Chrome binary instead of automatically downloading')
 
     return parser.parse_args()
 
@@ -79,7 +81,7 @@ def main() -> None:
     # otherwise, use headed browser when running under the debugger and headless one when otherwise
     headless = args.headless if args.headless is not None else not running_under_debugger
 
-    options = BrowserOptions(__file__, headless, args.trace)
+    options = BrowserOptions(__file__, headless, args.trace, args.chrome_path)
 
     # Turn off logging if verbosity is off
     if not verbose:
