@@ -26,7 +26,7 @@ POPUP_SELECTOR = 'div.popup__wrapper'
 ACCOUNTS_LABEL_SELECTOR = 'label'
 OVERLAY_BUTTON_SELECTOR = 'button.button.secondary'
 LOCATION_NAME_SELECTOR = '.text.es-text.variant-body-bold.mlxs.mrm'
-AMOUNT_SELECTOR = 'h1.text.es-text.variant-balance'
+AMOUNT_SELECTOR = '.h1.text.es-text.variant-balance'
 
 
 class Energa(Provider):
@@ -38,7 +38,7 @@ class Energa(Provider):
         """
         Initialize the provider with login fields and locations.
         """
-        user_input = PageElement(By.ID, "email_login")
+        user_input = PageElement(By.ID, "username")
         password_input = PageElement(By.ID, "password")
         super().__init__(SERVICE_URL, locations, user_input, password_input)
 
@@ -51,9 +51,9 @@ class Energa(Provider):
             return
         try:
             browser.wait_for_element_disappear(By.CSS_SELECTOR, OVERLAY_SELECTOR)
-            browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')
+            browser.wait_for_element(By.XPATH, '//button[contains(@class, "hover-submenu")]').click()
             weblogger.trace("pre-logout-click")
-            browser.find_element(By.XPATH, f'//span[contains(text(), "{LOGOUT_TEXT}")]').click()
+            browser.wait_for_element(By.XPATH, f'//span[contains(text(), "{LOGOUT_TEXT}")]').click()
         except (AttributeError, ElementNotInteractableException, TimeoutError) as e:
             weblogger.error()
             if type(e) is AttributeError:
