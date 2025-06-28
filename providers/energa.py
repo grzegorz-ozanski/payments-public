@@ -46,6 +46,9 @@ class Energa(Provider):
         """
         Log out the user from the Energa web portal.
         """
+        if not self.logged_in:
+            log.debug(f"Not logged in into service '{self.name}', skipping logout")
+            return
         try:
             browser.wait_for_element_disappear(By.CSS_SELECTOR, OVERLAY_SELECTOR)
             browser.open_dropdown_menu(By.XPATH, '//button[contains(@class, "hover-submenu")]')

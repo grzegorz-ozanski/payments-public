@@ -73,6 +73,7 @@ class Multimedia(Provider):
                         browser.wait_for_element(elem.by, elem.selector, 1)
                         for elem in [USER_INPUT, PASSWORD_INPUT]
                 ):
+                    self.logged_in = True
                     return
                 log.debug('Undetected login failure, retrying...')
                 weblogger.trace(f'failed-login-attempt-unknown-{i}')
