@@ -42,10 +42,10 @@ class Pgnig(Provider):
             raise RuntimeError(f"Cannot find location element '{READING_ADDRESS_CLASS}'!")
 
         log.info("Getting invoices menu...")
-        invoices_menu = browser.find_element(By.XPATH, INVOICES_MENU_XPATH)
+        invoices_menu = browser.wait_for_element(By.XPATH, INVOICES_MENU_XPATH)
         log.info("Opening invoices menu...")
         weblogger.trace("pre-invoices-click")
-        invoices_menu.click()
+        browser.click_element_with_js(invoices_menu)
 
         log.debug("Waiting for page load completed...")
         browser.wait_for_page_inactive()
