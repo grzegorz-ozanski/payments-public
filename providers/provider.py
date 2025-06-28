@@ -11,7 +11,6 @@ import time
 from dataclasses import dataclass
 
 import keyring
-from keyring.errors import NoKeyringError
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -60,13 +59,10 @@ class Credential:
         """Return the credential value or raise if not found."""
         if value := environ.get(self.environ):
             return value
-        try:
-            value = keyring.get_password(self.keyring_service, self.keyring)
-            if value and value.strip():
-                return value.strip()
-        except NoKeyringError:
-            pass
-        return None
+        value = keyring.get_password(self.keyring_service, self.keyring)
+        if value and value.strip():
+            return value.strip()
+        raise RuntimeError(f'"{self.keyring}" not found in env {self.environ} or keyring service {self.keyring_service}!')
 
 
 class Provider:
