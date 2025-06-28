@@ -17,7 +17,6 @@ Automation tool for retrieving outstanding payment information from various util
 ## 📋 Requirements
 
 - Python 3.10+
-- Google Chrome (ChromeDriver will be auto-downloaded)
 - pip
 
 ## 📦 Installation
@@ -34,8 +33,9 @@ python -m venv .venv
 #   .venv\Scripts\Activate.ps1     (Windows PowerShell)
 python -m pip install --upgrade pip
 pip install -r requirements.txt  # includes browser dependencies
-cp hooks/pre-push .git/hooks/pre-push
-chmod +x .git/hooks/pre-push
+# Optional, for development purposes
+cp hooks/* .git/hooks/
+chmod +x .git/hooks/pre-push .git/hooks/pre-commit
 ```
 
 ## ⚙️ Configuration
@@ -144,7 +144,8 @@ ruff check .
 #### pyright
 
 To use Pyright:
-1. Install globally:
+1. Install Node.js - https://nodejs.org/
+2. Install pyright globally:
    * Linux/macOS:
    ```bash
    npm install -g pyright
@@ -153,24 +154,10 @@ To use Pyright:
    ```bash
    npm install -g pyright
    ```
-2. Run from the project root:
+3. Run from the project root:
 ```bash
 pyright
 ```
-Documentation: https://github.com/microsoft/pyright
-
-npm install -g pyright
-
-Windows (cmd/PowerShell):
-
-npm install -g pyright
-
-(requires Node.js - https://nodejs.org/)
-
-Run from the project root:
-
-pyright
-
 Documentation: https://github.com/microsoft/pyright
 
 ### 🤖 Continuous Integration (CI)
