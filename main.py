@@ -98,7 +98,7 @@ def main() -> None:
         providers.Pgnig(sezamowa),
         providers.Energa(hodowlana, bryla, sezamowa),
         providers.Actum(hodowlana),
-        providers.Multimedia({'90': hodowlana, '77': sezamowa}),
+        # providers.Multimedia({'90': hodowlana, '77': sezamowa}),
         providers.Pewik(sezamowa),
         providers.Opec(sezamowa),
         providers.Nordhome(bryla)
