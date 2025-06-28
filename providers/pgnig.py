@@ -45,6 +45,10 @@ class Pgnig(Provider):
         invoices_menu = browser.wait_for_element(By.XPATH, INVOICES_MENU_XPATH)
         log.info("Opening invoices menu...")
         weblogger.trace("pre-invoices-click")
+        if not invoices_menu:
+            log.error("Cannot open invoices!")
+            return [Payment(self.name, location)]
+
         browser.click_element_with_js(invoices_menu)
 
         log.debug("Waiting for page load completed...")

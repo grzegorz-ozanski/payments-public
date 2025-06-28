@@ -3,6 +3,7 @@
 """
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
 
 from browser import setup_logging, Browser, WebLogger
 from payments import Amount, DueDate, Payment
@@ -46,14 +47,24 @@ class Energa(Provider):
         """
         Log out the user from the Energa web portal.
         """
+        def click_or_raise(webelement: WebElement | None) -> None:
+            """
+            Click element if not None, or raise an exception
+            :param webelement: WebElement to click or None
+            :raises NoSuchElementException if webelement is None
+            """
+            if not webelement:
+                raise NoSuchElementException
+            webelement.click()
+
         if not self.logged_in:
             log.debug(f"Not logged in into service '{self.name}', skipping logout")
             return
         try:
             browser.wait_for_element_disappear(By.CSS_SELECTOR, OVERLAY_SELECTOR)
-            browser.wait_for_element(By.XPATH, '//button[contains(@class, "hover-submenu")]').click()
+            click_or_raise(browser.wait_for_element(By.XPATH, '//button[contains(@class, "hover-submenu")]'))
             weblogger.trace("pre-logout-click")
-            browser.wait_for_element(By.XPATH, f'//span[contains(text(), "{LOGOUT_TEXT}")]').click()
+            click_or_raise(browser.wait_for_element(By.XPATH, f'//span[contains(text(), "{LOGOUT_TEXT}")]'))
         except (AttributeError, ElementNotInteractableException, TimeoutError) as e:
             weblogger.error()
             if type(e) is AttributeError:

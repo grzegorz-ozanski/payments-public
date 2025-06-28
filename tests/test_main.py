@@ -12,7 +12,7 @@ from _pytest.monkeypatch import MonkeyPatch
 
 import main
 
-def setup_args(monkeypatch: MonkeyPatch, output: str = ''):
+def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
     """
     Setup test environment for main() function
     :param output: output file name
