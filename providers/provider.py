@@ -119,6 +119,7 @@ class Provider:
     def get_payments(self, browser: Browser) -> list[Payment]:
         """Log in and fetch payments, return fallback on failure."""
         weblogger = WebLogger(self.name, browser)
+        payments = [Payment(self.name, location, None, None) for location in self.locations]
         try:
             message = f'Processing service {self.name}...'
             print(message)
@@ -130,10 +131,14 @@ class Provider:
             msg = f'{e.__class__.__name__}:{str(e)}\nCannot get payments for service {self.name}!'
             log.exception(msg)
             print(msg)
-            payments = [Payment(self.name, location, None, None) for location in self.locations]
             weblogger.error()
         finally:
-            self.logout(browser, weblogger)
+            try:
+                self.logout(browser, weblogger)
+            except Exception as e:
+                msg = f'{e.__class__.__name__}:{str(e)}\nUnexpected error while logging out from service {self.name}!'
+                log.exception(msg)
+                print(msg)
         return payments
 
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
