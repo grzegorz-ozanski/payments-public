@@ -12,6 +12,18 @@ from _pytest.monkeypatch import MonkeyPatch
 
 import main
 
+def setup_args(monkeypatch: MonkeyPatch, output: str = ''):
+    """
+    Setup test environment for main() function
+    :param output: output file name
+    :param monkeypatch:
+    """
+    monkeypatch.setattr("sys.argv", ["prog"])
+    monkeypatch.setattr(main, "parse_args", lambda: argparse.Namespace(
+        verbose=False, headless=True, trace=False, provider='', output=output, chrome_path=None
+    ))
+    monkeypatch.setattr(main, "is_debugger_active", lambda: False)
+
 
 def test_parse_args_defaults(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "argv", ["prog"])
@@ -22,12 +34,7 @@ def test_parse_args_defaults(monkeypatch: MonkeyPatch) -> None:
 
 
 def test_main_prints_output(monkeypatch: MonkeyPatch, capsys: CaptureFixture[str]) -> None:
-    monkeypatch.setattr("sys.argv", ["prog"])
-    monkeypatch.setattr(main, "parse_args", lambda: argparse.Namespace(
-        verbose=False, headless=True, trace=False, provider='', output=None
-    ))
-    monkeypatch.setattr(main, "is_debugger_active", lambda: False)
-
+    setup_args(monkeypatch)
     with patch("main.PaymentsManager") as mock_mgr_cls, patch("main.Browser"), patch("main.LookupList") as mock_lookup:
         dummy_mgr = MagicMock()
         dummy_mgr.to_string.return_value = "TEST_OUTPUT"
@@ -40,15 +47,10 @@ def test_main_prints_output(monkeypatch: MonkeyPatch, capsys: CaptureFixture[str
 
 
 def test_main_writes_to_file(monkeypatch: MonkeyPatch) -> None:
-    monkeypatch.setattr("sys.argv", ["prog"])
     dummy_file = tempfile.NamedTemporaryFile(delete=False)
     dummy_path = dummy_file.name
     dummy_file.close()
-
-    monkeypatch.setattr(main, "parse_args", lambda: argparse.Namespace(
-        verbose=False, headless=True, trace=False, provider='', output=dummy_path
-    ))
-    monkeypatch.setattr(main, "is_debugger_active", lambda: False)
+    setup_args(monkeypatch, dummy_path)
 
     with patch("main.PaymentsManager") as mock_mgr_cls, patch("main.Browser"), patch("main.LookupList") as mock_lookup:
         mgr = MagicMock()
