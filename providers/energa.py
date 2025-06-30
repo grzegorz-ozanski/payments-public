@@ -119,12 +119,14 @@ class Energa(Provider):
             if not invoices_button:
                 raise RuntimeError(f"Could not find invoices button for location {location}!")
             browser.click_with_retry(invoices_button, By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
+            # Energa page renders invoices list in two ways
             invoices = browser.wait_for_element(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
             weblogger.trace("duedate-check")
             due_date = None
             if invoices:
                 due_date = invoices.text
             else:
+                # If the first method of gettign data fails, try the second one
                 invoices = browser.wait_for_elements(
                     By.XPATH,
                     f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
