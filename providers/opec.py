@@ -55,13 +55,14 @@ class Opec(Provider):
 
         for invoice in invoices:
             columns = invoice.find_elements(By.TAG_NAME, COLUMN_TAG)
-            value = float(Amount(columns[Columns.AmountLeft]) if columns[Columns.AmountLeft].text else Amount(columns[Columns.Amount]))
-            if columns[Columns.Status].text == "Zapłacony" and value > 0:
-                continue
-            if columns[Columns.Status].text == "Niezapłacony" and value > 0:
-                amount += value
-            date = DueDate(columns[Columns.DueDate].text)
-            if (not due_date or date < due_date) and value > 0:
-                due_date = date
+            if len(columns) > Columns.Status:
+                value = float(Amount(columns[Columns.AmountLeft]) if columns[Columns.AmountLeft].text else Amount(columns[Columns.Amount]))
+                if columns[Columns.Status].text == "Zapłacony" and value > 0:
+                    continue
+                if columns[Columns.Status].text == "Niezapłacony" and value > 0:
+                    amount += value
+                date = DueDate(columns[Columns.DueDate].text)
+                if (not due_date or date < due_date) and value > 0:
+                    due_date = date
 
         return [Payment(self.name, self.locations[0], due_date, amount)]
