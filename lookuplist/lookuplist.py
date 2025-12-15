@@ -48,13 +48,21 @@ class LookupList(Sequence[T]):
         if isinstance(key, str):
             if key == '' or key == '*':
                 return self
-            try:
-                return next(item for item in self._items if item.__class__.__name__.lower() == key.lower())
-            except StopIteration:
-                raise KeyError(f"No item with class name '{key}' found.")
+            return self.__find__(key)
         if isinstance(key, (int, slice)):
+            if isinstance(key, slice) and (isinstance(key.start, str) or isinstance(key.stop, str)):
+                parts = [key.start, key.stop]
+                for index, value in enumerate(parts):
+                    parts[index] = self._items.index(self.__find__(value)) + 1 if isinstance(value, str) else value
+                return self._items[parts[0]:parts[1]:key.step]
             return self._items[key]
         raise TypeError(f"Invalid key type: {type(key)}")
+
+    def __find__(self, key: str) -> T:
+        try:
+            return next(item for item in self._items if item.__class__.__name__.lower() == key.lower())
+        except StopIteration:
+            raise KeyError(f"No item with class name '{key}' found.")
 
     def __contains__(self, key: object) -> bool:
         """
