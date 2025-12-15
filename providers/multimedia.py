@@ -44,7 +44,7 @@ class Multimedia(Provider):
                          locations_tuple,
                          USER_INPUT,
                          PASSWORD_INPUT,
-                         cookies_button=COOKIES_BUTTON,
+                         overlay_buttons=COOKIES_BUTTON,
                          pre_login_delay=1)
 
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:

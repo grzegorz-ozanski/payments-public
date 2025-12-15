@@ -70,7 +70,7 @@ class Provider:
 
     def __init__(self, url: str, locations: tuple[str, ...],
                  user_input: PageElement, password_input: PageElement,
-                 logout_button: PageElement | None = None, cookies_button: PageElement | None = None,
+                 logout_button: PageElement | None = None, overlay_buttons: PageElement | list[PageElement] | None = None,
                  recaptcha_token: PageElement | None = None, recaptcha_token_prefix: str | None = None,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         """
@@ -79,7 +79,7 @@ class Provider:
         :param user_input: Locator for username input field
         :param password_input: Locator for password input field
         :param logout_button: Optional locator for logout button (default: "Wyloguj")
-        :param cookies_button: Optional locator for cookie consent
+        :param overlay_buttons: Optional locator(s) for cookie consent or other overlays
         :param recaptcha_token: Optional locator for reCAPTCHA v3 token
         :param recaptcha_token_prefix: Prefix required in reCAPTCHA value
         :param pre_login_delay: Sleep before the login form fill
@@ -94,10 +94,10 @@ class Provider:
         self.username = Credential(self.name, 'username')
         self.password = Credential(self.name, 'password')
 
-        if not logout_button:
-            logout_button = PageElement(By.XPATH, DEFAULT_LOGOUT_XPATH)
-        self.logout_button = logout_button
-        self.cookies_button = cookies_button
+        self.logout_button = logout_button or PageElement(By.XPATH, DEFAULT_LOGOUT_XPATH)
+        self.overlay_buttons: list[PageElement] = []
+        if overlay_buttons:
+            self.overlay_buttons = overlay_buttons if isinstance(overlay_buttons, list) else [overlay_buttons]
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
         self.logged_in = False
@@ -143,9 +143,10 @@ class Provider:
                 log.debug("Opening %s" % self.url)
                 browser.open_in_new_tab(self.url)
                 browser.wait_for_page_inactive(2)
-                if (self.cookies_button and
-                        browser.wait_for_element(self.cookies_button.by, self.cookies_button.selector, 2)):
-                    browser.safe_click(self.cookies_button.by, self.cookies_button.selector)
+                for ob in self.overlay_buttons:
+                    webelement = browser.wait_for_element(ob.by, ob.selector, 2)
+                    if webelement:
+                        browser.safe_click(ob.by, ob.selector)
 
             log.info("Logging into service...")
             weblogger.trace("pre-login")
