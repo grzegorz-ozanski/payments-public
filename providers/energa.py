@@ -41,7 +41,8 @@ class Energa(Provider):
         """
         user_input = PageElement(By.ID, "username")
         password_input = PageElement(By.ID, "password")
-        super().__init__(SERVICE_URL, locations, user_input, password_input)
+        super().__init__(SERVICE_URL, locations, user_input, password_input,
+                         cookies_button=PageElement(By.ID, 'kc-switch-button'))
 
     def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """
