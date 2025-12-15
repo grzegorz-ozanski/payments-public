@@ -30,7 +30,10 @@ class Pgnig(Provider):
 
     def __init__(self, *locations: str):
         """Initialize the PGNiG provider with input elements and locations."""
-        super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
+        overlays = [PageElement(By.ID, 'CybotCookiebotDialogBodyButtonDecline'),
+                    PageElement(By.CLASS_NAME, 'modalCloseButton'),
+                    PageElement(By.CSS_SELECTOR, '.button.expanded.invert-colors'),]
+        super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT, overlay_buttons=overlays)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Return the list of unpaid invoices from the PGNiG eBOK portal."""
