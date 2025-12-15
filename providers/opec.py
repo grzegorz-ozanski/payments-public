@@ -49,7 +49,7 @@ class Opec(Provider):
         sleep(1)
 
         invoices = browser.find_element(By.TAG_NAME, TABLE_BODY).find_elements(By.TAG_NAME, TABLE_ROW)
-        amount = 0
+        amount = 0.0
         due_date: DueDateT | DueDate = ''
 
         for invoice in invoices:

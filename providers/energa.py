@@ -128,11 +128,11 @@ class Energa(Provider):
                 due_date = invoices.text
             else:
                 # If the first method of gettign data fails, try the second one
-                invoices = browser.wait_for_elements(
+                invoices_list = browser.wait_for_elements(
                     By.XPATH,
                     f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
-                if invoices:
-                    due_date = invoices[0].text.split('\n')[1]
+                if invoices_list:
+                    due_date = invoices_list[0].text.split('\n')[1]
             browser.wait_for_element(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
             browser.safe_click(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
             amount_element = browser.wait_for_element(By.CSS_SELECTOR, AMOUNT_SELECTOR)
