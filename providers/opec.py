@@ -1,6 +1,7 @@
 """
     OPEC (head and hot water) provider module.
 """
+from enum import Enum
 from time import sleep
 
 from selenium.webdriver.common.by import By
@@ -13,7 +14,7 @@ log = setup_logging(__name__)
 
 # === OPEC specific constants - URLs, selectors and texts ===
 
-SERVICE_URL = "https://ebok.opecgdy.com.pl/home"
+SERVICE_URL = "https://stary-ebok.opecgdy.com.pl/web/ebok/home"
 
 USER_INPUT = PageElement(By.ID, "_58_login")
 PASSWORD_INPUT = PageElement(By.ID, "_58_password")
@@ -26,6 +27,11 @@ TABLE_ROW = 'tr'
 COLUMN_TAG = 'td'
 AMOUNT_FIELD_NAME = 'value'
 
+class Columns:
+    DueDate = 4
+    Amount = 5
+    Status = 6
+    AmountLeft = 7
 
 class Opec(Provider):
     """OPEC provider for hot water and heating."""
@@ -44,16 +50,18 @@ class Opec(Provider):
         sleep(1)
 
         invoices = browser.find_element(By.TAG_NAME, TABLE_BODY).find_elements(By.TAG_NAME, TABLE_ROW)
-        amount = browser.find_element(By.NAME, AMOUNT_FIELD_NAME).text
+        amount = 0
         due_date: DueDateT | DueDate = ''
 
         for invoice in invoices:
             columns = invoice.find_elements(By.TAG_NAME, COLUMN_TAG)
-            value = Amount(columns[7]) if columns[7].text else Amount(columns[5])
-            if columns[6].text == "Zapłacony" and float(value) > 0:
+            value = float(Amount(columns[Columns.AmountLeft]) if columns[Columns.AmountLeft].text else Amount(columns[Columns.Amount]))
+            if columns[Columns.Status].text == "Zapłacony" and value > 0:
                 continue
-            date = DueDate(columns[4].text)
-            if (not due_date or date < due_date) and float(value) > 0:
+            if columns[Columns.Status].text == "Niezapłacony" and value > 0:
+                amount += value
+            date = DueDate(columns[Columns.DueDate].text)
+            if (not due_date or date < due_date) and value > 0:
                 due_date = date
 
         return [Payment(self.name, self.locations[0], due_date, amount)]
