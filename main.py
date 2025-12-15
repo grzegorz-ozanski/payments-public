@@ -94,7 +94,7 @@ def main() -> None:
     bryla = 'Bryla'
     sezamowa = 'Sezamowa'
 
-    providers_list = LookupList(
+    providers_list = LookupList[providers.Provider](
         providers.Pgnig(sezamowa),
         providers.Energa(hodowlana, bryla, sezamowa),
         providers.Actum(hodowlana),
