@@ -70,22 +70,22 @@ def main() -> None:
     print(f"Starting at {datetime.datetime.now()}")
 
     args = parse_args()
-    log.debug(f'Called with arguments: {args}')
     running_under_debugger = is_debugger_active()
 
     # If -v/--verbose argument was provided, use it to toggle verbosity;
     # otherwise, be turn verbosity on when running under the debugger, and off when otherwise
     verbose = args.verbose if args.verbose else running_under_debugger
 
+    # Turn off logging if verbosity is off
+    if not verbose:
+        logging.disable(logging.CRITICAL)
+
+    log.debug(f'Called with arguments: {args}')
     # If -l/--headless argument was provided, use it to set headless mode on/off;
     # otherwise, use headed browser when running under the debugger and headless one when otherwise
     headless = args.headless if args.headless is not None else not running_under_debugger
 
     options = BrowserOptions(__file__, headless, args.trace, args.chrome_path)
-
-    # Turn off logging if verbosity is off
-    if not verbose:
-        logging.disable(logging.CRITICAL)
 
     if args.trace and not verbose:
         print("ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console")
