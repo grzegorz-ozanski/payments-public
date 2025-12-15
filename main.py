@@ -91,20 +91,20 @@ def main() -> None:
         print("ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console")
 
     hodowlana = 'Hodowlana'
-    bryla = 'Bryla'
+    # bryla = 'Bryla'
     sezamowa = 'Sezamowa'
 
     providers_list = LookupList[providers.Provider](
-        providers.Pgnig(sezamowa),
-        providers.Energa(hodowlana, bryla, sezamowa),
-        providers.Actum(hodowlana),
+        # providers.Pgnig(sezamowa),
+        # providers.Energa(hodowlana, bryla, sezamowa),
+        # providers.Actum(hodowlana),
         providers.Multimedia({'90': hodowlana, '77': sezamowa}),
-        providers.Pewik(sezamowa),
-        providers.Opec(sezamowa),
-        providers.Nordhome(bryla)
+        # providers.Pewik(sezamowa),
+        # providers.Opec(sezamowa),
+        # providers.Nordhome(bryla)
     )
 
-    payments = PaymentsManager(providers_list[args.provider.lower() or ''])
+    payments = PaymentsManager(providers_list['' or args.provider.lower()])
     payments.collect_payments(Browser(options))
     output = payments.to_string()
     # payments.collect_fake_payments(r'.github\data\test_output.txt')
