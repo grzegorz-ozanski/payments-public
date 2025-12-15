@@ -1,7 +1,6 @@
 """
     OPEC (head and hot water) provider module.
 """
-from enum import Enum
 from time import sleep
 
 from selenium.webdriver.common.by import By
