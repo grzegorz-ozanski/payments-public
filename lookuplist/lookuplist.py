@@ -53,8 +53,8 @@ class LookupList(Sequence[T]):
             if isinstance(key, slice) and (isinstance(key.start, str) or isinstance(key.stop, str)):
                 parts = [key.start, key.stop]
                 for index, value in enumerate(parts):
-                    parts[index] = self._items.index(self.__find__(value)) + 1 if isinstance(value, str) else value
-                return self._items[parts[0]:parts[1]:key.step]
+                    parts[index] = self._items.index(self.__find__(value)) if isinstance(value, str) else value
+                return self._items[parts[0]:parts[1] + 1:key.step]
             return self._items[key]
         raise TypeError(f"Invalid key type: {type(key)}")
 
