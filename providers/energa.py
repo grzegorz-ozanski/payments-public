@@ -25,7 +25,7 @@ ACCOUNTS_LIST_TEXT = "LISTA KONT"
 OVERLAY_SELECTOR = 'div.popup.center'
 POPUP_SELECTOR = 'div.popup__wrapper'
 ACCOUNTS_LABEL_SELECTOR = 'label'
-OVERLAY_BUTTON_SELECTOR = 'button.button.secondary'
+OVERLAY_BUTTON_SELECTOR = 'button.button'
 LOCATION_NAME_SELECTOR = '.text.es-text.variant-body-bold.mlxs.mrm'
 AMOUNT_SELECTOR = '.h1.text.es-text.variant-balance'
 
