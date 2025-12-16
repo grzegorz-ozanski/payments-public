@@ -131,7 +131,7 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python main.py -v -t -o ${env:SCRIPT_OUTPUT} -l FALSE
+        python main.py -v -t -o ${env:SCRIPT_OUTPUT}
 
     - name: Download reference output from private repo
       env:
