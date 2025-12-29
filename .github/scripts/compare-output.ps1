@@ -31,10 +31,10 @@ function Write-Status {
 function Is-Equal {
   param (
       [Parameter(Mandatory = $true, Position=0)]
-	  [AllowEmptyString()]
+      [AllowEmptyString()]
       [string]$Left,
       [Parameter(Mandatory = $true, Position=1)]
-	  [AllowEmptyString()]
+      [AllowEmptyString()]
       [string]$Right,
       [Parameter(                 , Position=2)]
       [bool]$IgnoreWhitespace = $false
