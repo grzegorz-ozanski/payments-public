@@ -4,7 +4,7 @@
 from mocks import DummyProvider, MockBrowser
 from payments.payment import Payment
 from payments.paymentsmanager import PaymentsManager
-
+from browser import BrowserOptions
 
 def test_collect_payments_combines_results() -> None:
     payments = [
@@ -15,7 +15,7 @@ def test_collect_payments_combines_results() -> None:
                  DummyProvider("p2", ("L2",), [payments[1]])]
 
     mgr = PaymentsManager(providers)
-    mgr.collect_payments(MockBrowser())
+    mgr.collect_payments(BrowserOptions(__file__, False, False, ''), browser_class=MockBrowser)
     result = mgr.to_string()
 
     assert "p1" in result
