@@ -51,7 +51,7 @@ class MockBrowser(Browser):
     """Simplified mock of the Browser interface."""
     save_trace_logs: bool = False
 
-    def __init__(self, _) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         self.user_data_dir = None
         # library variable: out of scope
         self.session_id = 'testsession'  # type: ignore[assignment]
