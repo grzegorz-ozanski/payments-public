@@ -29,8 +29,6 @@ on:
         required: true
       BROWSER_REPO_TOKEN:
         required: true
-      CHROME_REPO_TOKEN:
-        required: true
       PAYMENTS_TESTDATA_REPO_TOKEN:
         required: true
       CREDENTIALS:
@@ -46,7 +44,6 @@ env:
   DIFF_FILE: diff.txt
   GH_ACTIONS_EMAIL: "github-actions@github.com"
   GH_ACTIONS_USER_NAME: "github-actions"
-  GH_TOKEN: ${{ secrets.CHROME_REPO_TOKEN }}
   LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
   LOCAL_ARTIFACTS_LINUX: /runner/artifacts
   REFERENCE_CONTENT: reference.txt
@@ -136,10 +133,10 @@ jobs:
 
     - name: Download reference output from private repo
       env:
-        GH_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
+        PAYMENTS_TESTDATA_REPO_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
       shell: pwsh
       run: |
-        git clone https://${env:GH_TOKEN}@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
+        git clone https://${env:PAYMENTS_TESTDATA_REPO_TOKEN}@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
         New-Item -ItemType Directory -Path .github/data -Force | Out-Null
         Copy-Item -Path temp_testdata/* -Destination .github/data -Recurse -Force
         Remove-Item -Recurse -Force temp_testdata
