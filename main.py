@@ -11,7 +11,7 @@ from argparse import Namespace
 from str_to_bool import str_to_bool
 
 import providers
-from browser import Browser, BrowserOptions, setup_logging
+from browser import BrowserOptions, setup_logging
 from lookuplist import LookupList
 from payments import PaymentsManager
 
