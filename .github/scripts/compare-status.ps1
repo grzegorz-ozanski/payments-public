@@ -1,6 +1,6 @@
 param (
   [Parameter(Position=0, Mandatory=$true)][string]$PreviousJobStatus,
-  [Parameter(Position=1, Mandatory=$true)][string]$CompareStatus,
+  [Parameter(Position=1, Mandatory=$true)][string][AllowEmptyString()]$CompareStatus,
   [Parameter(Position=2                 )][string]$ScriptOutput,
   [Parameter(Position=3                 )][string]$DiffFile,
   [Parameter(Position=4                 )][string]$GitHubOutput,
