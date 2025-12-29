@@ -105,7 +105,7 @@ def main() -> None:
     )
 
     payments = PaymentsManager(providers_list['' or args.provider.lower()])
-    payments.collect_payments(Browser(options))
+    payments.collect_payments(options)
     output = payments.to_string()
     # payments.collect_fake_payments(r'.github\data\test_output.txt')
     print(output)

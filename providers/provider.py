@@ -71,7 +71,7 @@ class Provider:
     def __init__(self, url: str, locations: tuple[str, ...],
                  user_input: PageElement, password_input: PageElement,
                  logout_button: PageElement | None = None, overlay_buttons: PageElement | list[PageElement] | None = None,
-                 recaptcha_token: PageElement | None = None, recaptcha_token_prefix: str | None = None,
+                 needs_fresh_browser: bool = False,
                  pre_login_delay: int = 0, post_login_delay: int = 0):
         """
         :param url: URL of the login page
@@ -80,8 +80,8 @@ class Provider:
         :param password_input: Locator for password input field
         :param logout_button: Optional locator for logout button (default: "Wyloguj")
         :param overlay_buttons: Optional locator(s) for cookie consent or other overlays
-        :param recaptcha_token: Optional locator for reCAPTCHA v3 token
-        :param recaptcha_token_prefix: Prefix required in reCAPTCHA value
+        :param needs_fresh_browser: True if providers web page needs fresh browser session for proper operation,
+        False otherwise
         :param pre_login_delay: Sleep before the login form fill
         :param post_login_delay: Sleep after the login form submitted
         """
@@ -98,6 +98,7 @@ class Provider:
         self.overlay_buttons: list[PageElement] = []
         if overlay_buttons:
             self.overlay_buttons = overlay_buttons if isinstance(overlay_buttons, list) else [overlay_buttons]
+        self.needs_fresh_browser = needs_fresh_browser
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
         self.logged_in = False

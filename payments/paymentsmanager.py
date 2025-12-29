@@ -1,7 +1,7 @@
 """Payments manager module"""
 from typing import Sequence
 
-from browser import Browser
+from browser import Browser, BrowserOptions
 from payments import Payment
 from providers.provider import Provider
 from lookuplist import LookupList
@@ -43,13 +43,18 @@ class PaymentsManager:
                                           due_date,
                                           amount)]
 
-    def collect_payments(self, browser: Browser) -> None:
+    def collect_payments(self, options: BrowserOptions, browser_class = Browser) -> None:
         """
         Collect payments for all providers and return them as string
-        :param browser: Browser instance
+        :param options: Browser options
+        :param browser_class: Browser class
         :return:
         """
+        browser = browser_class(options)
         for provider in self.providers:
+            if provider.needs_fresh_browser:
+                browser.quit()
+                browser = browser_class(options)
             self.payments += provider.get_payments(browser)
         browser.quit()
 

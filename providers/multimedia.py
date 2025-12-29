@@ -45,6 +45,7 @@ class Multimedia(Provider):
                          USER_INPUT,
                          PASSWORD_INPUT,
                          overlay_buttons=COOKIES_BUTTON,
+                         needs_fresh_browser=True,
                          pre_login_delay=1)
 
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
