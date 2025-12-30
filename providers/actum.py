@@ -18,5 +18,4 @@ class Actum(IOK):
 
         :param location: Location name for this provider instance.
         """
-        super().__init__(20, SERVICE_URL
-                         , log, location)
+        super().__init__(20, SERVICE_URL, log, location)
