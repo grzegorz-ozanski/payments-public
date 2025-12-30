@@ -3,7 +3,7 @@
 #  It is intended to be used via workflow_call from scheduled or manual dispatch workflows.
 #  Version that bypasses GitHub Runners IP being blocked by some pages by using an SSH tunnel
 #  to a Tailscale machine
-name: Run payments
+name: Run payments (GitHub)
 
 on:
   workflow_call:
