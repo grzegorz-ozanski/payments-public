@@ -1,0 +1,36 @@
+name: Run payments on Linux
+
+on:
+  push:
+    branches: [ 'master' ]
+#  schedule:
+#    - cron: "5 6 * * *"  # Daily @6.05
+  workflow_dispatch:
+    inputs:
+      dump:
+        description: 'Dump workspace after job?'
+        required: false
+        default: 'false'
+
+jobs:
+  linux:
+    if: github.repository == 'grzegorz-ozanski/payments'
+    uses: ./.github/workflows/run-payments-on-github.yml
+    permissions:
+      contents: write
+    with:
+      runner_label: '["ubuntu-latest"]'
+      dump: ${{ inputs.dump }}
+      event_name: ${{ github.event_name }}
+    secrets:
+      GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+      GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+      GMAIL_EMAIL_ADDRESS: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
+      BROWSER_REPO_TOKEN: ${{ secrets.BROWSER_REPO_TOKEN }}
+      PAYMENTS_TESTDATA_REPO_TOKEN: ${{ secrets.TESTDATA_REPO_TOKEN }}
+      CREDENTIALS: ${{ secrets.CREDENTIALS }}
+      TS_MACHINE_ADDRESS: ${{ secrets.TS_MACHINE_ADDRESS }}
+      TS_MACHINE_USERNAME: ${{ secrets.TS_MACHINE_USERNAME }}
+      TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+      TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }}
+      TS_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
