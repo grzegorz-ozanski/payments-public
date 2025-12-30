@@ -120,19 +120,22 @@ class Energa(Provider):
             if not invoices_button:
                 raise RuntimeError(f"Could not find invoices button for location {location}!")
             browser.click_with_retry(invoices_button, By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
-            # Energa page renders invoices list in two ways
-            invoices = browser.wait_for_element(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
-            weblogger.trace("duedate-check")
             due_date = None
-            if invoices:
-                due_date = invoices.text
-            else:
-                # If the first method of gettign data fails, try the second one
-                invoices_list = browser.wait_for_elements(
-                    By.XPATH,
-                    f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
-                if invoices_list:
-                    due_date = invoices_list[0].text.split('\n')[1]
+            # First check if all invoices are already paid
+            all_paid = browser.wait_for_element(By.CSS_SELECTOR, "form[novalidate]", 2)
+            if all_paid is None:
+                # Energa page renders invoices list in two ways
+                invoices = browser.wait_for_element(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
+                weblogger.trace("duedate-check")
+                if invoices:
+                    due_date = invoices.text
+                else:
+                    # If the first method of gettign data fails, try the second one
+                    invoices_list = browser.wait_for_elements(
+                        By.XPATH,
+                        f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
+                    if invoices_list:
+                        due_date = invoices_list[0].text.split('\n')[1]
             browser.wait_for_element(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
             browser.safe_click(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
             amount_element = browser.wait_for_element(By.CSS_SELECTOR, AMOUNT_SELECTOR)
