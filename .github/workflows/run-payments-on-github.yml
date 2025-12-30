@@ -99,8 +99,8 @@ jobs:
     - name: Create SOCKS proxy tunnel
       run: |
         # SSH to local machine via Tailscale IP and create SOCKS proxy
-        which ssh
-        ssh -vvv -D 1080 -f -C -q -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
+        # ssh -vvv -D 1080 -f -C -q -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
+        ssh -vvv -D 1080 -f -C -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
 
     - name: Checkout current repo
       uses: actions/checkout@v4
