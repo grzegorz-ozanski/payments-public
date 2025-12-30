@@ -100,7 +100,10 @@ jobs:
       run: |
         # SSH to local machine via Tailscale IP and create SOCKS proxy
         # ssh -vvv -D 1080 -f -C -q -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
-        ssh -vvv -D 1080 -f -C -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
+        echo ${{ secrets.TS_MACHINE_USERNAME }} > file.txt
+        echo ${{ secrets.TS_MACHINE_ADDRESS }} >> file.txt
+        cat file.txt
+        ssh -D 1080 -f -C -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
 
     - name: Checkout current repo
       uses: actions/checkout@v4
