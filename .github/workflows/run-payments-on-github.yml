@@ -31,8 +31,6 @@ on:
         required: true
       BROWSER_REPO_TOKEN:
         required: true
-      CHROME_REPO_TOKEN:
-        required: true
       PAYMENTS_TESTDATA_REPO_TOKEN:
         required: true
       CREDENTIALS:
