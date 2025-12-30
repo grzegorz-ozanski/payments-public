@@ -35,6 +35,16 @@ on:
         required: true
       CREDENTIALS:
         required: true
+      TS_MACHINE_ADDRESS:
+        required: true
+      TS_MACHINE_USERNAME:
+        required: true
+      TS_OAUTH_CLIENT_ID:
+        required: true
+      TS_OAUTH_SECRET:
+        required: true
+      TS_SSH_PRIVATE_KEY:
+        required: true
 
 # noinspection GrazieInspection
 # Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
