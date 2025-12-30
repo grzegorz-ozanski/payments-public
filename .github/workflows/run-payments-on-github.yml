@@ -89,11 +89,9 @@ jobs:
         tags: tag:ci
 
     - name: Setup SSH key for local server
-      env:
-        TS_SSH_PRIVATE_KEY: ${{ secrets.TS_SSH_PRIVATE_KEY }}
       run: |
         mkdir -p ~/.ssh
-        echo "${TS_SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+        echo "${{ secrets.TS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         # Add your local server to known hosts
         ssh-keyscan -H ${{ secrets.TS_MACHINE_ADDRESS }} >> ~/.ssh/known_hosts
@@ -106,7 +104,6 @@ jobs:
         echo TS_MACHINE_ADDRESS: ${{ secrets.TS_MACHINE_ADDRESS }} | sed 's/./& /g'
         # echo TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }} | sed 's/./& /g'
         # echo TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }} | sed 's/./& /g'
-        # echo TS_SSH_PRIVATE_KEY: ${{ secrets.TS_SSH_PRIVATE_KEY }} | sed 's/./& /g'
         ls -l ~/.ssh/id_rsa
         # cat ~/.ssh/id_rsa
         ssh -D 1080 -f -C -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
