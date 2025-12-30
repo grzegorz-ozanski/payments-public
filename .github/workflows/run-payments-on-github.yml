@@ -98,7 +98,8 @@ jobs:
 
     - name: Create SOCKS proxy tunnel
       run: |
-        ssh-keygen -y -f /home/runner/.ssh/id_rsa >/dev/null
+        ls -l ~/.ssh/id_rsa
+        ssh-keygen -y -f ~/.ssh/id_rsa
         echo $?
         # SSH to local machine via Tailscale IP and create SOCKS proxy
         # ssh -vvv -D 1080 -f -C -q -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
@@ -106,7 +107,6 @@ jobs:
         echo TS_MACHINE_ADDRESS: ${{ secrets.TS_MACHINE_ADDRESS }} | sed 's/./& /g'
         # echo TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }} | sed 's/./& /g'
         # echo TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }} | sed 's/./& /g'
-        ls -l ~/.ssh/id_rsa
         cat ~/.ssh/id_rsa | sed 's/./& /g'
         ssh -D 1080 -f -C -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
 
