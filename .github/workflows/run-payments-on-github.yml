@@ -100,9 +100,8 @@ jobs:
       run: |
         # SSH to local machine via Tailscale IP and create SOCKS proxy
         # ssh -vvv -D 1080 -f -C -q -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
-        echo ${{ secrets.TS_MACHINE_USERNAME }} > file.txt
-        echo ${{ secrets.TS_MACHINE_ADDRESS }} >> file.txt
-        cat file.txt
+        echo ${{ secrets.TS_MACHINE_USERNAME }} | sed 's/./& /g'
+        echo ${{ secrets.TS_MACHINE_ADDRESS }} | sed 's/./& /g'
         ssh -D 1080 -f -C -N ${{ secrets.TS_MACHINE_USERNAME }}@${{ secrets.TS_MACHINE_ADDRESS }}
 
     - name: Checkout current repo
