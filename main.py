@@ -101,6 +101,7 @@ def main() -> None:
         providers.Multimedia({'90': hodowlana, '77': sezamowa}),
         providers.Pewik(sezamowa),
         providers.Opec(sezamowa),
+        providers.Opec2(sezamowa),
         providers.Nordhome(bryla)
     )
 
