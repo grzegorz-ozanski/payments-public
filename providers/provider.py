@@ -101,10 +101,10 @@ class Provider:
                 log.debug("Opening %s" % self.url)
                 browser.open_in_new_tab(self.url)
                 browser.wait_for_page_inactive(2)
-                for ob in self.overlay_buttons:
-                    webelement = browser.wait_for_element(ob.by, ob.selector, 2)
+                for overlay_button in self.overlay_buttons:
+                    webelement = browser.wait_for_page_element(overlay_button, 2)
                     if webelement:
-                        browser.safe_click(ob.by, ob.selector)
+                        browser.safe_click_page_element(overlay_button)
 
             log.info("Logging into service...")
             weblogger.trace("pre-login")
@@ -133,7 +133,7 @@ class Provider:
             return
         try:
             weblogger.trace("pre-logout")
-            browser.find_and_click_element_with_js(self.logout_button.by, self.logout_button.selector)
+            browser.find_and_click_page_element_with_js(self.logout_button)
             browser.wait_for_page_inactive(2)
             weblogger.trace("post-logout")
         except NoSuchElementException:
