@@ -17,13 +17,22 @@ USER_INPUT = PageElement(By.ID, 'UserName')
 PASSWORD_INPUT = PageElement(By.ID, 'Password')
 AMOUNT = PageElement(By.CSS_SELECTOR, 'span.shf-s30.shf-w5.shf-csec')
 
-TERMS_OF_SERVICE_TEXT = "Regulamin"
+class TermsOfService:
+    """ OPEC2 terms of service popup. """
+    HEADER = PageElement(By.XPATH, "//h1[normalize-space(.)='Regulamin']")
+    BUTON_OPEN = PageElement(By.CSS_SELECTOR, "button[type=submit]")
+    HEADER_CLOSE = PageElement(By.TAG_NAME, 'h1')
+    BUTTON_CLOSE = PageElement(By.TAG_NAME, 'button')
 
-def _accept_terms_of_service(browser: Browser):
-    if browser.wait_for_element(By.XPATH, f"//h1[normalize-space(.)='{TERMS_OF_SERVICE_TEXT}']", 2):
-        browser.find_element(By.CSS_SELECTOR, "button[type=submit]").click()
-        browser.wait_for_element(By.TAG_NAME, 'h1', 2)
-        browser.find_element(By.TAG_NAME, 'button').click()
+    def __init__(self, browser: Browser) -> None:
+        self.browser = browser
+
+    def accept(self) -> None:
+        """ Closes the popup"""
+        if self.browser.wait_for_page_element(self.HEADER, 2):
+            self.browser.find_page_element(self.BUTON_OPEN).click()
+            self.browser.wait_for_page_element(self.HEADER_CLOSE, 2)
+            self.browser.find_page_element(self.BUTTON_CLOSE).click()
 
 
 class Opec2(Provider):
@@ -34,6 +43,6 @@ class Opec2(Provider):
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
-        _accept_terms_of_service(browser)
+        TermsOfService(browser).accept()
         return [Payment(self.name, self.locations[0],
-                        amount=browser.wait_for_element(AMOUNT.by, AMOUNT.selector, 2))]
+                        amount=browser.wait_for_page_element(AMOUNT, 2))]
