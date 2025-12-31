@@ -5,9 +5,9 @@ from selenium.common.exceptions import ElementNotInteractableException, NoSuchEl
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import setup_logging, Browser, WebLogger
+from browser import setup_logging, Browser, PageElement, WebLogger
 from payments import Amount, DueDate, Payment
-from .provider import PageElement, Provider
+from providers.provider import Provider
 
 log = setup_logging(__name__)
 

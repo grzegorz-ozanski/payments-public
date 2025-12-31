@@ -6,18 +6,16 @@
     - Credential helper for secure access to secrets.
     - PageElement dataclass for defining input/button locators.
 """
-from os import environ
 import time
-from dataclasses import dataclass
 
-import keyring
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.remote.webelement import WebElement
 
-from browser import setup_logging, Browser, WebLogger
+from browser import setup_logging, Browser, PageElement, WebLogger
 from payments import Payment
+from providers.login.base import BaseLogin
+from credentials import Credentials
+from providers.login.one_stage import OneStageLogin
 
 log = setup_logging(__name__)
 
@@ -35,36 +33,6 @@ def _sleep_with_message(amount: int, message: str) -> None:
         time.sleep(amount)
 
 
-@dataclass
-class PageElement:
-    """Element locator used for finding inputs and buttons in the page."""
-    by: str
-    selector: str
-
-
-class Credential:
-    """
-    Retrieve credentials from environment or system keyring.
-
-    Priority: environment variable > keyring service.
-    """
-    def __init__(self, service_name: str, name: str, env_upper: bool = True):
-        self.keyring_service = service_name
-        self.keyring = name
-        self.environ = f'{service_name}_{name}'
-        if env_upper:
-            self.environ = self.environ.upper()
-
-    def get(self) -> str | None:
-        """Return the credential value or raise if not found."""
-        if value := environ.get(self.environ):
-            return value
-        value = keyring.get_password(self.keyring_service, self.keyring)
-        if value and value.strip():
-            return value.strip()
-        raise RuntimeError(f'"{self.keyring}" not found in env {self.environ} or keyring service {self.keyring_service}!')
-
-
 class Provider:
     """Base class for a payment provider using Selenium."""
 
@@ -72,7 +40,8 @@ class Provider:
                  user_input: PageElement, password_input: PageElement,
                  logout_button: PageElement | None = None, overlay_buttons: PageElement | list[PageElement] | None = None,
                  needs_fresh_browser: bool = False,
-                 pre_login_delay: int = 0, post_login_delay: int = 0):
+                 pre_login_delay: int = 0, post_login_delay: int = 0,
+                 login_strategy: type[BaseLogin] = OneStageLogin):
         """
         :param url: URL of the login page
         :param locations: List of location names handled by this provider
@@ -89,10 +58,8 @@ class Provider:
         self.name = self.__class__.__name__.lower()
         self.locations = locations
         self._location_order = {location: i for i, location in enumerate(self.locations)}
-        self.user_input = user_input
-        self.password_input = password_input
-        self.username = Credential(self.name, 'username')
-        self.password = Credential(self.name, 'password')
+        self.login_strategy = login_strategy(self.name, user_input, password_input,
+                                             Credentials(self.name, 'username', 'password'))
 
         self.logout_button = logout_button or PageElement(By.XPATH, DEFAULT_LOGOUT_XPATH)
         self.overlay_buttons: list[PageElement] = []
@@ -106,16 +73,6 @@ class Provider:
     def __repr__(self) -> str:
         """Provider name and list of supported locations."""
         return f'{self.name}: [{", ".join(map(str, self.locations))}]'
-
-    @staticmethod
-    def input(control: WebElement, text: str) -> None:
-        """Clear the input field and type the given text."""
-        time.sleep(0.5)
-        if control.get_attribute('value') != '':
-            control.send_keys(Keys.CONTROL, 'a')
-            time.sleep(0.05)
-            control.send_keys(Keys.DELETE)
-        control.send_keys(text)
 
     def get_payments(self, browser: Browser) -> list[Payment]:
         """Log in and fetch payments, return fallback on failure."""
@@ -153,34 +110,7 @@ class Provider:
             weblogger.trace("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
 
-            input_user = browser.wait_for_element(self.user_input.by, self.user_input.selector)
-            if input_user is None:
-                print(f"No user input {self.user_input} found!")
-                weblogger.error()
-            assert input_user is not None
-
-            input_password = browser.wait_for_element(self.password_input.by, self.password_input.selector)
-            assert input_password is not None
-
-            username = self.username.get()
-            if username is not None:
-                browser.click_element_with_js(input_user, self.user_input.by, self.user_input.selector)
-                time.sleep(0.5)
-                self.input(input_user, username)
-            else:
-                raise RuntimeError(f"No valid username found for service '{self.name}'!")
-            weblogger.trace("username-input")
-
-            password = self.password.get()
-            if password is not None:
-                input_user.send_keys(Keys.TAB)
-                self.input(input_password, password)
-                time.sleep(0.5)
-            else:
-                raise RuntimeError(f"No valid password found for service '{self.name}', user '{username}'!")
-
-            weblogger.trace("password-input")
-            input_password.send_keys(Keys.ENTER)
+            self.login_strategy.login(browser, weblogger)
             log.debug("Form submitted")
 
             browser.wait_for_page_load_completed()

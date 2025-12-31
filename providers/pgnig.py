@@ -4,9 +4,9 @@
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, WebLogger
+from browser import setup_logging, Browser, PageElement, WebLogger
 from payments import Amount, Payment
-from .provider import PageElement, Provider
+from providers.provider import Provider
 
 log = setup_logging(__name__)
 

@@ -10,6 +10,7 @@ from .opec2 import Opec2
 from .pewik import Pewik
 from .pgnig import Pgnig
 from .provider import Provider
+from .vectra import Vectra
 
 __all__ = [
     "Provider",
@@ -20,5 +21,6 @@ __all__ = [
     "Opec",
     "Opec2",
     "Pgnig",
-    "Pewik"
+    "Pewik",
+    "Vectra"
 ]

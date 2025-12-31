@@ -8,9 +8,9 @@ import pytest
 from _pytest.capture import CaptureFixture
 from selenium.webdriver.common.by import By
 
+from browser import PageElement
 from mocks import DummyProvider, MockBrowser, MockWeblogger
 from payments import DueDate, Amount
-from providers.provider import PageElement
 from providers.provider import Provider
 
 
@@ -51,7 +51,7 @@ def test_get_location_unknown_logs_error(caplog: pytest.LogCaptureFixture) -> No
 
 
 @patch("providers.provider.WebLogger", new=MockWeblogger)
-@patch("providers.provider.Credential.get", return_value="dummy")
+@patch("credentials.Credential.get", return_value="dummy")
 def test_payments_fetch_error(mock_cred: Any, capsys: CaptureFixture[str]) -> None:
     """Test whether payments are sorted according to known locations."""
     assert mock_cred is not None
@@ -68,7 +68,7 @@ def test_payments_fetch_error(mock_cred: Any, capsys: CaptureFixture[str]) -> No
     assert "Cannot get payments for service dummyprovider!" in out
 
 
-@patch("providers.provider.Credential.get", return_value="dummy")
+@patch("credentials.Credential.get", return_value="dummy")
 def test_payment_sorting(mock_cred: Any) -> None:
     """Test whether payments are sorted according to known locations."""
     assert mock_cred is not None

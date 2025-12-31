@@ -2,13 +2,12 @@
     Multimedia (TV) provider module.
 """
 from time import sleep
-from typing import cast
 
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, WebLogger
+from browser import setup_logging, Browser, PageElement, WebLogger
 from payments import Payment
-from .provider import PageElement, Provider
+from providers.provider import Provider
 
 log = setup_logging(__name__)
 
@@ -39,7 +38,7 @@ class Multimedia(Provider):
         :param locations: Mapping from partial strings in amount fields to location names.
         """
         self._locations_map = locations
-        locations_tuple = cast(tuple[str, ...], tuple(locations.values()))
+        locations_tuple = tuple(locations.values())
         super().__init__(SERVICE_URL,
                          locations_tuple,
                          USER_INPUT,

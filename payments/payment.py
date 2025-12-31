@@ -160,7 +160,7 @@ class DueDate:
         return cls._today[0]
 
     @staticmethod
-    def create_from(value: DueDateT | 'DueDate' | None) -> 'DueDate':
+    def create_from(value: 'DueDateT | DueDate | None') -> 'DueDate':
         """
         Creates DueDate object from any compatible value
         :param value: source value

@@ -8,9 +8,9 @@ from logging import Logger
 
 from selenium.webdriver.common.by import By
 
-from browser import Browser, WebLogger
+from browser import Browser, PageElement, WebLogger
 from payments import Payment
-from .provider import PageElement, Provider
+from providers.provider import Provider
 
 # === Shared constants for IOK-based portals ===
 
