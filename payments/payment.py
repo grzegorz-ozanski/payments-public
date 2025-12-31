@@ -31,16 +31,17 @@ class Amount:
         Constructor
         :param value: payment value
         """
-        if isinstance(value, WebElement):
-            value = value.text
         if isinstance(value, float):
-            value = str(value)
+            self.value = str(value)
+        else:
+            self.value = str(value.text) if isinstance(value, WebElement) else value
+        self.whole, self.decimal = self._split()
+
+    def __iadd__(self, other: Amount) -> Amount:
+        value = float(self) + float(other)
         self.value = str(value)
-        if self.value != self.unknown:
-            separator = '|'
-            amount = re.sub(r'[^\d,.-]', '', self.value)
-            amount = re.sub(r'[,.]', separator, amount)
-            self.whole, self.decimal = amount.split(separator) if separator in amount else (amount, '0')
+        self.whole, self.decimal = self._split()
+        return self
 
     def __eq__(self, other: object) -> bool:
         """
@@ -69,6 +70,13 @@ class Amount:
             Return string representation of the Amount.
         """
         return f'{self.whole},{self.decimal:02}' if self.value != self.unknown else self.value
+
+    def _split(self):
+        if self.value != self.unknown:
+            separator = '|'
+            amount = re.sub(r'[^\d,.-]', '', self.value)
+            amount = re.sub(r'[,.]', separator, amount)
+            return amount.split(separator) if separator in amount else (amount, '0')
 
     @classmethod
     def is_zero(cls, value: str) -> bool:
