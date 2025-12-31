@@ -17,21 +17,21 @@ class BaseLogin:
         raise NotImplementedError(f"{self.__class__.__name__} must override login().")
 
     def find_username_input(self, browser: Browser, weblogger: WebLogger):
-        input_user = browser.wait_for_element(self.user_input_selector.by, self.user_input_selector.selector)
+        input_user = browser.wait_for_page_element(self.user_input_selector)
         if input_user is None:
             print(f"No user input {self.user_input_selector} found!")
             weblogger.error()
         return input_user
 
     def find_password_input(self, browser: Browser, weblogger: WebLogger):
-        input_password = browser.wait_for_element(self.password_input_selector.by, self.password_input_selector.selector)
+        input_password = browser.wait_for_page_element(self.password_input_selector)
         if input_password is None:
             print(f"No password input {self.password_input_selector} found!")
             weblogger.error()
         return input_password
 
     def input_username(self, input_box: WebElement, username: str | None, browser: Browser):
-        browser.click_element_with_js(input_box, self.user_input_selector.by, self.user_input_selector.selector)
+        browser.click_page_element_with_js(input_box, self.user_input_selector)
         time.sleep(0.5)
         self.input(input_box, username)
 
