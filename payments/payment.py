@@ -51,12 +51,16 @@ class Amount:
             if isinstance(other, str):
                 return self.value == other
             return NotImplemented
+        if self.is_unknown():
+            return True if other.is_unknown() else False
         return self.whole == other.whole and self.decimal == other.decimal
 
     def __float__(self) -> float:
         """
             Convert amount to float for numeric operations.
         """
+        if self.is_unknown():
+            raise ValueError('Cannot convert unknown amount to float.')
         return float(f'{self.whole}.{self.decimal}')
 
     def __format__(self, format_spec: str) -> str:
@@ -69,14 +73,23 @@ class Amount:
         """
             Return string representation of the Amount.
         """
-        return f'{self.whole},{self.decimal:02}' if self.value != self.unknown else self.value
+        return self.value if self.is_unknown() else f'{self.whole},{self.decimal:02}'
 
-    def _split(self):
-        if self.value != self.unknown:
-            separator = '|'
-            amount = re.sub(r'[^\d,.-]', '', self.value)
-            amount = re.sub(r'[,.]', separator, amount)
-            return amount.split(separator) if separator in amount else (amount, '0')
+    def _split(self) -> tuple[str, str]:
+        if self.is_unknown():
+            return '', ''
+        separator = '|'
+        amount = re.sub(r'[^\d,.-]', '', self.value)
+        amount = re.sub(r'[,.]', separator, amount)
+        whole, dec = amount.split(separator) if separator in amount else (amount, '0')
+        return whole, dec
+
+    def is_unknown(self) -> bool:
+        """
+        Checks if the amount is unknown.
+        :return: True if unknown, False otherwise
+        """
+        return self.value == self.unknown
 
     @classmethod
     def is_zero(cls, value: str) -> bool:
