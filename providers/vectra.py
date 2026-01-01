@@ -38,6 +38,16 @@ class Vectra(Provider):
                          overlay_buttons=PageElement(By.ID, 'cookiescript_accept'),
                          login_strategy=TwoStageLogin)
 
+    def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
+        if load:
+            self.load(browser)
+
+        if browser.wait_for_page_element(USER_MENU, 2):
+            self.logged_in = True
+            return
+
+        super().login(browser, weblogger, False)
+
     def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """
         Log out the user from Vectra web portal.
@@ -52,7 +62,10 @@ class Vectra(Provider):
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         total = Payment(self.name, self.locations[0])
         # Open invoices
-        browser.wait_for_page_element(INVOICES_BUTTON, 2).click()
+        invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
+        if invoices_button is None:
+            return [total]
+        invoices_button.click()
         # Get unpaid invoices
         unpaid_invoices = browser.wait_for_page_elements(INVOICES_LIST)
         for invoice in unpaid_invoices:
