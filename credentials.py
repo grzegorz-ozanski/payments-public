@@ -1,9 +1,12 @@
+"""
+    Credentials module
+"""
 from os import environ
 import keyring
 
 class Credential:
     """
-    Retrieve credentials from environment or system keyring.
+    Retrieve credential from environment or system keyring.
 
     Priority: environment variable > keyring service.
     """
@@ -25,6 +28,9 @@ class Credential:
 
 
 class Credentials:
+    """
+    Stores credentials values (username and password) described by tags provided.
+    """
     def __init__(self, name: str, username_tag: str, password_tag: str):
         self.username = Credential(name, username_tag)
         self.password = Credential(name, password_tag)

@@ -95,6 +95,7 @@ class Provider:
         return payments
 
     def load(self, browser: Browser):
+        """ Opens the login page """
         log.debug('Opening %s' % self.url)
         browser.open_in_new_tab(self.url)
         browser.wait_for_page_inactive(2)

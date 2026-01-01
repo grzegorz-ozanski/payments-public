@@ -29,6 +29,7 @@ INVOICE_PAID_TEXT = 'Zapłacony'
 INVOICE_UNPAID_TEXT = 'Niezapłacony'
 
 class Columns:
+    """ Invoices table columns """
     DueDate = 4
     Amount = 5
     Status = 6

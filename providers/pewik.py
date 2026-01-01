@@ -25,13 +25,18 @@ BALANCES_TAB = Locator(By.XPATH, '//a[text()="Salda"]')
 
 LOCATION = Locator(By.CLASS_NAME, 'select2-chosen')
 LOCATION_TEXT = Locator(By.TAG_NAME, 'span')
-BALANCE_TABLE = Locator(By.ID, 'saldaWplatyWykaz')
 
 LOCATIONS_ARROW = Locator(By.CLASS_NAME, 'select2-arrow')
 LOCATION_RESULT = Locator(By.CLASS_NAME, 'select2-result')
 
+class BalanceTable:
+    """ Balance table locators """
+    ID = Locator(By.ID, 'saldaWplatyWykaz')
+    BODY = Locator(By.TAG_NAME, 'tbody')
+    ROW = Locator(By.TAG_NAME, 'tr')
+    COLUMN = Locator(By.TAG_NAME, 'td')
 
-# for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
+    # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
 # noinspection PyArgumentEqualDefault
 class Pewik(Provider):
     """PEWiK Gdynia provider."""
@@ -61,14 +66,13 @@ class Pewik(Provider):
             )
 
             balances = (
-                # TODO constants?
-                browser.find_page_element(BALANCE_TABLE)
-                .find_element(By.TAG_NAME, 'tbody')
-                .find_elements(By.TAG_NAME, 'tr')
+                browser.find_page_element(BalanceTable.ID)
+                .find_page_element(BalanceTable.BODY)
+                .find_page_elements(BalanceTable.ROW)
             )
 
             for item in balances:
-                columns = item.find_elements(By.TAG_NAME, 'td')
+                columns = item.find_page_elements(BalanceTable.COLUMN)
                 if len(columns) > 1:
                     payments.append(Payment(self.name, location, columns[3], columns[5]))
                 else:

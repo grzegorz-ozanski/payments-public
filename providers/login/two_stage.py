@@ -1,3 +1,6 @@
+"""
+    Module for a login page that shows password input only after the username was typed in
+"""
 from selenium.webdriver.common.keys import Keys
 
 from browser import Browser, Locator, WebLogger
@@ -6,6 +9,9 @@ from credentials import Credentials
 
 
 class TwoStageLogin(BaseLogin):
+    """
+    Login page that shows password input only after the username was typed in
+    """
     def __init__(self, service_name:str, user_input: Locator, password_input: Locator, credentials: Credentials):
         super().__init__(service_name, user_input, password_input, credentials)
 
@@ -14,7 +20,7 @@ class TwoStageLogin(BaseLogin):
         assert username_input is not None
 
         username_value, password_value = self.get_credentials()
-        self.input_username(username_input, username_value, browser)
+        self.input_username(browser, username_input, username_value)
         weblogger.trace("username-input")
         username_input.send_keys(Keys.ENTER)
 
