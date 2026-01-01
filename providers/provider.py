@@ -94,17 +94,20 @@ class Provider:
             self.logout(browser, weblogger)
         return payments
 
+    def load(self, browser: Browser):
+        log.debug("Opening %s" % self.url)
+        browser.open_in_new_tab(self.url)
+        browser.wait_for_page_inactive(2)
+        for overlay_button in self.overlay_buttons:
+            webelement = browser.wait_for_page_element(overlay_button, 2)
+            if webelement:
+                browser.safe_click_page_element(overlay_button)
+
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
         """Perform login in the web application."""
         try:
             if load:
-                log.debug("Opening %s" % self.url)
-                browser.open_in_new_tab(self.url)
-                browser.wait_for_page_inactive(2)
-                for overlay_button in self.overlay_buttons:
-                    webelement = browser.wait_for_page_element(overlay_button, 2)
-                    if webelement:
-                        browser.safe_click_page_element(overlay_button)
+                self.load(browser)
 
             log.info("Logging into service...")
             weblogger.trace("pre-login")
