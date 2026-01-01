@@ -44,7 +44,7 @@ class Pewik(Provider):
         payments = []
         next_id = 1
 
-        cookies_panel = browser.find_element(By.CLASS_NAME, COOKIES_PANEL_CLASS)
+        cookies_panel = browser.wait_for_element(By.CLASS_NAME, COOKIES_PANEL_CLASS, 1)
         if cookies_panel:
             browser.wait_for_element_clickable(By.CLASS_NAME, COOKIES_PANEL_CLASS)
             browser.click_element_with_js(cookies_panel.find_element(value=COOKIES_CLOSE_ID))
