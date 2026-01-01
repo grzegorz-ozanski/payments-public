@@ -17,12 +17,12 @@ SERVICE_URL = "https://ebok.pgnig.pl"
 USER_INPUT = PageElement(By.NAME, "identificator")
 PASSWORD_INPUT = PageElement(By.NAME, "accessPin")
 
-READING_ADDRESS_CLASS = "reading-adress"
-INVOICES_MENU_XPATH = '//*[@class="menu-element" and normalize-space()="Faktury"]'
+READING_ADDRESS = PageElement(By.CLASS_NAME, "reading-adress")
+INVOICES_MENU = PageElement(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
 
-INVOICE_ROW_CLASS = "main-row-container"
-INVOICE_COLUMN_CLASS = "columns"
-INVOICE_BUTTON_CLASS = "button"
+INVOICE_ROW = PageElement(By.CLASS_NAME, "main-row-container")
+INVOICE_COLUMN = PageElement(By.CLASS_NAME, "columns")
+INVOICE_BUTTON = PageElement(By.CLASS_NAME, "button")
 
 
 class Pgnig(Provider):
@@ -38,14 +38,14 @@ class Pgnig(Provider):
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Return the list of unpaid invoices from the PGNiG eBOK portal."""
         log.info("Getting payments...")
-        location_element = browser.wait_for_element(By.CLASS_NAME, READING_ADDRESS_CLASS)
+        location_element = browser.wait_for_page_element(READING_ADDRESS)
         if location_element:
             location = self._get_location(location_element.text)
         else:
-            raise RuntimeError(f"Cannot find location element '{READING_ADDRESS_CLASS}'!")
+            raise RuntimeError(f"Cannot find location element '{READING_ADDRESS}'!")
 
         log.info("Getting invoices menu...")
-        invoices_menu = browser.wait_for_element(By.XPATH, INVOICES_MENU_XPATH)
+        invoices_menu = browser.wait_for_page_element(INVOICES_MENU)
         log.info("Opening invoices menu...")
         weblogger.trace("pre-invoices-click")
         if not invoices_menu:
@@ -65,11 +65,12 @@ class Pgnig(Provider):
             try:
                 log.info("Getting filtered invoices list...")
                 unpaid_invoices = []
-                elements = browser.wait_for_elements(By.CLASS_NAME, INVOICE_ROW_CLASS)
+                elements = browser.wait_for_page_elements(INVOICE_ROW)
                 if elements is None:
                     raise RuntimeError("Cannot get invoices list!")
                 for index, item in enumerate(browser.safe_list(elements)):
-                    if item.find_element(By.CLASS_NAME, INVOICE_BUTTON_CLASS).text == "Zapłać":
+                    # TODO Implement WebElementEx
+                    if item.find_element(INVOICE_BUTTON.by, INVOICE_BUTTON.selector).text == "Zapłać":
                         unpaid_invoices.append(item)
                 break
             except StaleElementReferenceException:
