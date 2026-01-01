@@ -52,7 +52,7 @@ class PaymentsManager:
         """
         browser = browser_class(options)
         for provider in self.providers:
-            if provider.needs_fresh_browser:
+            if provider.needs_fresh_browser and browser.dirty:
                 browser.quit()
                 browser = browser_class(options)
             self.payments += provider.get_payments(browser)
