@@ -3,7 +3,7 @@
 """
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Payment
 from providers.provider import Provider
 
@@ -13,21 +13,21 @@ log = setup_logging(__name__)
 
 SERVICE_URL = "https://ebok.pewik.gdynia.pl/login"
 
-USER_INPUT = PageElement(By.ID, "username")
-PASSWORD_INPUT = PageElement(By.ID, "password")
-LOGOUT_BUTTON = PageElement(By.CLASS_NAME, "btn-wyloguj")
+USER_INPUT = Locator(By.ID, "username")
+PASSWORD_INPUT = Locator(By.ID, "password")
+LOGOUT_BUTTON = Locator(By.CLASS_NAME, "btn-wyloguj")
 
-COOKIES_PANEL = PageElement(By.CLASS_NAME, "panel-cookies")
-COOKIES_CLOSE = PageElement(By.ID, "cookiesClose")
+COOKIES_PANEL = Locator(By.CLASS_NAME, "panel-cookies")
+COOKIES_CLOSE = Locator(By.ID, "cookiesClose")
 
-INVOICES_TAB = PageElement(By.XPATH, '//a[text()="Faktury i salda"]')
-BALANCES_TAB = PageElement(By.XPATH, '//a[text()="Salda"]')
+INVOICES_TAB = Locator(By.XPATH, '//a[text()="Faktury i salda"]')
+BALANCES_TAB = Locator(By.XPATH, '//a[text()="Salda"]')
 
-LOCATION = PageElement(By.CLASS_NAME, "select2-chosen")
-BALANCE_TABLE = PageElement(By.ID, "saldaWplatyWykaz")
+LOCATION = Locator(By.CLASS_NAME, "select2-chosen")
+BALANCE_TABLE = Locator(By.ID, "saldaWplatyWykaz")
 
-LOCATIONS_ARROW = PageElement(By.CLASS_NAME, "select2-arrow")
-LOCATION_RESULT = PageElement(By.CLASS_NAME, "select2-result")
+LOCATIONS_ARROW = Locator(By.CLASS_NAME, "select2-arrow")
+LOCATION_RESULT = Locator(By.CLASS_NAME, "select2-result")
 
 
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
@@ -48,7 +48,7 @@ class Pewik(Provider):
         cookies_panel = browser.wait_for_page_element(COOKIES_PANEL, 1)
         if cookies_panel:
             browser.wait_for_page_element_clickable(COOKIES_PANEL)
-            browser.click_element_using_js(cookies_panel.find_element(COOKIES_CLOSE.by, COOKIES_CLOSE.selector))
+            browser.click_element_using_js(cookies_panel.find_element(COOKIES_CLOSE.type, COOKIES_CLOSE.value))
 
         browser.trace_click(browser.find_page_element(INVOICES_TAB))
         browser.trace_click(browser.find_page_element(BALANCES_TAB))

@@ -8,18 +8,18 @@ from logging import Logger
 
 from selenium.webdriver.common.by import By
 
-from browser import Browser, PageElement, WebLogger
+from browser import Browser, Locator, WebLogger
 from payments import Payment
 from providers.provider import Provider
 
 # === Shared constants for IOK-based portals ===
 
-USER_INPUT = PageElement(By.CSS_SELECTOR, "[aria-labelledby=login]")
-PASSWORD_INPUT = PageElement(By.CSS_SELECTOR, "[aria-labelledby=haslo]")
-LOGOUT_BUTTON = PageElement(By.CSS_SELECTOR, "button.wcag.bg.navTxtColor")
+USER_INPUT = Locator(By.CSS_SELECTOR, "[aria-labelledby=login]")
+PASSWORD_INPUT = Locator(By.CSS_SELECTOR, "[aria-labelledby=haslo]")
+LOGOUT_BUTTON = Locator(By.CSS_SELECTOR, "button.wcag.bg.navTxtColor")
 
-AMOUNT = PageElement(By.CLASS_NAME, 'home-amount')
-DUE_DATE = PageElement(By.CLASS_NAME, 'home-info')
+AMOUNT = Locator(By.CLASS_NAME, 'home-amount')
+DUE_DATE = Locator(By.CLASS_NAME, 'home-info')
 DEFAULT_TIMEOUT = 1
 
 

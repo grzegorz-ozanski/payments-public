@@ -6,7 +6,7 @@ from typing import Any
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import Browser, PageElement, WebLogger
+from browser import Browser, Locator, WebLogger
 from payments.payment import Payment
 from providers.provider import Provider
 
@@ -24,8 +24,8 @@ class DummyProvider(Provider):
         super().__init__(
             url='',
             locations=locations,
-            user_input=PageElement(By.ID, "user"),
-            password_input=PageElement(By.ID, "pass")
+            user_input=Locator(By.ID, "user"),
+            password_input=Locator(By.ID, "pass")
         )
         self.name = name
         self._test_payments = payments

@@ -3,7 +3,7 @@
 """
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Payment
 from providers.login.two_stage import TwoStageLogin
 from providers.provider import Provider
@@ -14,14 +14,14 @@ log = setup_logging(__name__)
 
 SERVICE_URL = 'https://ebok.vectra.pl'
 
-USER_INPUT = PageElement(By.ID, 'input-v-2')
-PASSWORD_INPUT = PageElement(By.ID, 'input-v-5')
+USER_INPUT = Locator(By.ID, 'input-v-2')
+PASSWORD_INPUT = Locator(By.ID, 'input-v-5')
 
-INVOICES_BUTTON = PageElement(By.XPATH, "//span[normalize-space(.)='Zobacz faktury']")
-INVOICES_LIST = PageElement(By.XPATH,"(//table[contains(@class,'vectra-complex-table')])[1]/tbody/tr")
+INVOICES_BUTTON = Locator(By.XPATH, "//span[normalize-space(.)='Zobacz faktury']")
+INVOICES_LIST = Locator(By.XPATH, "(//table[contains(@class,'vectra-complex-table')])[1]/tbody/tr")
 
-USER_MENU = PageElement(By.CSS_SELECTOR, 'span.ico-avatar')
-LOGOUT_BUTTON = PageElement(By.XPATH, "//span[normalize-space(.)='Wyloguj się']")
+USER_MENU = Locator(By.CSS_SELECTOR, 'span.ico-avatar')
+LOGOUT_BUTTON = Locator(By.XPATH, "//span[normalize-space(.)='Wyloguj się']")
 
 class Columns:
     """ Invoice list columns"""
@@ -35,7 +35,7 @@ class Vectra(Provider):
     def __init__(self, *locations: str):
         """Initialize OPEC service with given locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT,
-                         overlay_buttons=PageElement(By.ID, 'cookiescript_accept'),
+                         overlay_buttons=Locator(By.ID, 'cookiescript_accept'),
                          login_strategy=TwoStageLogin)
 
     def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:

@@ -4,7 +4,7 @@
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Amount, DueDate, Payment
 from providers.provider import Provider
 
@@ -16,25 +16,25 @@ SERVICE_URL = "https://24.energa.pl"
 
 
 SKIP_PAYMENT_BUTTON_TEXT = "Zapłać teraz"
-INVOICES_TAB = PageElement( By.XPATH, f'//a[contains(., "Faktury")]')
+INVOICES_TAB = Locator(By.XPATH, '//a[contains(., "Faktury")]')
 
 DUE_DATE_LABEL_TEXT = "Termin płatności"
-DUE_DATE_LABEL = PageElement(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
-DUE_DATE_LABEL_ALT = PageElement(By.XPATH, f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
+DUE_DATE_LABEL = Locator(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
+DUE_DATE_LABEL_ALT = Locator(By.XPATH, f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
 
-DASHBOARD = PageElement(By.XPATH, f'//a[contains(., "Pulpit konta")]')
-ACCOUNTS_LIST = PageElement(By.XPATH, f'//span[contains(., "LISTA KONT")]/..')
+DASHBOARD = Locator(By.XPATH, '//a[contains(., "Pulpit konta")]')
+ACCOUNTS_LIST = Locator(By.XPATH, '//span[contains(., "LISTA KONT")]/..')
 
-OVERLAY = PageElement(By.CSS_SELECTOR, 'div.popup.center')
-ACCOUNTS_LABEL = PageElement(By.CSS_SELECTOR, 'label')
-OVERLAY_BUTTON = PageElement(By.CSS_SELECTOR, 'button.button')
-LOCATION_NAME = PageElement(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm')
-AMOUNT = PageElement(By.CSS_SELECTOR, '.h1.text.es-text.variant-balance')
-ALL_PAID = PageElement(By.XPATH, '//form[@novalidate]/div/div/p/strong')
+OVERLAY = Locator(By.CSS_SELECTOR, 'div.popup.center')
+ACCOUNTS_LABEL = Locator(By.CSS_SELECTOR, 'label')
+OVERLAY_BUTTON = Locator(By.CSS_SELECTOR, 'button.button')
+LOCATION_NAME = Locator(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm')
+AMOUNT = Locator(By.CSS_SELECTOR, '.h1.text.es-text.variant-balance')
+ALL_PAID = Locator(By.XPATH, '//form[@novalidate]/div/div/p/strong')
 
-USER_MENU = PageElement(By.XPATH, '//button[contains(@class, "hover-submenu")]')
-LOGOUT_BUTTON = PageElement(By.XPATH, f'//span[contains(text(), "Wyloguj się")]')
-MESSAGE_BOX_CLOSE_BUTTON = PageElement(By.CSS_SELECTOR, 'button.button.primary')
+USER_MENU = Locator(By.XPATH, '//button[contains(@class, "hover-submenu")]')
+LOGOUT_BUTTON = Locator(By.XPATH, '//span[contains(text(), "Wyloguj się")]')
+MESSAGE_BOX_CLOSE_BUTTON = Locator(By.CSS_SELECTOR, 'button.button.primary')
 
 class Energa(Provider):
     """
@@ -45,10 +45,10 @@ class Energa(Provider):
         """
         Initialize the provider with login fields and locations.
         """
-        user_input = PageElement(By.ID, "username")
-        password_input = PageElement(By.ID, "password")
+        user_input = Locator(By.ID, "username")
+        password_input = Locator(By.ID, "password")
         super().__init__(SERVICE_URL, locations, user_input, password_input,
-                         overlay_buttons=PageElement(By.ID, 'kc-switch-button'))
+                         overlay_buttons=Locator(By.ID, 'kc-switch-button'))
 
     def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """

@@ -5,7 +5,7 @@ from time import sleep
 
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Payment
 from providers.provider import Provider
 
@@ -15,17 +15,17 @@ log = setup_logging(__name__)
 
 SERVICE_URL = 'https://ebok.multimedia.pl/panel-glowny.aspx'
 
-USER_INPUT = PageElement(By.ID, 'Login_SSO_UserName')
-PASSWORD_INPUT = PageElement(By.ID, 'Login_SSO_Password')
-COOKIES_BUTTON = PageElement(By.ID, 'cookiescript_accept')
+USER_INPUT = Locator(By.ID, 'Login_SSO_UserName')
+PASSWORD_INPUT = Locator(By.ID, 'Login_SSO_Password')
+COOKIES_BUTTON = Locator(By.ID, 'cookiescript_accept')
 
-INVOICE = PageElement(By.CLASS_NAME, 'invoiceInfo')
-AMOUNT = PageElement(By.CLASS_NAME, 'kwota')
-DUE_DATE = PageElement(By.CLASS_NAME, 'platnoscDo')
+INVOICE = Locator(By.CLASS_NAME, 'invoiceInfo')
+AMOUNT = Locator(By.CLASS_NAME, 'kwota')
+DUE_DATE = Locator(By.CLASS_NAME, 'platnoscDo')
 
-LOGIN_ERROR_TEXT = PageElement(By.CSS_SELECTOR, 'span.logonFailureText')
-PASSWORD_CHANGE_ELEMENTS = (PageElement(By.ID, 'formPassword'), PageElement(By.ID, 'formConfirmation'))
-CAPTCHA_FORM = PageElement(By.ID, "formCaptcha")
+LOGIN_ERROR_TEXT = Locator(By.CSS_SELECTOR, 'span.logonFailureText')
+PASSWORD_CHANGE_ELEMENTS = (Locator(By.ID, 'formPassword'), Locator(By.ID, 'formConfirmation'))
+CAPTCHA_FORM = Locator(By.ID, "formCaptcha")
 
 
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
@@ -100,8 +100,8 @@ class Multimedia(Provider):
             return payments
         for invoice in invoices:
             #TODO Implement WebElementEx
-            amount = invoice.find_element(AMOUNT.by, AMOUNT.selector).text
-            due_date = invoice.find_element(DUE_DATE.by, DUE_DATE.selector).text
+            amount = invoice.find_element(AMOUNT.type, AMOUNT.value).text
+            due_date = invoice.find_element(DUE_DATE.type, DUE_DATE.value).text
             log.debug("Got amount '%s'" % amount)
             location = self._get_location_by_amount(amount)
             index = payments.index(next(payment for payment in payments if payment.location == location))

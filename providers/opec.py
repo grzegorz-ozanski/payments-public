@@ -5,7 +5,7 @@ from time import sleep
 
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Amount, DueDate, DueDateT, Payment
 from providers.provider import Provider
 
@@ -15,14 +15,14 @@ log = setup_logging(__name__)
 
 SERVICE_URL = "https://stary-ebok.opecgdy.com.pl/web/ebok/home"
 
-USER_INPUT = PageElement(By.ID, "_58_login")
-PASSWORD_INPUT = PageElement(By.ID, "_58_password")
+USER_INPUT = Locator(By.ID, "_58_login")
+PASSWORD_INPUT = Locator(By.ID, "_58_password")
 
-PAYMENTS_TAB = PageElement(By.XPATH, '//a[text()="Płatności"]')
-DOCUMENTS_TAB = PageElement(By.XPATH, '//a[contains(string(), "Dokumenty")]')
+PAYMENTS_TAB = Locator(By.XPATH, '//a[text()="Płatności"]')
+DOCUMENTS_TAB = Locator(By.XPATH, '//a[contains(string(), "Dokumenty")]')
 
-TABLE_BODY = PageElement(By.TAG_NAME, 'tbody')
-TABLE_ROW = PageElement(By.TAG_NAME, 'tr')
+TABLE_BODY = Locator(By.TAG_NAME, 'tbody')
+TABLE_ROW = Locator(By.TAG_NAME, 'tr')
 COLUMN_TAG = 'td'
 AMOUNT_FIELD_NAME = 'value'
 
@@ -48,7 +48,7 @@ class Opec(Provider):
         browser.wait_for_network_inactive()
         sleep(1)
 
-        invoices = browser.find_page_element(TABLE_BODY).find_elements(TABLE_ROW.by, TABLE_BODY.selector)
+        invoices = browser.find_page_element(TABLE_BODY).find_elements(TABLE_ROW.type, TABLE_BODY.value)
         amount = 0.0
         due_date: DueDateT | DueDate = ''
 

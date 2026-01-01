@@ -11,7 +11,7 @@ import time
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Payment
 from providers.login.base import BaseLogin
 from credentials import Credentials
@@ -37,8 +37,8 @@ class Provider:
     """Base class for a payment provider using Selenium."""
 
     def __init__(self, url: str, locations: tuple[str, ...],
-                 user_input: PageElement, password_input: PageElement,
-                 logout_button: PageElement | None = None, overlay_buttons: PageElement | list[PageElement] | None = None,
+                 user_input: Locator, password_input: Locator,
+                 logout_button: Locator | None = None, overlay_buttons: Locator | list[Locator] | None = None,
                  needs_fresh_browser: bool = False,
                  pre_login_delay: int = 0, post_login_delay: int = 0,
                  login_strategy: type[BaseLogin] = OneStageLogin):
@@ -61,8 +61,8 @@ class Provider:
         self.login_strategy = login_strategy(self.name, user_input, password_input,
                                              Credentials(self.name, 'username', 'password'))
 
-        self.logout_button = logout_button or PageElement(By.XPATH, DEFAULT_LOGOUT_XPATH)
-        self.overlay_buttons: list[PageElement] = []
+        self.logout_button = logout_button or Locator(By.XPATH, DEFAULT_LOGOUT_XPATH)
+        self.overlay_buttons: list[Locator] = []
         if overlay_buttons:
             self.overlay_buttons = overlay_buttons if isinstance(overlay_buttons, list) else [overlay_buttons]
         self.needs_fresh_browser = needs_fresh_browser

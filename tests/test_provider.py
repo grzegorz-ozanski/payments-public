@@ -8,7 +8,7 @@ import pytest
 from _pytest.capture import CaptureFixture
 from selenium.webdriver.common.by import By
 
-from browser import PageElement
+from browser import Locator
 from mocks import DummyProvider, MockBrowser, MockWeblogger
 from payments import DueDate, Amount
 from providers.provider import Provider
@@ -19,8 +19,8 @@ def test_location_order_map() -> None:
     provider = Provider(
         url="",
         locations=("X", "Y", "Z"),
-        user_input=PageElement(By.ID, "user"),
-        password_input=PageElement(By.ID, "pass")
+        user_input=Locator(By.ID, "user"),
+        password_input=Locator(By.ID, "pass")
     )
     assert provider._location_order == {"X": 0, "Y": 1, "Z": 2}
 
@@ -30,8 +30,8 @@ def test_get_location_known() -> None:
     provider = Provider(
         url="",
         locations=("Sezamowa", "Bryla"),
-        user_input=PageElement(By.ID, "u"),
-        password_input=PageElement(By.ID, "p")
+        user_input=Locator(By.ID, "u"),
+        password_input=Locator(By.ID, "p")
     )
     assert provider._get_location("Faktura: Sezamowa 123") == "Sezamowa"
 
@@ -41,8 +41,8 @@ def test_get_location_unknown_logs_error(caplog: pytest.LogCaptureFixture) -> No
     provider = Provider(
         url="",
         locations=("Bryla",),
-        user_input=PageElement(By.ID, "u"),
-        password_input=PageElement(By.ID, "p")
+        user_input=Locator(By.ID, "u"),
+        password_input=Locator(By.ID, "p")
     )
     with caplog.at_level("ERROR", logger="providers.provider"):
         with pytest.raises(RuntimeError):

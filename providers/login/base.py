@@ -3,11 +3,11 @@ import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import Browser, PageElement, WebLogger
+from browser import Browser, Locator, WebLogger
 from credentials import Credentials
 
 class BaseLogin:
-    def __init__(self, service_name: str, user_input: PageElement, password_input: PageElement, credentials: Credentials):
+    def __init__(self, service_name: str, user_input: Locator, password_input: Locator, credentials: Credentials):
         self.service_name = service_name
         self.user_input_selector = user_input
         self.password_input_selector = password_input

@@ -4,7 +4,7 @@
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Amount, Payment
 from providers.provider import Provider
 
@@ -14,15 +14,15 @@ log = setup_logging(__name__)
 
 SERVICE_URL = "https://ebok.pgnig.pl"
 
-USER_INPUT = PageElement(By.NAME, "identificator")
-PASSWORD_INPUT = PageElement(By.NAME, "accessPin")
+USER_INPUT = Locator(By.NAME, "identificator")
+PASSWORD_INPUT = Locator(By.NAME, "accessPin")
 
-READING_ADDRESS = PageElement(By.CLASS_NAME, "reading-adress")
-INVOICES_MENU = PageElement(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
+READING_ADDRESS = Locator(By.CLASS_NAME, "reading-adress")
+INVOICES_MENU = Locator(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
 
-INVOICE_ROW = PageElement(By.CLASS_NAME, "main-row-container")
-INVOICE_COLUMN = PageElement(By.CLASS_NAME, "columns")
-INVOICE_BUTTON = PageElement(By.CLASS_NAME, "button")
+INVOICE_ROW = Locator(By.CLASS_NAME, "main-row-container")
+INVOICE_COLUMN = Locator(By.CLASS_NAME, "columns")
+INVOICE_BUTTON = Locator(By.CLASS_NAME, "button")
 
 
 class Pgnig(Provider):
@@ -30,9 +30,9 @@ class Pgnig(Provider):
 
     def __init__(self, *locations: str):
         """Initialize the PGNiG provider with input elements and locations."""
-        overlays = [PageElement(By.ID, 'CybotCookiebotDialogBodyButtonDecline'),
-                    PageElement(By.CLASS_NAME, 'modalCloseButton'),
-                    PageElement(By.CSS_SELECTOR, '.button.expanded.invert-colors'),]
+        overlays = [Locator(By.ID, 'CybotCookiebotDialogBodyButtonDecline'),
+                    Locator(By.CLASS_NAME, 'modalCloseButton'),
+                    Locator(By.CSS_SELECTOR, '.button.expanded.invert-colors'), ]
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT, overlay_buttons=overlays)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
@@ -70,7 +70,7 @@ class Pgnig(Provider):
                     raise RuntimeError("Cannot get invoices list!")
                 for index, item in enumerate(browser.safe_list(elements)):
                     # TODO Implement WebElementEx
-                    if item.find_element(INVOICE_BUTTON.by, INVOICE_BUTTON.selector).text == "Zapłać":
+                    if item.find_element(INVOICE_BUTTON.type, INVOICE_BUTTON.value).text == "Zapłać":
                         unpaid_invoices.append(item)
                 break
             except StaleElementReferenceException:
@@ -84,7 +84,7 @@ class Pgnig(Provider):
             raise RuntimeError(f"Failed to collect invoices after {attempts} attempts!")
         for invoice in unpaid_invoices:
             log.debug("Iterating over unpaid invoices...")
-            columns = invoice.find_elements(By.CLASS_NAME, INVOICE_COLUMN_CLASS)
+            columns = invoice.find_elements(By.CLASS_NAME, INVOICE_COLUMN)
             log.debug("Adding payment...")
             payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(Amount(columns[3].text))
 

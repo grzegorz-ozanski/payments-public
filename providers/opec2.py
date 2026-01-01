@@ -3,7 +3,7 @@
 """
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Payment
 from providers.provider import Provider
 
@@ -13,16 +13,16 @@ log = setup_logging(__name__)
 
 SERVICE_URL = 'https://ebok.opecgdy.com.pl'
 
-USER_INPUT = PageElement(By.ID, 'UserName')
-PASSWORD_INPUT = PageElement(By.ID, 'Password')
-AMOUNT = PageElement(By.CSS_SELECTOR, 'span.shf-s30.shf-w5.shf-csec')
+USER_INPUT = Locator(By.ID, 'UserName')
+PASSWORD_INPUT = Locator(By.ID, 'Password')
+AMOUNT = Locator(By.CSS_SELECTOR, 'span.shf-s30.shf-w5.shf-csec')
 
 class TermsOfService:
     """ OPEC2 terms of service popup. """
-    HEADER = PageElement(By.XPATH, "//h1[normalize-space(.)='Regulamin']")
-    BUTON_OPEN = PageElement(By.CSS_SELECTOR, "button[type=submit]")
-    HEADER_CLOSE = PageElement(By.TAG_NAME, 'h1')
-    BUTTON_CLOSE = PageElement(By.TAG_NAME, 'button')
+    HEADER = Locator(By.XPATH, "//h1[normalize-space(.)='Regulamin']")
+    BUTON_OPEN = Locator(By.CSS_SELECTOR, "button[type=submit]")
+    HEADER_CLOSE = Locator(By.TAG_NAME, 'h1')
+    BUTTON_CLOSE = Locator(By.TAG_NAME, 'button')
 
     def __init__(self, browser: Browser) -> None:
         self.browser = browser

@@ -1,12 +1,12 @@
 from selenium.webdriver.common.keys import Keys
 
-from browser import Browser, PageElement, WebLogger
+from browser import Browser, Locator, WebLogger
 from providers.login.base import BaseLogin
 from credentials import Credentials
 
 
 class TwoStageLogin(BaseLogin):
-    def __init__(self, service_name:str, user_input: PageElement, password_input: PageElement, credentials: Credentials):
+    def __init__(self, service_name:str, user_input: Locator, password_input: Locator, credentials: Credentials):
         super().__init__(service_name, user_input, password_input, credentials)
 
     def login(self, browser: Browser, weblogger: WebLogger):
