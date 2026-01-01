@@ -9,7 +9,7 @@ class OneStageLogin(BaseLogin):
     def __init__(self, service_name:str, user_input: Locator, password_input: Locator, credentials: Credentials):
         super().__init__(service_name, user_input, password_input, credentials)
 
-    def login(self, browser: Browser, weblogger: WebLogger):
+    def execute(self, browser: Browser, weblogger: WebLogger):
         username_input = self.find_username_input(browser, weblogger)
         assert username_input is not None
 
