@@ -23,6 +23,7 @@ INVOICES_MENU = Locator(By.XPATH, '//*[@class="menu-element" and normalize-space
 INVOICE_ROW = Locator(By.CLASS_NAME, "main-row-container")
 INVOICE_COLUMN = Locator(By.CLASS_NAME, "columns")
 INVOICE_BUTTON = Locator(By.CLASS_NAME, "button")
+INVOICE_PAY_CAPTION = "Zapłać"
 
 
 class Pgnig(Provider):
@@ -69,8 +70,7 @@ class Pgnig(Provider):
                 if elements is None:
                     raise RuntimeError("Cannot get invoices list!")
                 for index, item in enumerate(browser.safe_page_elements_list(elements)):
-                    # TODO Implement WebElementEx
-                    if item.find_page_element(INVOICE_BUTTON).text == "Zapłać":
+                    if item.find_page_element(INVOICE_BUTTON).text == INVOICE_PAY_CAPTION:
                         unpaid_invoices.append(item)
                 break
             except StaleElementReferenceException:

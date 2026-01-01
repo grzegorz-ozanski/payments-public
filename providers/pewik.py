@@ -45,7 +45,6 @@ class Pewik(Provider):
         payments = []
         next_id = 1
 
-        # TODO Implement WebElementEx
         cookies_panel = browser.wait_for_page_element(COOKIES_PANEL, 1)
         if cookies_panel:
             browser.wait_for_page_element_clickable(COOKIES_PANEL)
@@ -57,7 +56,6 @@ class Pewik(Provider):
 
         while True:
             location = self._get_location(
-                # TODO Implement WebElementEx
                 browser.find_page_element(LOCATION)
                     .find_page_elements(LOCATION_TEXT)[2].text
             )

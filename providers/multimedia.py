@@ -99,7 +99,6 @@ class Multimedia(Provider):
         if invoices is None:
             return payments
         for invoice in invoices:
-            # TODO Implement WebElementEx
             amount = invoice.find_page_element(AMOUNT).text
             due_date = invoice.find_page_element(DUE_DATE).text
             log.debug("Got amount '%s'" % amount)
