@@ -3,7 +3,6 @@
 """
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webelement import WebElement
 
 from browser import setup_logging, Browser, PageElement, WebLogger
 from payments import Amount, DueDate, Payment
@@ -15,20 +14,27 @@ log = setup_logging(__name__)
 
 SERVICE_URL = "https://24.energa.pl"
 
-LOGOUT_TEXT = "Wyloguj się"
-SKIP_PAYMENT_BUTTON_TEXT = "Zapłać teraz"
-INVOICES_TAB_TEXT = "Faktury"
-DUE_DATE_LABEL_TEXT = "Termin płatności"
-DASHBOARD_TEXT = "Pulpit konta"
-ACCOUNTS_LIST_TEXT = "LISTA KONT"
 
-OVERLAY_SELECTOR = 'div.popup.center'
-POPUP_SELECTOR = 'div.popup__wrapper'
-ACCOUNTS_LABEL_SELECTOR = 'label'
-OVERLAY_BUTTON_SELECTOR = 'button.button'
-LOCATION_NAME_SELECTOR = '.text.es-text.variant-body-bold.mlxs.mrm'
-AMOUNT_SELECTOR = '.h1.text.es-text.variant-balance'
+SKIP_PAYMENT_BUTTON_TEXT = "Zapłać teraz"
+INVOICES_TAB = PageElement( By.XPATH, f'//a[contains(., "Faktury")]')
+
+DUE_DATE_LABEL_TEXT = "Termin płatności"
+DUE_DATE_LABEL = PageElement(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
+DUE_DATE_LABEL_ALT = PageElement(By.XPATH, f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
+
+DASHBOARD = PageElement(By.XPATH, f'//a[contains(., "Pulpit konta")]')
+ACCOUNTS_LIST = PageElement(By.XPATH, f'//span[contains(., "LISTA KONT")]/..')
+
+OVERLAY = PageElement(By.CSS_SELECTOR, 'div.popup.center')
+ACCOUNTS_LABEL = PageElement(By.CSS_SELECTOR, 'label')
+OVERLAY_BUTTON = PageElement(By.CSS_SELECTOR, 'button.button')
+LOCATION_NAME = PageElement(By.CSS_SELECTOR, '.text.es-text.variant-body-bold.mlxs.mrm')
+AMOUNT = PageElement(By.CSS_SELECTOR, '.h1.text.es-text.variant-balance')
 ALL_PAID = PageElement(By.XPATH, '//form[@novalidate]/div/div/p/strong')
+
+USER_MENU = PageElement(By.XPATH, '//button[contains(@class, "hover-submenu")]')
+LOGOUT_BUTTON = PageElement(By.XPATH, f'//span[contains(text(), "Wyloguj się")]')
+MESSAGE_BOX_CLOSE_BUTTON = PageElement(By.CSS_SELECTOR, 'button.button.primary')
 
 class Energa(Provider):
     """
@@ -48,24 +54,15 @@ class Energa(Provider):
         """
         Log out the user from the Energa web portal.
         """
-        def click_or_raise(webelement: WebElement | None) -> None:
-            """
-            Click element if not None, or raise an exception
-            :param webelement: WebElement to click or None
-            :raises NoSuchElementException if webelement is None
-            """
-            if not webelement:
-                raise NoSuchElementException
-            webelement.click()
 
         if not self.logged_in:
             log.debug(f"Not logged in into service '{self.name}', skipping logout")
             return
         try:
-            browser.wait_for_element_disappear(By.CSS_SELECTOR, OVERLAY_SELECTOR)
-            click_or_raise(browser.wait_for_element(By.XPATH, '//button[contains(@class, "hover-submenu")]'))
+            browser.wait_for_page_element_disappear(OVERLAY)
+            browser.click_page_element(USER_MENU)
             weblogger.trace("pre-logout-click")
-            click_or_raise(browser.wait_for_element(By.XPATH, f'//span[contains(text(), "{LOGOUT_TEXT}")]'))
+            browser.click_page_element(LOGOUT_BUTTON)
         except (AttributeError, ElementNotInteractableException, TimeoutError) as e:
             weblogger.error()
             if type(e) is AttributeError:
@@ -82,18 +79,18 @@ class Energa(Provider):
         """
         log.info("Getting payments...")
         weblogger.trace("accounts-list")
-        locations_list_or_none = browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR)
+        locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
         if not locations_list_or_none:
-            button = browser.wait_for_element(By.CSS_SELECTOR, OVERLAY_BUTTON_SELECTOR)
+            button = browser.wait_for_page_element(OVERLAY_BUTTON)
             if button:
                 browser.trace_click(button)
                 weblogger.trace("accounts-list-after-overlay")
-                locations_list_or_none = browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR)
+                locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
             else:
                 raise RuntimeError('Locations list is empty and no overlay was found!')
             if not locations_list_or_none:
                 raise RuntimeError(
-                    f'Locations list is empty even after clicking overlay button "{OVERLAY_BUTTON_SELECTOR}"!')
+                    f'Locations list is empty even after clicking overlay button "{OVERLAY_BUTTON}"!')
         locations_list = browser.safe_list(locations_list_or_none)
         log.debug("Identified %d locations" % len(locations_list_or_none))
         payments = []
@@ -104,11 +101,11 @@ class Energa(Provider):
             browser.click_element_with_js(locations_list[location_id])
             # If a 'button.primary' exists, there is probably a message displayed that needs to be dismissed before continuing —
             # unless its text is "Zapłać teraz", which indicates we're already on the target page
-            button = browser.wait_for_element(By.CSS_SELECTOR, 'button.button.primary', 1)
+            button = browser.wait_for_page_element(MESSAGE_BOX_CLOSE_BUTTON, 1)
             if button and button.text != SKIP_PAYMENT_BUTTON_TEXT:
                 browser.click_element_with_js(button)
 
-            location_element = browser.wait_for_element(By.CSS_SELECTOR, LOCATION_NAME_SELECTOR, 30)
+            location_element = browser.wait_for_page_element(LOCATION_NAME, 30)
             if location_element:
                 location = self._get_location(location_element.text)
             else:
@@ -116,29 +113,27 @@ class Energa(Provider):
                 continue
             log.debug("Getting payment")
             weblogger.trace("pre-invoices-click")
-            invoices_button = browser.wait_for_element(By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
+            invoices_button = browser.wait_for_page_element(INVOICES_TAB)
             if not invoices_button:
                 raise RuntimeError(f"Could not find invoices button for location {location}!")
-            browser.click_with_retry(invoices_button, By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
+            browser.click_page_element_with_retry(invoices_button, INVOICES_TAB)
             due_date = None
             # First check if all invoices are already paid
             all_paid = browser.wait_for_page_element(ALL_PAID, 2)
             if all_paid is None:
                 # Energa page renders invoices list in two ways
-                invoices = browser.wait_for_element(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
+                invoices = browser.wait_for_page_element(DUE_DATE_LABEL)
                 weblogger.trace("duedate-check")
                 if invoices:
                     due_date = invoices.text
                 else:
                     # If the first method of gettign data fails, try the second one
-                    invoices_list = browser.wait_for_elements(
-                        By.XPATH,
-                        f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
+                    invoices_list = browser.wait_for_page_elements(DUE_DATE_LABEL_ALT)
                     if invoices_list:
                         due_date = invoices_list[0].text.split('\n')[1]
-            browser.wait_for_element(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
-            browser.safe_click(By.XPATH, f'//a[contains(., "{DASHBOARD_TEXT}")]')
-            amount_element = browser.wait_for_element(By.CSS_SELECTOR, AMOUNT_SELECTOR)
+            browser.wait_for_page_element(DASHBOARD)
+            browser.safe_click_page_element(DASHBOARD)
+            amount_element = browser.wait_for_page_element(AMOUNT)
             if amount_element:
                 amount = amount_element.text
             else:
@@ -151,8 +146,8 @@ class Energa(Provider):
                     log.error(f"Could not retrieve due date for non-zero payment '{amount}', location '{location}'.")
             payments.append(Payment(self.name, location, due_date, amount))
             log.debug("Moving to the next location")
-            browser.wait_for_element(By.XPATH, f'//span[contains(., "{ACCOUNTS_LIST_TEXT}")]/..')
-            browser.safe_click(By.XPATH, f'//span[contains(., "{ACCOUNTS_LIST_TEXT}")]/..')
-            locations_list = browser.safe_list(browser.wait_for_elements(By.CSS_SELECTOR, ACCOUNTS_LABEL_SELECTOR))
+            browser.wait_for_page_element(ACCOUNTS_LIST)
+            browser.safe_click_page_element(ACCOUNTS_LIST)
+            locations_list = browser.safe_list(browser.wait_for_page_elements(ACCOUNTS_LABEL))
 
         return payments
