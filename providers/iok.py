@@ -18,8 +18,8 @@ USER_INPUT = PageElement(By.CSS_SELECTOR, "[aria-labelledby=login]")
 PASSWORD_INPUT = PageElement(By.CSS_SELECTOR, "[aria-labelledby=haslo]")
 LOGOUT_BUTTON = PageElement(By.CSS_SELECTOR, "button.wcag.bg.navTxtColor")
 
-AMOUNT_CLASS = 'home-amount'
-DUE_DATE_CLASS = 'home-info'
+AMOUNT = PageElement(By.CLASS_NAME, 'home-amount')
+DUE_DATE = PageElement(By.CLASS_NAME, 'home-info')
 DEFAULT_TIMEOUT = 1
 
 
@@ -43,8 +43,8 @@ class IOK(Provider):
         """Extract payment info from the page. Return fallback if missing."""
         self.log.info("Getting payments...")
         browser.wait_for_page_inactive()
-        amount = browser.wait_for_element(By.CLASS_NAME, AMOUNT_CLASS, self.timeout)
-        due_date_element = browser.wait_for_element(By.CLASS_NAME, DUE_DATE_CLASS, self.timeout)
+        amount = browser.wait_for_page_element(AMOUNT, self.timeout)
+        due_date_element = browser.wait_for_page_element(DUE_DATE, self.timeout)
 
         if amount is None or due_date_element is None:
             return [Payment(self.name, self.locations[0], self.due_date)]
