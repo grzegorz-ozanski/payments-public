@@ -13,19 +13,19 @@ from providers.provider import Provider
 
 class DummyProvider(Provider):
     """Flexible test provider that returns hardcoded or injected payments."""
-    default_name = "dummyprovider"
+    default_name = 'dummyprovider'
 
     def __init__(
             self,
             name: str = default_name,
-            locations: tuple[str, ...] = ("Sezamowa", "Bryla", "Hodowlana"),
+            locations: tuple[str, ...] = ('Sezamowa', 'Bryla', 'Hodowlana'),
             payments: list[Payment] | None = None,
     ):
         super().__init__(
             url='',
             locations=locations,
-            user_input=Locator(By.ID, "user"),
-            password_input=Locator(By.ID, "pass")
+            user_input=Locator(By.ID, 'user'),
+            password_input=Locator(By.ID, 'pass')
         )
         self.name = name
         self._test_payments = payments
@@ -38,9 +38,9 @@ class DummyProvider(Provider):
         if self._test_payments is not None:
             return self._test_payments
         return [
-            Payment(self.name, "Bryla", "2025-06-01", "100"),
-            Payment(self.name, "Sezamowa", "2025-06-02", "200"),
-            Payment(self.name, "Nieznana", "2025-06-03", "300"),
+            Payment(self.name, 'Bryla', '2025-06-01', '100'),
+            Payment(self.name, 'Sezamowa', '2025-06-02', '200'),
+            Payment(self.name, 'Nieznana', '2025-06-03', '300'),
         ]
 
 
@@ -59,7 +59,7 @@ class MockBrowser(Browser):
     @property
     def page_source(self) -> str:
         """Mock page_source property."""
-        return "<html></html>"
+        return '<html></html>'
 
     def click_element_using_js(self, element: WebElement, by: str = '', value: str = '',
                                timeout: int | None = None) -> None:

@@ -19,8 +19,8 @@ AMOUNT = Locator(By.CSS_SELECTOR, 'span.shf-s30.shf-w5.shf-csec')
 
 class TermsOfService:
     """ OPEC2 terms of service popup. """
-    HEADER = Locator(By.XPATH, "//h1[normalize-space(.)='Regulamin']")
-    BUTON_OPEN = Locator(By.CSS_SELECTOR, "button[type=submit]")
+    HEADER = Locator(By.XPATH, '//h1[normalize-space(.)="Regulamin"]')
+    BUTON_OPEN = Locator(By.CSS_SELECTOR, 'button[type=submit]')
     HEADER_CLOSE = Locator(By.TAG_NAME, 'h1')
     BUTTON_CLOSE = Locator(By.TAG_NAME, 'button')
 

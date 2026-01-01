@@ -6,7 +6,7 @@ from .iok import IOK
 
 log = setup_logging(__name__)
 
-SERVICE_URL = "https://iok.actum.pl/InetObsKontr/LoginPage"
+SERVICE_URL = 'https://iok.actum.pl/InetObsKontr/LoginPage'
 
 
 class Actum(IOK):

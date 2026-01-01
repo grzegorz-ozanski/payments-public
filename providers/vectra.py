@@ -17,11 +17,11 @@ SERVICE_URL = 'https://ebok.vectra.pl'
 USER_INPUT = Locator(By.ID, 'input-v-2')
 PASSWORD_INPUT = Locator(By.ID, 'input-v-5')
 
-INVOICES_BUTTON = Locator(By.XPATH, "//span[normalize-space(.)='Zobacz faktury']")
-INVOICES_LIST = Locator(By.XPATH, "(//table[contains(@class,'vectra-complex-table')])[1]/tbody/tr")
+INVOICES_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Zobacz faktury"]')
+INVOICES_LIST = Locator(By.XPATH, '(//table[contains(@class,"vectra-complex-table")])[1]/tbody/tr')
 
 USER_MENU = Locator(By.CSS_SELECTOR, 'span.ico-avatar')
-LOGOUT_BUTTON = Locator(By.XPATH, "//span[normalize-space(.)='Wyloguj się']")
+LOGOUT_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Wyloguj się"]')
 
 class Columns:
     """ Invoice list columns"""
@@ -54,7 +54,7 @@ class Vectra(Provider):
         """
 
         if not self.logged_in:
-            log.debug(f"Not logged in into service '{self.name}', skipping logout")
+            log.debug("Not logged in into service '%s', skipping logout", self.name)
             return
         browser.wait_for_page_element(USER_MENU).click()
         browser.wait_for_page_element(LOGOUT_BUTTON).click()

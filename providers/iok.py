@@ -14,9 +14,9 @@ from providers.provider import Provider
 
 # === Shared constants for IOK-based portals ===
 
-USER_INPUT = Locator(By.CSS_SELECTOR, "[aria-labelledby=login]")
-PASSWORD_INPUT = Locator(By.CSS_SELECTOR, "[aria-labelledby=haslo]")
-LOGOUT_BUTTON = Locator(By.CSS_SELECTOR, "button.wcag.bg.navTxtColor")
+USER_INPUT = Locator(By.CSS_SELECTOR, '[aria-labelledby=login]')
+PASSWORD_INPUT = Locator(By.CSS_SELECTOR, '[aria-labelledby=haslo]')
+LOGOUT_BUTTON = Locator(By.CSS_SELECTOR, 'button.wcag.bg.navTxtColor')
 
 AMOUNT = Locator(By.CLASS_NAME, 'home-amount')
 DUE_DATE = Locator(By.CLASS_NAME, 'home-info')
@@ -41,7 +41,7 @@ class IOK(Provider):
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Extract payment info from the page. Return fallback if missing."""
-        self.log.info("Getting payments...")
+        self.log.info('Getting payments...')
         browser.wait_for_page_inactive()
         amount = browser.wait_for_page_element(AMOUNT, self.timeout)
         due_date_element = browser.wait_for_page_element(DUE_DATE, self.timeout)
@@ -52,5 +52,5 @@ class IOK(Provider):
         due_dates = due_date_element.find_elements(By.TAG_NAME, 'span')
         due_date = due_dates[-1] if due_dates else 'today'
 
-        self.log.debug(f"Got amount '{amount.text}' of location '{self.locations[0]}'")
+        self.log.debug("Got amount '%s' of location '%s'", amount.text, self.locations[0])
         return [Payment(self.name, self.locations[0], due_date, amount)]

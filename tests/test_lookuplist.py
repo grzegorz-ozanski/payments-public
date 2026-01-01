@@ -20,15 +20,15 @@ class TestClass2(TestClassBase):
 def test_lookup_by_class_name() -> None:
     """Test that LookupList returns the correct item when indexed by class name."""
     lst = LookupList[TestClassBase](TestClass1(), TestClass2())
-    assert isinstance(lst["testclass1"], TestClass1)
+    assert isinstance(lst['testclass1'], TestClass1)
 
 
 def test_lookup_contains_by_class_name() -> None:
     """Test that LookupList `in` works for class names."""
     lst = LookupList[TestClassBase](TestClass1(), TestClass2())
-    assert "testclass1" in lst
-    assert "testclass2" in lst
-    assert "invalidclass" not in lst
+    assert 'testclass1' in lst
+    assert 'testclass2' in lst
+    assert 'invalidclass' not in lst
 
 
 def test_lookup_contains_by_instance() -> None:
@@ -50,14 +50,14 @@ def test_lookup_with_empty_string() -> None:
 def test_lookup_with_wildcard() -> None:
     """Test that LookupList returns itself when indexed with a wildcard."""
     lst = LookupList[TestClassBase](TestClass1(), TestClass2())
-    assert lst["*"] == lst
+    assert lst['*'] == lst
 
 
 def test_keyerror_for_invalid_class_name() -> None:
     """Test that LookupList raises KeyError for an invalid class name."""
     lst = LookupList[TestClassBase](TestClass1(), TestClass2())
     with pytest.raises(KeyError, match="No item with class name 'invalidclass' found."):
-        _ = lst["invalidclass"]
+        _ = lst['invalidclass']
 
 
 def test_typeerror_for_invalid_key_type() -> None:
@@ -72,7 +72,7 @@ def test_typeerror_for_invalid_key_type() -> None:
 def test_repr_output() -> None:
     """Test the string representation of LookupList."""
     lst = LookupList[TestClassBase](TestClass1(), TestClass2())
-    expected_repr = "<LookupList[TestClass1, TestClass2]>"
+    expected_repr = '<LookupList[TestClass1, TestClass2]>'
     assert repr(lst) == expected_repr
 
 

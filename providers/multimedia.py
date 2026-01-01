@@ -25,7 +25,7 @@ DUE_DATE = Locator(By.CLASS_NAME, 'platnoscDo')
 
 LOGIN_ERROR_TEXT = Locator(By.CSS_SELECTOR, 'span.logonFailureText')
 PASSWORD_CHANGE_ELEMENTS = (Locator(By.ID, 'formPassword'), Locator(By.ID, 'formConfirmation'))
-CAPTCHA_FORM = Locator(By.ID, "formCaptcha")
+CAPTCHA_FORM = Locator(By.ID, 'formCaptcha')
 
 
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
@@ -55,7 +55,8 @@ class Multimedia(Provider):
             try:
                 super().login(browser, weblogger, load if i == 0 else False)
             except Exception as ex:
-                log.debug(f"Unexpectedly unhandled exception in {self.__class__.__bases__[0].__name__}.login(): {ex}")
+                log.debug('Unexpectedly unhandled exception in %s.login(): %s',
+                          self.__class__.__bases__[0].__name__, ex)
                 if i == num_retries - 1:
                     raise ex
                 continue
@@ -78,9 +79,9 @@ class Multimedia(Provider):
                 log.debug('Undetected login failure, retrying...')
                 weblogger.trace(f'failed-login-attempt-unknown-{i}')
 
-        reason = "unknown"
+        reason = 'unknown'
         if browser.find_page_elements(CAPTCHA_FORM):
-            reason = "CAPTCHA required"
+            reason = 'CAPTCHA required'
         raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
 
     def _get_location_by_amount(self, amount: str) -> str:
@@ -92,7 +93,7 @@ class Multimedia(Provider):
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Extracts payment records from the invoice list."""
-        log.info("Getting payments...")
+        log.info('Getting payments...')
         sleep(0.1)
         payments = [Payment(self.name, location) for location in self.locations]
         invoices = browser.wait_for_page_elements(INVOICE)

@@ -13,14 +13,14 @@ from .provider import Provider
 from .vectra import Vectra
 
 __all__ = [
-    "Provider",
-    "Actum",
-    "Energa",
-    "Multimedia",
-    "Nordhome",
-    "Opec",
-    "Opec2",
-    "Pgnig",
-    "Pewik",
-    "Vectra"
+    'Provider',
+    'Actum',
+    'Energa',
+    'Multimedia',
+    'Nordhome',
+    'Opec',
+    'Opec2',
+    'Pgnig',
+    'Pewik',
+    'Vectra'
 ]

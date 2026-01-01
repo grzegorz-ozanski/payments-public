@@ -4,7 +4,7 @@
 from browser import setup_logging
 from .iok import IOK
 
-SERVICE_URL = "https://www.iok.nordhome.com.pl/content/InetObsKontr/login"
+SERVICE_URL = 'https://www.iok.nordhome.com.pl/content/InetObsKontr/login'
 
 log = setup_logging(__name__)
 

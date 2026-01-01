@@ -12,18 +12,18 @@ log = setup_logging(__name__)
 
 # === PGNiG specific constants - URLs, selectors and texts ===
 
-SERVICE_URL = "https://ebok.pgnig.pl"
+SERVICE_URL = 'https://ebok.pgnig.pl'
 
-USER_INPUT = Locator(By.NAME, "identificator")
-PASSWORD_INPUT = Locator(By.NAME, "accessPin")
+USER_INPUT = Locator(By.NAME, 'identificator')
+PASSWORD_INPUT = Locator(By.NAME, 'accessPin')
 
-READING_ADDRESS = Locator(By.CLASS_NAME, "reading-adress")
+READING_ADDRESS = Locator(By.CLASS_NAME, 'reading-adress')
 INVOICES_MENU = Locator(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
 
-INVOICE_ROW = Locator(By.CLASS_NAME, "main-row-container")
-INVOICE_COLUMN = Locator(By.CLASS_NAME, "columns")
-INVOICE_BUTTON = Locator(By.CLASS_NAME, "button")
-INVOICE_PAY_CAPTION = "Zapłać"
+INVOICE_ROW = Locator(By.CLASS_NAME, 'main-row-container')
+INVOICE_COLUMN = Locator(By.CLASS_NAME, 'columns')
+INVOICE_BUTTON = Locator(By.CLASS_NAME, 'button')
+INVOICE_PAY_CAPTION = 'Zapłać'
 
 
 class Pgnig(Provider):
@@ -38,24 +38,24 @@ class Pgnig(Provider):
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Return the list of unpaid invoices from the PGNiG eBOK portal."""
-        log.info("Getting payments...")
+        log.info('Getting payments...')
         location_element = browser.wait_for_page_element(READING_ADDRESS)
         if location_element:
             location = self._get_location(location_element.text)
         else:
             raise RuntimeError(f"Cannot find location element '{READING_ADDRESS}'!")
 
-        log.info("Getting invoices menu...")
+        log.info('Getting invoices menu...')
         invoices_menu = browser.wait_for_page_element(INVOICES_MENU)
-        log.info("Opening invoices menu...")
-        weblogger.trace("pre-invoices-click")
+        log.info('Opening invoices menu...')
+        weblogger.trace('pre-invoices-click')
         if not invoices_menu:
-            log.error("Cannot open invoices!")
+            log.error('Cannot open invoices!')
             return [Payment(self.name, location)]
 
         browser.click_element_using_js(invoices_menu)
 
-        log.debug("Waiting for page load completed...")
+        log.debug('Waiting for page load completed...')
         browser.wait_for_page_inactive()
 
         unpaid_invoices = None
@@ -64,28 +64,29 @@ class Pgnig(Provider):
             index = 0
             item = None
             try:
-                log.info("Getting filtered invoices list...")
+                log.info('Getting filtered invoices list...')
                 unpaid_invoices = []
                 elements = browser.wait_for_page_elements(INVOICE_ROW)
                 if elements is None:
-                    raise RuntimeError("Cannot get invoices list!")
+                    raise RuntimeError('Cannot get invoices list!')
                 for index, item in enumerate(browser.safe_page_elements_list(elements)):
                     if item.find_page_element(INVOICE_BUTTON).text == INVOICE_PAY_CAPTION:
                         unpaid_invoices.append(item)
                 break
             except StaleElementReferenceException:
-                log.warning(f"Stale element encountered during filtering invoices.\n"
-                            f"Element index: {index}\n"
-                            f"Element details:\n{browser.dump_element(item)}")
+                log.warning('Stale element encountered during filtering invoices.\n'
+                            'Element index: %s\n'
+                            'Element details:\n%s',
+                            index, browser.dump_element(item))
 
-        log.debug("Creating payments dict...")
+        log.debug('Creating payments dict...')
         payments_dict: dict[str, float] = {}
         if unpaid_invoices is None:
-            raise RuntimeError(f"Failed to collect invoices after {attempts} attempts!")
+            raise RuntimeError(f'Failed to collect invoices after {attempts} attempts!')
         for invoice in unpaid_invoices:
-            log.debug("Iterating over unpaid invoices...")
+            log.debug('Iterating over unpaid invoices...')
             columns = invoice.find_elements(By.CLASS_NAME, INVOICE_COLUMN)
-            log.debug("Adding payment...")
+            log.debug('Adding payment...')
             payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(Amount(columns[3].text))
 
         payments = [Payment(self.name, location, date, amount) for date, amount in payments_dict.items()]

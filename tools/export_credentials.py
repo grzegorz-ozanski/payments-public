@@ -25,7 +25,7 @@ def main() -> None:
     Main function
     """
     args = parse_args()
-    with open(args.output, "w") as file:
+    with open(args.output, 'w') as file:
         for provider in [provider.lower() for provider in providers.__all__ if provider != 'Provider']:
             for cred in ('username', 'password'):
                 print(f'{provider.upper()}_{cred.upper()}={keyring.get_password(provider, cred)}', file=file)

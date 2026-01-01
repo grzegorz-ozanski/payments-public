@@ -4,7 +4,7 @@
 from collections.abc import Sequence
 from typing import overload, Union, TypeVar
 
-T = TypeVar("T")
+T = TypeVar('T')
 
 class LookupList(Sequence[T]):
     """
@@ -57,7 +57,7 @@ class LookupList(Sequence[T]):
                     slice_parts[index] = self._items.index(self.__find__(value)) if isinstance(value, str) else value
                 return self._items[slice_parts[0]:slice_parts[1] + 1:key.step]
             return self._items[key]
-        raise TypeError(f"Invalid key type: {type(key)}")
+        raise TypeError(f'Invalid key type: {type(key)}')
 
     def __find__(self, key: str) -> T:
         try:

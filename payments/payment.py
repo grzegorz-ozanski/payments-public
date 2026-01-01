@@ -98,7 +98,7 @@ class Amount:
         :param value: amount value
         :return: True if provided value evaluates into zero, False otherwise
         """
-        return re.search(r"^\D*\b0,00\b", value) is not None
+        return re.search(r'^\D*\b0,00\b', value) is not None
 
     @staticmethod
     def create_from(value: AmountT | Amount | None) -> 'Amount':

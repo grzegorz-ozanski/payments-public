@@ -22,7 +22,7 @@ def is_debugger_active() -> bool:
     """
     Return True if a debugger is currently attached.
     """
-    return sys.gettrace() is not None or "VSCODE_DEBUGPY_ADAPTER_ENDPOINTS" in os.environ
+    return sys.gettrace() is not None or 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS' in os.environ
 
 
 def parse_args() -> Namespace:
@@ -67,7 +67,7 @@ def main() -> None:
     :return: None
     """
     begin_time = datetime.datetime.now()
-    print(f"Starting at {datetime.datetime.now()}")
+    print(f'Starting at {datetime.datetime.now()}')
 
     args = parse_args()
     running_under_debugger = is_debugger_active()
@@ -88,7 +88,7 @@ def main() -> None:
     options = BrowserOptions(__file__, headless, args.trace, args.chrome_path)
 
     if args.trace and not verbose:
-        print("ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console")
+        print('ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console')
 
     hodowlana = 'Hodowlana'
     bryla = 'Bryla'
@@ -111,12 +111,12 @@ def main() -> None:
     # payments.collect_fake_payments(r'.github\data\test_output.txt')
     print(output)
     if args.output:
-        with open(args.output, 'w', encoding="utf-8") as stream:
+        with open(args.output, 'w', encoding='utf-8') as stream:
             print(output, file=stream)
 
     end_time = datetime.datetime.now()
-    print("Finished at %s" % end_time)
-    print("Took %s " % (end_time - begin_time))
+    print('Finished at %s' % end_time)
+    print('Took %s ' % (end_time - begin_time))
 
 
 if __name__ == '__main__':

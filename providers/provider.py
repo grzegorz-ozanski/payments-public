@@ -29,7 +29,7 @@ DEFAULT_LOGOUT_XPATH = (
 def _sleep_with_message(amount: int, message: str) -> None:
     """Sleep for `amount` seconds, logging a debug message first."""
     if amount:
-        log.debug(f"{message}: sleeping {amount} seconds")
+        log.debug('%s: sleeping %s seconds', message, amount)
         time.sleep(amount)
 
 
@@ -95,7 +95,7 @@ class Provider:
         return payments
 
     def load(self, browser: Browser):
-        log.debug("Opening %s" % self.url)
+        log.debug('Opening %s' % self.url)
         browser.open_in_new_tab(self.url)
         browser.wait_for_page_inactive(2)
         for overlay_button in self.overlay_buttons:
@@ -109,49 +109,50 @@ class Provider:
             if load:
                 self.load(browser)
 
-            log.info("Logging into service...")
-            weblogger.trace("pre-login")
-            _sleep_with_message(self.pre_login_delay, "Pre-login")
+            log.info('Logging into service...')
+            weblogger.trace('pre-login')
+            _sleep_with_message(self.pre_login_delay, 'Pre-login')
 
             self.login_strategy.execute(browser, weblogger)
-            log.debug("Form submitted")
+            log.debug('Form submitted')
 
             browser.wait_for_page_load_completed()
-            _sleep_with_message(self.post_login_delay, "Post-login")
-            weblogger.trace("post-login")
-            log.info("Done.")
+            _sleep_with_message(self.post_login_delay, 'Post-login')
+            weblogger.trace('post-login')
+            log.info('Done.')
             self.logged_in = True
         except Exception as e:
-            if "Timed out receiving message from renderer" in str(e):
+            if 'Timed out receiving message from renderer' in str(e):
                 # Let the further code decide if the page really failed to load
                 return
-            log.info("Cannot login into service: %s" % e)
+            log.info('Cannot login into service: %s' % e)
             weblogger.error()
             raise
 
     def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """Click the logout button and wait for the page to finish logging out."""
         if not self.logged_in:
-            log.debug(f"Not logged in into service '{self.name}', skipping logout")
+            log.debug("Not logged in into service '%s', skipping logout", self.name)
             return
         try:
-            weblogger.trace("pre-logout")
+            weblogger.trace('pre-logout')
             browser.find_and_click_page_element_using_js(self.logout_button)
             browser.wait_for_page_inactive(2)
-            weblogger.trace("post-logout")
+            weblogger.trace('post-logout')
         except NoSuchElementException:
-            log.debug("Cannot click logout button. Are we even logged in?")
+            log.debug('Cannot click logout button. Are we even logged in?')
         except WebDriverException:
             weblogger.error()
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Must be overridden in subclasses to return actual payments."""
-        raise NotImplementedError(f"{self.__class__.__name__} must override _fetch_payments().")
+        raise NotImplementedError(f'{self.__class__.__name__} must override _fetch_payments().')
 
     def _get_location(self, name_string: str) -> str:
         """Return the first matching location from name_string or raise."""
         try:
             return next(location for location in self.locations if location in name_string)
         except StopIteration:
-            log.error(f"Cannot find location for {self.name} (input: '{name_string}')")
-            raise RuntimeError(f"Cannot find a valid location for service {self.name}!")
+            log.error("Cannot find location for %s (input: '%s')",
+                      self.name, name_string)
+            raise RuntimeError(f'Cannot find a valid location for service {self.name}!')

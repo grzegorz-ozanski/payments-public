@@ -12,13 +12,13 @@ log = setup_logging(__name__)
 
 # === Energa specific constants - URLs, selectors and texts ===
 
-SERVICE_URL = "https://24.energa.pl"
+SERVICE_URL = 'https://24.energa.pl'
 
 
-SKIP_PAYMENT_BUTTON_TEXT = "Zapłać teraz"
+SKIP_PAYMENT_BUTTON_TEXT = 'Zapłać teraz'
 INVOICES_TAB = Locator(By.XPATH, '//a[contains(., "Faktury")]')
 
-DUE_DATE_LABEL_TEXT = "Termin płatności"
+DUE_DATE_LABEL_TEXT = 'Termin płatności'
 DUE_DATE_LABEL = Locator(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
 DUE_DATE_LABEL_ALT = Locator(By.XPATH, f'//span[contains(text(), "{DUE_DATE_LABEL_TEXT}")]/../..')
 
@@ -45,8 +45,8 @@ class Energa(Provider):
         """
         Initialize the provider with login fields and locations.
         """
-        user_input = Locator(By.ID, "username")
-        password_input = Locator(By.ID, "password")
+        user_input = Locator(By.ID, 'username')
+        password_input = Locator(By.ID, 'password')
         super().__init__(SERVICE_URL, locations, user_input, password_input,
                          overlay_buttons=Locator(By.ID, 'kc-switch-button'))
 
@@ -61,30 +61,30 @@ class Energa(Provider):
         try:
             browser.wait_for_page_element_disappear(OVERLAY)
             browser.click_page_element(USER_MENU)
-            weblogger.trace("pre-logout-click")
+            weblogger.trace('pre-logout-click')
             browser.click_page_element(LOGOUT_BUTTON)
         except (AttributeError, ElementNotInteractableException, TimeoutError) as e:
             weblogger.error()
             if type(e) is AttributeError:
                 if 'move_to requires a WebElement' in str(e):
-                    log.debug("Cannot click logout button. Are we even logged in?")
+                    log.debug('Cannot click logout button. Are we even logged in?')
                 else:
                     raise
         except NoSuchElementException:
-            log.debug("Cannot click logout button. Are we even logged in?")
+            log.debug('Cannot click logout button. Are we even logged in?')
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """
         Read and return payment data for all user locations.
         """
-        log.info("Getting payments...")
-        weblogger.trace("accounts-list")
+        log.info('Getting payments...')
+        weblogger.trace('accounts-list')
         locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
         if not locations_list_or_none:
             button = browser.wait_for_page_element(OVERLAY_BUTTON)
             if button:
                 browser.trace_click(button)
-                weblogger.trace("accounts-list-after-overlay")
+                weblogger.trace('accounts-list-after-overlay')
                 locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
             else:
                 raise RuntimeError('Locations list is empty and no overlay was found!')
@@ -92,12 +92,12 @@ class Energa(Provider):
                 raise RuntimeError(
                     f'Locations list is empty even after clicking overlay button "{OVERLAY_BUTTON}"!')
         locations_list = browser.safe_elements_list(locations_list_or_none)
-        log.debug("Identified %d locations" % len(locations_list_or_none))
+        log.debug('Identified %d locations' % len(locations_list_or_none))
         payments = []
         for location_id in range(len(locations_list)):
             print(f'...location {location_id + 1} of {len(locations_list)}')
-            log.debug("Opening location page")
-            weblogger.trace("pre-location-click")
+            log.debug('Opening location page')
+            weblogger.trace('pre-location-click')
             browser.click_element_using_js(locations_list[location_id])
             # If a 'button.primary' exists, there is probably a message displayed that needs to be dismissed before continuing —
             # unless its text is "Zapłać teraz", which indicates we're already on the target page
@@ -109,13 +109,13 @@ class Energa(Provider):
             if location_element:
                 location = self._get_location(location_element.text)
             else:
-                log.error(f"Could not retrieve location #{location_id}!")
+                log.error("Could not retrieve location #%s!", location_id)
                 continue
-            log.debug("Getting payment")
-            weblogger.trace("pre-invoices-click")
+            log.debug('Getting payment')
+            weblogger.trace('pre-invoices-click')
             invoices_button = browser.wait_for_page_element(INVOICES_TAB)
             if not invoices_button:
-                raise RuntimeError(f"Could not find invoices button for location {location}!")
+                raise RuntimeError(f'Could not find invoices button for location {location}!')
             browser.click_page_element_with_retry(invoices_button, INVOICES_TAB)
             due_date = None
             # First check if all invoices are already paid
@@ -123,7 +123,7 @@ class Energa(Provider):
             if all_paid is None:
                 # Energa page renders invoices list in two ways
                 invoices = browser.wait_for_page_element(DUE_DATE_LABEL)
-                weblogger.trace("duedate-check")
+                weblogger.trace('duedate-check')
                 if invoices:
                     due_date = invoices.text
                 else:
@@ -137,15 +137,16 @@ class Energa(Provider):
             if amount_element:
                 amount = amount_element.text
             else:
-                log.error(f"Could not retrieve amount value for location {location}.")
+                log.error("Could not retrieve amount value for location %s.", location)
                 amount = Amount.unknown
             if due_date is None:
                 if Amount.is_zero(amount):
                     due_date = DueDate.today()
                 else:
-                    log.error(f"Could not retrieve due date for non-zero payment '{amount}', location '{location}'.")
+                    log.error("Could not retrieve due date for non-zero payment '%s', location '%s'.",
+                              amount, location)
             payments.append(Payment(self.name, location, due_date, amount))
-            log.debug("Moving to the next location")
+            log.debug('Moving to the next location')
             browser.wait_for_page_element(ACCOUNTS_LIST)
             browser.safe_click_page_element(ACCOUNTS_LIST)
             locations_list = browser.safe_elements_list(browser.wait_for_page_elements(ACCOUNTS_LABEL))

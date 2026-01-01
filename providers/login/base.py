@@ -14,19 +14,19 @@ class BaseLogin:
         self.credentials = credentials
 
     def execute(self, browser: Browser, weblogger: WebLogger):
-        raise NotImplementedError(f"{self.__class__.__name__} must override login().")
+        raise NotImplementedError(f'{self.__class__.__name__} must override login().')
 
     def find_username_input(self, browser: Browser, weblogger: WebLogger):
         input_user = browser.wait_for_page_element(self.user_input_selector)
         if input_user is None:
-            print(f"No user input {self.user_input_selector} found!")
+            print(f'No user input {self.user_input_selector} found!')
             weblogger.error()
         return input_user
 
     def find_password_input(self, browser: Browser, weblogger: WebLogger):
         input_password = browser.wait_for_page_element(self.password_input_selector)
         if input_password is None:
-            print(f"No password input {self.password_input_selector} found!")
+            print(f'No password input {self.password_input_selector} found!')
             weblogger.error()
         return input_password
 

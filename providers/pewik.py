@@ -11,24 +11,24 @@ log = setup_logging(__name__)
 
 # === PEWiK specific constants - URLs, selectors and texts ===
 
-SERVICE_URL = "https://ebok.pewik.gdynia.pl/login"
+SERVICE_URL = 'https://ebok.pewik.gdynia.pl/login'
 
-USER_INPUT = Locator(By.ID, "username")
-PASSWORD_INPUT = Locator(By.ID, "password")
-LOGOUT_BUTTON = Locator(By.CLASS_NAME, "btn-wyloguj")
+USER_INPUT = Locator(By.ID, 'username')
+PASSWORD_INPUT = Locator(By.ID, 'password')
+LOGOUT_BUTTON = Locator(By.CLASS_NAME, 'btn-wyloguj')
 
-COOKIES_PANEL = Locator(By.CLASS_NAME, "panel-cookies")
-COOKIES_CLOSE = Locator(By.ID, "cookiesClose")
+COOKIES_PANEL = Locator(By.CLASS_NAME, 'panel-cookies')
+COOKIES_CLOSE = Locator(By.ID, 'cookiesClose')
 
 INVOICES_TAB = Locator(By.XPATH, '//a[text()="Faktury i salda"]')
 BALANCES_TAB = Locator(By.XPATH, '//a[text()="Salda"]')
 
-LOCATION = Locator(By.CLASS_NAME, "select2-chosen")
-LOCATION_TEXT = Locator(By.TAG_NAME, "span")
-BALANCE_TABLE = Locator(By.ID, "saldaWplatyWykaz")
+LOCATION = Locator(By.CLASS_NAME, 'select2-chosen')
+LOCATION_TEXT = Locator(By.TAG_NAME, 'span')
+BALANCE_TABLE = Locator(By.ID, 'saldaWplatyWykaz')
 
-LOCATIONS_ARROW = Locator(By.CLASS_NAME, "select2-arrow")
-LOCATION_RESULT = Locator(By.CLASS_NAME, "select2-result")
+LOCATIONS_ARROW = Locator(By.CLASS_NAME, 'select2-arrow')
+LOCATION_RESULT = Locator(By.CLASS_NAME, 'select2-result')
 
 
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
@@ -61,13 +61,14 @@ class Pewik(Provider):
             )
 
             balances = (
+                # TODO constants?
                 browser.find_page_element(BALANCE_TABLE)
-                .find_element(By.TAG_NAME, "tbody")
-                .find_elements(By.TAG_NAME, "tr")
+                .find_element(By.TAG_NAME, 'tbody')
+                .find_elements(By.TAG_NAME, 'tr')
             )
 
             for item in balances:
-                columns = item.find_elements(By.TAG_NAME, "td")
+                columns = item.find_elements(By.TAG_NAME, 'td')
                 if len(columns) > 1:
                     payments.append(Payment(self.name, location, columns[3], columns[5]))
                 else:
