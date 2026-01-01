@@ -24,6 +24,7 @@ INVOICES_TAB = Locator(By.XPATH, '//a[text()="Faktury i salda"]')
 BALANCES_TAB = Locator(By.XPATH, '//a[text()="Salda"]')
 
 LOCATION = Locator(By.CLASS_NAME, "select2-chosen")
+LOCATION_TEXT = Locator(By.TAG_NAME, "span")
 BALANCE_TABLE = Locator(By.ID, "saldaWplatyWykaz")
 
 LOCATIONS_ARROW = Locator(By.CLASS_NAME, "select2-arrow")
@@ -48,7 +49,7 @@ class Pewik(Provider):
         cookies_panel = browser.wait_for_page_element(COOKIES_PANEL, 1)
         if cookies_panel:
             browser.wait_for_page_element_clickable(COOKIES_PANEL)
-            browser.click_element_using_js(cookies_panel.find_element(COOKIES_CLOSE.type, COOKIES_CLOSE.value))
+            browser.click_element_using_js(cookies_panel.find_page_element(COOKIES_CLOSE))
 
         browser.trace_click(browser.find_page_element(INVOICES_TAB))
         browser.trace_click(browser.find_page_element(BALANCES_TAB))
@@ -58,7 +59,7 @@ class Pewik(Provider):
             location = self._get_location(
                 # TODO Implement WebElementEx
                 browser.find_page_element(LOCATION)
-                    .find_elements(By.TAG_NAME, "span")[2].text
+                    .find_page_elements(LOCATION_TEXT)[2].text
             )
 
             balances = (

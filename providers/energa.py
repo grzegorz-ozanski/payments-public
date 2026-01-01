@@ -91,7 +91,7 @@ class Energa(Provider):
             if not locations_list_or_none:
                 raise RuntimeError(
                     f'Locations list is empty even after clicking overlay button "{OVERLAY_BUTTON}"!')
-        locations_list = browser.safe_list(locations_list_or_none)
+        locations_list = browser.safe_elements_list(locations_list_or_none)
         log.debug("Identified %d locations" % len(locations_list_or_none))
         payments = []
         for location_id in range(len(locations_list)):
@@ -148,6 +148,6 @@ class Energa(Provider):
             log.debug("Moving to the next location")
             browser.wait_for_page_element(ACCOUNTS_LIST)
             browser.safe_click_page_element(ACCOUNTS_LIST)
-            locations_list = browser.safe_list(browser.wait_for_page_elements(ACCOUNTS_LABEL))
+            locations_list = browser.safe_elements_list(browser.wait_for_page_elements(ACCOUNTS_LABEL))
 
         return payments

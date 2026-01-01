@@ -68,9 +68,9 @@ class Pgnig(Provider):
                 elements = browser.wait_for_page_elements(INVOICE_ROW)
                 if elements is None:
                     raise RuntimeError("Cannot get invoices list!")
-                for index, item in enumerate(browser.safe_list(elements)):
+                for index, item in enumerate(browser.safe_page_elements_list(elements)):
                     # TODO Implement WebElementEx
-                    if item.find_element(INVOICE_BUTTON.type, INVOICE_BUTTON.value).text == "Zapłać":
+                    if item.find_page_element(INVOICE_BUTTON).text == "Zapłać":
                         unpaid_invoices.append(item)
                 break
             except StaleElementReferenceException:

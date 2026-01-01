@@ -113,7 +113,7 @@ class Provider:
             weblogger.trace("pre-login")
             _sleep_with_message(self.pre_login_delay, "Pre-login")
 
-            self.login_strategy.login(browser, weblogger)
+            self.login_strategy.execute(browser, weblogger)
             log.debug("Form submitted")
 
             browser.wait_for_page_load_completed()

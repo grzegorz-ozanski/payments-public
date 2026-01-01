@@ -99,9 +99,9 @@ class Multimedia(Provider):
         if invoices is None:
             return payments
         for invoice in invoices:
-            #TODO Implement WebElementEx
-            amount = invoice.find_element(AMOUNT.type, AMOUNT.value).text
-            due_date = invoice.find_element(DUE_DATE.type, DUE_DATE.value).text
+            # TODO Implement WebElementEx
+            amount = invoice.find_page_element(AMOUNT).text
+            due_date = invoice.find_page_element(DUE_DATE).text
             log.debug("Got amount '%s'" % amount)
             location = self._get_location_by_amount(amount)
             index = payments.index(next(payment for payment in payments if payment.location == location))
