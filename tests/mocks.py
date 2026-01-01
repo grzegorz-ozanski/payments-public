@@ -61,12 +61,12 @@ class MockBrowser(Browser):
         """Mock page_source property."""
         return "<html></html>"
 
-    def click_element_with_js(self, element: WebElement, by: str = '', value: str = '',
-                              timeout: int | None = None) -> None:
+    def click_element_using_js(self, element: WebElement, by: str = '', value: str = '',
+                               timeout: int | None = None) -> None:
         """Mock click_element_with_js method."""
         pass
 
-    def find_and_click_element_with_js(self, by: str, value: str) -> None:
+    def find_and_click_element_using_js(self, by: str, value: str) -> None:
         """Mock find_and_click_element_with_js method."""
         pass
 

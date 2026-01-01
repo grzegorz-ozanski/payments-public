@@ -48,7 +48,7 @@ class Pewik(Provider):
         cookies_panel = browser.wait_for_page_element(COOKIES_PANEL, 1)
         if cookies_panel:
             browser.wait_for_page_element_clickable(COOKIES_PANEL)
-            browser.click_element_with_js(cookies_panel.find_element(COOKIES_CLOSE.by, COOKIES_CLOSE.selector))
+            browser.click_element_using_js(cookies_panel.find_element(COOKIES_CLOSE.by, COOKIES_CLOSE.selector))
 
         browser.trace_click(browser.find_page_element(INVOICES_TAB))
         browser.trace_click(browser.find_page_element(BALANCES_TAB))

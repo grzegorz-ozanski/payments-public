@@ -98,12 +98,12 @@ class Energa(Provider):
             print(f'...location {location_id + 1} of {len(locations_list)}')
             log.debug("Opening location page")
             weblogger.trace("pre-location-click")
-            browser.click_element_with_js(locations_list[location_id])
+            browser.click_element_using_js(locations_list[location_id])
             # If a 'button.primary' exists, there is probably a message displayed that needs to be dismissed before continuing —
             # unless its text is "Zapłać teraz", which indicates we're already on the target page
             button = browser.wait_for_page_element(MESSAGE_BOX_CLOSE_BUTTON, 1)
             if button and button.text != SKIP_PAYMENT_BUTTON_TEXT:
-                browser.click_element_with_js(button)
+                browser.click_element_using_js(button)
 
             location_element = browser.wait_for_page_element(LOCATION_NAME, 30)
             if location_element:

@@ -52,7 +52,7 @@ class Pgnig(Provider):
             log.error("Cannot open invoices!")
             return [Payment(self.name, location)]
 
-        browser.click_element_with_js(invoices_menu)
+        browser.click_element_using_js(invoices_menu)
 
         log.debug("Waiting for page load completed...")
         browser.wait_for_page_inactive()

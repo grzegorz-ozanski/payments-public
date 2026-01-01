@@ -31,7 +31,7 @@ class BaseLogin:
         return input_password
 
     def input_username(self, input_box: WebElement, username: str | None, browser: Browser):
-        browser.click_page_element_with_js(input_box, self.user_input_selector)
+        browser.click_page_element_with_retry_using_js(input_box, self.user_input_selector)
         time.sleep(0.5)
         self.input(input_box, username)
 

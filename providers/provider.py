@@ -136,7 +136,7 @@ class Provider:
             return
         try:
             weblogger.trace("pre-logout")
-            browser.find_and_click_page_element_with_js(self.logout_button)
+            browser.find_and_click_page_element_using_js(self.logout_button)
             browser.wait_for_page_inactive(2)
             weblogger.trace("post-logout")
         except NoSuchElementException:
