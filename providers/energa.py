@@ -28,7 +28,7 @@ ACCOUNTS_LABEL_SELECTOR = 'label'
 OVERLAY_BUTTON_SELECTOR = 'button.button'
 LOCATION_NAME_SELECTOR = '.text.es-text.variant-body-bold.mlxs.mrm'
 AMOUNT_SELECTOR = '.h1.text.es-text.variant-balance'
-
+ALL_PAID = PageElement(By.XPATH, '//form[@novalidate]/div/div/p/strong')
 
 class Energa(Provider):
     """
@@ -122,7 +122,7 @@ class Energa(Provider):
             browser.click_with_retry(invoices_button, By.XPATH, f'//a[contains(., "{INVOICES_TAB_TEXT}")]')
             due_date = None
             # First check if all invoices are already paid
-            all_paid = browser.wait_for_element(By.CSS_SELECTOR, "form[novalidate]", 2)
+            all_paid = browser.wait_for_page_element(ALL_PAID, 2)
             if all_paid is None:
                 # Energa page renders invoices list in two ways
                 invoices = browser.wait_for_element(By.CSS_SELECTOR, f'td[data-headerlabel="{DUE_DATE_LABEL_TEXT}"] span')
