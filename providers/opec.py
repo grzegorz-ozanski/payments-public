@@ -18,11 +18,11 @@ SERVICE_URL = "https://stary-ebok.opecgdy.com.pl/web/ebok/home"
 USER_INPUT = PageElement(By.ID, "_58_login")
 PASSWORD_INPUT = PageElement(By.ID, "_58_password")
 
-PAYMENTS_TAB = '//a[text()="Płatności"]'
-DOCUMENTS_TAB = '//a[contains(string(), "Dokumenty")]'
+PAYMENTS_TAB = PageElement(By.XPATH, '//a[text()="Płatności"]')
+DOCUMENTS_TAB = PageElement(By.XPATH, '//a[contains(string(), "Dokumenty")]')
 
-TABLE_BODY = 'tbody'
-TABLE_ROW = 'tr'
+TABLE_BODY = PageElement(By.TAG_NAME, 'tbody')
+TABLE_ROW = PageElement(By.TAG_NAME, 'tr')
 COLUMN_TAG = 'td'
 AMOUNT_FIELD_NAME = 'value'
 
@@ -42,13 +42,13 @@ class Opec(Provider):
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         """Click through the UI and return the earliest unpaid invoice."""
         weblogger.trace("pre-payments-click")
-        browser.find_element(By.XPATH, PAYMENTS_TAB).click()
+        browser.find_page_element(PAYMENTS_TAB).click()
         weblogger.trace("pre-documents-click")
-        browser.find_element(By.XPATH, DOCUMENTS_TAB).click()
+        browser.find_page_element(DOCUMENTS_TAB).click()
         browser.wait_for_network_inactive()
         sleep(1)
 
-        invoices = browser.find_element(By.TAG_NAME, TABLE_BODY).find_elements(By.TAG_NAME, TABLE_ROW)
+        invoices = browser.find_page_element(TABLE_BODY).find_elements(TABLE_ROW.by, TABLE_BODY.selector)
         amount = 0.0
         due_date: DueDateT | DueDate = ''
 
