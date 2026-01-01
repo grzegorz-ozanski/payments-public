@@ -17,17 +17,17 @@ USER_INPUT = PageElement(By.ID, "username")
 PASSWORD_INPUT = PageElement(By.ID, "password")
 LOGOUT_BUTTON = PageElement(By.CLASS_NAME, "btn-wyloguj")
 
-COOKIES_PANEL_CLASS = "panel-cookies"
-COOKIES_CLOSE_ID = "cookiesClose"
+COOKIES_PANEL = PageElement(By.CLASS_NAME, "panel-cookies")
+COOKIES_CLOSE = PageElement(By.ID, "cookiesClose")
 
-INVOICES_TAB = '//a[text()="Faktury i salda"]'
-BALANCES_TAB = '//a[text()="Salda"]'
+INVOICES_TAB = PageElement(By.XPATH, '//a[text()="Faktury i salda"]')
+BALANCES_TAB = PageElement(By.XPATH, '//a[text()="Salda"]')
 
-LOCATION_CLASS = "select2-chosen"
-BALANCE_TABLE_ID = "saldaWplatyWykaz"
+LOCATION = PageElement(By.CLASS_NAME, "select2-chosen")
+BALANCE_TABLE = PageElement(By.ID, "saldaWplatyWykaz")
 
-LOCATIONS_ARROW_CLASS = "select2-arrow"
-LOCATION_RESULT_CLASS = "select2-result"
+LOCATIONS_ARROW = PageElement(By.CLASS_NAME, "select2-arrow")
+LOCATION_RESULT = PageElement(By.CLASS_NAME, "select2-result")
 
 
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
@@ -44,23 +44,25 @@ class Pewik(Provider):
         payments = []
         next_id = 1
 
-        cookies_panel = browser.wait_for_element(By.CLASS_NAME, COOKIES_PANEL_CLASS, 1)
+        # TODO Implement WebElementEx
+        cookies_panel = browser.wait_for_page_element(COOKIES_PANEL, 1)
         if cookies_panel:
-            browser.wait_for_element_clickable(By.CLASS_NAME, COOKIES_PANEL_CLASS)
-            browser.click_element_with_js(cookies_panel.find_element(value=COOKIES_CLOSE_ID))
+            browser.wait_for_page_element_clickable(COOKIES_PANEL)
+            browser.click_element_with_js(cookies_panel.find_element(COOKIES_CLOSE.by, COOKIES_CLOSE.selector))
 
-        browser.trace_click(browser.find_element(By.XPATH, INVOICES_TAB))
-        browser.trace_click(browser.find_element(By.XPATH, BALANCES_TAB))
+        browser.trace_click(browser.find_page_element(INVOICES_TAB))
+        browser.trace_click(browser.find_page_element(BALANCES_TAB))
         browser.wait_for_page_load_completed()
 
         while True:
             location = self._get_location(
-                browser.find_element(By.CLASS_NAME, LOCATION_CLASS)
+                # TODO Implement WebElementEx
+                browser.find_page_element(LOCATION)
                     .find_elements(By.TAG_NAME, "span")[2].text
             )
 
             balances = (
-                browser.find_element(By.ID, BALANCE_TABLE_ID)
+                browser.find_page_element(BALANCE_TABLE)
                 .find_element(By.TAG_NAME, "tbody")
                 .find_elements(By.TAG_NAME, "tr")
             )
@@ -72,9 +74,9 @@ class Pewik(Provider):
                 else:
                     payments.append(Payment(self.name, location))
 
-            locations_arrow = browser.find_element(By.CLASS_NAME, LOCATIONS_ARROW_CLASS)
+            locations_arrow = browser.find_page_element(LOCATIONS_ARROW)
             browser.trace_click(locations_arrow)
-            locations = browser.find_elements(By.CLASS_NAME, LOCATION_RESULT_CLASS)
+            locations = browser.find_page_elements(LOCATION_RESULT)
 
             if next_id < len(locations):
                 browser.trace_click(locations[next_id])
