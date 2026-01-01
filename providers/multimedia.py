@@ -13,19 +13,19 @@ log = setup_logging(__name__)
 
 # === Multimedia specific constants - URLs, selectors and texts ===
 
-SERVICE_URL = "https://ebok.multimedia.pl/panel-glowny.aspx"
+SERVICE_URL = 'https://ebok.multimedia.pl/panel-glowny.aspx'
 
-USER_INPUT = PageElement(By.ID, "Login_SSO_UserName")
-PASSWORD_INPUT = PageElement(By.ID, "Login_SSO_Password")
-COOKIES_BUTTON = PageElement(By.ID, "cookiescript_accept")
+USER_INPUT = PageElement(By.ID, 'Login_SSO_UserName')
+PASSWORD_INPUT = PageElement(By.ID, 'Login_SSO_Password')
+COOKIES_BUTTON = PageElement(By.ID, 'cookiescript_accept')
 
-INVOICE_CLASS = "invoiceInfo"
-AMOUNT_CLASS = "kwota"
-DUE_DATE_CLASS = "platnoscDo"
+INVOICE = PageElement(By.CLASS_NAME, 'invoiceInfo')
+AMOUNT = PageElement(By.CLASS_NAME, 'kwota')
+DUE_DATE = PageElement(By.CLASS_NAME, 'platnoscDo')
 
-LOGIN_ERROR_TEXT = "span.logonFailureText"
-PASSWORD_CHANGE_IDS = ("formPassword", "formConfirmation")
-CAPTCHA_FORM_ID = "formCaptcha"
+LOGIN_ERROR_TEXT = PageElement(By.CSS_SELECTOR, 'span.logonFailureText')
+PASSWORD_CHANGE_ELEMENTS = (PageElement(By.ID, 'formPassword'), PageElement(By.ID, 'formConfirmation'))
+CAPTCHA_FORM = PageElement(By.ID, "formCaptcha")
 
 
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
@@ -61,17 +61,17 @@ class Multimedia(Provider):
                 continue
             browser.wait_for_page_inactive(2)
 
-            if browser.wait_for_element(By.CSS_SELECTOR, LOGIN_ERROR_TEXT, 2):
+            if browser.wait_for_page_element(LOGIN_ERROR_TEXT, 2):
                 log.debug('Login failure detected, retrying...')
                 weblogger.trace(f'failed-login-attempt-{i}')
-            elif all(browser.find_elements(By.ID, id_) for id_ in PASSWORD_CHANGE_IDS):
+            elif all(browser.find_page_elements(element) for element in PASSWORD_CHANGE_ELEMENTS):
                 raise RuntimeError("Couldn't login, reason: password change required")
             else:
                 # Either super().login() ended with success, or due to some misterious ways
                 # we ended up here with page correctly logged in (i.e. no login elements are present)
                 if self.logged_in or not any(
-                        browser.wait_for_element(elem.by, elem.selector, 1)
-                        for elem in [USER_INPUT, PASSWORD_INPUT]
+                        browser.wait_for_page_element(element, 1)
+                        for element in [USER_INPUT, PASSWORD_INPUT]
                 ):
                     self.logged_in = True
                     return
@@ -79,7 +79,7 @@ class Multimedia(Provider):
                 weblogger.trace(f'failed-login-attempt-unknown-{i}')
 
         reason = "unknown"
-        if browser.find_elements(By.ID, CAPTCHA_FORM_ID):
+        if browser.find_page_elements(CAPTCHA_FORM):
             reason = "CAPTCHA required"
         raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
 
@@ -95,12 +95,12 @@ class Multimedia(Provider):
         log.info("Getting payments...")
         sleep(0.1)
         payments = [Payment(self.name, location) for location in self.locations]
-        invoices = browser.wait_for_elements(By.CLASS_NAME, INVOICE_CLASS)
+        invoices = browser.wait_for_page_elements(INVOICE)
         if invoices is None:
             return payments
         for invoice in invoices:
-            amount = invoice.find_element(By.CLASS_NAME, AMOUNT_CLASS).text
-            due_date = invoice.find_element(By.CLASS_NAME, DUE_DATE_CLASS).text
+            amount = browser.find_page_element_in(invoice, AMOUNT).text
+            due_date = browser.find_page_element_in(invoice, DUE_DATE).text
             log.debug("Got amount '%s'" % amount)
             location = self._get_location_by_amount(amount)
             index = payments.index(next(payment for payment in payments if payment.location == location))
