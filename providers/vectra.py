@@ -56,9 +56,13 @@ class Vectra(Provider):
         if not self.logged_in:
             log.debug("Not logged in into service '%s', skipping logout", self.name)
             return
-        browser.wait_for_page_element(USER_MENU).click()
-        browser.wait_for_page_element(LOGOUT_BUTTON).click()
-        browser.wait_for_page_element(USER_INPUT)
+        user_menu = browser.wait_for_page_element(USER_MENU)
+        if user_menu:
+            user_menu.click()
+            browser.wait_for_page_element(LOGOUT_BUTTON).click()
+            browser.wait_for_page_element(USER_INPUT)
+        else:
+            log.debug("Logout error: user menu not found, are we logged in into service '%s?'", self.name)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         total = Payment(self.name, self.locations[0])
