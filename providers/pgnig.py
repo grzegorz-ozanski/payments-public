@@ -85,7 +85,7 @@ class Pgnig(Provider):
             raise RuntimeError(f'Failed to collect invoices after {attempts} attempts!')
         for invoice in unpaid_invoices:
             log.debug('Iterating over unpaid invoices...')
-            columns = invoice.find_elements(By.CLASS_NAME, INVOICE_COLUMN)
+            columns = invoice.find_page_elements(INVOICE_COLUMN)
             log.debug('Adding payment...')
             payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(Amount(columns[3].text))
 
