@@ -14,8 +14,8 @@ log = setup_logging(__name__)
 
 SERVICE_URL = 'https://ebok.vectra.pl'
 
-USER_INPUT = Locator(By.ID, 'input-v-2')
-PASSWORD_INPUT = Locator(By.ID, 'input-v-5')
+USER_INPUT = Locator(By.NAME, 'username')
+PASSWORD_INPUT = Locator(By.NAME, 'password')
 
 INVOICES_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Zobacz faktury"]')
 INVOICES_LIST = Locator(By.XPATH, '(//table[contains(@class,"vectra-complex-table")])[1]/tbody/tr')
@@ -58,6 +58,7 @@ class Vectra(Provider):
             return
         browser.wait_for_page_element(USER_MENU).click()
         browser.wait_for_page_element(LOGOUT_BUTTON).click()
+        browser.wait_for_page_element(USER_INPUT)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         total = Payment(self.name, self.locations[0])
