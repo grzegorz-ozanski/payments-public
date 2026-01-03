@@ -15,7 +15,7 @@ SERVICE_URL = 'https://ebok.opecgdy.com.pl'
 
 USER_INPUT = Locator(By.ID, 'UserName')
 PASSWORD_INPUT = Locator(By.ID, 'Password')
-AMOUNT = Locator(By.CSS_SELECTOR, 'span.shf-s30.shf-w5.shf-csec')
+AMOUNT = Locator(By.XPATH, '//sh-blok/div[2]/div/div/span')
 
 class TermsOfService:
     """ OPEC2 terms of service popup. """
