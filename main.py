@@ -87,7 +87,7 @@ def main() -> None:
     # otherwise, use headed browser when running under the debugger and headless one when otherwise
     headless = args.headless if args.headless is not None else not running_under_debugger
 
-    options = BrowserOptions(__file__, headless, args.trace, args.chrome_path)
+    options = BrowserOptions(__file__, headless, args.trace, args.chrome_path, not args.clear_profile)
 
     if args.trace and not verbose:
         print('ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console')
