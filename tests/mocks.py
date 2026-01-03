@@ -6,7 +6,7 @@ from typing import Any
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import Browser, Locator, WebLogger
+from browser import Browser, BrowserOptions, Locator, WebLogger
 from payments.payment import Payment
 from providers.provider import Provider
 
@@ -48,9 +48,9 @@ class DummyProvider(Provider):
 # noinspection PyMissingConstructor
 class MockBrowser(Browser):
     """Simplified mock of the Browser interface."""
-    save_trace_logs: bool = False
 
     def __init__(self, *_, **__) -> None:
+        self.options = BrowserOptions('', True, False, '')
         self.user_data_dir = None
         # library variable: out of scope
         self.session_id = 'testsession'  # type: ignore[assignment]

@@ -20,7 +20,7 @@ def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
     """
     monkeypatch.setattr('sys.argv', ['prog'])
     monkeypatch.setattr(main, 'parse_args', lambda: argparse.Namespace(
-        verbose=False, headless=True, trace=False, provider='', output=output, chrome_path=None
+        clear_profile=False, headless=True, output=output, provider='', trace=False, verbose=False, chrome_path=None
     ))
     monkeypatch.setattr(main, 'is_debugger_active', lambda: False)
 
