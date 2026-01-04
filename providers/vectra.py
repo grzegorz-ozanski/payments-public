@@ -65,7 +65,7 @@ class Vectra(Provider):
             log.debug("Logout error: user menu not found, are we logged in into service '%s?'", self.name)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
-        total = Payment(self.name, self.locations[0])
+        total = Payment(self.name, self.locations[0], None, None)
         # Open invoices
         invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
         if invoices_button is None:
