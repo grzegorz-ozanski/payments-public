@@ -1,11 +1,13 @@
 """Payments manager module"""
 from typing import Sequence
 
-from browser import Browser, BrowserOptions
+from browser import Browser, BrowserManager, BrowserOptions
 from payments import Payment
 from providers.provider import Provider
 from lookuplist import LookupList
+from browser import setup_logging
 
+log = setup_logging(__name__)
 
 class PaymentsManager:
     """
@@ -50,13 +52,13 @@ class PaymentsManager:
         :param browser_class: Browser class
         :return:
         """
-        browser = browser_class(options)
+        manager = BrowserManager(options, browser_class)
         for provider in self.providers:
-            if provider.needs_fresh_browser and browser.dirty:
-                browser.quit()
-                browser = browser_class(options)
-            self.payments += provider.get_payments(browser)
-        browser.quit()
+            log.debug(f'Collecting payments for {provider}')
+            browser = manager.get(provider.needs_clear_user_profile)
+        return
+        for provider in self.providers:
+            self.payments += provider.get_payments(manager.get(provider.needs_clear_user_profile))
 
     def to_string(self) -> str:
         """

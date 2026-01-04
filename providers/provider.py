@@ -39,7 +39,7 @@ class Provider:
     def __init__(self, url: str, locations: tuple[str, ...],
                  user_input: Locator, password_input: Locator,
                  logout_button: Locator | None = None, overlay_buttons: Locator | list[Locator] | None = None,
-                 needs_fresh_browser: bool = False,
+                 needs_clear_user_profile: bool = False,
                  pre_login_delay: int = 0, post_login_delay: int = 0,
                  login_strategy: type[BaseLogin] = OneStageLogin):
         """
@@ -49,7 +49,7 @@ class Provider:
         :param password_input: Locator for password input field
         :param logout_button: Optional locator for logout button (default: "Wyloguj")
         :param overlay_buttons: Optional locator(s) for cookie consent or other overlays
-        :param needs_fresh_browser: True if providers web page needs fresh browser session for proper operation,
+        :param needs_clear_user_profile: True if providers web page needs clear user profile for proper operation
         False otherwise
         :param pre_login_delay: Sleep before the login form fill
         :param post_login_delay: Sleep after the login form submitted
@@ -65,7 +65,7 @@ class Provider:
         self.overlay_buttons: list[Locator] = []
         if overlay_buttons:
             self.overlay_buttons = overlay_buttons if isinstance(overlay_buttons, list) else [overlay_buttons]
-        self.needs_fresh_browser = needs_fresh_browser
+        self.needs_clear_user_profile = needs_clear_user_profile
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
         self.logged_in = False
