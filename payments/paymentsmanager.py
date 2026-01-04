@@ -54,10 +54,6 @@ class PaymentsManager:
         """
         manager = BrowserManager(options, browser_class)
         for provider in self.providers:
-            log.debug(f'Collecting payments for {provider}')
-            browser = manager.get(provider.needs_clear_user_profile)
-        return
-        for provider in self.providers:
             self.payments += provider.get_payments(manager.get(provider.needs_clear_user_profile))
 
     def to_string(self) -> str:
