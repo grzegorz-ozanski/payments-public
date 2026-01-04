@@ -17,6 +17,7 @@ SERVICE_URL = 'https://ebok.vectra.pl'
 USER_INPUT = Locator(By.NAME, 'username')
 PASSWORD_INPUT = Locator(By.NAME, 'password')
 
+MAIN_DASHBOARD = Locator(By.CSS_SELECTOR, 'div.main-page.dashboard')
 INVOICES_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Zobacz faktury"]')
 INVOICES_LIST = Locator(By.XPATH, '(//table[contains(@class,"vectra-complex-table")])[1]/tbody/tr')
 
@@ -62,10 +63,13 @@ class Vectra(Provider):
             browser.wait_for_page_element(LOGOUT_BUTTON).click()
             browser.wait_for_page_element(USER_INPUT)
         else:
-            log.debug("Logout error: user menu not found, are we logged in into service '%s?'", self.name)
+            log.debug("Logout error: user menu not found, are we logged in?'", self.name)
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
-        total = Payment(self.name, self.locations[0], None, None)
+        # Verify if we are logged in
+        if not browser.wait_for_page_element(MAIN_DASHBOARD, 2):
+            return [Payment(self.name, self.locations[0], None, None)]
+        total = Payment(self.name, self.locations[0])
         # Open invoices
         invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
         if invoices_button is None:
