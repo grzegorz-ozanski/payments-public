@@ -162,13 +162,13 @@ class DueDate:
             return self.value < other
         if not isinstance(other, DueDate):
             return NotImplemented
-        return self.value < other.value
+        return True if other.value == DueDate.unknown else self.value < other.value
 
     def __repr__(self) -> str:
         """
             Return string representation of the DueDate.
         """
-        return self._unknown_str if self.value == date.min else self.value.strftime('%d-%m-%Y')
+        return self._unknown_str if self.value == DueDate.unknown else self.value.strftime('%d-%m-%Y')
 
     @classmethod
     def today(cls) -> str:
