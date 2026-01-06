@@ -20,6 +20,7 @@ PASSWORD_INPUT = Locator(By.NAME, 'password')
 MAIN_DASHBOARD = Locator(By.CSS_SELECTOR, 'div.main-page.dashboard')
 INVOICES_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Zobacz faktury"]')
 INVOICES_LIST = Locator(By.XPATH, '(//table[contains(@class,"vectra-complex-table")])[1]/tbody/tr')
+TWO_FACTOR_AUTH_BUTTON = Locator(By.XPATH, '//h3[normalize-space(.)="Wpisz kod weryfikacyjny"]')
 
 USER_MENU = Locator(By.CSS_SELECTOR, 'span.ico-avatar')
 LOGOUT_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Wyloguj się"]')
@@ -48,6 +49,14 @@ class Vectra(Provider):
             return
 
         super().login(browser, weblogger, False)
+        if browser.wait_for_page_element(TWO_FACTOR_AUTH_BUTTON, 2):
+            if browser.options.headless:
+                log.error('2FA is needed to login to service, aborting')
+                self.logged_in = False
+                return
+            else:
+                input('2FA is needed to login to service. '
+                      'Input 2FA code in the page and press <ENTER> to continue...')
 
     def logout(self, browser: Browser, weblogger: WebLogger) -> None:
         """
