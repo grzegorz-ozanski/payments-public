@@ -96,10 +96,12 @@ class Provider:
 
     def load(self, browser: Browser):
         """ Opens the login page """
-        log.debug('Opening %s' % self.url)
+        log.debug('Opening "%s" in a new tab' % self.url)
         browser.open_in_new_tab(self.url)
+        log.debug('Wating 2 seconds')
         browser.wait_for_page_inactive(2)
         for overlay_button in self.overlay_buttons:
+            log.debug('Closing overlay button %s', overlay_button)
             webelement = browser.wait_for_page_element(overlay_button, 2)
             if webelement:
                 browser.safe_click_page_element(overlay_button)
