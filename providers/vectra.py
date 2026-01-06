@@ -4,7 +4,7 @@
 from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator, WebLogger
-from payments import Payment
+from payments import Payment, DueDate
 from providers.login.two_stage import TwoStageLogin
 from providers.provider import Provider
 
@@ -78,7 +78,7 @@ class Vectra(Provider):
         # Verify if we are logged in
         if not browser.wait_for_page_element(MAIN_DASHBOARD, 2):
             return [Payment(self.name, self.locations[0], None, None)]
-        total = Payment(self.name, self.locations[0])
+        total = Payment(self.name, self.locations[0], None)
         # Open invoices
         invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
         if invoices_button is None:
@@ -92,4 +92,6 @@ class Vectra(Provider):
             total.amount += payment.amount
             if payment.due_date < total.due_date:
                 total.due_date = payment.due_date
+        if total.due_date == DueDate.unknown:
+            total.due_date = DueDate('today')
         return [total]
