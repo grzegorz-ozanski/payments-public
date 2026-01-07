@@ -1,4 +1,5 @@
 """Payments manager module"""
+import logging
 from typing import Sequence
 
 from browser import Browser, BrowserManager, BrowserOptions
@@ -56,7 +57,10 @@ class PaymentsManager:
         for provider in self.providers:
             message = f'Processing service {provider.name}...'
             print(message)
-            log.debug(message)
+            if log.level <= logging.DEBUG:
+                sep = '*' * len(message)
+                message = f'\n{sep}\n{message}\n{sep}'
+                log.debug(message)
             self.payments += provider.get_payments(manager.get(provider.needs_clear_user_profile))
 
     def to_string(self) -> str:
