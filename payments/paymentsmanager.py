@@ -54,6 +54,9 @@ class PaymentsManager:
         """
         manager = BrowserManager(options, browser_class)
         for provider in self.providers:
+            message = f'Processing service {provider.name}...'
+            print(message)
+            log.debug(message)
             self.payments += provider.get_payments(manager.get(provider.needs_clear_user_profile))
 
     def to_string(self) -> str:

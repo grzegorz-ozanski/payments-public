@@ -78,8 +78,7 @@ class Provider:
         """Log in and fetch payments, return fallback on failure."""
         weblogger = WebLogger(self.name, browser)
         try:
-            message = f'Processing service {self.name}...'
-            print(message)
+            message = f'Getting payments for service {self.name}...'
             log.debug(message)
             self.login(browser, weblogger)
             payments = sorted(self._fetch_payments(browser, weblogger),
