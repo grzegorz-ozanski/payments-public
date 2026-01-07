@@ -6,7 +6,7 @@ import time
 from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator, PageElement, WebLogger
-from payments import Payment
+from payments import Amount, Payment
 from providers.provider import Provider
 
 log = setup_logging(__name__)
@@ -47,11 +47,6 @@ class TermsOfService:
             self.browser.wait_for_page_element(self.HEADER_CLOSE, 2)
             self.browser.find_page_element(self.BUTTON_CLOSE).click()
 
-def _same_amount(left: PageElement | None, right: str) -> bool:
-    if left is None:
-        return False
-    return left.text == right.replace(' ', '')
-
 class Opec2(Provider):
     """OPEC provider for hot water and heating."""
 
@@ -62,34 +57,25 @@ class Opec2(Provider):
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         TermsOfService(browser).accept()
         amount = browser.wait_for_page_element(AMOUNT, 2).text
-        due_date = ''
-        main_table = browser.find_page_element(MONTHS_TABLE)
-        if not main_table:
+        months_table = browser.find_page_element(MONTHS_TABLE)
+        if not months_table:
             return [Payment(self.name, self.locations[0], amount=amount)]
-        month_entries = len(main_table.find_page_elements(MONTH_TABLE_ROW))
+        month_entries = len(months_table.find_page_elements(MONTH_TABLE_ROW))
+        due_date = ''
         for i in range(month_entries):
-            delay = 0.5
-            timeout = 10
-            counter = 0
-            while counter < timeout / delay:
-                if i > 0:
-                    main_table = browser.wait_for_page_element(MONTHS_TABLE)
-                months = main_table.find_page_elements(MONTH_TABLE_ROW)
-                if len(months) == month_entries:
-                    break
-                time.sleep(0.5)
-            else:
-                raise RuntimeError(f'Cound not process payments table for service {self.name}!')
-            print(f'{i=}: {len(months)=}')
+            if i > 0:
+                months_table = browser.wait_for_page_element(MONTHS_TABLE)
+            months = months_table.find_page_elements(MONTH_TABLE_ROW)
             months[i].click()
-            month_table = browser.wait_for_page_element(PAYMENTS_TABLE, 1)
-            print(month_table.text if month_table else '<empty>')
-            if month_table:
+            payments = browser.wait_for_page_element(PAYMENTS_TABLE, 1)
+            if payments:
                 matches = [row.find_page_element(Columns.DueDate).text
-                           for row in month_table.find_page_elements(PAYMENTS_TABLE_ROW)
-                           if _same_amount(row.find_page_element(Columns.Amount), amount)]
+                           for row in payments.find_page_elements(PAYMENTS_TABLE_ROW)
+                           if Amount(row.find_page_element(Columns.Amount)) == Amount(amount)]
                 if matches:
                     due_date = matches[0]
+                    if len(matches) > 1:
+                        log.warning('Multiple matches found for payment due date, first chosen:\n%s', matches)
                     break
             browser.back()
         return [Payment(self.name, self.locations[0], due_date, amount)]
