@@ -103,9 +103,9 @@ class Amount:
     @staticmethod
     def create_from(value: AmountT | Amount | None) -> 'Amount':
         """
-        Creates DueDate object from any compatible value
+        Creates Amount object from any compatible value
         :param value: source value
-        :return: Proper DueDate object
+        :return: Proper Amount object
         """
         if value is None:
             return Amount(Amount.unknown)
