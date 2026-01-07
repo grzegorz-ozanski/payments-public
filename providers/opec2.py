@@ -85,10 +85,11 @@ class Opec2(Provider):
             month_table = browser.wait_for_page_element(PAYMENTS_TABLE, 1)
             print(month_table.text if month_table else '<empty>')
             if month_table:
-                for row in month_table.find_page_elements(PAYMENTS_TABLE_ROW):
-                    if _same_amount(row.find_page_element(Columns.Amount), amount):
-                        due_date = row.find_page_element(Columns.DueDate).text
-            if due_date != '':
-                break
+                matches = [row.find_page_element(Columns.DueDate).text
+                           for row in month_table.find_page_elements(PAYMENTS_TABLE_ROW)
+                           if _same_amount(row.find_page_element(Columns.Amount), amount)]
+                if matches:
+                    due_date = matches[0]
+                    break
             browser.back()
         return [Payment(self.name, self.locations[0], due_date, amount)]
