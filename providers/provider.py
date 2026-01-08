@@ -93,7 +93,7 @@ class Provider:
             self.logout(browser, weblogger)
         return payments
 
-    def load(self, browser: Browser):
+    def load(self, browser: Browser) -> None:
         """ Opens the login page """
         log.debug('Opening "%s" in a new tab' % self.url)
         browser.open_in_new_tab(self.url)
