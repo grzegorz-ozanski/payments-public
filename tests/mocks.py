@@ -97,6 +97,9 @@ class MockBrowser(Browser):
         """Mock wait_for_page_load_completed method."""
         pass
 
+    def _execute_javascript(self, script: str, *args: Any) -> Any:
+        """Mock _execute_javascript method."""
+        pass
 
 class MockWebElement(WebElement):
     """Mock of a Selenium WebElement."""
