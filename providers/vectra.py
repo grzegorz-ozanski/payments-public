@@ -69,7 +69,11 @@ class Vectra(Provider):
         user_menu = browser.wait_for_page_element(USER_MENU)
         if user_menu:
             user_menu.click()
-            browser.wait_for_page_element(LOGOUT_BUTTON).click()
+            logout_button = browser.wait_for_page_element(LOGOUT_BUTTON)
+            if logout_button:
+                logout_button.click()
+            else:
+                raise RuntimeError('Unexpected error while logging out: logout button missing in user menu')
             browser.wait_for_page_element(USER_INPUT)
         else:
             log.debug("Logout error: user menu not found, are we logged in?'", self.name)
@@ -81,11 +85,13 @@ class Vectra(Provider):
         total = Payment(self.name, self.locations[0], None)
         # Open invoices
         invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
-        if invoices_button is None:
+        if not invoices_button:
             return [total]
         invoices_button.click()
         # Get unpaid invoices
         unpaid_invoices = browser.wait_for_page_elements(INVOICES_LIST)
+        if not unpaid_invoices:
+            return [total]
         for invoice in unpaid_invoices:
             columns = invoice.find_elements(By.TAG_NAME, 'td')
             payment = Payment(self.name, self.locations[0], columns[Columns.DueDate], columns[Columns.Amount])
