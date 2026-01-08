@@ -49,7 +49,7 @@ class DummyProvider(Provider):
 class MockBrowser(Browser):
     """Simplified mock of the Browser interface."""
 
-    def __init__(self, *_, **__) -> None:
+    def __init__(self, *_: Any, **__: Any) -> None:
         self.options = BrowserOptions('', True, False, '')
         self.user_data_dir = None
         # library variable: out of scope
