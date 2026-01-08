@@ -46,7 +46,7 @@ class PaymentsManager:
                                           due_date,
                                           amount)]
 
-    def collect_payments(self, options: BrowserOptions, browser_class = Browser) -> None:
+    def collect_payments(self, options: BrowserOptions, browser_class: type[Browser] = Browser) -> None:
         """
         Collect payments for all providers and return them as string
         :param options: Browser options
