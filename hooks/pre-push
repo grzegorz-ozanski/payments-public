@@ -1,17 +1,22 @@
 #!/bin/bash
-echo "✅ Static analysis"
-ruff check .
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Static analysis failed, push aborted."
-  exit $status
-fi
-echo "🧪 Running tests before push..."
-pytest --quiet
-status=$?
-if [ $status -ne 0 ]; then
-  echo "❌ Tests failed, push aborted."
-  exit $status
-fi
+
+run_check() {
+  local command="${1}"
+  local message="${2}"
+  local error_message="${3}"
+  
+  echo "${message}..."
+  ${command}
+  status=$?
+  if [ $status -ne 0 ]; then
+    echo "❌ ${error_message}, push aborted."
+    exit $status
+  fi
+}
+
+run_check "ruff check ." "✅ Static analysis" "Static analysis failed"
+run_check "mypy . --strict --ignore-missing-imports --exclude run" "Running mypy" "Mypy failed"
+run_check "pytest --quiet" "🧪 Running tests before push" "❌ Tests failed"
+
 rm -rf error
 echo "✅ Tests passed, pushing..."
