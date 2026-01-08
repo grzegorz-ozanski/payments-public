@@ -1,11 +1,9 @@
 """
     OPEC (head and hot water) provider module.
 """
-import time
-
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, Locator, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, WebLogger
 from payments import Amount, Payment
 from providers.provider import Provider
 
