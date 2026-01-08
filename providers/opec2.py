@@ -3,7 +3,7 @@
 """
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, Locator, WebLogger
+from browser import setup_logging, Browser, Locator, PageElement, WebLogger
 from payments import Amount, Payment
 from providers.provider import Provider
 
@@ -54,8 +54,11 @@ class Opec2(Provider):
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         TermsOfService(browser).accept()
-        amount = browser.wait_for_page_element(AMOUNT, 2).text
-        months_table = browser.find_page_element(MONTHS_TABLE)
+        amount_item = browser.wait_for_page_element(AMOUNT, 2)
+        if not amount_item:
+            raise RuntimeError('Unexpected error: total amount web item not found')
+        amount = amount_item.text
+        months_table: PageElement | None = browser.find_page_element(MONTHS_TABLE)
         if not months_table:
             return [Payment(self.name, self.locations[0], amount=amount)]
         month_entries = len(months_table.find_page_elements(MONTH_TABLE_ROW))
@@ -63,6 +66,8 @@ class Opec2(Provider):
         for i in range(month_entries):
             if i > 0:
                 months_table = browser.wait_for_page_element(MONTHS_TABLE)
+                if not months_table:
+                    raise RuntimeError('Months table not found after page reload!')
             months = months_table.find_page_elements(MONTH_TABLE_ROW)
             months[i].click()
             payments = browser.wait_for_page_element(PAYMENTS_TABLE, 1)
