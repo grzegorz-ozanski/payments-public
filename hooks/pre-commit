@@ -3,7 +3,7 @@
 # Check if main.py is staged
 if git diff --cached --name-only | grep -q '^main\.py$'; then
     # Get changed/added lines from main.py
-    # Check if there is no unwanted provicers limitation
+    # Check if there is no unwanted providers limitation
     if git diff --cached main.py | grep -E '^\+' | grep -vE '^\+\+\+' \
         | grep -E "args\.provider\.lower\(\)\s*or\s*['\"][^'\"]+['\"]" \
         | grep -vE "args\.provider\.lower\(\)\s*or\s*['\"]['\"]"
