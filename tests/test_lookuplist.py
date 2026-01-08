@@ -1,4 +1,6 @@
 """ Lookup list unittests."""
+from typing import Union
+
 import pytest
 from lookuplist.lookuplist import LookupList
 
@@ -25,7 +27,7 @@ def test_lookup_by_class_name() -> None:
 
 def test_lookup_contains_by_class_name() -> None:
     """Test that LookupList `in` works for class names."""
-    lst = LookupList[TestClassBase](TestClass1(), TestClass2())
+    lst = LookupList[Union[TestClassBase, str]](TestClass1(), TestClass2())
     assert 'testclass1' in lst
     assert 'testclass2' in lst
     assert 'invalidclass' not in lst

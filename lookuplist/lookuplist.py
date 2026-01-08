@@ -65,6 +65,12 @@ class LookupList(Sequence[T]):
         except StopIteration:
             raise KeyError(f"No item with class name '{key}' found.")
 
+    @overload
+    def __contains__(self, key: str) -> bool: ...
+    @overload
+    def __contains__(self, key: T) -> bool: ...
+    @overload
+    def __contains__(self, key: object) -> bool: ...
     def __contains__(self, key: object) -> bool:
         """
             Check if the key exists either directly or through fallback.
