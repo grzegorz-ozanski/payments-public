@@ -41,7 +41,7 @@ class BaseLogin:
             weblogger.error()
         return input_user
 
-    def find_password_input(self, browser: Browser, weblogger: WebLogger):
+    def find_password_input(self, browser: Browser, weblogger: WebLogger) -> PageElement | None:
         """
         Finds the password input for the service.
         :param browser: Browser object
@@ -55,7 +55,7 @@ class BaseLogin:
             weblogger.error()
         return input_password
 
-    def input_username(self, browser: Browser, username_input_box: WebElement, username: str | None) -> None:
+    def input_username(self, browser: Browser, username_input_box: WebElement, username: str) -> None:
         """
         Input the username for the service to the input box provided.
         :param browser: Browser object
@@ -66,7 +66,7 @@ class BaseLogin:
         time.sleep(0.5)
         self.input(username_input_box, username)
 
-    def input_password(self, password_input_box: WebElement, password: str | None) -> None:
+    def input_password(self, password_input_box: WebElement, password: str) -> None:
         """
         Input the password for the service to the input box provided.
         :param password_input_box: 
