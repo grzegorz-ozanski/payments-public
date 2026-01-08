@@ -69,7 +69,7 @@ class Pgnig(Provider):
                 elements = browser.wait_for_page_elements(INVOICE_ROW)
                 if elements is None:
                     raise RuntimeError('Cannot get invoices list!')
-                for index, item in enumerate(browser.safe_page_elements_list(elements)):
+                for index, item in enumerate(elements):
                     if item.find_page_element(INVOICE_BUTTON).text == INVOICE_PAY_CAPTION:
                         unpaid_invoices.append(item)
                 break
