@@ -152,7 +152,7 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python main.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}" -p vectra
+        python main.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}" -p vectra -f false
 
     - name: Download reference output from private repo
       env:
