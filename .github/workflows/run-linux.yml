@@ -22,6 +22,7 @@ jobs:
       runner_label: '["self-hosted", "Linux"]'
       dump: ${{ inputs.dump }}
       event_name: ${{ github.event_name }}
+      browser_profile_dir: '/runner/_work/_temp'
     secrets:
       GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
       GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
