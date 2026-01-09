@@ -84,11 +84,11 @@ class Provider:
             payments = sorted(self._fetch_payments(browser, weblogger),
                               key=lambda value: self._location_order.get(value.location, float('inf')))
         except Exception as e:
-            msg = f'{e.__class__.__name__}:{str(e)}\nCannot get payments for service {self.name}!'
+            msg = f'{e.__class__.__name__}: {str(e)}\nCannot get payments for service {self.name}!'
             log.exception(msg)
             print(msg)
             weblogger.error()
-            payments = [Payment(self.name, location, None, None) for location in self.locations]
+            payments = [Payment(self.name, location, None, None, str(e)) for location in self.locations]
         finally:
             self.logout(browser, weblogger)
         return payments

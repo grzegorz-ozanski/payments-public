@@ -205,7 +205,8 @@ class Payment:
                  provider: str,
                  location: str,
                  due_date: DueDate | DueDateT | None = '',
-                 amount: Amount | AmountT | None = '0,0') -> None:
+                 amount: Amount | AmountT | None = '0,0',
+                 comment: str = '') -> None:
         """
         Payment constructor
 
@@ -219,6 +220,7 @@ class Payment:
         self.due_date = DueDate.create_from(due_date)
         self.location = location
         self.provider = provider
+        self.comment = comment
         log.debug(f'Created payment object:'
                   f'{provider=}, {location=}, '
                   f'{due_date=}, {amount=}, '
@@ -238,4 +240,5 @@ class Payment:
         return (f'{self.provider or "": <{padding[0] + 1}}'
                 f'{self.amount: <{padding[1]}} '
                 f'{self.location: <{padding[2]}} '
-                f'{self.due_date}')
+                f'{self.due_date}'
+                f'{" #" + self.comment if self.comment else ""}')
