@@ -36,6 +36,7 @@ class Vectra(Provider):
 
     def __init__(self, *locations: str):
         """Initialize OPEC service with given locations."""
+        self.payment_comment = ''
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT,
                          overlay_buttons=Locator(By.ID, 'cookiescript_accept'),
                          login_strategy=TwoStageLogin)
@@ -51,7 +52,8 @@ class Vectra(Provider):
         super().login(browser, weblogger, False)
         if browser.wait_for_page_element(TWO_FACTOR_AUTH_BUTTON, 2):
             if browser.options.headless:
-                log.error('2FA is needed to login to service, aborting')
+                self.payment_comment = '2FA is needed to login to service'
+                log.error('%s, aborting', self.payment_comment)
                 self.logged_in = False
                 return
             else:
@@ -85,7 +87,7 @@ class Vectra(Provider):
                             self.locations[0],
                             None,
                             None,
-                            'Timeout waiting for main dashboard')]
+                            self.payment_comment or 'Unexpected timeout waiting for main dashboard')]
         total = Payment(self.name, self.locations[0], None)
         # Open invoices
         invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
