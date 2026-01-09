@@ -130,8 +130,8 @@ jobs:
         # Store credentials if running on self-hosted runner (PAYMENTS_CREDENTIALS_STORE_FILE is set)
         if ($env:PAYMENTS_CREDENTIALS_STORE_FILE) {
           $path = ${env:PAYMENTS_CREDENTIALS_STORE_FILE}
-          $file = Split-Path -Path $path -Leaf
-          if (-not (Test-Path -LiteralPath $path -PathType Container)) {
+          $dir  = Split-Path -Path $path -Parent
+          if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
               echo "::error:: Directory for PAYMENTS_CREDENTIALS_STORE_FILE '$path' does not exist: '$dir'\n" +
               "No credentials stored"
               return
