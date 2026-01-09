@@ -136,9 +136,11 @@ jobs:
               "No credentials stored"
               return
           }
-          Set-Content -LiteralPath $path -Value "${{ secrets.CREDENTIALS }}" -NoNewline 
+          $escaped = "${{ secrets.CREDENTIALS }}" -replace '(?m)^([^=\r\n]+)=(.+)$', '$1="$2"'
+          Set-Content -LiteralPath $path -Value $escaped -NoNewline 
           if ($IsLinux -or $IsMacOS) {
               chmod 600 -- $path
+              sed -i 's/^/export /' $path
           } elseif ($IsWindows) {
               icacls $path /inheritance:r | Out-Null
               icacls $path /grant:r "$env:USERNAME:(F)" | Out-Null
