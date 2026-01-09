@@ -40,14 +40,16 @@ def parse_args() -> Namespace:
         epilog=f"Available providers: {', '.join(providers.__all__)}"
     )
 
-    parser.add_argument('-c', '--clear_profile', default=False, action='store_true',
-                        help='Clear user profile on exit')
+    parser.add_argument('-c', '--clear-profile-on-exit', default=False, action='store_true',
+                        help='Clear browser user profile on exit')
     parser.add_argument('-l', '--headless', default=None, type=str_to_bool,
                         help='Toggle headless browser mode (default: auto)')
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
     parser.add_argument('-p', '--provider', default='',
                         help='Run for single provider only (name must match one from the list)')
+    parser.add_argument('--persistent-profile-dir', default='',
+                        help='Persisten browser profile directory location (default: user temp directory)')
     parser.add_argument('-t', '--trace', default=False, action='store_true',
                         help='Enable trace logging for browser actions')
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
@@ -87,7 +89,12 @@ def main() -> None:
     # otherwise, use headed browser when running under the debugger and headless one when otherwise
     headless = args.headless if args.headless is not None else not running_under_debugger
 
-    options = BrowserOptions(__file__, headless, args.trace, args.chrome_path, not args.clear_profile)
+    options = BrowserOptions(__file__,
+                             headless,
+                             args.trace,
+                             args.chrome_path,
+                             not args.clear_profile_on_exit,
+                             args.persistent_profile_dir)
 
     if args.trace and not verbose:
         print('ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console')
