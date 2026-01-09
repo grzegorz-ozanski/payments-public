@@ -126,7 +126,24 @@ jobs:
         # Prepare credentials
         echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
         # Mask credentials
-        pwsh -File $env:MASK_SCRIPT "_USERNAME,_PASSWORD" "${{ secrets.CREDENTIALS }}" 
+        pwsh -File $env:MASK_SCRIPT "_USERNAME,_PASSWORD" "${{ secrets.CREDENTIALS }}"
+        # Store credentials if running on self-hosted runner (PAYMENTS_CREDENTIALS_STORE_FILE is set)
+        if ($env:PAYMENTS_CREDENTIALS_STORE_FILE) {
+          $path = ${env:PAYMENTS_CREDENTIALS_STORE_FILE}
+          $file = Split-Path -Path $path -Leaf
+          if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
+              echo "::error:: Directory for PAYMENTS_CREDENTIALS_STORE_FILE '$path' does not exist: '$dir'\n" +
+              "No credentials stored"
+              return
+          }
+          Set-Content -LiteralPath $path -Value "${{ secrets.CREDENTIALS }}" -NoNewline 
+          if ($IsLinux -or $IsMacOS) {
+              chmod 600 -- $path
+          } elseif ($IsWindows) {
+              icacls $path /inheritance:r | Out-Null
+              icacls $path /grant:r "$env:USERNAME:(F)" | Out-Null
+          }
+        }
 
     - name: Run the script
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
