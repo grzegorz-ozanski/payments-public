@@ -76,7 +76,7 @@ class Vectra(Provider):
                 raise RuntimeError('Unexpected error while logging out: logout button missing in user menu')
             browser.wait_for_page_element(USER_INPUT)
         else:
-            log.debug("Logout error: user menu not found, are we logged in?'", self.name)
+            log.debug("Logout error: user menu not found, are we logged in?")
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         # Verify if we are logged in
