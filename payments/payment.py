@@ -223,7 +223,7 @@ class Payment:
         self.comment = comment
         log.debug(f'Created payment object:'
                   f'{provider=}, {location=}, '
-                  f'{due_date=}, {amount=}, '
+                  f'{due_date=}, {amount=}, {comment=}'
                   f'{self.due_date=}, {self.amount=}')
 
     def __repr__(self) -> str:
