@@ -41,15 +41,16 @@ class BaseLogin:
             weblogger.error()
         return input_user
 
-    def find_password_input(self, browser: Browser, weblogger: WebLogger) -> PageElement | None:
+    def find_password_input(self, browser: Browser, weblogger: WebLogger, timeout: int | None = None) -> PageElement | None:
         """
         Finds the password input for the service.
         :param browser: Browser object
         :param weblogger: weblogger object
+        :param timeout: timeout value or None if default browser timeout should be used
 
         :return: password input found or None if timeout expired
         """
-        input_password = browser.wait_for_page_element(self.password_input_selector)
+        input_password = browser.wait_for_page_element(self.password_input_selector, timeout)
         if input_password is None:
             print(f'No password input {self.password_input_selector} found!')
             weblogger.error()

@@ -24,7 +24,7 @@ class TwoStageLogin(BaseLogin):
         weblogger.trace("username-input")
         username_input.send_keys(Keys.ENTER)
 
-        password_input = self.find_password_input(browser, weblogger)
+        password_input = self.find_password_input(browser, weblogger, 30)
         assert password_input is not None
 
         self.input_password(password_input, password_value)
