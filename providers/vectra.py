@@ -80,8 +80,12 @@ class Vectra(Provider):
 
     def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
         # Verify if we are logged in
-        if not browser.wait_for_page_element(MAIN_DASHBOARD, 2):
-            return [Payment(self.name, self.locations[0], None, None)]
+        if not browser.wait_for_page_element(MAIN_DASHBOARD):
+            return [Payment(self.name,
+                            self.locations[0],
+                            None,
+                            None,
+                            'Timeout waiting for main dashboard')]
         total = Payment(self.name, self.locations[0], None)
         # Open invoices
         invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
