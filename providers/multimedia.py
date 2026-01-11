@@ -98,6 +98,8 @@ class Multimedia(Provider):
         payments = [Payment(self.name, location) for location in self.locations]
         invoices = browser.wait_for_page_elements(INVOICE)
         if invoices is None:
+            for payment in payments:
+                payment.comment = 'Timed out waiting for invoices list'
             return payments
         for invoice in invoices:
             amount = invoice.find_page_element(AMOUNT).text

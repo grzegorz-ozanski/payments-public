@@ -92,11 +92,13 @@ class Vectra(Provider):
         # Open invoices
         invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
         if not invoices_button:
+            total.comment = 'Timed out waiting for invoices button'
             return [total]
         invoices_button.click()
         # Get unpaid invoices
         unpaid_invoices = browser.wait_for_page_elements(INVOICES_LIST)
         if not unpaid_invoices:
+            total.comment = 'Timed out waiting for invoices list to open'
             return [total]
         for invoice in unpaid_invoices:
             columns = invoice.find_elements(By.TAG_NAME, 'td')

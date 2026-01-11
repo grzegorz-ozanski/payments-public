@@ -47,7 +47,8 @@ class IOK(Provider):
         due_date_element = browser.wait_for_page_element(DUE_DATE, self.timeout)
 
         if amount is None or due_date_element is None:
-            return [Payment(self.name, self.locations[0], self.due_date)]
+            return [Payment(self.name, self.locations[0], self.due_date, amount,
+                            comment=f'Timed out waiting for {"amount" if amount is None else "due date"}')]
 
         due_dates = due_date_element.find_elements(By.TAG_NAME, 'span')
         due_date = due_dates[-1] if due_dates else 'today'

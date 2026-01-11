@@ -50,8 +50,9 @@ class Pgnig(Provider):
         log.info('Opening invoices menu...')
         weblogger.trace('pre-invoices-click')
         if not invoices_menu:
-            log.error('Cannot open invoices!')
-            return [Payment(self.name, location)]
+            message = 'Cannot open invoices'
+            log.error('%s!', message)
+            return [Payment(self.name, location, comment=message)]
 
         browser.click_element_using_js(invoices_menu)
 
@@ -90,4 +91,4 @@ class Pgnig(Provider):
             payments_dict[columns[2].text] = payments_dict.get(columns[2].text, 0) + float(Amount(columns[3].text))
 
         payments = [Payment(self.name, location, date, amount) for date, amount in payments_dict.items()]
-        return payments if payments else [Payment(self.name, location)]
+        return payments if payments else [Payment(self.name, location, comment='Failed to process unpaid invoices')]

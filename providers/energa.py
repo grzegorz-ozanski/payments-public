@@ -134,10 +134,12 @@ class Energa(Provider):
             browser.wait_for_page_element(DASHBOARD)
             browser.safe_click_page_element(DASHBOARD)
             amount_element = browser.wait_for_page_element(AMOUNT)
+            comment = ''
             if amount_element:
                 amount = amount_element.text
             else:
                 log.error("Could not retrieve amount value for location %s.", location)
+                comment = 'Could not retrieve amount'
                 amount = Amount.unknown
             if due_date is None:
                 if Amount.is_zero(amount):
@@ -145,7 +147,8 @@ class Energa(Provider):
                 else:
                     log.error("Could not retrieve due date for non-zero payment '%s', location '%s'.",
                               amount, location)
-            payments.append(Payment(self.name, location, due_date, amount))
+                    comment = 'Could not retrieve due date'
+            payments.append(Payment(self.name, location, due_date, amount, comment))
             log.debug('Moving to the next location')
             browser.wait_for_page_element(ACCOUNTS_LIST)
             browser.safe_click_page_element(ACCOUNTS_LIST)
