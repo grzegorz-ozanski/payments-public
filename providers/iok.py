@@ -18,6 +18,7 @@ USER_INPUT = Locator(By.CSS_SELECTOR, '[aria-labelledby=login]')
 PASSWORD_INPUT = Locator(By.CSS_SELECTOR, '[aria-labelledby=haslo]')
 LOGOUT_BUTTON = Locator(By.CSS_SELECTOR, 'button.wcag.bg.navTxtColor')
 
+NO_OVERDUE = Locator(By.XPATH, '//span[contains(text(), "Brak zaległości")]')
 AMOUNT = Locator(By.CLASS_NAME, 'home-amount')
 DUE_DATE = Locator(By.CLASS_NAME, 'home-info')
 DEFAULT_TIMEOUT = 1
@@ -43,6 +44,9 @@ class IOK(Provider):
         """Extract payment info from the page. Return fallback if missing."""
         self.log.info('Getting payments...')
         browser.wait_for_page_inactive()
+        no_overdue = browser.wait_for_page_element(NO_OVERDUE, 2)
+        if no_overdue:
+            return [Payment(self.name, self.locations[0])]
         amount = browser.wait_for_page_element(AMOUNT, self.timeout)
         due_date_element = browser.wait_for_page_element(DUE_DATE, self.timeout)
 
