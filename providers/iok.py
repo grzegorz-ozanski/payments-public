@@ -18,7 +18,7 @@ USER_INPUT = Locator(By.CSS_SELECTOR, '[aria-labelledby=login]')
 PASSWORD_INPUT = Locator(By.CSS_SELECTOR, '[aria-labelledby=haslo]')
 LOGOUT_BUTTON = Locator(By.CSS_SELECTOR, 'button.wcag.bg.navTxtColor')
 
-NO_OVERDUE = Locator(By.XPATH, '//span[contains(text(), "Brak zaległości")]')
+NO_OVERDUE = Locator(By.CSS_SELECTOR, 'span.home-header.nopayments.greenColor.greenIconBefore.ng-star-inserted')
 AMOUNT = Locator(By.CLASS_NAME, 'home-amount')
 DUE_DATE = Locator(By.CLASS_NAME, 'home-info')
 DEFAULT_TIMEOUT = 1
