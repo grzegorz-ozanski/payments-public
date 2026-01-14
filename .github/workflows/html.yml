@@ -5,7 +5,7 @@ name: HTML Test
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ 'html-test' ]
   workflow_dispatch:
 
 jobs:
