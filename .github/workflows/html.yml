@@ -17,4 +17,12 @@ jobs:
       if: always()
       shell: pwsh
       run: |
-        Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "Status: OK"
+        $output= @"
+        <html>
+        <head/>
+        <body>
+        <h1>OK</h1>
+        </body>
+        </html>
+        "@
+        Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $output
