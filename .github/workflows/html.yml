@@ -10,7 +10,7 @@ on:
 
 jobs:
   html-test:
-    runs-on: [self-hosted, Linux]
+    runs-on: [linux]
     steps:
     # 💾 Save current status
     - name: Save current status
