@@ -16,7 +16,5 @@ jobs:
     - name: Save current status
       if: always()
       shell: pwsh
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "Test" > ${env:GITHUB_OUTPUT}
+        Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "Status: OK"
