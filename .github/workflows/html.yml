@@ -21,7 +21,37 @@ jobs:
         <html>
         <head/>
         <body>
-        <h1>OK</h1>
+        <details>
+          <summary>pgnig      28,09   Sezamowa  16-01-2026</summary>
+          <pre>Processing service pgnig...
+        DEBUG:browser.manager 2026-01-14 04:53:31,288 Creating new persistent profile browser instance
+        DEBUG:browser.browser 2026-01-14 04:53:31,290 Creating new Chrome instance with parameters: "chromedriver_location=C:\actions-runner\_work\payments\payments\chromedriver\chromedriver.exe, chrome_location=C:\actions-runner\_work\payments\payments\chromedriver\chrome\chrome.exe, _driver_options=['disable-blink-features=AutomationControlled', 'window-size=1920,1200', 'log-level=3', 'disable-dev-shm-usage', 'headless', 'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.7204.49 Safari/537.36', 'disable-gpu', 'disable-webgl', 'enable-unsafe-swiftshader', 'no-sandbox'], save_trace_logs=True, headless=True, timeout=10, profile=Profile (name=myprofile, path="C:\actions-runner\_work\payments\myprofile"), error_log_dir=error"
+        DEBUG:browser.browser 2026-01-14 04:53:31,290 Using Chrome from "C:\actions-runner\_work\payments\payments\chromedriver\chrome\chrome.exe"
+        DEBUG:browser.browser 2026-01-14 04:53:31,290 Using Chromedriver from "C:\actions-runner\_work\payments\payments\chromedriver\chromedriver.exe"
+        DEBUG:browser.manager 2026-01-14 04:53:38,009 Browser timezone is: Europe/Warsaw
+        DEBUG:providers.provider 2026-01-14 04:53:38,011 Getting payments for service pgnig...
+        DEBUG:providers.provider 2026-01-14 04:53:38,011 Opening "https://ebok.pgnig.pl" in a new tab
+        DEBUG:providers.provider 2026-01-14 04:53:49,829 Wating 2 seconds
+        DEBUG:providers.provider 2026-01-14 04:53:51,573 Closing overlay button [(id) CybotCookiebotDialogBodyButtonDecline]
+        DEBUG:providers.provider 2026-01-14 04:53:53,854 Closing overlay button [(class name) modalCloseButton]
+        DEBUG:providers.provider 2026-01-14 04:53:56,278 Closing overlay button [(css selector) .button.expanded.invert-colors]
+        INFO:providers.provider 2026-01-14 04:53:57,344 Logging into service...
+        DEBUG:providers.provider 2026-01-14 04:54:01,685 Form submitted
+        DEBUG:browser.browser 2026-01-14 04:54:01,702 Page load state == complete
+        INFO:providers.provider 2026-01-14 04:54:02,760 Done.
+        INFO:providers.pgnig 2026-01-14 04:54:02,760 Getting payments...
+        INFO:providers.pgnig 2026-01-14 04:54:02,997 Getting invoices menu...
+        INFO:providers.pgnig 2026-01-14 04:54:03,066 Opening invoices menu...
+        DEBUG:providers.pgnig 2026-01-14 04:54:03,625 Waiting for page load completed...
+        INFO:providers.pgnig 2026-01-14 04:54:14,016 Getting filtered invoices list...
+        DEBUG:providers.pgnig 2026-01-14 04:54:14,565 Creating payments dict...
+        DEBUG:providers.pgnig 2026-01-14 04:54:14,565 Iterating over unpaid invoices...
+        DEBUG:providers.pgnig 2026-01-14 04:54:14,585 Adding payment...
+        DEBUG:payments.payment 2026-01-14 04:54:14,637 Created payment object:provider='pgnig', location='Sezamowa', due_date='16-01-2026', amount=28.09, comment=''self.due_date=16-01-2026, self.amount=28,09
+        DEBUG:browser.browser 2026-01-14 04:54:19,103 Timeout 2(s) expired waiting for page to become inactive!
+        DEBUG:payments.paymentsmanager 2026-01-14 04:54:20,395 
+        </pre>
+        </details>
         </body>
         </html>
         "@
