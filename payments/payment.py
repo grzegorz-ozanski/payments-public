@@ -10,13 +10,13 @@ from functools import total_ordering
 from dateutil import parser
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import setup_logging
+from browser import setup_logging, PageElement
 
 log = setup_logging(__name__)
 
-AmountT = str | float | WebElement
+AmountT = str | float | WebElement | PageElement
 
-DueDateT = str | date | WebElement
+DueDateT = str | date | WebElement | PageElement
 
 
 class Amount:
@@ -31,10 +31,7 @@ class Amount:
         Constructor
         :param value: payment value
         """
-        if isinstance(value, float):
-            self.value = str(value)
-        else:
-            self.value = str(value.text) if isinstance(value, WebElement) else value
+        self.value = str(value.text) if isinstance(value, (PageElement, WebElement)) else str(value)
         self.whole, self.decimal = self._split()
 
     def __iadd__(self, other: Amount) -> Amount:
