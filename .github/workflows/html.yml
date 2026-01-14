@@ -1,0 +1,22 @@
+#file: noinspection GrazieInspection
+#  This workflow runs the payment script, compares results, and handles errors and reporting.
+#  It is intended to be used via workflow_call from scheduled or manual dispatch workflows.
+name: HTML Test
+
+on:
+  push:
+    branches: [ 'master' ]
+  workflow_dispatch:
+
+jobs:
+  html-test:
+    runs-on: [self-hosted, Linux]
+    steps:
+    # 💾 Save current status
+    - name: Save current status
+      if: always()
+      shell: pwsh
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        echo "Test" > ${env:GITHUB_OUTPUT}
