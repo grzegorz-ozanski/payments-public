@@ -43,7 +43,8 @@ on:
 # Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
 env:
   ACTUAL_CONTENT: actual.txt
-  BROWSER_LOG_FILENAME: trace.log
+#  BROWSER_LOG_FILENAME: trace.log
+  BROWSER_LOG_FILENAME: .github/data/test_trace.log
   BROWSER_LOG_TO_CONSOLE: False
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
   DIFF_FILE: diff.txt
