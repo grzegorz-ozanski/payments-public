@@ -78,7 +78,7 @@ def parse_output(path: str | Path) -> dict[str, str]:
     return {k: '\n'.join(v) for k, v in out.items()}
 
 def encode(string: str) -> str:
-    return html.escape(string).replace('\n', '<br/>')
+    return html.escape(string)
 
 def html_output(log_file: Path | str,
                 output_file: Path | str,
