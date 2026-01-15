@@ -55,6 +55,7 @@ env:
   REFERENCE_OUTPUT: .github/data/reference_output.txt
 #  SCRIPT_OUTPUT: script_output.txt
   SCRIPT_OUTPUT: .github/data/test_output.txt
+  SCRIPT_HTML: script_output.html
   STATUS_FILE: .github/status/last-status.txt
   # Scripts
   COMPARE_SCRIPT: .github/scripts/compare-output.ps1
@@ -154,6 +155,13 @@ jobs:
       run: |
         python main.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
 
+    - name: Generate HTML output
+      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      continue-on-error: true
+      shell: pwsh
+      run: |
+        python html_output.py -o ${env:SCRIPT_OUTPUT} -l ${{ env.BROWSER_LOG_FILENAME }} -H ${{ env.SCRIPT_HTML }}
+
     - name: Download reference output from private repo
       env:
         PAYMENTS_TESTDATA_REPO_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
@@ -250,7 +258,7 @@ jobs:
         pwsh -File ${env:STATUS_SCRIPT} `
         "${{ steps.readstatus.outputs.previous }}" `
         "${{ steps.compare.outputs.status }}" `
-        ${env:SCRIPT_OUTPUT} `
+        ${env:SCRIPT_HTML} `
         ${env:DIFF_FILE} `
         ${env:GITHUB_OUTPUT} `
         ${env:GITHUB_STEP_SUMMARY}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import html
 import os
 import re
@@ -95,16 +96,16 @@ def parse_output(path: str | Path) -> dict[str, str]:
 def encode(string: str) -> str:
     return html.escape(string)
 
-def html_output(env_variable_name: str,
+def html_output(log_file: Path | str,
                 output_file: Path | str,
-                html_log_file: Path | str) -> None:
-    log_file = os.environ.get(env_variable_name)
-    if log_file is None:
-        return
-    logs = parse_log(log_file)
-    output = parse_output(output_file)
+                html_file: Path | str) -> None:
+    log_file_path = Path(log_file)
+    html_file_path = Path(html_file)
+    output_file_path = Path(output_file)
+    logs = parse_log(log_file_path)
+    output = parse_output(output_file_path)
 
-    with open(html_log_file, 'w') as f:
+    with open(html_file_path, 'w') as f:
         f.write(HTML_HEADER)
         for provider in output.keys():
             f.write(f'''<details>
@@ -113,5 +114,30 @@ def html_output(env_variable_name: str,
             </details>''')
         f.write(HTML_FOOTER)
 
+def parse_args() -> argparse.Namespace:
+    """
+    Parses command-line arguments and returns a Namespace object containing
+    the parsed arguments and their values.
+    """
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Combines payment script output and trace logs into a single HTML file."
+        )
+    )
+
+    parser.add_argument('-H', '--html-file' , required=True, type=Path,
+                        help='target HTML file path')
+    parser.add_argument('-l', '--log-file', required=True, type=Path,
+                        help='log file path')
+    parser.add_argument('-o', '--output-file', required=True, type=Path,
+                        help='payments output file path')
+
+    return parser.parse_args()
+
+def main() -> None:
+    args = parse_args()
+    html_output(args.log_file, args.output_file, args.html_file)
+
 if __name__ == '__main__':
-    html_output('BROWSER_LOG_FILENAME', 'run/log.txt', 'log.html')
+    main()
