@@ -77,8 +77,9 @@ def parse_output(path: str | Path) -> dict[str, str]:
 
     return {k: '\n'.join(v) for k, v in out.items()}
 
-def encode(string: str) -> str:
-    return html.escape(string)
+def encode(string: str, replace_newline: bool=False) -> str:
+    result = html.escape(string)
+    return result.replace('\n', '<br/>') if replace_newline else result
 
 def html_output(log_file: Path | str,
                 output_file: Path | str,
@@ -96,8 +97,8 @@ def html_output(log_file: Path | str,
         for provider in output.keys():
             f.write(f'''\
 <details>
-    <summary>{encode(output[provider])}</summary>
-    <pre>{encode(logs[provider])}</pre>
+    <summary>{encode(output[provider], True)}</summary>
+    <pre>{logs[provider]}</pre>
 </details>''')
         if add_header:
             f.write(HTML_FOOTER)
