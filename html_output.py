@@ -9,31 +9,33 @@ from pathlib import Path
 
 SEPARATOR_RE = re.compile(r'^\*{5,}\s*$')  # '*****' (i więcej), sama linia
 NAME_RE = re.compile(r'^Processing service\s+(.+?)\.\.\.\s*$')
-HTML_HEADER = """<!DOCTYPE html>
+HTML_HEADER = '''<!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      /* Ukrycie trójkąta <summary> */
-      summary {
-        list-style: none;
-        cursor: pointer;
+  <head/>
+  <body>
+    <div class="my-embed">
+      <style>
+      .my-embed summary {
+          list-style: none;
+          cursor: pointer;
       }
 
-      summary::-webkit-details-marker {
-        display: none;
+      .my-embed summary::-webkit-details-marker {
+          display: none;
       }
-      .log {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
-                     "Liberation Mono", monospace;
-        font-size: 16px;
-        white-space: pre;   /* domyślnie, ale jasno */
+
+      .my-embed .log {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+                      "Liberation Mono", monospace;
+          font-size: 16px;
+          white-space: pre;
       }
-    </style>
-  </head>
-<body>
-"""
-HTML_FOOTER = """</body>
-</html>"""
+      </style>'''
+HTML_FOOTER = '''\
+    </div>
+  </body>
+</html>
+'''
 
 def parse_log(path: str | Path) -> dict[str, str]:
     out: dict[str, str] = {}
@@ -108,7 +110,8 @@ def html_output(log_file: Path | str,
     with open(html_file_path, 'w') as f:
         f.write(HTML_HEADER)
         for provider in output.keys():
-            f.write(f'''<details>
+            f.write(f'''
+            <details>
                 <summary class="log">{encode(output[provider])}</summary>
                 <code>{logs[provider]}</code>
             </details>''')
