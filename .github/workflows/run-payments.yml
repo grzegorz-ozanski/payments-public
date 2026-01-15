@@ -156,7 +156,6 @@ jobs:
         python main.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
 
     - name: Generate HTML output
-      if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       continue-on-error: true
       shell: pwsh
       run: |
