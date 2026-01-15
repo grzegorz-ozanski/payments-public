@@ -156,12 +156,6 @@ jobs:
       run: |
         python main.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
 
-    - name: Generate HTML output
-      continue-on-error: true
-      shell: pwsh
-      run: |
-        python html_output.py -o ${env:SCRIPT_OUTPUT} -l ${{ env.BROWSER_LOG_FILENAME }} -H ${{ env.SCRIPT_HTML }}
-
     - name: Download reference output from private repo
       env:
         PAYMENTS_TESTDATA_REPO_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
@@ -171,6 +165,12 @@ jobs:
         New-Item -ItemType Directory -Path .github/data -Force | Out-Null
         Copy-Item -Path temp_testdata/* -Destination .github/data -Recurse -Force
         Remove-Item -Recurse -Force temp_testdata
+
+    - name: Generate HTML output
+      continue-on-error: true
+      shell: pwsh
+      run: |
+        python html_output.py -o ${env:SCRIPT_OUTPUT} -l ${{ env.BROWSER_LOG_FILENAME }} -H ${{ env.SCRIPT_HTML }}
 
     - name: Compare script output with reference
       id: compare
