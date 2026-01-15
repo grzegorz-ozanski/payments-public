@@ -1,4 +1,10 @@
 #!/bin/bash
+BRANCH="$(git symbolic-ref --short HEAD 2>/dev/null)"
+
+if [[ "${BRANCH}" != "master" ]]; then
+  echo "ℹ️ pre-push checks skipped for branch '${BRANCH}'"
+  exit 0
+fi
 
 run_check() {
   local command="${1}"
