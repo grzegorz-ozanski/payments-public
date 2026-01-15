@@ -96,7 +96,7 @@ def html_output(log_file: Path | str,
         for provider in output.keys():
             f.write(f'''\
 <details>
-    <summary style="list-style: none; cursor: pointer;">{encode(output[provider])}</summary>
+    <summary>{encode(output[provider])}</summary>
     <pre style="white-space: pre-wrap; font-size: 12px; padding: 8px;">{logs[provider]}</pre>
 </details>''')
         if add_header:
