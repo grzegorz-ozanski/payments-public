@@ -30,7 +30,7 @@ def parse_log(path: str | Path) -> dict[str, str]:
     def flush() -> None:
         nonlocal current_name, current_lines
         if current_name is not None:
-            out[current_name] = '<br/>'.join(current_lines)
+            out[current_name] = '\n'.join(current_lines)
         current_name = None
         current_lines = []
 
