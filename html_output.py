@@ -82,7 +82,8 @@ def encode(string: str) -> str:
 
 def html_output(log_file: Path | str,
                 output_file: Path | str,
-                html_file: Path | str) -> None:
+                html_file: Path | str,
+                add_header: bool = True) -> None:
     log_file_path = Path(log_file)
     html_file_path = Path(html_file)
     output_file_path = Path(output_file)
@@ -90,14 +91,16 @@ def html_output(log_file: Path | str,
     output = parse_output(output_file_path)
 
     with open(html_file_path, 'w') as f:
-        f.write(HTML_HEADER)
+        if add_header:
+            f.write(HTML_HEADER)
         for provider in output.keys():
             f.write(f'''
             <details>
                 <summary>{encode(output[provider])}</summary>
                 <code>{logs[provider]}</code>
             </details>''')
-        f.write(HTML_FOOTER)
+        if add_header:
+            f.write(HTML_FOOTER)
 
 def parse_args() -> argparse.Namespace:
     """
@@ -117,12 +120,13 @@ def parse_args() -> argparse.Namespace:
                         help='log file path')
     parser.add_argument('-o', '--output-file', required=True, type=Path,
                         help='payments output file path')
-
+    parser.add_argument('-n', '--no-header', required=False, action='store_true', default=False,
+                        help='do not add HTML header (for embedding in GitHub workflow summary)')
     return parser.parse_args()
 
 def main() -> None:
     args = parse_args()
-    html_output(args.log_file, args.output_file, args.html_file)
+    html_output(args.log_file, args.output_file, args.html_file, not args.no_header)
 
 if __name__ == '__main__':
     main()
