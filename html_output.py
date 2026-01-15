@@ -13,26 +13,8 @@ HTML_HEADER = '''<!DOCTYPE html>
 <html>
   <head/>
   <body>
-    <div class="my-embed">
-      <style>
-      .my-embed summary {
-          list-style: none;
-          cursor: pointer;
-      }
-
-      .my-embed summary::-webkit-details-marker {
-          display: none;
-      }
-
-      .my-embed .log {
-          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
-                      "Liberation Mono", monospace;
-          font-size: 16px;
-          white-space: pre;
-      }
-      </style>'''
+'''
 HTML_FOOTER = '''\
-    </div>
   </body>
 </html>
 '''
@@ -112,7 +94,7 @@ def html_output(log_file: Path | str,
         for provider in output.keys():
             f.write(f'''
             <details>
-                <summary class="log">{encode(output[provider])}</summary>
+                <summary>{encode(output[provider])}</summary>
                 <code>{logs[provider]}</code>
             </details>''')
         f.write(HTML_FOOTER)
