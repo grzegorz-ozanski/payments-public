@@ -97,7 +97,7 @@ def html_output(log_file: Path | str,
             f.write(f'''\
 <details>
     <summary>{encode(output[provider])}</summary>
-    <pre>{logs[provider]}</pre>
+    <pre>{encode(logs[provider])}</pre>
 </details>''')
         if add_header:
             f.write(HTML_FOOTER)
