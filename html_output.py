@@ -94,11 +94,11 @@ def html_output(log_file: Path | str,
         if add_header:
             f.write(HTML_HEADER)
         for provider in output.keys():
-            f.write(f'''
-            <details>
-                <summary>{encode(output[provider])}</summary>
-                <code>{logs[provider]}</code>
-            </details>''')
+            f.write(f'''\
+<details>
+    <summary>{encode(output[provider])}</summary>
+    <code>{logs[provider]}</code>
+</details>''')
         if add_header:
             f.write(HTML_FOOTER)
 

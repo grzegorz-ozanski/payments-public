@@ -102,9 +102,10 @@ Append-IfExists "transition=${transition}" $GitHubOutput
 
 - **Previous run status**: $(Get-Emoji $emojis $PreviousJobStatus) $PreviousJobStatus
 - **Current comparison status**: $(Get-Emoji $emojis $current) $CompareStatus
+- 📃**Script Output**:
 "@ | Append-IfExists -Path $GitHubSummary
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
-  Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
+#   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
 #   Get-Content -Path $ScriptOutput -Raw | Append-IfExists -Path $GitHubSummary -Blockquote $true
   Get-Content -Path $ScriptOutput -Raw | Append-IfExists -Path $GitHubSummary
 }
