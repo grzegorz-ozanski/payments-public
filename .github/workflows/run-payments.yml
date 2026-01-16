@@ -27,7 +27,7 @@ on:
         type: string
       debug_workflow:
         required: false
-        default: true
+        default: false
         type: boolean
     secrets:
       GMAIL_USERNAME:
