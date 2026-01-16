@@ -100,9 +100,9 @@ Append-IfExists "transition=${transition}" $GitHubOutput
 @"
 # 🛠️ Workflow summary
 
-## **Previous run status**: $(Get-Emoji $emojis $PreviousJobStatus) $PreviousJobStatus
-## **Current comparison status**: $(Get-Emoji $emojis $current) $CompareStatus
-## 📃**Script Output**:
+### **Previous run status**: $(Get-Emoji $emojis $PreviousJobStatus) $PreviousJobStatus
+### **Current comparison status**: $(Get-Emoji $emojis $current) $CompareStatus
+### 📃**Script Output**:
 "@ | Append-IfExists -Path $GitHubSummary
 if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
 #   Append-IfExists "- 📃**Script Output**:" -Path $GitHubSummary
@@ -110,6 +110,6 @@ if ($ScriptOutput -and (Test-Path $ScriptOutput)) {
   (Get-Content -Path $ScriptOutput -Raw).TrimEnd() + "`n`n" | Append-IfExists -Path $GitHubSummary
 }
 if ($DiffFile -and (Test-Path $DiffFile) -and ($CompareStatus -eq "changed")) {
-  Append-IfExists "## 🟥🟩**Diff**:" -Path $GitHubSummary
+  Append-IfExists "### 🟥🟩**Diff**:" -Path $GitHubSummary
   Get-Content -Path $DiffFile -Raw | Append-IfExists -Path $GitHubSummary -Blockquote $true
 }
