@@ -43,7 +43,8 @@ on:
 # Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
 env:
   ACTUAL_CONTENT: actual.txt
-  BROWSER_LOG_FILENAME: trace.log
+#  BROWSER_LOG_FILENAME: trace.log
+  BROWSER_LOG_FILENAME: .github/data/test_trace.log
   BROWSER_LOG_TO_CONSOLE: False
   CHROMEDRIVER_VERSION: chromedriver-chrome-134.0.6944.0
   DIFF_FILE: diff.txt
@@ -53,8 +54,9 @@ env:
   LOCAL_ARTIFACTS_LINUX: /runner/artifacts
   REFERENCE_CONTENT: reference.txt
   REFERENCE_OUTPUT: .github/data/reference_output.txt
-  SCRIPT_OUTPUT: script_output.txt
-#  SCRIPT_OUTPUT: .github/data/test_output.txt
+#  SCRIPT_OUTPUT: script_output.txt
+  SCRIPT_OUTPUT: .github/data/test_output.txt
+  SCRIPT_HTML: script_output.html
   STATUS_FILE: .github/status/last-status.txt
   # Scripts
   COMPARE_SCRIPT: .github/scripts/compare-output.ps1
@@ -164,6 +166,12 @@ jobs:
         Copy-Item -Path temp_testdata/* -Destination .github/data -Recurse -Force
         Remove-Item -Recurse -Force temp_testdata
 
+    - name: Generate HTML output
+      continue-on-error: true
+      shell: pwsh
+      run: |
+        python html_output.py -o ${env:SCRIPT_OUTPUT} -l ${{ env.BROWSER_LOG_FILENAME }} -H ${{ env.SCRIPT_HTML }} -n
+
     - name: Compare script output with reference
       id: compare
       shell: pwsh
@@ -250,7 +258,7 @@ jobs:
         pwsh -File ${env:STATUS_SCRIPT} `
         "${{ steps.readstatus.outputs.previous }}" `
         "${{ steps.compare.outputs.status }}" `
-        ${env:SCRIPT_OUTPUT} `
+        ${env:SCRIPT_HTML} `
         ${env:DIFF_FILE} `
         ${env:GITHUB_OUTPUT} `
         ${env:GITHUB_STEP_SUMMARY}
