@@ -6,7 +6,7 @@ from typing import Any
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import Browser, BrowserOptions, Locator, WebLogger
+from browser import Browser, BrowserOptions, Locator
 from payments.payment import Payment
 from providers.provider import Provider
 
@@ -114,21 +114,3 @@ class MockWebElement(WebElement):
     def send_keys(self, *value: str) -> None:
         """Mock send_keys method."""
         pass
-
-class MockWeblogger(WebLogger):
-    """Mock implementation of a weblogger for testing."""
-
-    # we do want not to invoke an actual constructor for this mock
-    # noinspection PyMissingConstructor
-    def __init__(self, _: str, __: MockBrowser) -> None:
-        pass
-
-    def web_error(self) -> None:
-        """Mock error method."""
-        pass
-
-    def web_trace(self, reason: str) -> None:
-        """Mock trace method."""
-        pass
-
-

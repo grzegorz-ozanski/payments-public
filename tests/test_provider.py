@@ -9,7 +9,7 @@ from _pytest.capture import CaptureFixture
 from selenium.webdriver.common.by import By
 
 from browser import Locator
-from mocks import DummyProvider, MockBrowser, MockWeblogger
+from mocks import DummyProvider, MockBrowser
 from payments import DueDate, Amount
 from providers.provider import Provider
 
@@ -50,7 +50,6 @@ def test_get_location_unknown_logs_error(caplog: pytest.LogCaptureFixture) -> No
         assert 'Cannot find location for provider' in caplog.text
 
 
-@patch('providers.provider.WebLogger', new=MockWeblogger)
 @patch('credentials.Credential.get', return_value='dummy')
 def test_payments_fetch_error(mock_cred: Any, capsys: CaptureFixture[str]) -> None:
     """Test whether payments are sorted according to known locations."""
