@@ -41,7 +41,7 @@ chmod +x .git/hooks/pre-push .git/hooks/pre-commit
 ## ⚙️ Configuration
 
 You can configure logging and browser behavior via environment variables.  
-See [`browser/README.md`](browser/README.md) for full details.
+See README.md of the browser library for full details.
 
 ## 🔐 Credentials
 

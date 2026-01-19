@@ -30,10 +30,10 @@ class DummyProvider(Provider):
         self.name = name
         self._test_payments = payments
 
-    def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
+    def login(self, browser: Browser, load: bool = True) -> None:
         pass
 
-    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Return predefined payments or static defaults."""
         if self._test_payments is not None:
             return self._test_payments
@@ -123,11 +123,11 @@ class MockWeblogger(WebLogger):
     def __init__(self, _: str, __: MockBrowser) -> None:
         pass
 
-    def error(self) -> None:
+    def web_error(self) -> None:
         """Mock error method."""
         pass
 
-    def trace(self, suffix: str) -> None:
+    def web_trace(self, reason: str) -> None:
         """Mock trace method."""
         pass
 

@@ -3,7 +3,7 @@
 """
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, Locator, WebLogger
+from browser import setup_logging, Browser, Locator
 from payments import Payment, DueDate
 from providers.login.two_stage import TwoStageLogin
 from providers.provider import Provider
@@ -41,7 +41,7 @@ class Vectra(Provider):
                          overlay_buttons=Locator(By.ID, 'cookiescript_accept'),
                          login_strategy=TwoStageLogin)
 
-    def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
+    def login(self, browser: Browser, load: bool = True) -> None:
         if load:
             self.load(browser)
 
@@ -49,7 +49,7 @@ class Vectra(Provider):
             self.logged_in = True
             return
 
-        super().login(browser, weblogger, False)
+        super().login(browser, False)
         if browser.wait_for_page_element(TWO_FACTOR_AUTH_BUTTON, 2):
             if browser.options.headless:
                 self.payment_comment = '2FA is needed to login to service'
@@ -60,7 +60,7 @@ class Vectra(Provider):
                 input('2FA is needed to login to service. '
                       'Input 2FA code in the page and press <ENTER> to continue...')
 
-    def logout(self, browser: Browser, weblogger: WebLogger) -> None:
+    def logout(self, browser: Browser) -> None:
         """
         Log out the user from Vectra web portal.
         """
@@ -80,7 +80,7 @@ class Vectra(Provider):
         else:
             log.debug("Logout error: user menu not found, are we logged in?")
 
-    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         # Verify if we are logged in
         if not browser.wait_for_page_element(MAIN_DASHBOARD):
             return [Payment(self.name,

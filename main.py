@@ -127,6 +127,5 @@ def main() -> None:
     print('Finished at %s' % end_time)
     print('Took %s ' % (end_time - begin_time))
 
-
 if __name__ == '__main__':
     main()

@@ -3,7 +3,7 @@
 """
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, Locator, PageElement, WebLogger
+from browser import setup_logging, Browser, Locator, PageElement
 from payments import Amount, Payment
 from providers.provider import Provider
 
@@ -52,14 +52,14 @@ class Opec2(Provider):
         """Initialize OPEC service with given locations."""
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
 
-    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         TermsOfService(browser).accept()
-        weblogger.trace('pre-amount')
+        log.web_trace('pre-amount')
         amount_item = browser.wait_for_page_element(AMOUNT, 2)
         if not amount_item:
             raise RuntimeError('Unexpected error: total amount web item not found')
         amount = amount_item.text
-        weblogger.trace('pre-months-table-0')
+        log.web_trace('pre-months-table-0')
         months_table: PageElement | None = browser.find_page_element(MONTHS_TABLE)
         if not months_table:
             return [Payment(self.name, self.locations[0], amount=amount)]
@@ -67,16 +67,16 @@ class Opec2(Provider):
         due_date = ''
         for i in range(month_entries):
             if i > 0:
-                weblogger.trace(f'pre-months-table-{i}')
+                log.web_trace(f'pre-months-table-{i}')
                 months_table = browser.wait_for_page_element(MONTHS_TABLE)
                 if not months_table:
                     raise RuntimeError('Months table not found after page reload!')
             months = months_table.find_page_elements(MONTH_TABLE_ROW)
-            weblogger.trace(f'pre-months-table-{i}-click')
+            log.web_trace(f'pre-months-table-{i}-click')
             months[i].click()
             payments = browser.wait_for_page_element(PAYMENTS_TABLE, 1)
             if payments:
-                weblogger.trace(f'pre-payments-month-{i}-click')
+                log.web_trace(f'pre-payments-month-{i}-click')
                 matches = [row.find_page_element(Columns.DueDate).text
                            for row in payments.find_page_elements(PAYMENTS_TABLE_ROW)
                            if Amount(row.find_page_element(Columns.Amount)) == Amount(amount)]

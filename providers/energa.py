@@ -4,7 +4,7 @@
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, Locator, WebLogger
+from browser import setup_logging, Browser, Locator
 from payments import Amount, DueDate, Payment
 from providers.provider import Provider
 
@@ -50,7 +50,7 @@ class Energa(Provider):
         super().__init__(SERVICE_URL, locations, user_input, password_input,
                          overlay_buttons=Locator(By.ID, 'kc-switch-button'))
 
-    def logout(self, browser: Browser, weblogger: WebLogger) -> None:
+    def logout(self, browser: Browser) -> None:
         """
         Log out the user from the Energa web portal.
         """
@@ -61,10 +61,10 @@ class Energa(Provider):
         try:
             browser.wait_for_page_element_disappear(OVERLAY)
             browser.click_page_element(USER_MENU)
-            weblogger.trace('pre-logout-click')
+            log.web_trace('pre-logout-click')
             browser.click_page_element(LOGOUT_BUTTON)
         except (AttributeError, ElementNotInteractableException, TimeoutError) as e:
-            weblogger.error()
+            log.web_error()
             if type(e) is AttributeError:
                 if 'move_to requires a WebElement' in str(e):
                     log.debug('Cannot click logout button. Are we even logged in?')
@@ -73,18 +73,18 @@ class Energa(Provider):
         except NoSuchElementException:
             log.debug('Cannot click logout button. Are we even logged in?')
 
-    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """
         Read and return payment data for all user locations.
         """
         log.info('Getting payments...')
-        weblogger.trace('accounts-list')
+        log.web_trace('accounts-list')
         locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
         if not locations_list_or_none:
             button = browser.wait_for_page_element(OVERLAY_BUTTON)
             if button:
                 browser.trace_click(button)
-                weblogger.trace('accounts-list-after-overlay')
+                log.web_trace('accounts-list-after-overlay')
                 locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
             else:
                 raise RuntimeError('Locations list is empty and no overlay was found!')
@@ -97,7 +97,7 @@ class Energa(Provider):
         for location_id in range(len(locations_list)):
             print(f'...location {location_id + 1} of {len(locations_list)}')
             log.debug('Opening location page')
-            weblogger.trace('pre-location-click')
+            log.web_trace('pre-location-click')
             browser.click_element_using_js(locations_list[location_id])
             # If a 'button.primary' exists, there is probably a message displayed that needs to be dismissed before continuing —
             # unless its text is "Zapłać teraz", which indicates we're already on the target page
@@ -112,7 +112,7 @@ class Energa(Provider):
                 log.error("Could not retrieve location #%s!", location_id)
                 continue
             log.debug('Getting payment')
-            weblogger.trace('pre-invoices-click')
+            log.web_trace('pre-invoices-click')
             invoices_button = browser.wait_for_page_element(INVOICES_TAB)
             if not invoices_button:
                 raise RuntimeError(f'Could not find invoices button for location {location}!')
@@ -123,7 +123,7 @@ class Energa(Provider):
             if all_paid is None:
                 # Energa page renders invoices list in two ways
                 invoices = browser.wait_for_page_element(DUE_DATE_LABEL)
-                weblogger.trace('duedate-check')
+                log.web_trace('duedate-check')
                 if invoices:
                     due_date = invoices.text
                 else:

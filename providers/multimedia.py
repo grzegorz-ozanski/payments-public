@@ -5,7 +5,7 @@ from time import sleep
 
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, Locator, WebLogger
+from browser import setup_logging, Browser, Locator
 from payments import Payment
 from providers.provider import Provider
 
@@ -47,13 +47,13 @@ class Multimedia(Provider):
                          needs_clear_user_profile=True,
                          pre_login_delay=1)
 
-    def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
+    def login(self, browser: Browser, load: bool = True) -> None:
         """Retryable login with detection of CAPTCHA and password change."""
         num_retries = 10
         for i in range(num_retries):
             log.debug(f'Login attempt {i + 1}')
             try:
-                super().login(browser, weblogger, load if i == 0 else False)
+                super().login(browser, load if i == 0 else False)
             except Exception as ex:
                 log.debug('Unexpectedly unhandled exception in %s.login(): %s',
                           self.__class__.__bases__[0].__name__, ex)
@@ -64,7 +64,7 @@ class Multimedia(Provider):
 
             if browser.wait_for_page_element(LOGIN_ERROR_TEXT, 2):
                 log.debug('Login failure detected, retrying...')
-                weblogger.trace(f'failed-login-attempt-{i}')
+                log.web_trace(f'failed-login-attempt-{i}')
             elif all(browser.find_page_elements(element) for element in PASSWORD_CHANGE_ELEMENTS):
                 raise RuntimeError("Couldn't login, reason: password change required")
             else:
@@ -77,7 +77,7 @@ class Multimedia(Provider):
                     self.logged_in = True
                     return
                 log.debug('Undetected login failure, retrying...')
-                weblogger.trace(f'failed-login-attempt-unknown-{i}')
+                log.web_trace(f'failed-login-attempt-unknown-{i}')
 
         reason = 'unknown'
         if browser.find_page_elements(CAPTCHA_FORM):
@@ -91,7 +91,7 @@ class Multimedia(Provider):
         except StopIteration:
             raise Exception(f"Cannot find suitable location for payment '{amount}'!")
 
-    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Extracts payment records from the invoice list."""
         log.info('Getting payments...')
         sleep(0.1)

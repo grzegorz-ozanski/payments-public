@@ -11,7 +11,7 @@ import time
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 
-from browser import setup_logging, Browser, Locator, WebLogger
+from browser import Browser, Locator, setup_logging
 from payments import Payment
 from providers.login.base import BaseLogin
 from credentials import Credentials
@@ -76,22 +76,22 @@ class Provider:
 
     def get_payments(self, browser: Browser) -> list[Payment]:
         """Log in and fetch payments, return fallback on failure."""
-        weblogger = WebLogger(self.name, browser)
-        try:
-            message = f'Getting payments for service {self.name}...'
-            log.debug(message)
-            self.login(browser, weblogger)
-            payments = sorted(self._fetch_payments(browser, weblogger),
-                              key=lambda value: self._location_order.get(value.location, float('inf')))
-        except Exception as e:
-            msg = f'{e.__class__.__name__}: {str(e)}\nCannot get payments for service {self.name}!'
-            log.exception(msg)
-            print(msg)
-            weblogger.error()
-            payments = [Payment(self.name, location, None, None, str(e)) for location in self.locations]
-        finally:
-            self.logout(browser, weblogger)
-        return payments
+        with log.browser(browser):
+            try:
+                message = f'Getting payments for service {self.name}...'
+                log.debug(message)
+                self.login(browser)
+                payments = sorted(self._fetch_payments(browser),
+                                  key=lambda value: self._location_order.get(value.location, float('inf')))
+            except Exception as e:
+                msg = f'{e.__class__.__name__}: {str(e)}\nCannot get payments for service {self.name}!'
+                log.exception(msg)
+                print(msg)
+                log.web_error()
+                payments = [Payment(self.name, location, None, None, str(e)) for location in self.locations]
+            finally:
+                self.logout(browser)
+            return payments
 
     def load(self, browser: Browser) -> None:
         """ Opens the login page """
@@ -105,22 +105,22 @@ class Provider:
             if webelement:
                 browser.safe_click_page_element(overlay_button)
 
-    def login(self, browser: Browser, weblogger: WebLogger, load: bool = True) -> None:
+    def login(self, browser: Browser, load: bool = True) -> None:
         """Perform login in the web application."""
         try:
             if load:
                 self.load(browser)
 
             log.info('Logging into service...')
-            weblogger.trace('pre-login')
+            log.web_trace('pre-login')
             _sleep_with_message(self.pre_login_delay, 'Pre-login')
 
-            self.login_strategy.execute(browser, weblogger)
+            self.login_strategy.execute(browser)
             log.debug('Form submitted')
 
             browser.wait_for_page_load_completed()
             _sleep_with_message(self.post_login_delay, 'Post-login')
-            weblogger.trace('post-login')
+            log.web_trace('post-login')
             log.info('Done.')
             self.logged_in = True
         except Exception as e:
@@ -128,25 +128,25 @@ class Provider:
                 # Let the further code decide if the page really failed to load
                 return
             log.info('Cannot login into service: %s' % e)
-            weblogger.error()
+            log.web_error()
             raise
 
-    def logout(self, browser: Browser, weblogger: WebLogger) -> None:
+    def logout(self, browser: Browser) -> None:
         """Click the logout button and wait for the page to finish logging out."""
         if not self.logged_in:
             log.debug("Not logged in into service '%s', skipping logout", self.name)
             return
         try:
-            weblogger.trace('pre-logout')
+            log.web_trace('pre-logout')
             browser.find_and_click_page_element_using_js(self.logout_button)
             browser.wait_for_page_inactive(2)
-            weblogger.trace('post-logout')
+            log.web_trace('post-logout')
         except NoSuchElementException:
             log.debug('Cannot click logout button. Are we even logged in?')
         except WebDriverException:
-            weblogger.error()
+            log.web_error()
 
-    def _fetch_payments(self, browser: Browser, weblogger: WebLogger) -> list[Payment]:
+    def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Must be overridden in subclasses to return actual payments."""
         raise NotImplementedError(f'{self.__class__.__name__} must override _fetch_payments().')
 

@@ -6,8 +6,10 @@ import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
-from browser import Browser, Locator, WebLogger, PageElement
+from browser import Browser, Locator, PageElement, setup_logging
 from credentials import Credentials
+
+log = setup_logging(__name__)
 
 class BaseLogin:
     """Base login strategy class."""
@@ -17,35 +19,32 @@ class BaseLogin:
         self.password_input_selector = password_input
         self.credentials = credentials
 
-    def execute(self, browser: Browser, weblogger: WebLogger) -> None:
+    def execute(self, browser: Browser) -> None:
         """
         Executes login to a service.
 
         :param browser: Browser object
-        :param weblogger: WebLogger object
         """
         raise NotImplementedError(f'{self.__class__.__name__} must override execute().')
 
-    def find_username_input(self, browser: Browser, weblogger: WebLogger) -> PageElement | None:
+    def find_username_input(self, browser: Browser) -> PageElement | None:
         """
         Finds the username input for the service.
 
         :param browser: Browser object
-        :param weblogger: WebLogger object
 
         :return: username input found or None if timeout expired
         """
         input_user = browser.wait_for_page_element(self.user_input_selector)
         if input_user is None:
             print(f'No user input {self.user_input_selector} found!')
-            weblogger.error()
+            log.web_error()
         return input_user
 
-    def find_password_input(self, browser: Browser, weblogger: WebLogger, timeout: int | None = None) -> PageElement | None:
+    def find_password_input(self, browser: Browser, timeout: int | None = None) -> PageElement | None:
         """
         Finds the password input for the service.
         :param browser: Browser object
-        :param weblogger: weblogger object
         :param timeout: timeout value or None if default browser timeout should be used
 
         :return: password input found or None if timeout expired
@@ -53,7 +52,7 @@ class BaseLogin:
         input_password = browser.wait_for_page_element(self.password_input_selector, timeout)
         if input_password is None:
             print(f'No password input {self.password_input_selector} found!')
-            weblogger.error()
+            log.web_error()
         return input_password
 
     def input_username(self, browser: Browser, username_input_box: WebElement, username: str) -> None:
