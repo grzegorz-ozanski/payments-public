@@ -2,7 +2,7 @@ name: Run payments on Windows
 
 on:
   schedule:
-    - cron: "15 8 * * *" # Daily @8.15
+    - cron: "5 7 * * *" # Daily @8.05
   workflow_dispatch:
     inputs:
       dump:
