@@ -1,6 +1,7 @@
 """
     Multimedia (TV) provider module.
 """
+from os import getenv
 from time import sleep
 
 from selenium.webdriver.common.by import By
@@ -39,6 +40,7 @@ class Multimedia(Provider):
         """
         self._locations_map = locations
         locations_tuple = tuple(locations.values())
+        self.debug_login = getenv('PAYMENTS_DEBUG_MULTIMEDIA_LOGIN', '0') == '1'
         super().__init__(SERVICE_URL,
                          locations_tuple,
                          USER_INPUT,
@@ -52,6 +54,8 @@ class Multimedia(Provider):
         num_retries = 10
         for i in range(num_retries):
             log.debug(f'Login attempt {i + 1}')
+            if self.debug_login and i > 0:
+                input('Press ENTER to continue...')
             try:
                 super().login(browser, load if i == 0 else False)
             except Exception as ex:
