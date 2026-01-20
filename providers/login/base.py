@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
 from browser import Browser, Locator, PageElement, setup_logging
-from credentials import Credentials
+from credentials.credentials import Credentials
 
 log = setup_logging(__name__)
 

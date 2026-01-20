@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 
 from browser import Browser, Locator, setup_logging
 from providers.login.base import BaseLogin
-from credentials import Credentials
+from credentials.credentials import Credentials
 
 log = setup_logging(__name__)
 
