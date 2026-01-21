@@ -10,6 +10,23 @@ from browser import setup_logging
 
 log = setup_logging(__name__)
 
+
+def to_string(payments: list[Payment]) -> str:
+    """
+    Export all payments to string, adding padding
+    """
+    max_len_provider = 0
+    max_len_amount = 0
+    max_len_location = 0
+
+    for payment in payments:
+        max_len_provider = max(max_len_provider, len(payment.provider))
+        max_len_amount = max(max_len_amount, len(str(payment.amount)))
+        max_len_location = max(max_len_location, len(payment.location))
+    return '\n'.join([payment.to_padded_string([max_len_provider, max_len_amount, max_len_location])
+                      for payment in payments])
+
+
 class PaymentsManager:
     """
     Collect and export all payments as alligned text
@@ -18,7 +35,6 @@ class PaymentsManager:
         """
         If a single item is provided, change it into the one-element list
         """
-        self.payments: list[Payment] = []
         self.providers: LookupList[Provider]
         if isinstance(providers, Provider):
             self.providers = LookupList[Provider](providers)
@@ -32,27 +48,32 @@ class PaymentsManager:
     def __repr__(self) -> str:
         return '\n'.join(map(str, self.providers))
 
-    def collect_fake_payments(self, filename: str) -> None:
+    def collect_fake(self, filename: str) -> str:
         """
         Collect payments for all providers
         """
+        payments: list[Payment] = []
         with open(filename) as file:
             for line in file.readlines():
-                provider, amount, location_name, due_date = line.strip().split(' ')
+                provider, amount, location_name, due_date = ' '.join(line.split()).strip().split()
+                if provider not in (prov.name for prov in self.providers):
+                    continue
                 if due_date == '{{TODAY}}':
                     due_date = 'today'
-                self.payments += [Payment(provider,
-                                          location_name,
-                                          due_date,
-                                          amount)]
+                payments += [Payment(provider,
+                                     location_name,
+                                     due_date,
+                                     amount)]
+        return to_string(payments)
 
-    def collect_payments(self, options: BrowserOptions, browser_class: type[Browser] = Browser) -> None:
+    def collect(self, options: BrowserOptions, browser_class: type[Browser] = Browser) -> str:
         """
         Collect payments for all providers and return them as string
         :param options: Browser options
         :param browser_class: Browser class
         :return:
         """
+        payments: list[Payment] = []
         manager = BrowserManager(options, browser_class)
         for provider in self.providers:
             message = f'Processing service {provider.name}...'
@@ -61,19 +82,5 @@ class PaymentsManager:
                 sep = '*' * len(message)
                 message = f'\n{sep}\n{message}\n{sep}'
                 log.debug(message)
-            self.payments += provider.get_payments(manager.get(provider.needs_clear_user_profile))
-
-    def to_string(self) -> str:
-        """
-        Export all payments to string, adding padding
-        """
-        max_len_provider = 0
-        max_len_amount = 0
-        max_len_location = 0
-
-        for payment in self.payments:
-            max_len_provider = max(max_len_provider, len(payment.provider))
-            max_len_amount = max(max_len_amount, len(str(payment.amount)))
-            max_len_location = max(max_len_location, len(payment.location))
-        return '\n'.join([payment.to_padded_string([max_len_provider, max_len_amount, max_len_location])
-                          for payment in self.payments])
+            payments += provider.get_payments(manager.get(provider.needs_clear_user_profile))
+        return to_string(payments)

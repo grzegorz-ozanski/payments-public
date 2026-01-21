@@ -9,6 +9,7 @@ import os
 import sys
 from argparse import Namespace
 from enum import StrEnum
+from typing import Sequence
 
 from str_to_bool import str_to_bool
 
@@ -164,10 +165,15 @@ def main() -> None:
         providers.Vectra(sezamowa)
     )
 
-    payments = PaymentsManager(providers_list['' or args.provider.lower()])
-    payments.collect_payments(options)
-    output = payments.to_string()
-    # payments.collect_fake_payments(r'.github\data\test_output.txt')
+    selected_providers: providers.Provider | Sequence[providers.Provider]
+    if args_provider := args.provider.lower():
+        selected_providers = [provider for provider in providers_list if provider.name in
+                              [name.strip() for name in args_provider.split(',')]]
+    else:
+        selected_providers = providers_list['']
+    payments = PaymentsManager(selected_providers)
+    output = payments.collect(options)
+    # output = payments.collect_fake(r'.github\data\test_output.txt')
     print(output)
     if args.output:
         with open(args.output, 'w', encoding='utf-8') as stream:

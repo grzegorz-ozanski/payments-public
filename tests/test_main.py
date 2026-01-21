@@ -44,7 +44,7 @@ def test_main_prints_output(monkeypatch: MonkeyPatch, capsys: CaptureFixture[str
     setup_args(monkeypatch)
     with patch('main.PaymentsManager') as mock_mgr_cls, patch('main.LookupList') as mock_lookup:
         dummy_mgr = MagicMock()
-        dummy_mgr.to_string.return_value = 'TEST_OUTPUT'
+        dummy_mgr.collect.return_value = 'TEST_OUTPUT'
         mock_mgr_cls.return_value = dummy_mgr
         mock_lookup.return_value.__getitem__.return_value = ['provider']
 
@@ -61,7 +61,7 @@ def test_main_writes_to_file(monkeypatch: MonkeyPatch) -> None:
 
     with patch('main.PaymentsManager') as mock_mgr_cls, patch('main.LookupList') as mock_lookup:
         mgr = MagicMock()
-        mgr.to_string.return_value = 'WYNIK'
+        mgr.collect.return_value = 'WYNIK'
         mock_mgr_cls.return_value = mgr
         mock_lookup.return_value.__getitem__.return_value = ['provider']
 
