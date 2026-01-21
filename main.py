@@ -2,6 +2,7 @@
     Main application entry point
 """
 import argparse
+import ctypes
 import datetime
 import logging
 import os
@@ -32,6 +33,27 @@ def is_debugger_active() -> bool:
     """
     return sys.gettrace() is not None or 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS' in os.environ
 
+def is_elevated() -> bool:
+    """
+    Returns True if current process has admin/root privileges.
+    Cross-platform:
+      - Windows: checks token membership in Administrators group.
+      - POSIX: checks effective UID == 0.
+    """
+    if os.name == "nt":
+        try:
+            return bool(ctypes.windll.shell32.IsUserAnAdmin())
+        except Exception:
+            # Conservative fallback: if we can't tell, assume not elevated
+            return False
+    else:
+        # Linux/macOS/*BSD
+        geteuid = getattr(os, "geteuid", None)
+        if geteuid is None:
+            # Very unusual POSIX env without geteuid; fallback to uid if available
+            getuid = getattr(os, "getuid", None)
+            return bool(getuid and getuid() == 0)
+        return bool(geteuid() == 0)
 
 def parse_args() -> Namespace:
     """
@@ -95,6 +117,9 @@ def main() -> None:
 
     :return: None
     """
+    if os.getenv('RUNNER_VERSION') and is_elevated():
+        raise SystemExit('Covardly refusing to run with elevated privileges (admin/root)'
+                         ' in GitHub runner environment')
     begin_time = datetime.datetime.now()
     print(f'Starting at {datetime.datetime.now()}')
 
