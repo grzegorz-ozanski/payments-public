@@ -123,7 +123,7 @@ def html_output(log_file: Path | str,
     logs = parse_log(log_file_path)
     output = parse_output(output_file_path)
 
-    with open(html_file_path, 'w') as f:
+    with open(html_file_path, 'w', encoding='utf-8') as f:
         if add_header:
             f.write(HTML_HEADER)
         for provider in output.keys():
