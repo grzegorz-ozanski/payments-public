@@ -7,5 +7,5 @@ multimedia 90,00     Hodowlana 30-01-2026
 multimedia 77,00     Sezamowa  30-01-2026
 pewik      95,33     Sezamowa  21-01-2026
 opec2      2007,06   Sezamowa  15-01-2026
-nordhome   <unknown> Bryla     10-01-2026 #Timed out waiting for amount
+nordhome   <unknown> Bryla     10-01-2026
 vectra     9,99      Sezamowa  30-01-2026
