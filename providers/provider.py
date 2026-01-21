@@ -76,7 +76,7 @@ class Provider:
 
     def get_payments(self, browser: Browser) -> list[Payment]:
         """Log in and fetch payments, return fallback on failure."""
-        with log.browser(browser):
+        with log.browser(browser), log.group(self.name):
             try:
                 message = f'Getting payments for service {self.name}...'
                 log.debug(message)
