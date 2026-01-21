@@ -7,6 +7,7 @@ import logging
 import os
 import sys
 from argparse import Namespace
+from enum import StrEnum
 
 from str_to_bool import str_to_bool
 
@@ -16,6 +17,13 @@ from lookuplist import LookupList
 from payments import PaymentsManager
 
 log = setup_logging(__name__)
+
+class DebugFlags(StrEnum):
+    """
+    Application debugging flags
+    """
+    BROWSER_PROFILE = 'bp'
+    MULTIMEDIA_LOGIN = 'ml'
 
 
 def is_debugger_active() -> bool:
@@ -44,6 +52,10 @@ def parse_args() -> Namespace:
                         help='Clear browser user profile on exit')
     parser.add_argument('-l', '--headless', default=None, type=str_to_bool,
                         help='Toggle headless browser mode (default: auto)')
+    parser.add_argument('-d', '--debug',
+                        help='Comma-separated list of debug flags (implicates verbose mode)'
+                             f'({DebugFlags.BROWSER_PROFILE}: browser profile creation debugging, '
+                             f'{DebugFlags.MULTIMEDIA_LOGIN}: Multimedia provider login debugging)',)
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
     parser.add_argument('-p', '--provider', default='',
@@ -57,7 +69,20 @@ def parse_args() -> Namespace:
     parser.add_argument('--chrome-path',
                         help='Use provided Chrome binary instead of automatically downloading')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.debug:
+        args.verbose = True
+        for flag in [f.strip() for f in args.debug.split(',')]:
+            if flag == DebugFlags.BROWSER_PROFILE:
+                os.environ['BROWSER_DEBUG_PROFILE'] = '1'
+            elif flag == DebugFlags.MULTIMEDIA_LOGIN:
+                os.environ['PAYMENTS_DEBUG_MULTIMEDIA_LOGIN'] = '1'
+            else:
+                log.error(f'Unrecognized debug flag: {flag}')
+                parser.print_help()
+                exit(1)
+
+    return args
 
 
 def main() -> None:
