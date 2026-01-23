@@ -69,7 +69,7 @@ class BaseLogin:
     def input_password(self, password_input_box: WebElement, password: str) -> None:
         """
         Input the password for the service to the input box provided.
-        :param password_input_box: 
+        :param password_input_box: Password input box
         :param password: password
         """
         self.input(password_input_box, password)
