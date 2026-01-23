@@ -18,6 +18,7 @@ class BaseLogin:
         self.user_input_selector = user_input
         self.password_input_selector = password_input
         self.credentials = credentials
+        self.login_button: Locator | None = None
 
     def execute(self, browser: Browser) -> None:
         """
