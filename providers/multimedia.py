@@ -46,7 +46,7 @@ class Multimedia(Provider):
                          USER_INPUT,
                          PASSWORD_INPUT,
                          overlay_buttons=COOKIES_BUTTON,
-                         needs_clear_user_profile=False,
+                         needs_clear_user_profile=True,
                          pre_login_delay=1,
                          login_strategy=RecaptchaLogin)
         self.login_strategy.login_button = Locator(By.ID, 'LoginButton')
