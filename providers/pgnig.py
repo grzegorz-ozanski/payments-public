@@ -19,6 +19,8 @@ PASSWORD_INPUT = Locator(By.NAME, 'accessPin')
 
 READING_ADDRESS = Locator(By.CLASS_NAME, 'reading-adress')
 INVOICES_MENU = Locator(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
+ALL_INVOICES_PAID = Locator(By.XPATH,'//div[contains(@class,"last-invoice") and contains(@class,"blue")]'
+                                     '/strong[contains(text(), "Faktury są opłacone")]')
 
 INVOICE_ROW = Locator(By.CLASS_NAME, 'main-row-container')
 INVOICE_COLUMN = Locator(By.CLASS_NAME, 'columns')
@@ -45,6 +47,10 @@ class Pgnig(Provider):
         else:
             raise RuntimeError(f"Cannot find location element '{READING_ADDRESS}'!")
 
+        # If all invoices are paid, no point in processing the invoices list
+        if browser.find_page_elements(ALL_INVOICES_PAID):
+            log.info('All invoices paid, skipping processing invoices list')
+            return [Payment(self.name, location)]
         log.info('Getting invoices menu...')
         invoices_menu = browser.wait_for_page_element(INVOICES_MENU)
         log.info('Opening invoices menu...')
