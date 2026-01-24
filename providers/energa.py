@@ -36,6 +36,8 @@ USER_MENU = Locator(By.XPATH, '//button[contains(@class, "hover-submenu")]')
 LOGOUT_BUTTON = Locator(By.XPATH, '//span[contains(text(), "Wyloguj się")]')
 MESSAGE_BOX_CLOSE_BUTTON = Locator(By.CSS_SELECTOR, 'button.button.primary')
 
+MAINTENANCE_PATTERN = 'aktuali'
+
 class Energa(Provider):
     """
     Provider integration for the Energa electricity platform.
@@ -48,9 +50,18 @@ class Energa(Provider):
         user_input = Locator(By.ID, 'username')
         password_input = Locator(By.ID, 'password')
         super().__init__(SERVICE_URL, locations, user_input, password_input,
-                         overlay_buttons=Locator(By.ID, 'kc-switch-button'))
                          overlay_buttons=[Locator(By.ID, 'kc-switch-button'),
                                           Locator(By.ID, 'CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll')])
+        self.under_maintenance = False
+        
+    def login(self, browser: Browser, load: bool = True) -> None:
+        try:
+            super().login(browser, load)
+        except Exception:
+            if MAINTENANCE_PATTERN in browser.title.lower():
+                self.under_maintenance = True
+            else:
+                raise
 
     def logout(self, browser: Browser) -> None:
         """
@@ -80,6 +91,9 @@ class Energa(Provider):
         Read and return payment data for all user locations.
         """
         log.info('Getting payments...')
+        if self.under_maintenance:
+            return [Payment(self.name, location, None, None, 'Page under maintenance')
+                    for location in self.locations]
         log.web_trace('accounts-list')
         locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
         if not locations_list_or_none:
