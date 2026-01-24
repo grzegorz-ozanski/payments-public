@@ -52,20 +52,28 @@ def ensure_not_constant_axis(points: np.ndarray, axis: int, start: list[int], en
         return points
 
     divisor = random.choice((2, 3, 4)) # take a mid, third or quarter point
+    delta = random.uniform(50, 250)
 
+    new_points = [start]
     if axis == 0:
         # X constant -> perturb X a bit, and tweak Y based on existing point(s)
-        mid = [points[0, 0] + 100, points[1, 1] / divisor]
+        new_points.append([points[0, 0] + delta, points[1, 1] / divisor])
+        mid_count = random.choice((1, 2))
+        if mid_count == 2:
+            new_points.append([points[0, 0] - delta, points[1, 1] / divisor])
     else:
         # Y constant -> perturb Y a bit, and tweak X based on existing point(s)
-        mid = [points[1, 0] / divisor, points[0, 1] + 100]
+        new_points.append([points[1, 0] / divisor, points[0, 1] + delta])
+        mid_count = random.choice((1, 2))
+        if mid_count == 2:
+            new_points.append([points[1, 0] / divisor, points[0, 1] - delta])
+    new_points.append(end)
+    return np.array(new_points, dtype=float)
 
-    return np.array([start, mid, end], dtype=float)
-
-def move_from_to(browser: Browser,
-                 start_element: WebElement,
-                 end_element: WebElement,
-                 steps: int = 10) -> None:
+def _move_from_to(browser: Browser,
+                  start_element: WebElement,
+                  end_element: WebElement,
+                  steps: int = 10) -> None:
     """
     Move mouse pointer from one web element to another using interpolated B-spline curve
     :param browser: Browser object
@@ -95,7 +103,7 @@ def move_from_to(browser: Browser,
         time.sleep(random.uniform(0.01, 0.05))
 
 
-def input_delay(low: float = 0.05, high: float = 0.2) -> float:
+def _input_delay(low: float = 0.05, high: float = 0.2) -> float:
     """
     Generates a random input delay from a specified range
 
@@ -106,7 +114,7 @@ def input_delay(low: float = 0.05, high: float = 0.2) -> float:
     return random.uniform(low, high)
 
 
-def input_with_error(control: WebElement, text: str, error_rate: float) -> None:
+def _input_with_error(control: WebElement, text: str, error_rate: float) -> None:
     """
     Clear the input field and type the given text, introducing human-like errors at a specified rate
     :param control: input field to be cleared
@@ -117,7 +125,7 @@ def input_with_error(control: WebElement, text: str, error_rate: float) -> None:
     if control.get_attribute('value') != '':
         # Clear the input first if already contains any value
         control.send_keys(Keys.CONTROL, 'a')
-        time.sleep(input_delay())
+        time.sleep(_input_delay())
         if random.random() < 0.5:
             control.send_keys(Keys.DELETE)
         else:
@@ -130,7 +138,7 @@ def input_with_error(control: WebElement, text: str, error_rate: float) -> None:
             control.send_keys(random.choice(string.ascii_letters))
             time.sleep(random.uniform(0.5, 2))
             control.send_keys(Keys.BACKSPACE)
-        time.sleep(input_delay())
+        time.sleep(_input_delay())
 
 
 class RecaptchaLogin(BaseLogin):
@@ -159,7 +167,7 @@ class RecaptchaLogin(BaseLogin):
         """
         browser.click_page_element_with_retry_using_js(username_input_box, self.user_input_selector)
         time.sleep(0.5)
-        input_with_error(username_input_box, username, self.error_treshold.user)
+        _input_with_error(username_input_box, username, self.error_treshold.user)
 
     def input_password(self, password_input_box: WebElement, password: str) -> None:
         """
@@ -167,7 +175,7 @@ class RecaptchaLogin(BaseLogin):
         :param password_input_box:
         :param password: password
         """
-        input_with_error(password_input_box, password, self.error_treshold.password)
+        _input_with_error(password_input_box, password, self.error_treshold.password)
         time.sleep(0.5)
 
     def execute(self, browser: Browser) -> None:
@@ -182,7 +190,7 @@ class RecaptchaLogin(BaseLogin):
         username_value, password_value = self.get_credentials()
         self.input_username(browser, username_input, username_value)
         log.web_trace("username-input")
-        move_from_to(browser, username_input, password_input)
+        _move_from_to(browser, username_input, password_input)
         if random.random() < self.tab_key_treshold:
             log.debug('Using <TAB> to move to password input')
             password_input.send_keys(Keys.TAB)
