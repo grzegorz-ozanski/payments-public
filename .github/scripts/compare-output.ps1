@@ -40,7 +40,7 @@ function Is-Equal {
       [bool]$IgnoreWhitespace = $false
     )
 
-    $pattern = '^(\S+\s+)(\S+\s+)(\S+\s+)(\S+)$'
+    $pattern = '^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)(?:\s+(.*))?$'
     $leftMatch = [regex]::Match($Left, $pattern)
     $rightMatch = [regex]::Match($Right, $pattern)
     if (-not $leftMatch.Success -or
