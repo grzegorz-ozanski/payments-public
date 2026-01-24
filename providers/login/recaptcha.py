@@ -95,7 +95,7 @@ def move_from_to(browser: Browser,
         time.sleep(random.uniform(0.01, 0.05))
 
 
-def input_delay(low: float = 0.05, high: float = 0.5) -> float:
+def input_delay(low: float = 0.05, high: float = 0.2) -> float:
     """
     Generates a random input delay from a specified range
 
