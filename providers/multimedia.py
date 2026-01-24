@@ -45,7 +45,7 @@ class Multimedia(Provider):
                          locations_tuple,
                          USER_INPUT,
                          PASSWORD_INPUT,
-                         overlay_buttons=COOKIES_BUTTON,
+                         overlay_buttons=[COOKIES_BUTTON],
                          needs_clear_user_profile=True,
                          pre_login_delay=1,
                          login_strategy=RecaptchaLogin)

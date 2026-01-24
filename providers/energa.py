@@ -49,6 +49,8 @@ class Energa(Provider):
         password_input = Locator(By.ID, 'password')
         super().__init__(SERVICE_URL, locations, user_input, password_input,
                          overlay_buttons=Locator(By.ID, 'kc-switch-button'))
+                         overlay_buttons=[Locator(By.ID, 'kc-switch-button'),
+                                          Locator(By.ID, 'CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll')])
 
     def logout(self, browser: Browser) -> None:
         """

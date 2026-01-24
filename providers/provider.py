@@ -36,11 +36,16 @@ def _sleep_with_message(amount: int, message: str) -> None:
 class Provider:
     """Base class for a payment provider using Selenium."""
 
-    def __init__(self, url: str, locations: tuple[str, ...],
-                 user_input: Locator, password_input: Locator,
-                 logout_button: Locator | None = None, overlay_buttons: Locator | list[Locator] | None = None,
+    def __init__(self,
+                 url: str,
+                 locations: tuple[str, ...],
+                 user_input: Locator,
+                 password_input: Locator,
+                 logout_button: Locator | None = None,
+                 overlay_buttons: list[Locator] | None = None,
                  needs_clear_user_profile: bool = False,
-                 pre_login_delay: int = 0, post_login_delay: int = 0,
+                 pre_login_delay: int = 0,
+                 post_login_delay: int = 0,
                  login_strategy: type[BaseLogin] = OneStageLogin):
         """
         :param url: URL of the login page
@@ -62,9 +67,7 @@ class Provider:
                                              Credentials(self.name, 'username', 'password'))
 
         self.logout_button = logout_button or Locator(By.XPATH, DEFAULT_LOGOUT_XPATH)
-        self.overlay_buttons: list[Locator] = []
-        if overlay_buttons:
-            self.overlay_buttons = overlay_buttons if isinstance(overlay_buttons, list) else [overlay_buttons]
+        self.overlay_buttons = [] if overlay_buttons is None else overlay_buttons
         self.needs_clear_user_profile = needs_clear_user_profile
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay

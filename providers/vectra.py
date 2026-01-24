@@ -38,7 +38,7 @@ class Vectra(Provider):
         """Initialize OPEC service with given locations."""
         self.payment_comment = ''
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT,
-                         overlay_buttons=Locator(By.ID, 'cookiescript_accept'),
+                         overlay_buttons=[Locator(By.ID, 'cookiescript_accept')],
                          login_strategy=TwoStageLogin)
 
     def login(self, browser: Browser, load: bool = True) -> None:
