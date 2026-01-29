@@ -8,7 +8,7 @@
 """
 import time
 
-from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException, TimeoutException
 from selenium.webdriver.common.by import By
 
 from browser import Browser, Locator, setup_logging
@@ -106,7 +106,10 @@ class Provider:
             log.debug('Closing overlay button %s', overlay_button)
             webelement = browser.wait_for_page_element(overlay_button, 2)
             if webelement:
-                browser.safe_click_page_element(overlay_button)
+                try:
+                    browser.safe_click_page_element(overlay_button)
+                except TimeoutException:
+                    log.debug('Timeout expired waiting for button %s to become clickable!', overlay_button)
 
     def login(self, browser: Browser, load: bool = True) -> None:
         """Perform login in the web application."""

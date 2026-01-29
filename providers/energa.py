@@ -50,8 +50,8 @@ class Energa(Provider):
         user_input = Locator(By.ID, 'username')
         password_input = Locator(By.ID, 'password')
         super().__init__(SERVICE_URL, locations, user_input, password_input,
-                         overlay_buttons=[Locator(By.ID, 'kc-switch-button'),
-                                          Locator(By.ID, 'CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll')])
+                         overlay_buttons=[Locator(By.ID, 'CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll'),
+                                          Locator(By.ID, 'kc-switch-button')])
         self.under_maintenance = False
         
     def login(self, browser: Browser, load: bool = True) -> None:
