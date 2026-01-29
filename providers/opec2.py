@@ -31,19 +31,34 @@ class Columns:
 class TermsOfService:
     """ OPEC2 terms of service popup. """
     HEADER = Locator(By.XPATH, '//h1[normalize-space(.)="Regulamin"]')
-    BUTON_OPEN = Locator(By.CSS_SELECTOR, 'button[type=submit]')
+    BUTTON_OPEN = Locator(By.CSS_SELECTOR, 'button[type=submit]')
     HEADER_CLOSE = Locator(By.TAG_NAME, 'h1')
     BUTTON_CLOSE = Locator(By.TAG_NAME, 'button')
 
     def __init__(self, browser: Browser) -> None:
         self.browser = browser
 
-    def accept(self) -> None:
-        """ Closes the popup"""
+    def close(self) -> None:
+        """ Closes the popup """
         if self.browser.wait_for_page_element(self.HEADER, 2):
-            self.browser.find_page_element(self.BUTON_OPEN).click()
+            self.browser.find_page_element(self.BUTTON_OPEN).click()
             self.browser.wait_for_page_element(self.HEADER_CLOSE, 2)
             self.browser.find_page_element(self.BUTTON_CLOSE).click()
+
+class Message:
+    """ OPEC2 message popup. """
+    CLOSE_BUTTON = Locator(By.CSS_SELECTOR, 'button.sh-btn')
+    #TODO fix when appears again
+    MESSAGE_HEADER = Locator(By.XPATH, '//h3[contains(text(), "Wiadomości")]')
+
+    def __init__(self, browser: Browser) -> None:
+        self.browser = browser
+
+    def close(self) -> None:
+        """ Closes the message popup """
+        if self.browser.wait_for_page_element(self.MESSAGE_HEADER, 2):
+            self.browser.wait_for_page_element(self.CLOSE_BUTTON, 2).click()
+
 
 class Opec2(Provider):
     """OPEC provider for hot water and heating."""
@@ -53,7 +68,8 @@ class Opec2(Provider):
         super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT)
 
     def _fetch_payments(self, browser: Browser) -> list[Payment]:
-        TermsOfService(browser).accept()
+        for popup in TermsOfService, Message:
+            popup(browser).close()
         log.web_trace('pre-amount')
         amount_item = browser.wait_for_page_element(AMOUNT, 2)
         if not amount_item:
