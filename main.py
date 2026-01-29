@@ -170,7 +170,7 @@ def main() -> None:
         selected_providers = [provider for provider in providers_list if provider.name in
                               [name.strip() for name in args_provider.split(',')]]
         if not selected_providers:
-            print(f'ERROR: No providers can be found for provided argument {args_provider}')
+            print(f'ERROR: No providers can be found for provided argument "{args_provider}"')
     else:
         selected_providers = providers_list['']
     payments = PaymentsManager(selected_providers)
