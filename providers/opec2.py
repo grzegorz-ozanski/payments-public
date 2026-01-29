@@ -57,7 +57,7 @@ class Message:
     def close(self) -> None:
         """ Closes the message popup """
         if self.browser.wait_for_page_element(self.MESSAGE_HEADER, 2):
-            self.browser.wait_for_page_element(self.CLOSE_BUTTON, 2).click()
+            self.browser.find_page_element(self.CLOSE_BUTTON).click()
 
 
 class Opec2(Provider):
