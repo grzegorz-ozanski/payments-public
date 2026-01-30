@@ -93,14 +93,25 @@ def _move_from_to(browser: Browser,
     ipl_t = np.linspace(t[0], t[-1], steps)
 
     # Generate B-spline points for X and Y
-    x_i = np.rint(si.splev(ipl_t, si.splrep(t, x, k=1))).astype(int)
-    y_i = np.rint(si.splev(ipl_t, si.splrep(t, y, k=1))).astype(int)
+    dx = np.diff(np.rint(si.splev(ipl_t, si.splrep(t, x, k=1))).astype(int))
+    dy = np.diff(np.rint(si.splev(ipl_t, si.splrep(t, y, k=1))).astype(int))
     action = ActionChains(browser)
+    start_coords = _get_element_coords(start_element)
+    end_coords = _get_element_coords(end_element)
+    log.trace('Start point: (%d, %d)\n'
+              'End point: (%d, %d)',
+              start_coords[0], start_coords[1],
+              end_coords[0], end_coords[1])
     action.move_to_element(start_element).perform()
-    for mouse_x, mouse_y in zip(x_i, y_i):
-        log.debug('Mouse moved by (%s, %s)', mouse_x, mouse_y)
+    for mouse_x, mouse_y in zip(dx, dy):
+        start_coords[0], start_coords[1] = start_coords[0] + mouse_x, start_coords[1] + mouse_y
+        log.trace('Mouse moved by (%d, %d)\n'
+                  'Current location: (%d, %d)',
+                  mouse_x, mouse_y,
+                  start_coords[0], start_coords[1])
         action.move_by_offset(mouse_x, mouse_y).perform()
         time.sleep(random.uniform(0.01, 0.05))
+    log.trace('Mismatch: (%d, %d)' % (end_coords[0] - start_coords[0], end_coords[1] - start_coords[1]))
 
 
 def _input_delay(low: float = 0.05, high: float = 0.2) -> float:
