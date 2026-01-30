@@ -84,14 +84,17 @@ class Provider:
                 message = f'Getting payments for service {self.name}...'
                 log.debug(message)
                 self.login(browser)
-                payments = sorted(self._fetch_payments(browser),
-                                  key=lambda value: self._location_order.get(value.location, float('inf')))
+                if self.logged_in:
+                    payments = sorted(self._fetch_payments(browser),
+                                      key=lambda value: self._location_order.get(value.location, float('inf')))
+                else:
+                    payments = self._default_payments('Login error')
             except Exception as e:
                 msg = f'{e.__class__.__name__}: {str(e)}\nCannot get payments for service {self.name}!'
                 log.exception(msg)
                 print(msg)
                 log.web_error()
-                payments = [Payment(self.name, location, None, None, str(e)) for location in self.locations]
+                payments = self._default_payments(str(e))
             finally:
                 self.logout(browser)
             return payments
@@ -125,10 +128,11 @@ class Provider:
             log.debug('Form submitted')
 
             browser.wait_for_page_load_completed()
+            browser.wait_for_page_inactive()
             _sleep_with_message(self.post_login_delay, 'Post-login')
             log.web_trace('post-login')
             log.info('Done.')
-            self.logged_in = True
+            self.logged_in = self.login_strategy.verify(browser)
         except Exception as e:
             if 'Timed out receiving message from renderer' in str(e):
                 # Let the further code decide if the page really failed to load
@@ -151,6 +155,14 @@ class Provider:
             log.debug('Cannot click logout button. Are we even logged in?')
         except WebDriverException:
             log.web_error()
+
+    def _default_payments(self, message: str = '') -> list[Payment]:
+        return [Payment(self.name,
+                        location,
+                        None,
+                        None,
+                        message)
+                for location in self.locations]
 
     def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Must be overridden in subclasses to return actual payments."""

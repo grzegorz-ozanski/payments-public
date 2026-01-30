@@ -3,6 +3,7 @@
 """
 import time
 
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -91,6 +92,17 @@ class BaseLogin:
 
         return username_value, password_value
 
+    def verify(self, browser: Browser) -> bool:
+        """
+        Verify if login was successful.
+        :param browser: Browser object
+        :return: True on successful login, False otherwise
+        """
+        try:
+            browser.find_page_element(self.user_input_selector)
+        except NoSuchElementException:
+            return True
+        return False
 
     @staticmethod
     def input(control: WebElement, text: str) -> None:

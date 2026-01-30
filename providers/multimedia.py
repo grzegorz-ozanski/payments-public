@@ -68,7 +68,7 @@ class Multimedia(Provider):
                 continue
             browser.wait_for_page_inactive(2)
 
-            if browser.wait_for_page_element(LOGIN_ERROR_TEXT, 2):
+            if not self.logged_in or browser.wait_for_page_element(LOGIN_ERROR_TEXT, 2):
                 log.debug('Login failure detected, retrying...')
                 log.web_trace(f'failed-login-attempt-{i}')
             elif all(browser.find_page_elements(element) for element in PASSWORD_CHANGE_ELEMENTS):

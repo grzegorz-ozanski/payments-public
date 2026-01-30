@@ -215,4 +215,3 @@ class RecaptchaLogin(BaseLogin):
         else:
             log.debug('Using mouse to submit a form')
             browser.find_page_element(self.login_button).click()
-
