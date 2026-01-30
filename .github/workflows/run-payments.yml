@@ -68,8 +68,6 @@ env:
   READ_STATUS_SCRIPT:   .github/scripts/read-previous-status.ps1
   STATUS_SCRIPT:        .github/scripts/compare-status.ps1
   STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
-  PAYMENTS_FAKE_DATA:   <default>
-  PAYMENTS_FAKE_DELAY:  3
 
 jobs:
   run-payments:
