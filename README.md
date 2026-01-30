@@ -82,13 +82,39 @@ python tools/import_credentials.py
 
 ## 🚀 Usage
 
-Basic usage:
+### Basic usage:
 
 ```bash
 python main.py
 ```
 
-Examples:
+### Command-line arguments:
+| Short          | Long                         | Meaning                                                                                                                                                                                      |
+|----------------|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -c             | --clear-profile-on-exit      | Clear browser user profile on exit                                                                                                                                                           |
+| -l false/true  | --headless false/true        | Toggle headless browser mode (default: auto)                                                                                                                                                 |
+| -d debug_flags | --debug debug_flags          | Comma-separated list of debug flags<ul><li>bp: browser profile creation debugging</li><li>ml: Multimedia provider login debugging</li></ul>Using this option implicitly enables verbose mode |
+| -o file_name   | --output OUTPUT              | Write retrieved payments to output file (UTF-8)                                                                                                                                              |
+| -p name        | --provider name              | Run for single provider only (name must match one from the list below)                                                                                                                       |
+| -t             | --trace                      | Enable trace logging for browser actions                                                                                                                                                     |
+| -v             | --verbose                    | Enable verbose mode (show debug logs)                                                                                                                                                        |
+|                | --persistent-profile-dir dir | Persisten browser profile directory location (default: user temp directory)                                                                                                                  |
+|                | --chrome-path CHROME_PATH    | Use provided Chrome binary instead of automatically downloading                                                                                                                              |
+
+Available providers: Provider, Actum, Energa, Multimedia, Nordhome, Opec, Opec2, Pgnig, Pewik, Vectra
+
+### Environment variables
+Program behavior can be modified using the following environment variables"
+
+| Variable name                   | Default                                        | Values                                 | Meaning                                                                                  | Remarks                                              |
+|---------------------------------|------------------------------------------------|----------------------------------------|------------------------------------------------------------------------------------------|------------------------------------------------------|
+| BROWSER_LOG_LEVEL               | DEBUG                                          | Any valid Python log level or TRACE    | Logging level                                                                            |                                                      |
+| BROWSER_LOG_FORMATTING          | %(levelname)s:%(name)s %(asctime)s %(message)s | Any valid Python log formatting string | Logging format string                                                                    |                                                      |
+| BROWSER_LOG_TO_CONSOLE          | True                                           | True/False                             | If logs should be written to console or only to a file provided in  BROWSER_LOG_FILENAME |                                                      |
+| BROWSER_LOG_FILENAME            | <empty>                                        | Valid file name                        | Name of the log file                                                                     |                                                      |
+| BROWSER_DEBUG_PROFILE           | 0                                              | 0/1                                    | Debug browser profile creation                                                           | Set automatically with "-d bp" command line argument |
+| PAYMENTS_DEBUG_MULTIMEDIA_LOGIN | 0                                              | 0/1                                    | Debug Multimedia provider login process                                                  | Set automatically with "-d ml" command line argument |
+### Examples:
 
 ```bash
 python main.py                         # Print payment data to console
