@@ -171,10 +171,7 @@ jobs:
       run: |
         ls .github
         ls .github/data
-        # python main.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
-        python -u -c "import time; 
-        for i in range(10):
-          print('PY tick', i, flush=True); time.sleep(1)"
+        python -u main.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
 
     - name: Generate HTML output
       continue-on-error: true
