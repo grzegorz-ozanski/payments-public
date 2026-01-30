@@ -69,7 +69,7 @@ class Energa(Provider):
         """
 
         if not self.logged_in:
-            log.debug(f"Not logged in into service '{self.name}', skipping logout")
+            log.debug("Not logged in into service '%s', skipping logout", self.name)
             return
         try:
             browser.wait_for_page_element_disappear(OVERLAY)

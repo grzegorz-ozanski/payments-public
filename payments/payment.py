@@ -218,10 +218,14 @@ class Payment:
         self.location = location
         self.provider = provider
         self.comment = comment
-        log.debug(f'Created payment object:'
-                  f'{provider=}, {location=}, '
-                  f'{due_date=}, {amount=}, {comment=}'
-                  f'{self.due_date=}, {self.amount=}')
+        log.debug('Created payment object:'
+                  'provider=%s, location=%s, '
+                  'due_date=%s, amount=%s, comment=%s'
+                  'self.due_date=%s, self.amount=%s',
+                  provider, location,
+                  due_date, amount, comment,
+                  self.due_date, self.amount
+        )
 
     def __repr__(self) -> str:
         return f'{self.location} {self.due_date} {self.amount}'

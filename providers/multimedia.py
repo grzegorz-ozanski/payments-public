@@ -55,7 +55,7 @@ class Multimedia(Provider):
         """Retryable login with detection of CAPTCHA and password change."""
         num_retries = 10
         for i in range(num_retries):
-            log.debug(f'Login attempt {i + 1}')
+            print(f'Login attempt {i + 1}')
             if self.debug_login and i > 0:
                 input('Press ENTER to continue...')
             try:

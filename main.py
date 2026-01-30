@@ -116,7 +116,7 @@ def parse_args() -> Namespace:
             elif flag == DebugFlags.MULTIMEDIA_LOGIN:
                 os.environ['PAYMENTS_DEBUG_MULTIMEDIA_LOGIN'] = '1'
             else:
-                log.error(f'Unrecognized debug flag: {flag}')
+                log.error('Unrecognized debug flag: %s', flag)
                 parser.print_help()
                 exit(1)
 
@@ -149,7 +149,7 @@ def main() -> None:
     if not verbose:
         logging.disable(logging.CRITICAL)
 
-    log.debug(f'Called with arguments: {args}')
+    log.debug('Called with arguments: %s', args)
     # If -l/--headless argument was provided, use it to set headless mode on/off;
     # otherwise, use headed browser when running under the debugger and headless one when otherwise
     headless = args.headless if args.headless is not None else not is_debugger_active()
