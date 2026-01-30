@@ -9,6 +9,7 @@ import os
 import sys
 from argparse import Namespace
 from enum import StrEnum
+from functools import cache
 from typing import Sequence
 
 from str_to_bool import str_to_bool
@@ -27,7 +28,20 @@ class DebugFlags(StrEnum):
     BROWSER_PROFILE = 'bp'
     MULTIMEDIA_LOGIN = 'ml'
 
+@cache
+def is_fake_run() -> str:
+    """
+    Returns path to artificail payments data if fake run (i.e. with no actual providers page parsing)
+    is executed.
+    """
+    path = os.getenv('PAYMENTS_FAKE_DATA', '')
+    if not path:
+        return path
+    if path == '<default>':
+        return r'.github\data\test_output.txt'
+    return path
 
+@cache
 def is_debugger_active() -> bool:
     """
     Return True if a debugger is currently attached.
@@ -125,11 +139,10 @@ def main() -> None:
     print(f'Starting at {datetime.datetime.now()}')
 
     args = parse_args()
-    running_under_debugger = is_debugger_active()
 
     # If -v/--verbose argument was provided, use it to toggle verbosity;
     # otherwise, be turn verbosity on when running under the debugger, and off when otherwise
-    verbose = args.verbose if args.verbose else running_under_debugger
+    verbose = args.verbose if args.verbose else is_debugger_active()
 
     # Turn off logging if verbosity is off
     if not verbose:
@@ -138,14 +151,16 @@ def main() -> None:
     log.debug(f'Called with arguments: {args}')
     # If -l/--headless argument was provided, use it to set headless mode on/off;
     # otherwise, use headed browser when running under the debugger and headless one when otherwise
-    headless = args.headless if args.headless is not None else not running_under_debugger
+    headless = args.headless if args.headless is not None else not is_debugger_active()
 
-    options = BrowserOptions(__file__,
-                             headless,
-                             args.trace,
-                             args.chrome_path,
-                             not args.clear_profile_on_exit,
-                             args.persistent_profile_dir)
+    browser_options = None
+    if not is_fake_run():
+        browser_options = BrowserOptions(__file__,
+                                         headless,
+                                         args.trace,
+                                         args.chrome_path,
+                                         not args.clear_profile_on_exit,
+                                         args.persistent_profile_dir)
 
     if args.trace and not verbose:
         print('ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console')
@@ -174,8 +189,11 @@ def main() -> None:
     else:
         selected_providers = providers_list['']
     payments = PaymentsManager(selected_providers)
-    output = payments.collect(options)
-    # output = payments.collect_fake(r'.github\data\test_output.txt')
+    if browser_options:
+        output = payments.collect(browser_options)
+    else:
+        fake_delay = int(os.getenv('PAYMENTS_FAKE_DELAY', '0'))
+        output = payments.collect_fake(is_fake_run(), fake_delay)
     print(output)
     if args.output:
         with open(args.output, 'w', encoding='utf-8') as stream:

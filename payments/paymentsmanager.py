@@ -1,5 +1,6 @@
 """Payments manager module"""
 import logging
+import time
 from typing import Sequence
 
 from browser import Browser, BrowserManager, BrowserOptions
@@ -48,7 +49,7 @@ class PaymentsManager:
     def __repr__(self) -> str:
         return '\n'.join(map(str, self.providers))
 
-    def collect_fake(self, filename: str) -> str:
+    def collect_fake(self, filename: str, delay: int = 0) -> str:
         """
         Collect payments for all providers
         """
@@ -60,10 +61,13 @@ class PaymentsManager:
                     continue
                 if due_date == '{{TODAY}}':
                     due_date = 'today'
+                if delay > 0:
+                    print(f'Processing service {provider}...')
                 payments += [Payment(provider,
                                      location_name,
                                      due_date,
                                      amount)]
+                time.sleep(delay)
         return to_string(payments)
 
     def collect(self, options: BrowserOptions, browser_class: type[Browser] = Browser) -> str:
