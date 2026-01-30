@@ -68,6 +68,8 @@ env:
   READ_STATUS_SCRIPT:   .github/scripts/read-previous-status.ps1
   STATUS_SCRIPT:        .github/scripts/compare-status.ps1
   STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
+  PAYMENTS_FAKE_DATA:   <default>
+  PAYMENTS_FAKE_DELAY:  3
 
 jobs:
   run-payments:
@@ -157,6 +159,9 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
+        Write-Host "PS heartbeat start: $(Get-Date)"
+        1..10 | ForEach-Object { Write-Host "PS tick $_ $(Get-Date)"; Start-Sleep -Seconds 1 }
+        Write-Host "PS heartbeat end: $(Get-Date)"
         python main.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
 
     - name: Download reference output from private repo
