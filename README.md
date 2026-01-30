@@ -106,14 +106,14 @@ Available providers: Provider, Actum, Energa, Multimedia, Nordhome, Opec, Opec2,
 ### Environment variables
 Program behavior can be modified using the following environment variables"
 
-| Variable name                   | Default                                        | Values                                 | Meaning                                                                                  | Remarks                                              |
-|---------------------------------|------------------------------------------------|----------------------------------------|------------------------------------------------------------------------------------------|------------------------------------------------------|
-| BROWSER_LOG_LEVEL               | DEBUG                                          | Any valid Python log level or TRACE    | Logging level                                                                            |                                                      |
-| BROWSER_LOG_FORMATTING          | %(levelname)s:%(name)s %(asctime)s %(message)s | Any valid Python log formatting string | Logging format string                                                                    |                                                      |
-| BROWSER_LOG_TO_CONSOLE          | True                                           | True/False                             | If logs should be written to console or only to a file provided in  BROWSER_LOG_FILENAME |                                                      |
-| BROWSER_LOG_FILENAME            | <empty>                                        | Valid file name                        | Name of the log file                                                                     |                                                      |
-| BROWSER_DEBUG_PROFILE           | 0                                              | 0/1                                    | Debug browser profile creation                                                           | Set automatically with "-d bp" command line argument |
-| PAYMENTS_DEBUG_MULTIMEDIA_LOGIN | 0                                              | 0/1                                    | Debug Multimedia provider login process                                                  | Set automatically with "-d ml" command line argument |
+| Variable name                   | Default                                        | Values                                 | Meaning                                                                                  |
+|---------------------------------|------------------------------------------------|----------------------------------------|------------------------------------------------------------------------------------------|
+| BROWSER_LOG_LEVEL               | DEBUG                                          | Any valid Python log level or TRACE    | Logging level                                                                            |
+| BROWSER_LOG_FORMATTING          | %(levelname)s:%(name)s %(asctime)s %(message)s | Any valid Python log formatting string | Logging format string                                                                    |
+| BROWSER_LOG_TO_CONSOLE          | True                                           | True/False                             | If logs should be written to console or only to a file provided in  BROWSER_LOG_FILENAME |
+| BROWSER_LOG_FILENAME            | <empty>                                        | Valid file name                        | Name of the log file                                                                     |
+
+
 ### Examples:
 
 ```bash
