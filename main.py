@@ -10,6 +10,7 @@ import sys
 from argparse import Namespace
 from enum import StrEnum
 from functools import cache
+from pathlib import Path
 from typing import Sequence
 
 from str_to_bool import str_to_bool
@@ -29,17 +30,17 @@ class DebugFlags(StrEnum):
     MULTIMEDIA_LOGIN = 'ml'
 
 @cache
-def is_fake_run() -> str:
+def is_fake_run() -> Path | None:
     """
-    Returns path to artificail payments data if fake run (i.e. with no actual providers page parsing)
+    Returns path to artifical payments data if fake run (i.e. with no actual providers page parsing)
     is executed.
     """
     path = os.getenv('PAYMENTS_FAKE_DATA', '')
     if not path:
-        return path
+        return None
     if path == '<default>':
-        return r'.github\data\test_output.txt'
-    return path
+        return Path('.github', 'data', 'test_output.txt')
+    return Path(path)
 
 @cache
 def is_debugger_active() -> bool:

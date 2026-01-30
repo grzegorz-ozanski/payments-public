@@ -1,6 +1,7 @@
 """Payments manager module"""
 import logging
 import time
+from pathlib import Path
 from typing import Sequence
 
 from browser import Browser, BrowserManager, BrowserOptions
@@ -49,11 +50,13 @@ class PaymentsManager:
     def __repr__(self) -> str:
         return '\n'.join(map(str, self.providers))
 
-    def collect_fake(self, filename: str, delay: int = 0) -> str:
+    def collect_fake(self, filename: Path | None, delay: int = 0) -> str:
         """
         Collect payments for all providers
         """
         payments: list[Payment] = []
+        if not filename:
+            return ''
         with open(filename) as file:
             for line in file.readlines():
                 provider, amount, location_name, due_date = ' '.join(line.split()).strip().split()
