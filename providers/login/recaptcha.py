@@ -98,15 +98,13 @@ def _move_from_to(browser: Browser,
     action = ActionChains(browser)
     start_coords = _get_element_coords(start_element)
     end_coords = _get_element_coords(end_element)
-    log.trace('Start point: (%d, %d)\n'
-              'End point: (%d, %d)',
+    log.trace('Start point: (%d, %d), end point: (%d, %d)',
               start_coords[0], start_coords[1],
               end_coords[0], end_coords[1])
     action.move_to_element(start_element).perform()
     for mouse_x, mouse_y in zip(dx, dy):
         start_coords[0], start_coords[1] = start_coords[0] + mouse_x, start_coords[1] + mouse_y
-        log.trace('Mouse moved by (%d, %d)\n'
-                  'Current location: (%d, %d)',
+        log.trace('Mouse moved by (%d, %d), current location: (%d, %d)',
                   mouse_x, mouse_y,
                   start_coords[0], start_coords[1])
         action.move_by_offset(mouse_x, mouse_y).perform()
