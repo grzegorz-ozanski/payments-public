@@ -29,8 +29,12 @@ class DummyProvider(Provider):
         )
         self.name = name
         self._test_payments = payments
+        self.logged_in = True
 
     def login(self, browser: Browser, load: bool = True) -> None:
+        pass
+
+    def logout(self, browser: Browser) -> None:
         pass
 
     def _fetch_payments(self, browser: Browser) -> list[Payment]:
