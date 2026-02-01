@@ -176,7 +176,7 @@ def main() -> None:
         providers.Actum(hodowlana),
         providers.Multimedia({'90': hodowlana, '77': sezamowa}),
         providers.Pewik(sezamowa),
-        providers.Opec2(sezamowa),
+        providers.Opec(sezamowa),
         providers.Nordhome(bryla),
         providers.Vectra(sezamowa)
     )
