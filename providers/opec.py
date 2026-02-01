@@ -29,7 +29,7 @@ class Columns:
     Amount = Locator(By.CSS_SELECTOR, 'td[data-label="Obciążenia"]')
 
 class TermsOfService:
-    """ OPEC2 terms of service popup. """
+    """ OPEC terms of service popup. """
     HEADER = Locator(By.XPATH, '//h1[normalize-space(.)="Regulamin"]')
     BUTTON_OPEN = Locator(By.CSS_SELECTOR, 'button[type=submit]')
     HEADER_CLOSE = Locator(By.TAG_NAME, 'h1')
@@ -46,7 +46,7 @@ class TermsOfService:
             self.browser.find_page_element(self.BUTTON_CLOSE).click()
 
 class Message:
-    """ OPEC2 message popup. """
+    """ OPEC message popup. """
     CLOSE_BUTTON = Locator(By.CSS_SELECTOR, 'button.sh-btn')
     #TODO fix when appears again
     MESSAGE_HEADER = Locator(By.XPATH, '//h3[contains(text(), "Wiadomości")]')
