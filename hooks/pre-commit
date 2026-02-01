@@ -1,14 +1,15 @@
 #!/bin/bash
 
-# Check if collector.py is staged
-if git diff --cached --name-only | grep -q '^collector\.py$'; then
-    # Get changed/added lines from collector.py
+# Check if collect_payments.py is staged
+MAIN=collect_payments
+if git diff --cached --name-only | grep -q "^${MAIN}\.py\$"; then
+    # Get changed/added lines from collect_payments.py
     # Check if there is no unwanted providers limitation
-  if git diff --cached collector.py \
+  if git diff --cached "${MAIN}.py" \
     | grep -E '^\+' | grep -vE '^\+\+\+' \
     | grep -E "providers_list\[['\"][^'\"]+['\"]\]"
   then
-        echo "❌ Commit blocked: Detected hardcoded providers list limitation in 'collector.py'."
+    echo "❌ Commit blocked: Detected hardcoded providers list limitation in '${MAIN}.py'."
     exit 1
   fi
 fi
