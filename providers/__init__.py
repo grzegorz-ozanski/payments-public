@@ -22,3 +22,9 @@ __all__ = [
     'Pewik',
     'Vectra'
 ]
+
+def all() -> list[str]:
+    """
+    Returns the list of all supported providers
+    """
+    return [name for name in __all__ if name != 'Provider']

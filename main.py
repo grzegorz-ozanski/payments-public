@@ -83,7 +83,7 @@ def parse_args() -> Namespace:
             "using browser automation (Selenium). Supports headless mode, trace logging, "
             "and output to file."
         ),
-        epilog=f"Available providers: {', '.join(providers.__all__)}"
+        epilog=f"Available providers: {', '.join(providers.all())}"
     )
 
     parser.add_argument('-c', '--clear-profile-on-exit', default=False, action='store_true',
