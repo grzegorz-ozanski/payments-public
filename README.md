@@ -85,7 +85,7 @@ python tools/import_credentials.py
 ### Basic usage:
 
 ```bash
-python main.py
+python collector.py
 ```
 
 ### Command-line arguments:
@@ -119,8 +119,8 @@ Program behavior can be modified using the following environment variables"
 ### Examples:
 
 ```bash
-python main.py                         # Print payment data to console
-python main.py -o output.txt           # Also write output to a file
+python collector.py                         # Print payment data to console
+python collector.py -o output.txt           # Also write output to a file
 ```
 
 ## 📊 Example Output
