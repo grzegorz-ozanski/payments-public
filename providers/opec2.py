@@ -77,7 +77,7 @@ class Opec2(Provider):
         amount = amount_item.text
         log.web_trace('pre-months-table-0')
         months_table: PageElement | None = browser.find_page_element(MONTHS_TABLE)
-        if not months_table:
+        if not months_table or Amount.is_zero(amount):
             return [Payment(self.name, self.locations[0], amount=amount)]
         month_entries = len(months_table.find_page_elements(MONTH_TABLE_ROW))
         due_date = ''
