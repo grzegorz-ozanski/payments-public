@@ -29,6 +29,14 @@ def to_string(payments: list[Payment]) -> str:
                       for payment in payments])
 
 
+def _print_banner(message: str) -> None:
+    print(message)
+    if log.level <= logging.DEBUG:
+        sep = '*' * len(message)
+        message = f'\n{sep}\n{message}\n{sep}'
+        log.debug(message)
+
+
 class PaymentsManager:
     """
     Collect and export all payments as alligned text
@@ -83,12 +91,7 @@ class PaymentsManager:
         payments: list[Payment] = []
         manager = BrowserManager(options, browser_class)
         for provider in self.providers:
+            _print_banner(f'Processing service {provider.name}...')
             with manager.session(provider.needs_clear_user_profile) as browser:
-                message = f'Processing service {provider.name}...'
-                print(message)
-                if log.level <= logging.DEBUG:
-                    sep = '*' * len(message)
-                    message = f'\n{sep}\n{message}\n{sep}'
-                    log.debug(message)
                 payments += provider.get_payments(browser)
         return to_string(payments)
