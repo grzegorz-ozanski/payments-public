@@ -4,7 +4,7 @@
 from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator
-from payments import Payment, DueDate
+from payments import Payment, DueDate, Amount
 from providers.login.two_stage import TwoStageLogin
 from providers.provider import Provider
 
@@ -21,6 +21,7 @@ MAIN_DASHBOARD = Locator(By.CSS_SELECTOR, 'div.main-page.dashboard')
 INVOICES_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Zobacz faktury"]')
 INVOICES_LIST = Locator(By.XPATH, '(//table[contains(@class,"vectra-complex-table")])[1]/tbody/tr')
 TWO_FACTOR_AUTH_BUTTON = Locator(By.XPATH, '//h3[normalize-space(.)="Wpisz kod weryfikacyjny"]')
+TOTAL = Locator(By.XPATH, '//div[contains(@class, "left-column")]//h3')
 
 USER_MENU = Locator(By.CSS_SELECTOR, 'span.ico-avatar')
 LOGOUT_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Wyloguj się"]')
@@ -89,6 +90,10 @@ class Vectra(Provider):
                             None,
                             self.payment_comment or 'Unexpected timeout waiting for main dashboard')]
         total = Payment(self.name, self.locations[0], None)
+        total_amount = browser.wait_for_page_element(TOTAL, 2)
+        if Amount.is_zero(total_amount.text):
+            total.due_date = DueDate('today')
+            return [total]
         # Open invoices
         invoices_button = browser.wait_for_page_element(INVOICES_BUTTON, 2)
         if not invoices_button:
