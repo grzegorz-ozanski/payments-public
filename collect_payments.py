@@ -189,7 +189,7 @@ def main() -> None:
         if not selected_providers:
             print(f'ERROR: No providers can be found for provided argument "{args_provider}"')
     else:
-        selected_providers = providers_list['']
+        selected_providers = providers_list['vectra']
     payments = PaymentsManager(selected_providers)
     if browser_options:
         output = payments.collect(browser_options)
