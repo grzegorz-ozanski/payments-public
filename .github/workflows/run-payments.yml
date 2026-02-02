@@ -167,7 +167,7 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python -u collect_payments.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}" -p pgnig
+        python -u collect_payments.py -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
 
     - name: Generate HTML output
       continue-on-error: true
