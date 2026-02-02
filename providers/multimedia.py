@@ -24,6 +24,7 @@ COOKIES_BUTTON = Locator(By.ID, 'cookiescript_accept')
 INVOICE = Locator(By.CLASS_NAME, 'invoiceInfo')
 AMOUNT = Locator(By.CLASS_NAME, 'kwota')
 DUE_DATE = Locator(By.CLASS_NAME, 'platnoscDo')
+ALL_PAID = Locator(By.XPATH, '//div[contains(@class, "clear")]/span[contains(@class, "-bold")]')
 
 LOGIN_ERROR_TEXT = Locator(By.CSS_SELECTOR, 'span.logonFailureText')
 PASSWORD_CHANGE_ELEMENTS = (Locator(By.ID, 'formPassword'), Locator(By.ID, 'formConfirmation'))
@@ -102,6 +103,9 @@ class Multimedia(Provider):
         log.info('Getting payments...')
         sleep(0.1)
         payments = [Payment(self.name, location) for location in self.locations]
+        all_paid = browser.wait_for_page_element(ALL_PAID, 2)
+        if all_paid:
+            return payments
         invoices = browser.wait_for_page_elements(INVOICE)
         if invoices is None:
             for payment in payments:
