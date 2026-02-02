@@ -91,7 +91,7 @@ class Vectra(Provider):
                             self.payment_comment or 'Unexpected timeout waiting for main dashboard')]
         total = Payment(self.name, self.locations[0], None)
         total_amount = browser.wait_for_page_element(TOTAL, 2)
-        if Amount.is_zero(total_amount.text):
+        if total_amount and Amount.is_zero(total_amount.text):
             total.due_date = DueDate('today')
             return [total]
         # Open invoices
