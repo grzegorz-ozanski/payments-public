@@ -161,7 +161,8 @@ def main() -> None:
                                          args.trace,
                                          args.chrome_path,
                                          not args.clear_profile_on_exit,
-                                         args.persistent_profile_dir)
+                                         args.persistent_profile_dir,
+                                         renderer_timeout=30)
 
     if args.trace and not verbose:
         print('ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console')
