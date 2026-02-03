@@ -43,7 +43,8 @@ def test_parse_args_defaults(monkeypatch: MonkeyPatch) -> None:
 
 def test_main_prints_output(monkeypatch: MonkeyPatch, capsys: CaptureFixture[str]) -> None:
     setup_args(monkeypatch)
-    with patch('collect_payments.PaymentsManager') as mock_mgr_cls, patch('collect_payments.LookupList') as mock_lookup:
+    with (patch('payments.collect_payments.PaymentsManager') as mock_mgr_cls,
+          patch('payments.collect_payments.LookupList') as mock_lookup):
         dummy_mgr = MagicMock()
         dummy_mgr.collect.return_value = 'TEST_OUTPUT'
         mock_mgr_cls.return_value = dummy_mgr
@@ -60,7 +61,8 @@ def test_main_writes_to_file(monkeypatch: MonkeyPatch) -> None:
     dummy_file.close()
     setup_args(monkeypatch, dummy_path)
 
-    with patch('collect_payments.PaymentsManager') as mock_mgr_cls, patch('collect_payments.LookupList') as mock_lookup:
+    with (patch('payments.collect_payments.PaymentsManager') as mock_mgr_cls,
+          patch('payments.collect_payments.LookupList') as mock_lookup):
         mgr = MagicMock()
         mgr.collect.return_value = 'WYNIK'
         mock_mgr_cls.return_value = mgr
