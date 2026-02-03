@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator
 from payments import Payment, DueDate, Amount
-from providers.login.two_stage import TwoStageLogin
+from providers.auth_flow.two_stage import TwoStageLogin
 from providers.provider import Provider
 
 log = setup_logging(__name__)

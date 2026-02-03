@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
 from browser import Browser, Locator, setup_logging
-from providers.login.base import BaseLogin
+from providers.auth_flow.base import BaseLogin
 from credentials.providersecrets import ProviderSecrets
 import numpy as np
 import scipy.interpolate as si

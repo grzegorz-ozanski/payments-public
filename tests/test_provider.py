@@ -50,7 +50,7 @@ def test_get_location_unknown_logs_error(caplog: pytest.LogCaptureFixture) -> No
         assert 'Cannot find location for provider' in caplog.text
 
 
-@patch('credentials.credentials.Credential.get', return_value='dummy')
+@patch('credentials.providersecrets.ProviderSecret.get', return_value='dummy')
 def test_payments_fetch_error(mock_cred: Any, capsys: CaptureFixture[str]) -> None:
     """Test whether payments are sorted according to known locations."""
     assert mock_cred is not None
@@ -67,7 +67,7 @@ def test_payments_fetch_error(mock_cred: Any, capsys: CaptureFixture[str]) -> No
     assert 'Cannot get payments for service dummyprovider!' in out
 
 
-@patch('credentials.credentials.Credential.get', return_value='dummy')
+@patch('credentials.providersecrets.ProviderSecret.get', return_value='dummy')
 def test_payment_sorting(mock_cred: Any) -> None:
     """Test whether payments are sorted according to known locations."""
     assert mock_cred is not None

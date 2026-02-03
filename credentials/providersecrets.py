@@ -5,7 +5,7 @@ from os import environ
 import keyring
 
 
-class Secret:
+class ProviderSecret:
     """
     Retrieve credential from environment or system keyring.
 
@@ -34,5 +34,5 @@ class ProviderSecrets:
     Stores credentials values (username and password) described by tags provided.
     """
     def __init__(self, name: str, username_tag: str, password_tag: str):
-        self.username = Secret(name, username_tag)
-        self.password = Secret(name, password_tag)
+        self.username = ProviderSecret(name, username_tag)
+        self.password = ProviderSecret(name, password_tag)
