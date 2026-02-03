@@ -17,7 +17,7 @@ from str_to_bool import str_to_bool
 
 from payments import providers
 from browser import BrowserOptions, setup_logging
-from lookuplist import LookupList
+from payments.lookuplist import LookupList
 from payments.payments import PaymentsManager
 
 log = setup_logging(__name__)
