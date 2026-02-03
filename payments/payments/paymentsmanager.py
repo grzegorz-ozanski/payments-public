@@ -8,6 +8,7 @@ from browser import Browser, BrowserManager, BrowserOptions, setup_logging
 from payments.lookuplist import LookupList
 from payments.payments import Payment
 from payments.providers.provider import Provider
+from payments.console import print_progress
 
 log = setup_logging(__name__)
 
@@ -29,7 +30,7 @@ def to_string(payments: list[Payment]) -> str:
 
 
 def _print_banner(message: str) -> None:
-    print(message)
+    print_progress(message)
     if log.level <= logging.DEBUG:
         sep = '*' * len(message)
         message = f'\n{sep}\n{message}\n{sep}'

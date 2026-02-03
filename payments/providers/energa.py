@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from browser import setup_logging, Browser, Locator
 from payments.payments import Amount, DueDate, Payment
 from payments.providers.provider import Provider
+from payments.console import print_stage
 
 log = setup_logging(__name__)
 
@@ -113,7 +114,7 @@ class Energa(Provider):
         log.debug('Identified %d locations' % len(locations_list))
         payments = []
         for location_id in range(len(locations_list)):
-            print(f'...location {location_id + 1} of {len(locations_list)}')
+            print_stage('location', location_id, len(locations_list))
             log.debug('Opening location page')
             log.web_trace('pre-location-click')
             browser.click_element_using_js(locations_list[location_id])

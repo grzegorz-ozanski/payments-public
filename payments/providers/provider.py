@@ -15,6 +15,7 @@ from browser import Browser, Locator, setup_logging
 from payments.payments import Payment
 from payments.providers.auth_flow import BaseLogin, OneStageLogin
 from payments.providers.secrets.core import Secrets
+from payments.console import print_progress, print_done
 
 log = setup_logging(__name__)
 
@@ -82,10 +83,13 @@ class Provider:
             try:
                 message = f'Getting payments for service {self.name}...'
                 log.debug(message)
+                print_progress('logging in...')
                 self.login(browser)
                 if self.logged_in:
+                    print_progress('fetching payments...')
                     payments = sorted(self._fetch_payments(browser),
                                       key=lambda value: self._location_order.get(value.location, float('inf')))
+                    print_done('done.')
                 else:
                     payments = self._default_payments('Login error')
             except Exception as e:

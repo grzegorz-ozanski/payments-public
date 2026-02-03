@@ -10,6 +10,7 @@ from browser import setup_logging, Browser, Locator
 from payments.payments import Payment
 from payments.providers.auth_flow import RecaptchaLogin
 from payments.providers.provider import Provider
+from payments.console import print_progress, print_stage
 
 log = setup_logging(__name__)
 
@@ -57,7 +58,7 @@ class Multimedia(Provider):
         """Retryable login with detection of CAPTCHA and password change."""
         num_retries = 10
         for i in range(num_retries):
-            print(f'...login attempt {i + 1}')
+            print_stage('login attempt',  i, num_retries)
             if self.debug_login and i > 0:
                 input('Press ENTER to continue...')
             try:
@@ -83,6 +84,7 @@ class Multimedia(Provider):
                         for element in [USER_INPUT, PASSWORD_INPUT]
                 ):
                     self.logged_in = True
+                    print_progress('\n...')
                     return
                 log.debug('Undetected login failure, retrying...')
                 log.web_trace(f'failed-login-attempt-unknown-{i}')
