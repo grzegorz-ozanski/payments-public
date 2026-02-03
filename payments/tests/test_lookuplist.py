@@ -11,14 +11,16 @@ class TestClassBase:
     pass
 
 
-class TestClass1(TestClassBase):
-    """ Mock class #1 """
-    pass
+TEST_CLASSES = [
+    type(
+        f"TestClass{i}",
+        (TestClassBase,),
+        {"__doc__": f"Mock class #{i}"},
+    )
+    for i in range(1, 6)
+]
 
-
-class TestClass2(TestClassBase):
-    """ Mock class #2 """
-    pass
+TestClass1, TestClass2, TestClass3, TestClass4, TestClass5 = TEST_CLASSES
 
 
 def test_lookup_by_class_name() -> None:
@@ -87,3 +89,41 @@ def test_slice_access() -> None:
     assert isinstance(sliced_lst, list)
     assert len(sliced_lst) == 1
     assert isinstance(sliced_lst[0], TestClass1)
+
+
+def test_prefix() -> None:
+    """Test that LookupList supports prefixing."""
+    lst = LookupList[Union[TestClassBase, str]](TestClass1(), TestClass2())
+    item = lst['testclass*']
+    assert isinstance(item, TestClass1)
+
+
+def test_comma_separated() -> None:
+    """Test that LookupList supports comma separated keys."""
+
+    tcs: list[TestClassBase] = [
+        cls() for cls in TEST_CLASSES if int(cls.__name__[-1]) < 4
+    ]
+    assert len(tcs) == 3
+    lst = LookupList[Union[TestClassBase, str]](*tcs)
+    sublist = lst['testclass1,testclass3']
+    assert isinstance(sublist, list)
+    assert tcs[0] in sublist
+    assert tcs[2] in sublist
+    assert tcs[1] not in sublist
+
+
+def test_range() -> None:
+    """Test that LookupList supports comma separated keys."""
+
+    tcs: list[TestClassBase] = [
+        cls() for cls in TEST_CLASSES
+    ]
+    lst = LookupList[Union[TestClassBase, str]](*tcs)
+    sublist = lst['testclass2-testclass4']
+    assert isinstance(sublist, list)
+    assert tcs[0] not in sublist
+    assert tcs[1] in sublist
+    assert tcs[2] in sublist
+    assert tcs[3] in sublist
+    assert tcs[4] not in sublist

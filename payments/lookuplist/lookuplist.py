@@ -2,6 +2,7 @@
     Lookup list class
 """
 from collections.abc import Sequence
+from operator import eq, contains
 from typing import overload, Union, TypeVar
 
 T = TypeVar('T')
@@ -30,7 +31,7 @@ class LookupList(Sequence[T]):
         ...
 
     @overload
-    def __getitem__(self, key: str) -> Union[T, 'LookupList[T]']:
+    def __getitem__(self, key: str) -> Union[T, list[T], 'LookupList[T]']:
         ...
 
     @overload
@@ -49,6 +50,18 @@ class LookupList(Sequence[T]):
         if isinstance(key, str):
             if key == '' or key == '*':
                 return self
+
+            # range: "ClassN-ClassM" (with optional spaces)
+            if '-' in key:
+                left, right = (part.strip() for part in key.split('-', 1))
+                if left and right:
+                    i = self._items.index(self.__find__(left))
+                    j = self._items.index(self.__find__(right))
+                    if i > j:
+                        raise KeyError(f"Invalid range '{key}' (start after end).")
+                    return self._items[i: j + 1]
+            if ',' in key:
+                return [self.__find__(item.strip()) for item in key.split(',')]
             return self.__find__(key)
         if isinstance(key, (int, slice)):
             if isinstance(key, slice) and (isinstance(key.start, str) or isinstance(key.stop, str)):
@@ -62,16 +75,27 @@ class LookupList(Sequence[T]):
 
     def __find__(self, key: str) -> T:
         try:
-            return next(item for item in self._items if item.__class__.__name__.lower() == key.lower())
+            if '*' in key:
+                predicate = contains
+                needle = key[:-1].lower()
+            else:
+                predicate = eq
+                needle = key.lower()
+            return next(item for item in self._items if predicate(item.__class__.__name__.lower(), needle))
         except StopIteration:
             raise KeyError(f"No item with class name '{key}' found.")
 
     @overload
-    def __contains__(self, key: str) -> bool: ...
+    def __contains__(self, key: str) -> bool:
+        ...
+
     @overload
-    def __contains__(self, key: T) -> bool: ...
+    def __contains__(self, key: T) -> bool:
+        ...
+
     @overload
-    def __contains__(self, key: object) -> bool: ...
+    def __contains__(self, key: object) -> bool:
+        ...
 
     def __contains__(self, key: object) -> bool:
         """
