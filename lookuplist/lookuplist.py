@@ -6,6 +6,7 @@ from typing import overload, Union, TypeVar
 
 T = TypeVar('T')
 
+
 class LookupList(Sequence[T]):
     """
     List extension, allowing indexing by class name of the list item
@@ -33,7 +34,7 @@ class LookupList(Sequence[T]):
         ...
 
     @overload
-    def __getitem__(self, key: tuple[str,...]) -> Union[T, 'LookupList[T]']:
+    def __getitem__(self, key: tuple[str, ...]) -> Union[T, 'LookupList[T]']:
         ...
 
     def __getitem__(self, key: object) -> Union[T, list[T], 'LookupList[T]']:
@@ -71,6 +72,7 @@ class LookupList(Sequence[T]):
     def __contains__(self, key: T) -> bool: ...
     @overload
     def __contains__(self, key: object) -> bool: ...
+
     def __contains__(self, key: object) -> bool:
         """
             Check if the key exists either directly or through fallback.

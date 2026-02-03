@@ -1,8 +1,8 @@
 """
     Credentials management
 """
-from .credentials import Credentials
+from .providersecrets import ProviderSecrets
 
 __all__ = [
-    'Credentials',
+    'ProviderSecrets',
 ]

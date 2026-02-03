@@ -23,6 +23,8 @@ __all__ = [
     'Vectra'
 ]
 
+
+# noinspection PyShadowingBuiltins
 def all() -> list[str]:
     """
     Returns the list of all supported providers

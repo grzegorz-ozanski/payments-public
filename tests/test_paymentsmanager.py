@@ -6,6 +6,7 @@ from payments.payment import Payment
 from payments.paymentsmanager import PaymentsManager, to_string
 from browser import BrowserOptions
 
+
 def test_collect_payments_combines_results() -> None:
     payments = [
         Payment('p1', 'L1', '2025-06-01', '123'),

@@ -23,10 +23,12 @@ MONTH_TABLE_ROW = Locator(By.CSS_SELECTOR, 'tr.exe')
 PAYMENTS_TABLE = Locator(By.XPATH, f'//h2[contains(text(), "Zapisy finansowe w miesiącu")]/{TABLE_XPATH}')
 PAYMENTS_TABLE_ROW = Locator(By.XPATH, '//tbody/tr')
 
+
 class Columns:
     """ Payments list columns"""
     DueDate = Locator(By.CSS_SELECTOR, 'td[data-label="Data płatności"]')
     Amount = Locator(By.CSS_SELECTOR, 'td[data-label="Obciążenia"]')
+
 
 class TermsOfService:
     """ OPEC terms of service popup. """
@@ -45,10 +47,11 @@ class TermsOfService:
             self.browser.wait_for_page_element(self.HEADER_CLOSE, 2)
             self.browser.find_page_element(self.BUTTON_CLOSE).click()
 
+
 class Message:
     """ OPEC message popup. """
     CLOSE_BUTTON = Locator(By.CSS_SELECTOR, 'button.sh-btn')
-    #TODO fix when appears again
+    # TODO fix when appears again
     MESSAGE_HEADER = Locator(By.XPATH, '//h3[contains(text(), "Wiadomości")]')
 
     def __init__(self, browser: Browser) -> None:

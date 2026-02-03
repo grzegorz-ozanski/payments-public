@@ -4,7 +4,8 @@
 from os import environ
 import keyring
 
-class Credential:
+
+class Secret:
     """
     Retrieve credential from environment or system keyring.
 
@@ -24,13 +25,14 @@ class Credential:
         value = keyring.get_password(self.keyring_service, self.keyring)
         if value and value.strip():
             return value.strip()
-        raise RuntimeError(f'"{self.keyring}" not found in env {self.environ} or keyring service {self.keyring_service}!')
+        raise RuntimeError(f'"{self.keyring}" not found in env {self.environ} '
+                           f'or keyring service {self.keyring_service}!')
 
 
-class Credentials:
+class ProviderSecrets:
     """
     Stores credentials values (username and password) described by tags provided.
     """
     def __init__(self, name: str, username_tag: str, password_tag: str):
-        self.username = Credential(name, username_tag)
-        self.password = Credential(name, password_tag)
+        self.username = Secret(name, username_tag)
+        self.password = Secret(name, password_tag)

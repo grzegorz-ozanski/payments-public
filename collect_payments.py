@@ -22,12 +22,14 @@ from payments import PaymentsManager
 
 log = setup_logging(__name__)
 
+
 class DebugFlags(StrEnum):
     """
     Application debugging flags
     """
     BROWSER_PROFILE = 'bp'
     MULTIMEDIA_LOGIN = 'ml'
+
 
 @cache
 def is_fake_run() -> Path | None:
@@ -42,12 +44,14 @@ def is_fake_run() -> Path | None:
         return Path('.github', 'data', 'test_output.txt')
     return Path(path)
 
+
 @cache
 def is_debugger_active() -> bool:
     """
     Return True if a debugger is currently attached.
     """
     return sys.gettrace() is not None or 'VSCODE_DEBUGPY_ADAPTER_ENDPOINTS' in os.environ
+
 
 def is_elevated() -> bool:
     """
@@ -58,8 +62,9 @@ def is_elevated() -> bool:
     """
     if os.name == "nt":
         try:
+            # noinspection PyUnresolvedReferences
             return bool(ctypes.windll.shell32.IsUserAnAdmin())
-        except Exception:
+        except (AttributeError, OSError, ValueError, TypeError, ctypes.ArgumentError):
             # Conservative fallback: if we can't tell, assume not elevated
             return False
     else:
@@ -70,6 +75,7 @@ def is_elevated() -> bool:
             getuid = getattr(os, "getuid", None)
             return bool(getuid and getuid() == 0)
         return bool(geteuid() == 0)
+
 
 def parse_args() -> Namespace:
     """
@@ -204,6 +210,7 @@ def main() -> None:
     end_time = datetime.datetime.now()
     print('Finished at %s' % end_time)
     print('Took %s ' % (end_time - begin_time))
+
 
 if __name__ == '__main__':
     main()

@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 
 from browser import Browser, Locator, setup_logging
 from providers.login.base import BaseLogin
-from credentials.credentials import Credentials
+from credentials.providersecrets import ProviderSecrets
 
 log = setup_logging(__name__)
 
@@ -14,7 +14,7 @@ class TwoStageLogin(BaseLogin):
     """
     Login page that shows password input only after the username was typed in
     """
-    def __init__(self, service_name:str, user_input: Locator, password_input: Locator, credentials: Credentials):
+    def __init__(self, service_name: str, user_input: Locator, password_input: Locator, credentials: ProviderSecrets):
         super().__init__(service_name, user_input, password_input, credentials)
 
     def execute(self, browser: Browser) -> None:

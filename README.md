@@ -104,7 +104,7 @@ python collect_payments.py
 Available providers: Provider, Actum, Energa, Multimedia, Nordhome, Opec, Opec2, Pgnig, Pewik, Vectra
 
 ### Environment variables
-Program behavior can be modified using the following environment variables"
+Program behavior can be modified using the following environment variables
 
 | Variable name                   | Default          | Values                                 | Meaning                                                                                  |
 |---------------------------------|------------------|----------------------------------------|------------------------------------------------------------------------------------------|

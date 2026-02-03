@@ -21,6 +21,7 @@ HTML_FOOTER = '''\
 </html>
 '''
 
+
 def parse_log(path: str | Path) -> dict[str, str]:
     """
     Convert large monolithic browser log file into a dictionary of per-provider chunks
@@ -94,7 +95,8 @@ def parse_output(path: str | Path) -> dict[str, str]:
 
     return {k: '\n'.join(v) for k, v in out.items()}
 
-def encode(string: str, replace_newline: bool=False) -> str:
+
+def encode(string: str, replace_newline: bool = False) -> str:
     """
     Encodes string for proper HTML representation
     :param string: string to be converted
@@ -103,6 +105,7 @@ def encode(string: str, replace_newline: bool=False) -> str:
     """
     result = html.escape(string)
     return result.replace('\n', '<br/>') if replace_newline else result
+
 
 def html_output(log_file: Path | str,
                 output_file: Path | str,
@@ -137,6 +140,7 @@ def html_output(log_file: Path | str,
         if add_header:
             f.write(HTML_FOOTER)
 
+
 def parse_args() -> argparse.Namespace:
     """
     Parses command-line arguments and returns a Namespace object containing
@@ -149,7 +153,7 @@ def parse_args() -> argparse.Namespace:
         )
     )
 
-    parser.add_argument('-H', '--html-file' , required=True, type=Path,
+    parser.add_argument('-H', '--html-file', required=True, type=Path,
                         help='target HTML file path')
     parser.add_argument('-l', '--log-file', required=True, type=Path,
                         help='log file path')
@@ -158,6 +162,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('-n', '--no-header', required=False, action='store_true', default=False,
                         help='do not add HTML header (for embedding in GitHub workflow summary)')
     return parser.parse_args()
+
 
 if __name__ == '__main__':
     args = parse_args()

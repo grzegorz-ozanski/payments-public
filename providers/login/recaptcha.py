@@ -12,11 +12,12 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from browser import Browser, Locator, setup_logging
 from providers.login.base import BaseLogin
-from credentials.credentials import Credentials
+from credentials.providersecrets import ProviderSecrets
 import numpy as np
 import scipy.interpolate as si
 
 log = setup_logging(__name__)
+
 
 def _get_element_coords(element: WebElement) -> list[int]:
     """
@@ -27,6 +28,7 @@ def _get_element_coords(element: WebElement) -> list[int]:
     rect = element.rect
     return [rect['x'], rect['y']]
 
+
 def _calculate_offset(end: list[int], start: list[int]) -> list[int]:
     """
     Calculate an offset between two points
@@ -35,6 +37,7 @@ def _calculate_offset(end: list[int], start: list[int]) -> list[int]:
     :return: list[x offset, y offset]
     """
     return list(map(lambda x: x[0] - x[1], zip(end, start)))
+
 
 def ensure_not_constant_axis(points: np.ndarray, axis: int, start: list[int], end: list[int]) -> np.ndarray:
     """
@@ -51,7 +54,7 @@ def ensure_not_constant_axis(points: np.ndarray, axis: int, start: list[int], en
     if not np.all(vals == vals[0]):
         return points
 
-    divisor = random.choice((2, 3, 4)) # take a mid, third or quarter point
+    divisor = random.choice((2, 3, 4))  # take a mid, third or quarter point
     delta = random.uniform(50, 250)
 
     new_points = [start]
@@ -69,6 +72,7 @@ def ensure_not_constant_axis(points: np.ndarray, axis: int, start: list[int], en
             new_points.append([points[1, 0] / divisor, points[0, 1] - delta])
     new_points.append(end)
     return np.array(new_points, dtype=float)
+
 
 def _move_from_to(browser: Browser,
                   start_element: WebElement,
@@ -156,12 +160,12 @@ class RecaptchaLogin(BaseLogin):
     Try to be non-deterministic not to alert reCAPTCHA v3.
     """
     def __init__(self,
-                 service_name:str,
+                 service_name: str,
                  user_input: Locator,
                  password_input: Locator,
-                 credentials: Credentials):
+                 credentials: ProviderSecrets):
         super().__init__(service_name, user_input, password_input, credentials)
-        self.login_button : Locator | None = None
+        self.login_button: Locator | None = None
         self.error_treshold = Namespace(user=random.uniform(0.01, 0.2),
                                         password=random.uniform(0.01, 0.1))
         self.login_button_treshold = random.uniform(0.01, 0.4)

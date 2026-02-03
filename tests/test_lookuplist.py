@@ -9,6 +9,7 @@ class TestClassBase:
     """ Base class for LookupList elements."""
     pass
 
+
 class TestClass1(TestClassBase):
     """ Mock class #1 """
     pass
@@ -68,7 +69,7 @@ def test_typeerror_for_invalid_key_type() -> None:
     with pytest.raises(TypeError, match="Invalid key type: <class 'float'>"):
         # noinspection PyTypeChecker
         # ignore mypy check as we actually want to call with the wrong key type
-        _ = lst[3.14] # type: ignore[call-overload]
+        _ = lst[3.14]  # type: ignore[call-overload]
 
 
 def test_repr_output() -> None:

@@ -29,6 +29,7 @@ LOCATION_TEXT = Locator(By.TAG_NAME, 'span')
 LOCATIONS_ARROW = Locator(By.CLASS_NAME, 'select2-arrow')
 LOCATION_RESULT = Locator(By.CLASS_NAME, 'select2-result')
 
+
 class BalanceTable:
     """ Balance table locators """
     ID = Locator(By.ID, 'saldaWplatyWykaz')
@@ -37,6 +38,8 @@ class BalanceTable:
     COLUMN = Locator(By.TAG_NAME, 'td')
 
     # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
+
+
 # noinspection PyArgumentEqualDefault
 class Pewik(Provider):
     """PEWiK Gdynia provider."""
@@ -61,8 +64,7 @@ class Pewik(Provider):
 
         while True:
             location = self._get_location(
-                browser.find_page_element(LOCATION)
-                    .find_page_elements(LOCATION_TEXT)[2].text
+                browser.find_page_element(LOCATION).find_page_elements(LOCATION_TEXT)[2].text
             )
 
             balances = (

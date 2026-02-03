@@ -26,6 +26,7 @@ TOTAL = Locator(By.XPATH, '//div[contains(@class, "left-column")]//h3')
 USER_MENU = Locator(By.CSS_SELECTOR, 'span.ico-avatar')
 LOGOUT_BUTTON = Locator(By.XPATH, '//span[normalize-space(.)="Wyloguj się"]')
 
+
 class Columns:
     """ Invoice list columns"""
     DueDate = 5

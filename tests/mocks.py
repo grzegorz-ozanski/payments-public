@@ -112,6 +112,7 @@ class MockBrowser(Browser):
     def set_script_timeout(self, seconds: float) -> None:
         return
 
+
 class MockWebElement(WebElement):
     """Mock of a Selenium WebElement."""
 

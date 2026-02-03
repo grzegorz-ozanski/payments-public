@@ -12,6 +12,7 @@ from _pytest.monkeypatch import MonkeyPatch
 
 import collect_payments
 
+
 def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
     """
     Setup test environment for main() function
@@ -26,8 +27,8 @@ def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
         output=output,
         persistent_profile_dir='',
         provider='',
-        trace = False,
-        verbose = False
+        trace=False,
+        verbose=False
     ))
     monkeypatch.setattr(collect_payments, 'is_debugger_active', lambda: False)
 

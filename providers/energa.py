@@ -38,6 +38,7 @@ MESSAGE_BOX_CLOSE_BUTTON = Locator(By.CSS_SELECTOR, 'button.button.primary')
 
 MAINTENANCE_PATTERN = 'aktuali'
 
+
 class Energa(Provider):
     """
     Provider integration for the Energa electricity platform.
@@ -57,11 +58,12 @@ class Energa(Provider):
     def login(self, browser: Browser, load: bool = True) -> None:
         try:
             super().login(browser, load)
-        except Exception:
+        except Exception as _:
+            # If page title contains maintenance string, assume that login raised exception because of page maintenace
             if MAINTENANCE_PATTERN in browser.title.lower():
                 self.under_maintenance = True
-            else:
-                raise
+                return
+            raise
 
     def logout(self, browser: Browser) -> None:
         """
@@ -115,8 +117,9 @@ class Energa(Provider):
             log.debug('Opening location page')
             log.web_trace('pre-location-click')
             browser.click_element_using_js(locations_list[location_id])
-            # If a 'button.primary' exists, there is probably a message displayed that needs to be dismissed before continuing —
-            # unless its text is "Zapłać teraz", which indicates we're already on the target page
+            # If a 'button.primary' exists, there is probably a message displayed
+            # that needs to be dismissed before continuing —  unless its text is "Zapłać teraz",
+            # which indicates we're already on the target page
             button = browser.wait_for_page_element(MESSAGE_BOX_CLOSE_BUTTON, 1)
             if button and button.text != SKIP_PAYMENT_BUTTON_TEXT:
                 browser.click_element_using_js(button)

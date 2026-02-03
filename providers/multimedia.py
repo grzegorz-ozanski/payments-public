@@ -30,6 +30,7 @@ LOGIN_ERROR_TEXT = Locator(By.CSS_SELECTOR, 'span.logonFailureText')
 PASSWORD_CHANGE_ELEMENTS = (Locator(By.ID, 'formPassword'), Locator(By.ID, 'formConfirmation'))
 CAPTCHA_FORM = Locator(By.ID, 'formCaptcha')
 
+
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
 # noinspection PyArgumentEqualDefault
 class Multimedia(Provider):

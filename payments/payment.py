@@ -225,7 +225,7 @@ class Payment:
                   provider, location,
                   due_date, amount, comment,
                   self.due_date, self.amount
-        )
+                  )
 
     def __repr__(self) -> str:
         return f'{self.location} {self.due_date} {self.amount}'

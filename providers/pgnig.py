@@ -19,8 +19,8 @@ PASSWORD_INPUT = Locator(By.NAME, 'accessPin')
 
 READING_ADDRESS = Locator(By.CLASS_NAME, 'reading-adress')
 INVOICES_MENU = Locator(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
-ALL_INVOICES_PAID = Locator(By.XPATH,'//div[contains(@class,"last-invoice") and contains(@class,"blue")]'
-                                     '/strong[contains(text(), "Faktury są opłacone")]')
+ALL_INVOICES_PAID = Locator(By.XPATH, '//div[contains(@class,"last-invoice") and contains(@class,"blue")]'
+                                      '/strong[contains(text(), "Faktury są opłacone")]')
 
 INVOICE_ROW = Locator(By.CLASS_NAME, 'main-row-container')
 INVOICE_COLUMN = Locator(By.CLASS_NAME, 'columns')
