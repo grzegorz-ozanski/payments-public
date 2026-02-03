@@ -37,11 +37,13 @@ def is_fake_run() -> Path | None:
     Returns path to artifical payments data if fake run (i.e. with no actual providers page parsing)
     is executed.
     """
+    # PowerShell cuts off empty variables when passing the env to the child process,
+    # so we cannot differenciate betweeen "set to empty" and "not set"
     path = os.getenv('PAYMENTS_FAKE_DATA', '')
     if not path:
         return None
     if path == '<default>':
-        return Path('../.github', 'data', 'test_output.txt')
+        return Path('.github', 'data', 'test_output.txt')
     return Path(path)
 
 
@@ -99,7 +101,7 @@ def parse_args() -> Namespace:
     parser.add_argument('-d', '--debug',
                         help='Comma-separated list of debug flags (implicates verbose mode)'
                              f'({DebugFlags.BROWSER_PROFILE}: browser profile creation debugging, '
-                             f'{DebugFlags.MULTIMEDIA_LOGIN}: Multimedia provider login debugging)',)
+                             f'{DebugFlags.MULTIMEDIA_LOGIN}: Multimedia provider login debugging)', )
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
     parser.add_argument('-p', '--provider', default='',
@@ -190,8 +192,8 @@ def main() -> int:
 
     selected_providers: providers.Provider | Sequence[providers.Provider]
     if args_provider := args.provider.lower():
-        selected_providers = [provider for provider in providers_list if provider.name in
-                              [name.strip() for name in args_provider.split(',')]]
+        selected_providers = providers_list[args_provider]
+                              #[name.strip() for name in args_provider.split(',')]]
         if not selected_providers:
             print(f'ERROR: No providers can be found for provided argument "{args_provider}"')
     else:
