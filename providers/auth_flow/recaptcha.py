@@ -12,7 +12,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from browser import Browser, Locator, setup_logging
 from providers.auth_flow.base import BaseLogin
-from credentials.providersecrets import ProviderSecrets
+from providers.secrets.core import Secrets
 import numpy as np
 import scipy.interpolate as si
 
@@ -163,7 +163,7 @@ class RecaptchaLogin(BaseLogin):
                  service_name: str,
                  user_input: Locator,
                  password_input: Locator,
-                 credentials: ProviderSecrets):
+                 credentials: Secrets):
         super().__init__(service_name, user_input, password_input, credentials)
         self.login_button: Locator | None = None
         self.error_treshold = Namespace(user=random.uniform(0.01, 0.2),

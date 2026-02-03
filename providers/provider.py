@@ -14,7 +14,7 @@ from selenium.webdriver.common.by import By
 from browser import Browser, Locator, setup_logging
 from payments import Payment
 from providers.auth_flow.base import BaseLogin
-from credentials.providersecrets import ProviderSecrets
+from providers.secrets.core import Secrets
 from providers.auth_flow.one_stage import OneStageLogin
 
 log = setup_logging(__name__)
@@ -64,7 +64,7 @@ class Provider:
         self.locations = locations
         self._location_order = {location: i for i, location in enumerate(self.locations)}
         self.login_strategy = login_strategy(self.name, user_input, password_input,
-                                             ProviderSecrets(self.name, 'username', 'password'))
+                                             Secrets(self.name, 'username', 'password'))
 
         self.logout_button = logout_button or Locator(By.XPATH, DEFAULT_LOGOUT_XPATH)
         self.overlay_buttons = [] if overlay_buttons is None else overlay_buttons

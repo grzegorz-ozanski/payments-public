@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 
 from browser import Browser, Locator, setup_logging
 from providers.auth_flow.base import BaseLogin
-from credentials.providersecrets import ProviderSecrets
+from providers.secrets.core import Secrets
 
 log = setup_logging(__name__)
 
@@ -14,7 +14,7 @@ class OneStageLogin(BaseLogin):
     """
     Login page that has both username and password inputs visible at the moment of opening.
     """
-    def __init__(self, service_name: str, user_input: Locator, password_input: Locator, credentials: ProviderSecrets):
+    def __init__(self, service_name: str, user_input: Locator, password_input: Locator, credentials: Secrets):
         super().__init__(service_name, user_input, password_input, credentials)
 
     def execute(self, browser: Browser) -> None:

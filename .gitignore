@@ -7,6 +7,6 @@ chromedriver
 htmlcov
 run
 .coverage
-.credentials
+providers/secrets/.credentials
 .env
 output.txt

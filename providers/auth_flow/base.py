@@ -8,14 +8,14 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
 from browser import Browser, Locator, PageElement, setup_logging
-from credentials.providersecrets import ProviderSecrets
+from providers.secrets.core import Secrets
 
 log = setup_logging(__name__)
 
 
 class BaseLogin:
     """Base login strategy class."""
-    def __init__(self, service_name: str, user_input: Locator, password_input: Locator, credentials: ProviderSecrets):
+    def __init__(self, service_name: str, user_input: Locator, password_input: Locator, credentials: Secrets):
         self.service_name = service_name
         self.user_input_selector = user_input
         self.password_input_selector = password_input
