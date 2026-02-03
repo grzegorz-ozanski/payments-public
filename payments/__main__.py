@@ -1,6 +1,6 @@
 """
     Application entrypoint
 """
-from .collect_payments import main
+from .main import main
 
 raise SystemExit(main())

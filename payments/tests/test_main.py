@@ -10,7 +10,7 @@ from unittest.mock import patch, MagicMock
 from _pytest.capture import CaptureFixture
 from _pytest.monkeypatch import MonkeyPatch
 
-from payments import collect_payments
+from payments import main
 
 
 def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
@@ -20,7 +20,7 @@ def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
     :param monkeypatch:
     """
     monkeypatch.setattr('sys.argv', ['prog'])
-    monkeypatch.setattr(collect_payments, 'parse_args', lambda: argparse.Namespace(
+    monkeypatch.setattr(main, 'parse_args', lambda: argparse.Namespace(
         clear_profile_on_exit=False,
         chrome_path=None,
         headless=True,
@@ -30,12 +30,12 @@ def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
         trace=False,
         verbose=False
     ))
-    monkeypatch.setattr(collect_payments, 'is_debugger_active', lambda: False)
+    monkeypatch.setattr(main, 'is_debugger_active', lambda: False)
 
 
 def test_parse_args_defaults(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(sys, 'argv', ['prog'])
-    args = collect_payments.parse_args()
+    args = main.parse_args()
     assert args.verbose is False
     assert args.trace is False
     assert args.provider == ''
@@ -43,14 +43,14 @@ def test_parse_args_defaults(monkeypatch: MonkeyPatch) -> None:
 
 def test_main_prints_output(monkeypatch: MonkeyPatch, capsys: CaptureFixture[str]) -> None:
     setup_args(monkeypatch)
-    with (patch('payments.collect_payments.PaymentsManager') as mock_mgr_cls,
-          patch('payments.collect_payments.LookupList') as mock_lookup):
+    with (patch('payments.main.PaymentsManager') as mock_mgr_cls,
+          patch('payments.main.LookupList') as mock_lookup):
         dummy_mgr = MagicMock()
         dummy_mgr.collect.return_value = 'TEST_OUTPUT'
         mock_mgr_cls.return_value = dummy_mgr
         mock_lookup.return_value.__getitem__.return_value = ['provider']
 
-        collect_payments.main()
+        main.main()
         out = capsys.readouterr().out
         assert 'TEST_OUTPUT' in out
 
@@ -61,14 +61,14 @@ def test_main_writes_to_file(monkeypatch: MonkeyPatch) -> None:
     dummy_file.close()
     setup_args(monkeypatch, dummy_path)
 
-    with (patch('payments.collect_payments.PaymentsManager') as mock_mgr_cls,
-          patch('payments.collect_payments.LookupList') as mock_lookup):
+    with (patch('payments.main.PaymentsManager') as mock_mgr_cls,
+          patch('payments.main.LookupList') as mock_lookup):
         mgr = MagicMock()
         mgr.collect.return_value = 'WYNIK'
         mock_mgr_cls.return_value = mgr
         mock_lookup.return_value.__getitem__.return_value = ['provider']
 
-        collect_payments.main()
+        main.main()
 
     with open(dummy_path, encoding='utf-8') as f:
         assert f.read().strip() == 'WYNIK'
