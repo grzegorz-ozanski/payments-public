@@ -129,7 +129,7 @@ def parse_args() -> Namespace:
     return args
 
 
-def main() -> None:
+def main() -> int:
     """
     This function serves as the main entry point for the application. It initializes
     the runtime environment, parses command-line arguments, configures logging and
@@ -137,7 +137,7 @@ def main() -> None:
     outputs the results to either the console or a file if an output file is specified.
     The execution is tracked for timing and provides feedback throughout its workflow.
 
-    :return: None
+    :return: exit code
     """
     if os.getenv('RUNNER_VERSION') and is_elevated():
         raise SystemExit('Covardly refusing to run with elevated privileges (admin/root)'
@@ -210,6 +210,7 @@ def main() -> None:
     end_time = datetime.datetime.now()
     print('Finished at %s' % end_time)
     print('Took %s ' % (end_time - begin_time))
+    return 0
 
 
 if __name__ == '__main__':
