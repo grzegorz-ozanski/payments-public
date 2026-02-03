@@ -1,10 +1,10 @@
 """
     PaymentsManager class unittests
 """
+from browser import BrowserOptions
 from mocks import DummyProvider, MockBrowser
 from payments.payment import Payment
 from payments.paymentsmanager import PaymentsManager, to_string
-from browser import BrowserOptions
 
 
 def test_collect_payments_combines_results() -> None:

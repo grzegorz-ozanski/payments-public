@@ -6,15 +6,15 @@ import string
 import time
 from argparse import Namespace
 
+import numpy as np
+import scipy.interpolate as si
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
 from browser import Browser, Locator, setup_logging
-from providers.auth_flow.base import BaseLogin
+from providers.auth_flow import BaseLogin
 from providers.secrets.core import Secrets
-import numpy as np
-import scipy.interpolate as si
 
 log = setup_logging(__name__)
 

@@ -4,11 +4,10 @@ import time
 from pathlib import Path
 from typing import Sequence
 
-from browser import Browser, BrowserManager, BrowserOptions
+from browser import Browser, BrowserManager, BrowserOptions, setup_logging
+from lookuplist import LookupList
 from payments import Payment
 from providers.provider import Provider
-from lookuplist import LookupList
-from browser import setup_logging
 
 log = setup_logging(__name__)
 

@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator
 from payments import Payment
-from providers.auth_flow.recaptcha import RecaptchaLogin
+from providers.auth_flow import RecaptchaLogin
 from providers.provider import Provider
 
 log = setup_logging(__name__)

@@ -4,7 +4,7 @@
 from selenium.webdriver.common.keys import Keys
 
 from browser import Browser, Locator, setup_logging
-from providers.auth_flow.base import BaseLogin
+from providers.auth_flow import BaseLogin
 from providers.secrets.core import Secrets
 
 log = setup_logging(__name__)

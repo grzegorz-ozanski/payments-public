@@ -13,9 +13,8 @@ from selenium.webdriver.common.by import By
 
 from browser import Browser, Locator, setup_logging
 from payments import Payment
-from providers.auth_flow.base import BaseLogin
+from providers.auth_flow import BaseLogin, OneStageLogin
 from providers.secrets.core import Secrets
-from providers.auth_flow.one_stage import OneStageLogin
 
 log = setup_logging(__name__)
 

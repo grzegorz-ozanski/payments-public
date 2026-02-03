@@ -2,6 +2,7 @@
     Credentials module
 """
 from os import environ
+
 import keyring
 
 

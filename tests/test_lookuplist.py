@@ -2,6 +2,7 @@
 from typing import Union
 
 import pytest
+
 from lookuplist.lookuplist import LookupList
 
 
