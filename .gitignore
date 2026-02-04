@@ -3,10 +3,10 @@
 .vscode
 __pycache__
 browser
-chromedriver
 htmlcov
 run
 .coverage
 payments/providers/secrets/.credentials
+**/chromedriver*
 .env
 output.txt
