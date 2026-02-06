@@ -109,11 +109,13 @@ class Provider:
         log.debug('Wating 2 seconds')
         browser.wait_for_page_inactive(2)
         for overlay_button in self.overlay_buttons:
-            log.debug('Closing overlay button %s', overlay_button)
+            log.debug('Checking overlay button %s', overlay_button)
             webelement = browser.wait_for_page_element(overlay_button, 2)
             if webelement:
+                log.debug('Overlay button %s found, closing', overlay_button)
                 try:
                     browser.safe_click_page_element(overlay_button)
+                    browser.wait_for_page_element_disappear(overlay_button, 2)
                 except TimeoutException:
                     log.debug('Timeout expired waiting for button %s to become clickable!', overlay_button)
 
