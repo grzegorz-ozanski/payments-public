@@ -6,11 +6,6 @@ name: Run payments
 on:
   workflow_call:
     inputs:
-      dump:
-        description: 'Dump workspace after job?'
-        required: false
-        default: 'false'
-        type: string
       event_name:
         description: 'Event name (push/schedule/etc)'
         required: false
@@ -295,35 +290,6 @@ jobs:
           https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
           If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
-
-    - name: "[SKIP REASON] Copy working directory skipped"
-      if: inputs.event_name == 'workflow_dispatch' && inputs.dump != 'true'
-      shell: pwsh
-      run: |-
-        $msg = "::notice ::Skipping 'Copy working directory for inspection' step because " + 
-               "'inputs.event_name == 'workflow_dispatch' && inputs.dump != 'true''."
-        echo $msg
-
-    - name: Copy working directory for inspection
-      if: inputs.event_name != 'workflow_dispatch' || inputs.dump != 'false'
-      shell: pwsh
-      env:
-        WORKSPACE_DUMP_DIR: ${{ runner.os == 'Windows' && 'c:/actions-runner/jobs' || '/tmp/actions-runner/jobs' }}
-        GH_EVENT: ${{ inputs.event_name }}
-      run: |
-        $src = "$env:GITHUB_WORKSPACE"
-        # Store current workspace either if it was requested during manual workflow trigger,
-        # or this is a scheduled workflow, but only keep the most recent one
-        if ($env:GH_EVENT -eq 'workflow_dispatch') {
-          $dst = "${env:WORKSPACE_DUMP_DIR}/${{ github.run_id }}"
-        } else {
-          $dst = "${env:WORKSPACE_DUMP_DIR}/last_workspace"
-          if (Test-Path $dst) {
-            Remove-Item -Path $dst -Recurse -Force
-          }
-        }
-        mkdir -p $dst
-        Copy-Item -Path $src -Recurse -Destination $dst
 
     # 💾 Save current status
     - name: Save current status
