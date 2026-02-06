@@ -193,7 +193,6 @@ def main() -> int:
     selected_providers: providers.Provider | Sequence[providers.Provider]
     if args_provider := args.provider.lower():
         selected_providers = providers_list[args_provider]
-                              #[name.strip() for name in args_provider.split(',')]]
         if not selected_providers:
             print(f'ERROR: No providers can be found for provided argument "{args_provider}"')
     else:
