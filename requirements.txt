@@ -1,4 +1,4 @@
--r browser/requirements.txt
+-r ../browser/requirements.txt
 keyring==25.6.0
 numpy==2.4.1
 python-dateutil==2.9.0.post0
