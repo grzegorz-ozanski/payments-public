@@ -22,7 +22,7 @@ on:
         type: string
       debug_workflow:
         required: false
-        default: false
+        default: true
         type: boolean
     secrets:
       GMAIL_USERNAME:
@@ -72,9 +72,15 @@ jobs:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
       contents: write
 
+    defaults:
+      run:
+        working-directory: payments
+
     steps:
-    - name: Checkout current repo
+    - name: Checkout current repo (payments) into subdir
       uses: actions/checkout@v4
+      with:
+        path: payments
 
     - name: Read previous status
       id: readstatus
@@ -122,7 +128,7 @@ jobs:
       shell: pwsh
       run: |
         # Add dependency to PYTHONPATH
-        echo "PYTHONPATH=$(pwd)/browser" >> $env:GITHUB_ENV
+        echo "PYTHONPATH=$env:GITHUB_WORKSPACE/browser" >> $env:GITHUB_ENV
         # Prepare credentials
         echo "${{ secrets.CREDENTIALS }}" >> $env:GITHUB_ENV
         # Mask credentials
@@ -189,7 +195,7 @@ jobs:
         if-no-files-found: ignore
         retention-days: 3
         path: |
-          ./error/**
+          payments/error/**
 
     - name: Upload trace logs
       uses: actions/upload-artifact@v4
@@ -198,8 +204,8 @@ jobs:
         name: trace-logs
         retention-days: 3
         path: |
-          ${{ env.BROWSER_LOG_FILENAME }}
-          ./trace/**
+          payments/${{ env.BROWSER_LOG_FILENAME }}
+          payments/trace/**
 
     - name: "[SKIP REASON] Upload log skipped"
       if: steps.compare.outputs.status == 'unchanged'
@@ -216,10 +222,10 @@ jobs:
         name: changed-output
         retention-days: 3
         path: |
-          ${{ env.SCRIPT_OUTPUT }}
-          ${{ env.ACTUAL_CONTENT }}
-          ${{ env.REFERENCE_CONTENT }}
-          ${{ env.DIFF_FILE }}
+          payments/${{ env.SCRIPT_OUTPUT }}
+          payments/${{ env.ACTUAL_CONTENT }}
+          payments/${{ env.REFERENCE_CONTENT }}
+          payments/${{ env.DIFF_FILE }}
 
     - name: Store artifacts locally
       shell: pwsh
