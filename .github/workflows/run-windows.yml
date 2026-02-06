@@ -13,7 +13,6 @@ jobs:
       contents: write
     with:
       runner_label: '["self-hosted", "Windows"]'
-      dump: ${{ inputs.dump }}
       event_name: ${{ github.event_name }}
       browser_profile_dir: 'C:\actions-runner\_work\payments'
     secrets:

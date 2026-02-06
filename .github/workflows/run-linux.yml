@@ -15,7 +15,6 @@ jobs:
       contents: write
     with:
       runner_label: '["self-hosted", "Linux"]'
-      dump: ${{ inputs.dump }}
       event_name: ${{ github.event_name }}
       browser_profile_dir: '/runner/_work/payments'
     secrets:
