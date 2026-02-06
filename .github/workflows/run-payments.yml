@@ -174,7 +174,7 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python html_output.py -o ${env:SCRIPT_OUTPUT} -l ${{ env.BROWSER_LOG_FILENAME }} -H ${{ env.SCRIPT_HTML }} -n
+        python payments/html_output.py -o ${env:SCRIPT_OUTPUT} -l ${{ env.BROWSER_LOG_FILENAME }} -H ${{ env.SCRIPT_HTML }} -n
 
     - name: Compare script output with reference
       id: compare
