@@ -90,8 +90,11 @@ class PaymentsManager:
         """
         payments: list[Payment] = []
         manager = BrowserManager(options, browser_class)
-        for provider in self.providers:
-            _print_banner(f'Processing service {provider.name}...')
-            with manager.session(provider.needs_clear_user_profile) as browser:
-                payments += provider.get_payments(browser)
-        return to_string(payments)
+        try:
+            for provider in self.providers:
+                _print_banner(f'Processing service {provider.name}...')
+                with manager.session(provider.needs_clear_user_profile) as browser:
+                    payments += provider.get_payments(browser)
+            return to_string(payments)
+        finally:
+            manager.close()
