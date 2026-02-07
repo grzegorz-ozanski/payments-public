@@ -59,19 +59,19 @@ class Multimedia(Provider):
         num_retries = 10
         for i in range(num_retries):
             print_stage('login attempt',  i, num_retries)
-            state = None
+            debug_input = None
             if self.debug_login and i > 0:
                 while True:
-                    state = input('Press <r> to re-enter credentials or ENTER continue...')
-                    if state == '' or state == 'r':
+                    debug_input = input('Press <r> to re-enter credentials or ENTER continue...')
+                    if debug_input == '' or debug_input == 'r':
                         break
             try:
-                if state is None or state == 'r':
+                if debug_input is None or debug_input == 'r':
                     super().login(browser, load if i == 0 else False)
-                elif state == '':
+                elif debug_input == '':
                     self.logged_in = True
                 else:
-                    raise RuntimeError(f'Unexpected debug state: "{state}"')
+                    raise RuntimeError(f'Unexpected debug state: "{debug_input}"')
             except Exception as ex:
                 log.debug('Unexpectedly unhandled exception in %s.login(): %s',
                           self.__class__.__bases__[0].__name__, ex)
