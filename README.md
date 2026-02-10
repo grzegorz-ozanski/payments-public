@@ -113,6 +113,7 @@ Program behavior can be modified using the following environment variables
 | BROWSER_LOG_TO_CONSOLE | True             | True/False                             | If logs should be written to console or only to a file provided in  BROWSER_LOG_FILENAME |
 | BROWSER_LOG_FILENAME   | <empty>          | Valid file name                        | Name of the log file                                                                     |
 | PAYMENTS_FAKE_DATA     | <empty>          | Valid file name                        | Name of the file containing fake payments data (for debugging purposes) **)              |
+| PAYMENTS_FAKE_DELAY    | 0                | Integer                                | Delay between processing fake payment lines                                              |
 *) Default log format: "%(levelname)s:%(name)s %(asctime)s %(message)s"
 **) If set to "<default>", a default path of /.github/data/test_output.txt will be used
 
