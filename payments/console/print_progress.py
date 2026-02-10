@@ -2,11 +2,43 @@
     Functions for printing a provider operation progress
 """
 import os
-from functools import partial
 
-print_progress = partial(print, end='\n...' if "GITHUB_ACTIONS" in os.environ else '', flush=True)
+_IS_CI = 'GITHUB_ACTIONS' in os.environ
+PREFIX = ''
 
-print_done = partial(print, flush=True)
+
+def print_done(*values: object) -> None:
+    """
+    Prints message indicating that provider processing has completed
+    :param values: objects to print
+    """
+    global PREFIX
+    if PREFIX:
+        try:
+            first_string = next(item for item in values if isinstance(item, str))
+        except StopIteration:
+            first_string = None
+        values = list(values)
+        values[values.index(first_string)] = PREFIX + first_string
+        PREFIX = ''
+    print(*values, flush=True)
+
+
+def print_progress(*values: object) -> None:
+    """
+    Prints progress message
+    :param values: objects to print
+    """
+    try:
+        last_string = next(item for item in reversed(values) if isinstance(item, str))
+    except StopIteration:
+        last_string = None
+    end = ''
+    if _IS_CI:
+        end = '\n'
+        if last_string and not last_string.endswith('...'):
+            end = '\n...'
+    print(*values, end=end, flush=True)
 
 
 def print_stage(msg: str, stage_id: int, number_of_stages: int) -> None:
@@ -21,7 +53,15 @@ def print_stage(msg: str, stage_id: int, number_of_stages: int) -> None:
     # ...
     # print_done("")
     # print_progress(message)
-    message = f'\n...{msg} {stage_id + 1} of {number_of_stages}...'
+    global PREFIX
+    if not _IS_CI:
+        message = '\n'
+    else:
+        message = ''
+    message += f'...{msg} {stage_id + 1} of {number_of_stages}...'
     if stage_id + 1 == number_of_stages:
-        message = f'{message}\n...'
+        if not _IS_CI:
+            message += '\n...'
+        else:
+            PREFIX = '...'
     print_progress(message)
