@@ -10,7 +10,6 @@ import sys
 from argparse import Namespace
 from enum import StrEnum
 from functools import cache
-from pathlib import Path
 from typing import Sequence
 
 from str_to_bool import str_to_bool
@@ -18,7 +17,7 @@ from str_to_bool import str_to_bool
 from payments import providers
 from browser import BrowserOptions, setup_logging
 from payments.lookuplist import LookupList
-from payments.payments import PaymentsManager
+from payments.payments import PaymentsManager, Payment
 
 log = setup_logging(__name__)
 
@@ -29,22 +28,6 @@ class DebugFlags(StrEnum):
     """
     BROWSER_PROFILE = 'bp'
     MULTIMEDIA_LOGIN = 'ml'
-
-
-@cache
-def is_fake_run() -> Path | None:
-    """
-    Returns path to artifical payments data if fake run (i.e. with no actual providers page parsing)
-    is executed.
-    """
-    # PowerShell cuts off empty variables when passing the env to the child process,
-    # so we cannot differenciate betweeen "set to empty" and "not set"
-    path = os.getenv('PAYMENTS_FAKE_DATA', '')
-    if not path:
-        return None
-    if path == '<default>':
-        return Path('.github', 'data', 'test_output.txt')
-    return Path(path)
 
 
 @cache
@@ -90,8 +73,7 @@ def parse_args() -> Namespace:
             "Automatically collects payment information from supported providers' web portals "
             "using browser automation (Selenium). Supports headless mode, trace logging, "
             "and output to file."
-        ),
-        epilog=f"Available providers: {', '.join(providers.all())}"
+        )
     )
 
     parser.add_argument('-c', '--clear-profile-on-exit', default=False, action='store_true',
@@ -105,11 +87,15 @@ def parse_args() -> Namespace:
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
     parser.add_argument('-p', '--provider', default='',
-                        help='Run for single provider only (name must match one from the list below)')
+                        help='Run for single provider only', choices=providers.all())
     parser.add_argument('--persistent-profile-dir', default='',
                         help='Persisten browser profile directory location (default: user temp directory)')
     parser.add_argument('-t', '--trace', default=False, action='store_true',
                         help='Enable trace logging for browser actions')
+    parser.add_argument('-r', '--reverse', default=False, action='store_true',
+                        help='Sort in reverse order')
+    parser.add_argument('-s', '--sort', default=None,
+                        help='Sort payments by the provided key', choices=Payment.KEYS)
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
                         help='Enable verbose mode (show debug logs)')
     parser.add_argument('--chrome-path',
@@ -162,15 +148,17 @@ def main() -> int:
     # otherwise, use headed browser when running under the debugger and headless one when otherwise
     headless = args.headless if args.headless is not None else not is_debugger_active()
 
-    browser_options = None
-    if not is_fake_run():
-        browser_options = BrowserOptions(__file__,
-                                         headless,
-                                         args.trace,
-                                         args.chrome_path,
-                                         not args.clear_profile_on_exit,
-                                         args.persistent_profile_dir,
-                                         renderer_timeout=30)
+    def browser_options() -> BrowserOptions:
+        """
+        Browser options factory
+        """
+        return BrowserOptions(__file__,
+                              headless,
+                              args.trace,
+                              args.chrome_path,
+                              not args.clear_profile_on_exit,
+                              args.persistent_profile_dir,
+                              renderer_timeout=30)
 
     if args.trace and not verbose:
         print('ℹ️ Trace enabled, but verbose mode is off — no logs will be shown on console')
@@ -198,11 +186,7 @@ def main() -> int:
     else:
         selected_providers = providers_list['']
     payments = PaymentsManager(selected_providers)
-    if browser_options:
-        output = payments.collect(browser_options)
-    else:
-        fake_delay = int(os.getenv('PAYMENTS_FAKE_DELAY', '0'))
-        output = payments.collect_fake(is_fake_run(), fake_delay)
+    output = payments.collect(browser_options, args.sort, args.reverse)
     print(output)
     if args.output:
         with open(args.output, 'w', encoding='utf-8') as stream:

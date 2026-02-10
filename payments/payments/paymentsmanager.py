@@ -1,8 +1,9 @@
 """Payments manager module"""
 import logging
+import os
 import time
 from pathlib import Path
-from typing import Sequence
+from typing import Sequence, Callable
 
 from browser import Browser, BrowserManager, BrowserOptions, setup_logging
 from payments.lookuplist import LookupList
@@ -58,7 +59,7 @@ class PaymentsManager:
     def __repr__(self) -> str:
         return '\n'.join(map(str, self.providers))
 
-    def collect_fake(self, filename: Path | None, delay: int = 0) -> str:
+    def collect_fake(self, filename: Path | None, delay: int = 0) -> list[Payment]:
         """
         Collect payments for all providers
         """
@@ -79,14 +80,13 @@ class PaymentsManager:
                                      due_date,
                                      amount)]
                 time.sleep(delay)
-        return to_string(payments)
+        return payments
 
-    def collect(self, options: BrowserOptions, browser_class: type[Browser] = Browser) -> str:
+    def collect_real(self, options: BrowserOptions, browser_class: type[Browser] = Browser) -> list[Payment]:
         """
         Collect payments for all providers and return them as string
         :param options: Browser options
         :param browser_class: Browser class
-        :return:
         """
         payments: list[Payment] = []
         manager = BrowserManager(options, browser_class)
@@ -95,6 +95,34 @@ class PaymentsManager:
                 _print_banner(f'Processing service {provider.name}...')
                 with manager.session(provider.needs_clear_user_profile) as browser:
                     payments += provider.get_payments(browser)
-            return to_string(payments)
+            return payments
         finally:
             manager.close()
+
+    def collect(self, options_factory: Callable[[], BrowserOptions], sort_key: str = None, reverse = False) -> str:
+        """
+        Collect payments either for all providers or from fake data file and return them as string
+        :param options_factory: Browser options factory
+        """
+
+        def is_fake_run() -> Path | None:
+            """
+            Returns path to artifical payments data if fake run (i.e. with no actual providers page parsing)
+            is executed.
+            """
+            # PowerShell cuts off empty variables when passing the env to the child process,
+            # so we cannot differenciate betweeen "set to empty" and "not set"
+            path = os.getenv('PAYMENTS_FAKE_DATA', '')
+            if not path:
+                return None
+            if path == '<default>':
+                return Path('.github', 'data', 'test_output.txt')
+            return Path(path)
+
+        if (fake_data := is_fake_run()) is not None:
+            payments = self.collect_fake(fake_data, int(os.getenv('PAYMENTS_FAKE_DELAY', '0')))
+        else:
+            payments = self.collect_real(options_factory())
+        if sort_key:
+            payments = sorted(payments, key=lambda p: getattr(p, sort_key), reverse=reverse)
+        return to_string(payments)
