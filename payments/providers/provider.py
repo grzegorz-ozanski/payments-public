@@ -71,7 +71,7 @@ class Provider:
         self.needs_clear_user_profile = needs_clear_user_profile
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
-        self.logged_in = False
+        self.logged_in = False  # TODO: consider refactoring after all providers have _is_logged_in implemented
 
     def __repr__(self) -> str:
         """Provider name and list of supported locations."""
@@ -121,6 +121,8 @@ class Provider:
 
     def login(self, browser: Browser, load: bool = True) -> None:
         """Perform login in the web application."""
+        if self._is_logged_in(browser):
+            return
         try:
             if load:
                 self.load(browser)
@@ -168,6 +170,9 @@ class Provider:
                         None,
                         message)
                 for location in self.locations]
+
+    def _is_logged_in(self, browser: Browser) -> bool:
+        return False
 
     def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Must be overridden in subclasses to return actual payments."""

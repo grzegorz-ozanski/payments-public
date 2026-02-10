@@ -89,6 +89,12 @@ class Energa(Provider):
         except NoSuchElementException:
             log.debug('Cannot click logout button. Are we even logged in?')
 
+    def _is_logged_in(self, browser: Browser) -> bool:
+        if browser.wait_for_page_element(USER_MENU, 2):
+            self.logged_in = True
+            return True
+        return False
+
     def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """
         Read and return payment data for all user locations.
