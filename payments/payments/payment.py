@@ -19,6 +19,7 @@ AmountT = str | float | WebElement | PageElement
 DueDateT = str | date | WebElement | PageElement
 
 
+@total_ordering
 class Amount:
     """
         Represents payment amount either as float or decimal value with comma (',') decimal separator
@@ -51,6 +52,16 @@ class Amount:
         if self.is_unknown():
             return True if other.is_unknown() else False
         return self.whole == other.whole and self.decimal == other.decimal
+
+    def __lt__(self, other: object) -> bool:
+        """
+            Compare dates for sorting (less than).
+        """
+        if isinstance(other, float):
+            return float(self) < other
+        if isinstance(other, Amount):
+            return float(self) < float(other)
+        return NotImplemented
 
     def __float__(self) -> float:
         """
@@ -197,6 +208,7 @@ class Payment:
     (with amount and due_date containing actual values),
     or an invalid one otherwise (amount and due_date set to '<unknown>')
     """
+    SORT_KEYS = ('provider', 'location', 'due_date', 'amount')
 
     def __init__(self,
                  provider: str,

@@ -95,7 +95,7 @@ def parse_args() -> Namespace:
     parser.add_argument('-r', '--reverse', default=False, action='store_true',
                         help='Sort in reverse order')
     parser.add_argument('-s', '--sort', default=None,
-                        help='Sort payments by the provided key', choices=Payment.KEYS)
+                        help='Sort payments by the provided key', choices=Payment.SORT_KEYS)
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
                         help='Enable verbose mode (show debug logs)')
     parser.add_argument('--chrome-path',
