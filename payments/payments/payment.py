@@ -162,6 +162,8 @@ class DueDate:
         """
         if isinstance(other, date):
             return self.value == other
+        if isinstance(other, DueDateT):
+            return self == DueDate.create_from(other)
         if not isinstance(other, DueDate):
             return NotImplemented
         return self.value == other.value
@@ -172,6 +174,8 @@ class DueDate:
         """
         if isinstance(other, date):
             return self.value < other
+        if isinstance(other, DueDateT):
+            return self < DueDate.create_from(other)
         if not isinstance(other, DueDate):
             return NotImplemented
         return True if other.value == DueDate.unknown else self.value < other.value
