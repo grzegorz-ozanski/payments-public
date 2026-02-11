@@ -1,6 +1,8 @@
 """Payments manager module"""
 import logging
+import operator
 import os
+import re
 import time
 from pathlib import Path
 from typing import Sequence, Callable
@@ -12,22 +14,6 @@ from payments.providers.provider import Provider
 from payments.console import print_progress
 
 log = setup_logging(__name__)
-
-
-def to_string(payments: list[Payment]) -> str:
-    """
-    Export all payments to string, adding padding
-    """
-    max_len_provider = 0
-    max_len_amount = 0
-    max_len_location = 0
-
-    for payment in payments:
-        max_len_provider = max(max_len_provider, len(payment.provider))
-        max_len_amount = max(max_len_amount, len(str(payment.amount)))
-        max_len_location = max(max_len_location, len(payment.location))
-    return '\n'.join([payment.to_padded_string([max_len_provider, max_len_amount, max_len_location])
-                      for payment in payments])
 
 
 def _print_banner(message: str) -> None:
@@ -46,6 +32,7 @@ class PaymentsManager:
         """
         If a single item is provided, change it into the one-element list
         """
+        self.collected_payments: list[Payment] | None = None
         self.providers: LookupList[Provider]
         if isinstance(providers, Provider):
             self.providers = LookupList[Provider](providers)
@@ -65,7 +52,7 @@ class PaymentsManager:
         """
         payments: list[Payment] = []
         if not filename:
-            return ''
+            return payments
         with open(filename) as file:
             for line in file.readlines():
                 provider, amount, location_name, due_date = ' '.join(line.split()).strip().split()
@@ -99,10 +86,12 @@ class PaymentsManager:
         finally:
             manager.close()
 
-    def collect(self, options_factory: Callable[[], BrowserOptions], sort_key: str = None, reverse = False) -> str:
+    def collect(self,
+                options_factory: Callable[[], BrowserOptions]) -> 'PaymentsManager':
         """
-        Collect payments either for all providers or from fake data file and return them as string
+        Collect payments either for all providers or from fake data file
         :param options_factory: Browser options factory
+        :return PaymentsManager self object for pipelining
         """
 
         def is_fake_run() -> Path | None:
@@ -120,9 +109,59 @@ class PaymentsManager:
             return Path(path)
 
         if (fake_data := is_fake_run()) is not None:
-            payments = self.collect_fake(fake_data, int(os.getenv('PAYMENTS_FAKE_DELAY', '0')))
+            self.collected_payments = self.collect_fake(fake_data, int(os.getenv('PAYMENTS_FAKE_DELAY', '0')))
         else:
-            payments = self.collect_real(options_factory())
+            self.collected_payments = self.collect_real(options_factory())
+        return self
+
+    def sort(self,
+             sort_key: str | None = None,
+             reverse: bool = False) -> 'PaymentsManager':
+        """
+        Sorts collected payments
+        :param sort_key: sort key or None if no sorting should be performed
+        :param reverse: reverse sort order
+        :return PaymentsManager self object for pipelining
+        """
         if sort_key:
-            payments = sorted(payments, key=lambda p: getattr(p, sort_key), reverse=reverse)
-        return to_string(payments)
+            self.collected_payments = sorted(self.collected_payments,
+                                             key=lambda p: getattr(p, sort_key),
+                                             reverse=reverse)
+        return self
+
+    def where(self,
+              filter_string: str | None = None) -> 'PaymentsManager':
+        """
+        Filters collected payments by provided criteria
+        :param filter_string:
+        :return PaymentsManager self object for pipelining
+        """
+        if filter_string:
+            ops = {
+                "<": operator.lt,
+                "<=": operator.le,
+                ">": operator.gt,
+                ">=": operator.ge,
+                "==": operator.eq,
+                "!=": operator.ne
+            }
+            m = re.match(rf'(\S+)\s*({"|".join(ops.keys())})\s*(\S+)', filter_string)
+            if m:
+                self.collected_payments = list(filter(lambda p: ops[m[2]](getattr(p, m[1]), m[3]),
+                                                      self.collected_payments))
+        return self
+
+    def as_string(self) -> str:
+        """
+        Export all payments to string, adding padding
+        """
+        max_len_provider = 0
+        max_len_amount = 0
+        max_len_location = 0
+
+        for payment in self.collected_payments:
+            max_len_provider = max(max_len_provider, len(payment.provider))
+            max_len_amount = max(max_len_amount, len(str(payment.amount)))
+            max_len_location = max(max_len_location, len(payment.location))
+        return '\n'.join([payment.to_padded_string([max_len_provider, max_len_amount, max_len_location])
+                          for payment in self.collected_payments])

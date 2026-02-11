@@ -46,8 +46,10 @@ class Amount:
             Compare amounts for equality.
         """
         if not isinstance(other, Amount):
+            if isinstance(other, float):
+                return float(self) == other
             if isinstance(other, str):
-                return self.value == other
+                return str(self) == str(Amount.create_from(other))
             return NotImplemented
         if self.is_unknown():
             return True if other.is_unknown() else False
@@ -61,6 +63,8 @@ class Amount:
             return float(self) < other
         if isinstance(other, Amount):
             return float(self) < float(other)
+        if isinstance(other, str):
+            return str(self) < str(Amount.create_from(other))
         return NotImplemented
 
     def __float__(self) -> float:

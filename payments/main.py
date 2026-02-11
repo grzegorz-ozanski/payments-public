@@ -96,6 +96,8 @@ def parse_args() -> Namespace:
                         help='Sort in reverse order')
     parser.add_argument('-s', '--sort', default=None,
                         help='Sort payments by the provided key', choices=Payment.SORT_KEYS)
+    parser.add_argument('-f', '--filter', default=None,
+                        help=f'Filter (<=, <, =, !=, >, >=) by provided keys ({Payment.SORT_KEYS})')
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
                         help='Enable verbose mode (show debug logs)')
     parser.add_argument('--chrome-path',
@@ -186,7 +188,7 @@ def main() -> int:
     else:
         selected_providers = providers_list['']
     payments = PaymentsManager(selected_providers)
-    output = payments.collect(browser_options, args.sort, args.reverse)
+    output = payments.collect(browser_options).sort(args.sort, args.reverse).where(args.filter).as_string()
     print(output)
     if args.output:
         with open(args.output, 'w', encoding='utf-8') as stream:
