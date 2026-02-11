@@ -87,7 +87,7 @@ def parse_args() -> Namespace:
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
     parser.add_argument('-p', '--provider', default='',
-                        help='Run for single provider only', choices=providers.all())
+                        help='Run for single provider only', choices=providers.all_lower())
     parser.add_argument('--persistent-profile-dir', default='',
                         help='Persisten browser profile directory location (default: user temp directory)')
     parser.add_argument('-t', '--trace', default=False, action='store_true',

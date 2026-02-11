@@ -24,9 +24,8 @@ __all__ = [
 ]
 
 
-# noinspection PyShadowingBuiltins
-def all() -> list[str]:
+def all_lower() -> list[str]:
     """
     Returns the list of all supported providers
     """
-    return [name for name in __all__ if name != 'Provider']
+    return [name.lower() for name in __all__ if name != 'Provider']
