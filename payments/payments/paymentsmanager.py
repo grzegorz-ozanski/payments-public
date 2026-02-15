@@ -85,10 +85,12 @@ class PaymentsManager:
             manager.close()
 
     def collect(self,
-                options_factory: Callable[[], BrowserOptions]) -> PaymentsList:
+                options_factory: Callable[[], BrowserOptions],
+                browser_class: type[Browser] = Browser) -> PaymentsList:
         """
         Collect payments either for all providers or from fake data file
         :param options_factory: Browser options factory
+        :param browser_class: Browser class
         :return PaymentsManager self object for pipelining
         """
 
@@ -108,4 +110,4 @@ class PaymentsManager:
 
         if (fake_data := is_fake_run()) is not None:
             return self.collect_fake(fake_data, int(os.getenv('PAYMENTS_FAKE_DELAY', '0')))
-        return self.collect_real(options_factory())
+        return self.collect_real(options_factory(), browser_class)
