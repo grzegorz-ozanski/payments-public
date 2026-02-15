@@ -16,11 +16,13 @@ def print_done(*values: object) -> None:
     if PREFIX:
         try:
             first_string = next(item for item in values if isinstance(item, str))
+            values_list = list(values)
+            values_list[values_list.index(first_string)] = PREFIX + first_string
+            PREFIX = ''
+            print(*values_list, flush=True)
+            return
         except StopIteration:
-            first_string = None
-        values = list(values)
-        values[values.index(first_string)] = PREFIX + first_string
-        PREFIX = ''
+            pass
     print(*values, flush=True)
 
 
