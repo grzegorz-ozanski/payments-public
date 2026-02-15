@@ -54,6 +54,7 @@ class PaymentsManager:
         if not filename:
             return payments
         with open(filename) as file:
+            print(f'Getting data from {filename}...')
             for line in file.readlines():
                 provider, amount, location_name, due_date = ' '.join(line.split()).strip().split()
                 if provider not in (prov.name for prov in self.providers):
