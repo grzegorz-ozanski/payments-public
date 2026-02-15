@@ -3,8 +3,7 @@
 """
 from browser import BrowserOptions
 from mocks import DummyProvider, MockBrowser
-from payments.payments.payment import Payment
-from payments.payments.paymentsmanager import PaymentsManager, to_string
+from payments import Payment, PaymentsList, PaymentsManager
 
 
 def test_collect_payments_combines_results() -> None:
@@ -16,8 +15,8 @@ def test_collect_payments_combines_results() -> None:
                  DummyProvider('p2', ('L2',), [payments[1]])]
 
     mgr = PaymentsManager(providers)
-    result = mgr.collect(BrowserOptions(__file__, False, False, ''), browser_class=MockBrowser)
-
+    result = str(mgr.collect(lambda: BrowserOptions(__file__, False, False, ''),
+                             MockBrowser))
     assert 'p1' in result
     assert 'p2' in result
     assert '123' in result
@@ -31,7 +30,7 @@ def test_payments_to_str_padding() -> None:
         Payment('p', 'loc', '2025-06-01', '1'),
         Payment('prov', 'location', '2025-06-02', '100')
     ]
-    result = to_string(payments)
+    result = str(PaymentsList(payments))
 
     lines = result.strip().splitlines()
     assert len(lines) == 2

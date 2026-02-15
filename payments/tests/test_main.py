@@ -28,7 +28,9 @@ def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
         persistent_profile_dir='',
         provider='',
         trace=False,
-        verbose=False
+        verbose=False,
+        sort=None,
+        filter=None,
     ))
     monkeypatch.setattr(main, 'is_debugger_active', lambda: False)
 
