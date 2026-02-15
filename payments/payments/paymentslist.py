@@ -14,43 +14,40 @@ class PaymentsList:
         self.payments: list[Payment] = payments
 
     def copy(self) -> 'PaymentsList':
+        """
+        Creates a copy of the object
+        """
         return PaymentsList(self.payments.copy())
 
-    def sort(self,
-             sort_key: str | None = None,
-             reverse: bool = False) -> 'PaymentsList':
+    def sort(self, sort_key: str, reverse: bool = False) -> 'PaymentsList':
         """
         Sorts collected payments
         :param sort_key: sort key or None if no sorting should be performed
         :param reverse: reverse sort order
         :return PaymentsManager self object for pipelining
         """
-        if sort_key:
-            return PaymentsList(sorted(self.payments,
-                                       key=lambda p: getattr(p, sort_key),
-                                       reverse=reverse))
-        return self.copy()
+        return PaymentsList(sorted(self.payments,
+                                   key=lambda p: getattr(p, sort_key),
+                                   reverse=reverse))
 
-    def where(self,
-              filter_string: str | None = None) -> 'PaymentsList':
+    def where(self, filter_string: str) -> 'PaymentsList':
         """
         Filters collected payments by provided criteria
         :param filter_string:
         :return PaymentsManager self object for pipelining
         """
-        if filter_string:
-            ops = {
-                "<": operator.lt,
-                "<=": operator.le,
-                ">": operator.gt,
-                ">=": operator.ge,
-                "==": operator.eq,
-                "!=": operator.ne
-            }
-            m = re.match(rf'(\S+)\s*({"|".join(ops.keys())})\s*(\S+)', filter_string)
-            if m:
-                return PaymentsList(list(filter(lambda p: ops[m[2]](getattr(p, m[1]), m[3]),
-                                                self.payments)))
+        ops = {
+            "<": operator.lt,
+            "<=": operator.le,
+            ">": operator.gt,
+            ">=": operator.ge,
+            "==": operator.eq,
+            "!=": operator.ne
+        }
+        m = re.match(rf'(\S+)\s*({"|".join(ops.keys())})\s*(\S+)', filter_string)
+        if m:
+            return PaymentsList(list(filter(lambda p: ops[m[2]](getattr(p, m[1]), m[3]),
+                                            self.payments)))
         return self.copy()
 
     def __str__(self) -> str:
