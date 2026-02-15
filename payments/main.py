@@ -188,7 +188,7 @@ def main() -> int:
     else:
         selected_providers = providers_list['']
     payments = PaymentsManager(selected_providers)
-    output = payments.collect(browser_options).sort(args.sort, args.reverse).where(args.filter).as_string()
+    output = payments.collect(browser_options).sort(args.sort, args.reverse).where(args.filter)
     print(output)
     if args.output:
         with open(args.output, 'w', encoding='utf-8') as stream:
