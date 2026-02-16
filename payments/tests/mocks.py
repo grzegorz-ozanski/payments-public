@@ -105,11 +105,12 @@ class MockBrowser(Browser):
         """Mock _execute_javascript method."""
         pass
 
-    def set_page_load_timeout(self, seconds: float) -> None:
+    def set_page_load_timeout(self, time_to_wait: float) -> None:
         # no-op for tests
         return
 
-    def set_script_timeout(self, seconds: float) -> None:
+    def set_script_timeout(self, time_to_wait: float) -> None:
+        # no-op for tests
         return
 
 

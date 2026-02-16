@@ -45,7 +45,7 @@ def is_elevated() -> bool:
       - Windows: checks token membership in Administrators group.
       - POSIX: checks effective UID == 0.
     """
-    if os.name == "nt":
+    if sys.platform == "win32":
         try:
             # noinspection PyUnresolvedReferences
             return bool(ctypes.windll.shell32.IsUserAnAdmin())
