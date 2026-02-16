@@ -10,3 +10,4 @@ payments/providers/secrets/.credentials
 **/chromedriver*
 .env
 output.txt
+.github/data/test_output.txt
