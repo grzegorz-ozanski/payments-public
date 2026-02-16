@@ -38,34 +38,38 @@ on:
       CREDENTIALS:
         required: true
 
-# noinspection GrazieInspection
-# Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
 env:
-  DEBUG_WORKFLOW:          ${{ inputs.debug_workflow }}
-  ACTUAL_CONTENT:          actual.txt
-  BROWSER_LOG_FILENAME:    ${{ inputs.debug_workflow && '.github/data/test_trace.log' || 'trace.log' }}
-  BROWSER_LOG_TO_CONSOLE:  False
-  CHROMEDRIVER_VERSION:    chromedriver-chrome-134.0.6944.0
-  DIFF_FILE:               diff.txt
-  GH_ACTIONS_EMAIL:       "github-actions@github.com"
-  GH_ACTIONS_USER_NAME:   "github-actions"
-  LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
-  LOCAL_ARTIFACTS_LINUX:   /runner/artifacts
-  REFERENCE_CONTENT:       reference.txt
-  REFERENCE_OUTPUT:        .github/data/reference_output.txt
-  SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && '.github/data/test_output.txt' || 'script_output.txt' }}
-  SCRIPT_HTML:             script_output.html
-  STATUS_FILE:             .github/status/last-status.txt
-  # Scripts
-  COMPARE_SCRIPT:       .github/scripts/compare-output.ps1
-  GIT_PUSH_SCRIPT:      .github/scripts/git-push.ps1
-  MASK_SCRIPT:          .github/scripts/mask-env-secrets.ps1
-  READ_STATUS_SCRIPT:   .github/scripts/read-previous-status.ps1
-  STATUS_SCRIPT:        .github/scripts/compare-status.ps1
-  STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
+  GH_ACTIONS_USER_NAME: "github-actions"
+  TEST_DATA:            ${{ github.workspace }}/testdata
+  SCRIPTS_DIR:          .github/scripts
 
 jobs:
   run-payments:
+    # noinspection GrazieInspection
+    # Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
+    env:
+      ACTUAL_CONTENT:          actual.txt
+      BROWSER_LOG_FILENAME:    ${{ inputs.debug_workflow && (env.TEST_DATA + '/test_trace.log') || 'trace.log' }}
+      BROWSER_LOG_TO_CONSOLE:  false
+      CHROMEDRIVER_VERSION:    chromedriver-chrome-134.0.6944.0
+      DIFF_FILE:               diff.txt
+      GH_ACTIONS_EMAIL:        ${{ env.GH_ACTIONS_USER_NAME + '@github.com' }}
+      LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
+      LOCAL_ARTIFACTS_LINUX:   /runner/artifacts
+      REFERENCE_CONTENT:       reference.txt
+      REFERENCE_OUTPUT:        ${{ env.TEST_DATA + '/reference_output.txt' }}
+      SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && (env.TEST_DATA + '/test_output.txt') || 'script_output.txt' }}
+      SCRIPT_HTML:             script_output.html
+      STATUS_FILE:             ${{ env.TEST_DATA + '/last-status.txt' }}
+
+      # Scripts
+      COMPARE_SCRIPT:          ${{ env.SCRIPTS_DIR + '/compare-output.ps1' }}
+      GIT_PUSH_SCRIPT:         ${{ env.SCRIPTS_DIR + '/git-push.ps1' }}
+      MASK_SCRIPT:             ${{ env.SCRIPTS_DIR + '/mask-env-secrets.ps1' }}
+      READ_STATUS_SCRIPT:      ${{ env.SCRIPTS_DIR + '/read-previous-status.ps1' }}
+      STATUS_SCRIPT:           ${{ env.SCRIPTS_DIR + '/compare-status.ps1' }}
+      STORE_LOCALLY_SCRIPT:    ${{ env.SCRIPTS_DIR + '/store-artifacts-locally.ps1' }}
+
     runs-on: ${{ fromJson(inputs.runner_label) }}
 
     permissions:
@@ -106,7 +110,7 @@ jobs:
       shell: pwsh
       run: |
         python --version
-        where python
+        (Get-Command python).Source
 
     - name: Clone required browser repo
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
@@ -154,14 +158,11 @@ jobs:
         }
 
     - name: Download reference output from private repo
-      env:
-        PAYMENTS_TESTDATA_REPO_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
-      shell: pwsh
-      run: |
-        git clone https://${env:PAYMENTS_TESTDATA_REPO_TOKEN}@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
-        New-Item -ItemType Directory -Path .github/data -Force | Out-Null
-        Copy-Item -Path temp_testdata/* -Destination .github/data -Recurse -Force
-        Remove-Item -Recurse -Force temp_testdata
+      uses: actions/checkout@v4
+      with:
+        repository: grzegorz-ozanski/payments-testdata
+        path: testdata
+        token: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
 
     - name: Run the script
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
@@ -312,6 +313,7 @@ jobs:
         }
         Set-Content -Path ${env:STATUS_FILE} -Value "$status" -Encoding UTF8
         
+        Set-Location "${env:TEST_DATA}"
         pwsh -File ${env:GIT_PUSH_SCRIPT} `
         ${env:STATUS_FILE} `
         "Update coverage badge [skip ci]" `
