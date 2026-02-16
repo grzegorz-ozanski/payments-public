@@ -56,7 +56,7 @@ jobs:
     - name: Prepare environment
       shell: pwsh
       run: |
-        # Add dependency to PYTHONPATH
+        # Add browser repo to PYTHONPATH
         echo "PYTHONPATH=$env:GITHUB_WORKSPACE/browser" >> $env:GITHUB_ENV
 
     - name: Install Pyright
