@@ -6,12 +6,12 @@ on:
   pull_request:
 
 env:
-  COVERAGE_REPORT_FILE: coverage.txt
+  COVERAGE_REPORT_FILE: payments/coverage.txt
   GIT_PUSH_SCRIPT: .github/scripts/git-push.ps1
   GH_ACTIONS_EMAIL: "github-actions@github.com"
   GH_ACTIONS_USER_NAME: "github-actions"
   MASTER_BRANCH: refs/heads/master
-  README_PATH: README.md
+  README_PATH: payments/README.md
 
 jobs:
   test:
@@ -64,7 +64,9 @@ jobs:
     - name: Run tests with coverage
       shell: pwsh
       run: |
-        coverage run -m pytest payments browser
+        coverage run --data-file .coverage.payments -m pytest payments
+        coverage run --data-file .coverage.browser -m pytest browser
+        coverage combine --data-file .coverage .coverage.payments .coverage.browser
         coverage report
 
     - name: Generate HTML coverage report
@@ -72,7 +74,7 @@ jobs:
       shell: pwsh
       run: |
         coverage html
-        coverage report > ${env:COVERAGE_REPORT_FILE}
+        coverage report --data-file .coverage.payments > ${env:COVERAGE_REPORT_FILE}
         Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip
 
     - name: Upload coverage artifact
@@ -128,7 +130,6 @@ jobs:
     - name: Update coverage badge in README
       if: github.ref == env.MASTER_BRANCH
       shell: pwsh
-      working-directory: payments
       run: |
         $lines = Get-Content ${env:COVERAGE_REPORT_FILE} 
         $totalLine = $lines | Where-Object { $_ -match '^TOTAL\s' }
