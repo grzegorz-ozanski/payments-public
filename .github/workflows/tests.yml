@@ -64,7 +64,6 @@ jobs:
     - name: Run tests with coverage
       shell: pwsh
       run: |
-        ls
         coverage run -m pytest payments browser
         coverage report
 
@@ -101,12 +100,20 @@ jobs:
         mypy . --strict --ignore-missing-imports >> ${env:GITHUB_STEP_SUMMARY}
         echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
-    - name: Add pyright results to summary
+    - name: Add pyright payments results to summary
       if: always()
       shell: pwsh
+      working-directory: payments
       run: |
         echo '### ✅ Pyright Summary' >> ${env:GITHUB_STEP_SUMMARY}
         echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+        pyright >> ${env:GITHUB_STEP_SUMMARY}
+
+    - name: Add pyright browser results to summary
+      if: always()
+      shell: pwsh
+      working-directory: browser
+      run: |
         pyright >> ${env:GITHUB_STEP_SUMMARY}
         echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
