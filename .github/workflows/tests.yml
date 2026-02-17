@@ -128,6 +128,7 @@ jobs:
     - name: Update coverage badge in README
       if: github.ref == env.MASTER_BRANCH
       shell: pwsh
+      working-directory: payments
       run: |
         $lines = Get-Content ${env:COVERAGE_REPORT_FILE} 
         $totalLine = $lines | Where-Object { $_ -match '^TOTAL\s' }
@@ -163,6 +164,7 @@ jobs:
 
     - name: Commit updated README
       if: github.ref == env.MASTER_BRANCH
+      working-directory: payments
       shell: pwsh
       run: |
         pwsh -File ${env:GIT_PUSH_SCRIPT} `
