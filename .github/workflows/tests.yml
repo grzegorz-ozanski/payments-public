@@ -65,18 +65,16 @@ jobs:
       shell: pwsh
       run: |
         coverage run --data-file .coverage.payments -m pytest payments
+        coverage report --data-file .coverage.payments > ${env:COVERAGE_REPORT_FILE}
         coverage run --data-file .coverage.browser -m pytest browser
         coverage combine --data-file .coverage .coverage.payments .coverage.browser
         coverage report
-        Get-ChildItem -Force
 
     - name: Generate HTML coverage report
       if: always()
       shell: pwsh
       run: |
-        Get-ChildItem -Force
         coverage html
-        coverage report --data-file .coverage.payments > ${env:COVERAGE_REPORT_FILE}
         Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip
 
     - name: Upload coverage artifact
