@@ -65,7 +65,7 @@ jobs:
       shell: pwsh
       run: |
         ls
-        coverage run -m pytest
+        coverage run -m pytest payments browser
         coverage report
 
     - name: Generate HTML coverage report
