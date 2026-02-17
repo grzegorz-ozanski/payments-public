@@ -68,13 +68,13 @@ jobs:
         coverage run --data-file .coverage.browser -m pytest browser
         coverage combine --data-file .coverage .coverage.payments .coverage.browser
         coverage report
-        ls
+        Get-ChildItem -Force
 
     - name: Generate HTML coverage report
       if: always()
       shell: pwsh
       run: |
-        ls
+        Get-ChildItem -Force
         coverage html
         coverage report --data-file .coverage.payments > ${env:COVERAGE_REPORT_FILE}
         Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip
