@@ -68,11 +68,13 @@ jobs:
         coverage run --data-file .coverage.browser -m pytest browser
         coverage combine --data-file .coverage .coverage.payments .coverage.browser
         coverage report
+        ls
 
     - name: Generate HTML coverage report
       if: always()
       shell: pwsh
       run: |
+        ls
         coverage html
         coverage report --data-file .coverage.payments > ${env:COVERAGE_REPORT_FILE}
         Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip
@@ -82,7 +84,7 @@ jobs:
       continue-on-error: true
       with:
         name: htmlcov
-        path: payments/htmlcov.zip
+        path: htmlcov.zip
 
     - name: Add coverage report to summary
       if: always()
