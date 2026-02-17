@@ -21,10 +21,6 @@ jobs:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
       contents: write
 
-    defaults:
-      run:
-        working-directory: payments
-
     steps:
     - name: Checkout current repo
       uses: actions/checkout@v4
@@ -50,6 +46,7 @@ jobs:
 
     - name: Install dependencies
       shell: pwsh
+      working-directory: payments
       run: |
         pip install -r requirements-dev.txt
 
