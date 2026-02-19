@@ -54,7 +54,7 @@ jobs:
       LOCAL_ARTIFACTS_LINUX:   /runner/artifacts
       REFERENCE_CONTENT:       reference.txt
       REFERENCE_OUTPUT:        ${{ github.workspace }}/testdata/reference_output.txt
-      SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && github.workspace'/testdata/test_output.txt' || 'script_output.txt' }}
+      SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && format('{0}/testdata/test_output.txt', github.workspace) || 'script_output.txt' }}
       SCRIPT_HTML:             script_output.html
       STATUS_FILE:             ${{ github.workspace }}/testdata/last-status.txt
 
