@@ -38,38 +38,34 @@ on:
       CREDENTIALS:
         required: true
 
-env:
-  GH_ACTIONS_USER_NAME: "github-actions"
-  TEST_DATA:            ${{ github.workspace }}/testdata
-  SCRIPTS_DIR:          .github/scripts
-
 jobs:
   run-payments:
     # noinspection GrazieInspection
     # Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
     env:
       ACTUAL_CONTENT:          actual.txt
-      BROWSER_LOG_FILENAME:    ${{ inputs.debug_workflow && format('{0}/test_trace.log', env.TEST_DATA) || 'trace.log' }}
+      BROWSER_LOG_FILENAME:    ${{ inputs.debug_workflow && '.github/data/test_trace.log' || 'trace.log' }}
       BROWSER_LOG_TO_CONSOLE:  false
-      CHROMEDRIVER_VERSION:    chromedriver-chrome-134.0.6944.0
+      DEBUG_WORKFLOW:          ${{ inputs.debug_workflow }}
       DIFF_FILE:               diff.txt
-      GH_ACTIONS_EMAIL:        ${{ format('{0}@github.com', env.GH_ACTIONS_USER_NAME) }}
+      GH_ACTIONS_EMAIL:       "github-actions@github.com"
+      GH_ACTIONS_USER_NAME:   "github-actions"
       LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
       LOCAL_ARTIFACTS_LINUX:   /runner/artifacts
       REFERENCE_CONTENT:       reference.txt
-      REFERENCE_OUTPUT:        ${{ format('{0}/reference_output.txt', env.TEST_DATA) }}
-      SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && format('{0}/test_output.txt', env.TEST_DATA) || 'script_output.txt' }}
+      REFERENCE_OUTPUT:        ${{ github.workspace }}/testdata/reference_output.txt
+      SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && github.workspace'/testdata/test_output.txt' || 'script_output.txt' }}
       SCRIPT_HTML:             script_output.html
-      STATUS_FILE:             ${{ format('{0}/last-status.txt', env.TEST_DATA) }}
+      STATUS_FILE:             ${{ github.workspace }}/testdata/last-status.txt
 
       # Scripts
-      COMPARE_SCRIPT:       ${{ format('{0}/compare-output.ps1', env.SCRIPTS_DIR) }}
-      GIT_PUSH_SCRIPT:      ${{ format('{0}/git-push.ps1', env.SCRIPTS_DIR) }}
-      MASK_SCRIPT:          ${{ format('{0}/mask-env-secrets.ps1', env.SCRIPTS_DIR) }}
-      READ_STATUS_SCRIPT:   ${{ format('{0}/read-previous-status.ps1', env.SCRIPTS_DIR) }}
-      STATUS_SCRIPT:        ${{ format('{0}/compare-status.ps1', env.SCRIPTS_DIR) }}
-      STORE_LOCALLY_SCRIPT: ${{ format('{0}/store-artifacts-locally.ps1', env.SCRIPTS_DIR) }}
-      
+      COMPARE_SCRIPT:       .github/scripts/compare-output.ps1
+      GIT_PUSH_SCRIPT:      .github/scripts/git-push.ps1
+      MASK_SCRIPT:          .github/scripts/mask-env-secrets.ps1
+      READ_STATUS_SCRIPT:   .github/scripts/read-previous-status.ps1
+      STATUS_SCRIPT:        .github/scripts/compare-status.ps1
+      STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
+
     runs-on: ${{ fromJson(inputs.runner_label) }}
 
     permissions:
