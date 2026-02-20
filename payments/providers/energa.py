@@ -124,7 +124,7 @@ class Energa(Provider):
         for location_id in range(len(locations_list)):
             print_stage('location', location_id, len(locations_list))
             log.debug('Opening location page')
-            log.web_trace('pre-location-click')
+            log.web_trace(f'location-{location_id}-pre-location-click')
             browser.click_element_using_js(locations_list[location_id])
             # If a 'button.primary' exists, there is probably a message displayed
             # that needs to be dismissed before continuing —  unless its text is "Zapłać teraz",
@@ -140,7 +140,7 @@ class Energa(Provider):
                 log.error("Could not retrieve location #%s!", location_id)
                 continue
             log.debug('Getting payment')
-            log.web_trace('pre-invoices-click')
+            log.web_trace(f'location-{location_id}pre-invoices-click')
             invoices_button = browser.wait_for_page_element(INVOICES_TAB)
             if not invoices_button:
                 raise RuntimeError(f'Could not find invoices button for location {location}!')
@@ -151,7 +151,7 @@ class Energa(Provider):
             if all_paid is None:
                 # Energa page renders invoices list in two ways
                 invoices = browser.wait_for_page_element(DUE_DATE_LABEL, DUE_DATE_TIMEOUT)
-                log.web_trace('duedate-check')
+                log.web_trace(f'location-{location_id}duedate-check')
                 if invoices:
                     due_date = invoices.text
                 else:
