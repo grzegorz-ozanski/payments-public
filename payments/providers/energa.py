@@ -39,6 +39,8 @@ MESSAGE_BOX_CLOSE_BUTTON = Locator(By.CSS_SELECTOR, 'button.button.primary')
 
 MAINTENANCE_PATTERN = 'aktuali'
 
+DUE_DATE_TIMEOUT = 30
+
 
 class Energa(Provider):
     """
@@ -148,13 +150,13 @@ class Energa(Provider):
             all_paid = browser.wait_for_page_element(ALL_PAID, 2)
             if all_paid is None:
                 # Energa page renders invoices list in two ways
-                invoices = browser.wait_for_page_element(DUE_DATE_LABEL)
+                invoices = browser.wait_for_page_element(DUE_DATE_LABEL, DUE_DATE_TIMEOUT)
                 log.web_trace('duedate-check')
                 if invoices:
                     due_date = invoices.text
                 else:
                     # If the first method of gettign data fails, try the second one
-                    invoices_list = browser.wait_for_page_elements(DUE_DATE_LABEL_ALT)
+                    invoices_list = browser.wait_for_page_elements(DUE_DATE_LABEL_ALT, DUE_DATE_TIMEOUT)
                     if invoices_list:
                         due_date = invoices_list[0].text.split('\n')[1]
             browser.wait_for_page_element(DASHBOARD)
