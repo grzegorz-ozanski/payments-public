@@ -300,7 +300,7 @@ jobs:
       if: always()
       shell: pwsh
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
       run: |
         if ("${{ steps.statuscheck.outputs.current }}" -ne "") {
           $status="${{ steps.statuscheck.outputs.current }}"
