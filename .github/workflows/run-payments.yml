@@ -22,7 +22,7 @@ on:
         type: string
       debug_workflow:
         required: false
-        default: false
+        default: true
         type: boolean
     secrets:
       GMAIL_USERNAME:
@@ -38,34 +38,35 @@ on:
       CREDENTIALS:
         required: true
 
-# noinspection GrazieInspection
-# Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
-env:
-  DEBUG_WORKFLOW:          ${{ inputs.debug_workflow }}
-  ACTUAL_CONTENT:          actual.txt
-  BROWSER_LOG_FILENAME:    ${{ inputs.debug_workflow && '.github/data/test_trace.log' || 'trace.log' }}
-  BROWSER_LOG_TO_CONSOLE:  False
-  CHROMEDRIVER_VERSION:    chromedriver-chrome-134.0.6944.0
-  DIFF_FILE:               diff.txt
-  GH_ACTIONS_EMAIL:       "github-actions@github.com"
-  GH_ACTIONS_USER_NAME:   "github-actions"
-  LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
-  LOCAL_ARTIFACTS_LINUX:   /runner/artifacts
-  REFERENCE_CONTENT:       reference.txt
-  REFERENCE_OUTPUT:        .github/data/reference_output.txt
-  SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && '.github/data/test_output.txt' || 'script_output.txt' }}
-  SCRIPT_HTML:             script_output.html
-  STATUS_FILE:             .github/status/last-status.txt
-  # Scripts
-  COMPARE_SCRIPT:       .github/scripts/compare-output.ps1
-  GIT_PUSH_SCRIPT:      .github/scripts/git-push.ps1
-  MASK_SCRIPT:          .github/scripts/mask-env-secrets.ps1
-  READ_STATUS_SCRIPT:   .github/scripts/read-previous-status.ps1
-  STATUS_SCRIPT:        .github/scripts/compare-status.ps1
-  STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
-
 jobs:
   run-payments:
+    # noinspection GrazieInspection
+    # Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
+    env:
+      ACTUAL_CONTENT:          actual.txt
+      BROWSER_LOG_FILENAME:    ${{ inputs.debug_workflow && format('{0}/testdata/test_trace.log', github.workspace) || 'trace.log' }}
+      BROWSER_LOG_TO_CONSOLE:  false
+      DEBUG_WORKFLOW:          ${{ inputs.debug_workflow }}
+      DIFF_FILE:               diff.txt
+      GH_ACTIONS_EMAIL:       "github-actions@github.com"
+      GH_ACTIONS_USER_NAME:   "github-actions"
+      LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
+      LOCAL_ARTIFACTS_LINUX:   /runner/artifacts
+      REFERENCE_CONTENT:       reference.txt
+      REFERENCE_OUTPUT:        ${{ github.workspace }}/testdata/reference_output.txt
+      SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && format('{0}/testdata/test_output.txt', github.workspace) || 'script_output.txt' }}
+      SCRIPT_HTML:             script_output.html
+      STATUS_FILE:             ${{ github.workspace }}/testdata/last-status.txt
+      TEST_DATA:               ${{ github.workspace }}/testdata
+
+      # Scripts
+      COMPARE_SCRIPT:       .github/scripts/compare-output.ps1
+      GIT_PUSH_SCRIPT:      .github/scripts/git-push.ps1
+      MASK_SCRIPT:          .github/scripts/mask-env-secrets.ps1
+      READ_STATUS_SCRIPT:   .github/scripts/read-previous-status.ps1
+      STATUS_SCRIPT:        .github/scripts/compare-status.ps1
+      STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
+
     runs-on: ${{ fromJson(inputs.runner_label) }}
 
     permissions:
@@ -106,7 +107,7 @@ jobs:
       shell: pwsh
       run: |
         python --version
-        where python
+        (Get-Command python).Source
 
     - name: Clone required browser repo
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
@@ -154,14 +155,11 @@ jobs:
         }
 
     - name: Download reference output from private repo
-      env:
-        PAYMENTS_TESTDATA_REPO_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
-      shell: pwsh
-      run: |
-        git clone https://${env:PAYMENTS_TESTDATA_REPO_TOKEN}@github.com/grzegorz-ozanski/payments-testdata.git temp_testdata --depth 1
-        New-Item -ItemType Directory -Path .github/data -Force | Out-Null
-        Copy-Item -Path temp_testdata/* -Destination .github/data -Recurse -Force
-        Remove-Item -Recurse -Force temp_testdata
+      uses: actions/checkout@v4
+      with:
+        repository: grzegorz-ozanski/payments-testdata
+        path: ${{ env.TEST_DATA }}
+        token: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
 
     - name: Run the script
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
@@ -302,7 +300,7 @@ jobs:
       if: always()
       shell: pwsh
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
       run: |
         if ("${{ steps.statuscheck.outputs.current }}" -ne "") {
           $status="${{ steps.statuscheck.outputs.current }}"
@@ -313,10 +311,11 @@ jobs:
         Set-Content -Path ${env:STATUS_FILE} -Value "$status" -Encoding UTF8
         
         pwsh -File ${env:GIT_PUSH_SCRIPT} `
-        ${env:STATUS_FILE} `
-        "Update coverage badge [skip ci]" `
-        ${env:GH_ACTIONS_USER_NAME} `
-        ${env:GH_ACTIONS_EMAIL}
+        -File ${env:STATUS_FILE} `
+        -Message "Update coverage badge [skip ci]" `
+        -Username ${env:GH_ACTIONS_USER_NAME} `
+        -Email ${env:GH_ACTIONS_EMAIL} `
+        -RepoDir ${env:TEST_DATA}
 
     - name: "[SKIP REASON] Fail workflow"
       if: steps.compare.outputs.status == 'unchanged'
