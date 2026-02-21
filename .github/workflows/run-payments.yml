@@ -44,7 +44,7 @@ jobs:
     # Ignore inspection error on '.github' folder name (as the proper service name is apparently GitHub)
     env:
       ACTUAL_CONTENT:          actual.txt
-      BROWSER_LOG_FILENAME:    ${{ inputs.debug_workflow && '.github/data/test_trace.log' || 'trace.log' }}
+      BROWSER_LOG_FILENAME:    ${{ inputs.debug_workflow && format('{0}/testdata/test_trace.log', github.workspace) || 'trace.log' }}
       BROWSER_LOG_TO_CONSOLE:  false
       DEBUG_WORKFLOW:          ${{ inputs.debug_workflow }}
       DIFF_FILE:               diff.txt
