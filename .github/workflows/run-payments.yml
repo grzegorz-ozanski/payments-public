@@ -313,7 +313,7 @@ jobs:
         -File ${env:STATUS_FILE} `
         -Message "Update coverage badge [skip ci]" `
         -Username ${env:GH_ACTIONS_USER_NAME} `
-        -Mail ${env:GH_ACTIONS_EMAIL}
+        -Email ${env:GH_ACTIONS_EMAIL} `
         -RepoDir ${env:TEST_DATA}
 
     - name: "[SKIP REASON] Fail workflow"
