@@ -272,6 +272,31 @@ jobs:
         echo "::notice ::Skipping 'Send email if script output comparison result changed' step because condition " + 
              "'github.event_name == 'schedule' && steps.statuscheck.outputs.changed == 'true' is not met'."
 
+    - name: Prepare email body
+      if: |
+        (inputs.event_name == 'schedule' && steps.statuscheck.outputs.transition != 'NONE')
+        || steps.statuscheck.outputs.transition == 'FIXED'
+      id: emailbody
+      shell: pwsh
+      run: |
+        $body = @"
+        ${{ github.repository }} GitHub Actions scheduled job execution status changed
+        from "${{ steps.statuscheck.outputs.previous }}" to "${{ steps.statuscheck.outputs.current }}"
+    
+        ➤ View artifact and logs:
+        https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        "@
+    
+        if ("${{ steps.statuscheck.outputs.transition }}" -ne "FIXED") {
+            $body += @"
+
+        If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
+        "@
+        }
+        "body<<EOF" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        $body       | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        "EOF"       | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
     # 💌 Send email only on status change
     - name: Send email if script output comparison result changed and run was scheduled
       if: |
@@ -286,14 +311,7 @@ jobs:
         subject: "⚠️ ${{ github.repository }} - workflow ${{ steps.statuscheck.outputs.transition }}"
         to: ${{ secrets.GMAIL_EMAIL_ADDRESS }}
         from: GitHub Actions <no-reply@github.com>
-        body: |
-          ${{ github.repository }} GitHub Actions scheduled job execution status changed 
-          from "${{ steps.statuscheck.outputs.previous }}" to "${{ steps.statuscheck.outputs.current }}"
-
-          ➤ View artifact and logs:
-          https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-          If this was expected, consider updating ${{ env.REFERENCE_OUTPUT }}
+        body: ${{ steps.emailbody.outputs.body }}
 
     # 💾 Save current status
     - name: Save current status
