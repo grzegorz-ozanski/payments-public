@@ -2,7 +2,7 @@ param (
   [Parameter(Position=0, Mandatory=$true)][string]$File,
   [Parameter(Position=1, Mandatory=$true)][string]$Message,
   [Parameter(Position=2, Mandatory=$true)][string]$Username,
-  [Parameter(Position=3, Mandatory=$true)][string]$Email
+  [Parameter(Position=3, Mandatory=$true)][string]$Email,
   [Parameter(Position=4)][string]$RepoDir
 )
 
