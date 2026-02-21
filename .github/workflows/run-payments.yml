@@ -309,12 +309,12 @@ jobs:
         }
         Set-Content -Path ${env:STATUS_FILE} -Value "$status" -Encoding UTF8
         
-        Set-Location "${env:TEST_DATA}"
         pwsh -File ${env:GIT_PUSH_SCRIPT} `
-        ${env:STATUS_FILE} `
-        "Update coverage badge [skip ci]" `
-        ${env:GH_ACTIONS_USER_NAME} `
-        ${env:GH_ACTIONS_EMAIL}
+        -File ${env:STATUS_FILE} `
+        -Message "Update coverage badge [skip ci]" `
+        -Username ${env:GH_ACTIONS_USER_NAME} `
+        -Mail ${env:GH_ACTIONS_EMAIL}
+        -RepoDir ${env:TEST_DATA}
 
     - name: "[SKIP REASON] Fail workflow"
       if: steps.compare.outputs.status == 'unchanged'
