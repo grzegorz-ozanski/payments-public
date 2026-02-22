@@ -28,6 +28,7 @@ class DebugFlags(StrEnum):
     """
     BROWSER_PROFILE = 'bp'
     MULTIMEDIA_LOGIN = 'ml'
+    MULTIMEDIA_PROFILE = 'mp'
 
 
 @cache
@@ -83,7 +84,8 @@ def parse_args() -> Namespace:
     parser.add_argument('-d', '--debug',
                         help='Comma-separated list of debug flags (implicates verbose mode)'
                              f'({DebugFlags.BROWSER_PROFILE}: browser profile creation debugging, '
-                             f'{DebugFlags.MULTIMEDIA_LOGIN}: Multimedia provider login debugging)', )
+                             f'{DebugFlags.MULTIMEDIA_LOGIN}: Multimedia provider login debugging)'
+                             f'{DebugFlags.MULTIMEDIA_PROFILE}: Use persistent profile for Multimedia provider)')
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
     parser.add_argument('-p', '--provider', default='',
@@ -111,6 +113,8 @@ def parse_args() -> Namespace:
                 os.environ['BROWSER_DEBUG_PROFILE'] = '1'
             elif flag == DebugFlags.MULTIMEDIA_LOGIN:
                 os.environ['PAYMENTS_DEBUG_MULTIMEDIA_LOGIN'] = '1'
+            elif flag == DebugFlags.MULTIMEDIA_PROFILE:
+                os.environ['PAYMENTS_DEBUG_MULTIMEDIA_PERSISTENT_PROFILE'] = '1'
             else:
                 log.error('Unrecognized debug flag: %s', flag)
                 parser.print_help()
