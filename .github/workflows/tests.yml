@@ -66,11 +66,9 @@ jobs:
     - name: Run tests with coverage
       shell: pwsh
       run: |
-        coverage run --data-file .coverage.payments -m pytest payments
-        coverage report --data-file .coverage.payments > ${env:COVERAGE_REPORT_FILE}
-        coverage html --data-file .coverage.payments
-        coverage run --data-file .coverage.browser -m pytest browser
-        coverage combine --data-file .coverage .coverage.payments .coverage.browser
+        coverage run -m pytest payments
+        coverage report --include "*/payments/*" > ${env:COVERAGE_REPORT_FILE}
+        coverage html --include "*/payments/*"
         coverage report
 
     - name: Prepare HTML payments coverage report for upload
