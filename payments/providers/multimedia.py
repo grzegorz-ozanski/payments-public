@@ -20,6 +20,9 @@ SERVICE_URL = 'https://ebok.multimedia.pl/'
 
 USER_INPUT = Locator(By.ID, 'Login_SSO_UserName')
 PASSWORD_INPUT = Locator(By.ID, 'Login_SSO_Password')
+LOGIN_BUTTON = Locator(By.ID, 'LoginButton')
+LOGIN_BUTTON_DISAPPEAR_TIMEOUT = 60
+
 COOKIES_BUTTON = Locator(By.ID, 'cookiescript_accept')
 
 INVOICE = Locator(By.CLASS_NAME, 'invoiceInfo')
@@ -30,7 +33,6 @@ ALL_PAID = Locator(By.XPATH, '//div[contains(@class, "clear")]/span[contains(@cl
 LOGIN_ERROR_TEXT = Locator(By.CSS_SELECTOR, 'span.logonFailureText')
 PASSWORD_CHANGE_ELEMENTS = (Locator(By.ID, 'formPassword'), Locator(By.ID, 'formConfirmation'))
 CAPTCHA_FORM = Locator(By.ID, 'formCaptcha')
-LOGIN_BUTTON_DISAPPEAR_TIMEOUT = 60
 
 
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
@@ -53,7 +55,7 @@ class Multimedia(Provider):
                          needs_clear_user_profile=getenv('PAYMENTS_DEBUG_MULTIMEDIA_PERSISTENT_PROFILE', '0') != '1',
                          pre_login_delay=1,
                          login_strategy=RecaptchaLogin)
-        self.login_strategy.login_button = Locator(By.ID, 'LoginButton')
+        self.login_strategy.login_button = LOGIN_BUTTON
 
     def login(self, browser: Browser, load: bool = True) -> None:
         """Retryable login with detection of CAPTCHA and password change."""
@@ -80,7 +82,7 @@ class Multimedia(Provider):
                     raise ex
                 continue
             browser.wait_for_page_inactive(2)
-            browser.wait_for_page_element_disappear(self.login_strategy.login_button, LOGIN_BUTTON_DISAPPEAR_TIMEOUT)
+            browser.wait_for_page_element_disappear(LOGIN_BUTTON, LOGIN_BUTTON_DISAPPEAR_TIMEOUT)
 
             if not self.logged_in or browser.wait_for_page_element(LOGIN_ERROR_TEXT, 2):
                 log.debug('Login failure detected, retrying...')
