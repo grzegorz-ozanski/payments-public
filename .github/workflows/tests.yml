@@ -66,6 +66,8 @@ jobs:
     - name: Run tests with coverage
       shell: pwsh
       run: |
+        ls
+        pip show coverage
         coverage run -m pytest payments
         coverage report --include "*/payments/*" > ${env:COVERAGE_REPORT_FILE}
         coverage html --include "*/payments/*"
