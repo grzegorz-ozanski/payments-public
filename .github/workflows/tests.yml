@@ -12,6 +12,10 @@ env:
   GH_ACTIONS_USER_NAME: "github-actions"
   MASTER_BRANCH: refs/heads/master
   README_PATH: payments/README.md
+  REMOTE_DIR: upload/incoming
+  COVERAGE_ARCHIVE: coverage.zip
+  REPORTS_TS_HOST: 100.127.93.3
+  REPORTS_TS_PORT: 2222
 
 jobs:
   test:
@@ -66,23 +70,24 @@ jobs:
       run: |
         coverage run --data-file .coverage.payments -m pytest payments
         coverage report --data-file .coverage.payments > ${env:COVERAGE_REPORT_FILE}
+        coverage html --data-file .coverage.payments
         coverage run --data-file .coverage.browser -m pytest browser
         coverage combine --data-file .coverage .coverage.payments .coverage.browser
         coverage report
 
-    - name: Generate HTML coverage report
+    - name: Prepare HTML payments coverage report for upload
+      if: always()
+      shell: bash
+      run: |
+        mkdir -p payments/coverage
+        rm -rf htmlcov/__pycache__
+        mv htmlcov/* payments/coverage
+
+    - name: Archive HTML coverage report
       if: always()
       shell: pwsh
       run: |
-        coverage html
-        Compress-Archive -Path htmlcov -DestinationPath htmlcov.zip
-
-    - name: Upload coverage artifact
-      uses: actions/upload-artifact@v4
-      continue-on-error: true
-      with:
-        name: htmlcov
-        path: htmlcov.zip
+        Compress-Archive -Path payments -DestinationPath ${env:COVERAGE_ARCHIVE}
 
     - name: Add coverage report to summary
       if: always()
@@ -118,6 +123,39 @@ jobs:
       run: |
         pyright >> ${env:GITHUB_STEP_SUMMARY}
         echo '```' >> ${env:GITHUB_STEP_SUMMARY}
+
+    - name: Connect to Tailnet (ephemeral)
+      uses: tailscale/github-action@v4
+      with:
+        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+        tags: tag:ci
+        ping: ${{ env.REPORTS_TS_HOST }}
+
+    - name: Start ssh-agent
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.REPORTS_SSH_KEY }}
+
+    - name: Upload coverage archive via SFTP
+      shell: bash
+      env:
+        SFTP_HOST: ${{ env.REPORTS_TS_HOST }}
+        SFTP_PORT: ${{ env.REPORTS_TS_PORT }}   # np. 22
+        SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
+
+      run: |
+        set -euo pipefail
+    
+        mkdir -p ~/.ssh
+        ssh-keyscan -p "$SFTP_PORT" "$SFTP_HOST" >> ~/.ssh/known_hosts
+    
+        sftp -P "$SFTP_PORT" "$SFTP_USER@$SFTP_HOST" <<EOF
+        mkdir $REMOTE_DIR
+        cd $REMOTE_DIR
+        put $COVERAGE_ARCHIVE
+        bye
+        EOF
 
     - name: "[SKIP REASON] Update coverage badge in README"
       if: github.ref != env.MASTER_BRANCH
