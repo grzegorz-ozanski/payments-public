@@ -30,6 +30,7 @@ ALL_PAID = Locator(By.XPATH, '//div[contains(@class, "clear")]/span[contains(@cl
 LOGIN_ERROR_TEXT = Locator(By.CSS_SELECTOR, 'span.logonFailureText')
 PASSWORD_CHANGE_ELEMENTS = (Locator(By.ID, 'formPassword'), Locator(By.ID, 'formConfirmation'))
 CAPTCHA_FORM = Locator(By.ID, 'formCaptcha')
+LOGIN_BUTTON_DISAPPEAR_TIMEOUT = 60
 
 
 # for clarity, keep the first argument to browser.find_elements() even if it's equal to default By.ID
@@ -79,6 +80,7 @@ class Multimedia(Provider):
                     raise ex
                 continue
             browser.wait_for_page_inactive(2)
+            browser.wait_for_page_element_disappear(self.login_strategy.login_button, LOGIN_BUTTON_DISAPPEAR_TIMEOUT)
 
             if not self.logged_in or browser.wait_for_page_element(LOGIN_ERROR_TEXT, 2):
                 log.debug('Login failure detected, retrying...')
