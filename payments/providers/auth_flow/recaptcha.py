@@ -6,6 +6,7 @@ import string
 import time
 from argparse import Namespace
 
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -108,10 +109,10 @@ class RecaptchaLogin(BaseLogin):
         move_from_to(browser, username_input, password_input)
         if random.random() < self.tab_key_treshold:
             log.debug('Using <TAB> to move to password input')
-            password_input.send_keys(Keys.TAB)
+            ActionChains(browser).send_keys(Keys.TAB).perform()
         else:
             log.debug('Using mouse to move to password input')
-            browser.click_page_element_with_retry_using_js(password_input, self.user_input_selector)
+            browser.click_page_element_with_retry_using_js(password_input, self.password_input_selector)
 
         self.input_password(password_input, password_value)
         log.web_trace("password-input")
