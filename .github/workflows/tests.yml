@@ -68,10 +68,10 @@ jobs:
       run: |
         ls
         pip show coverage
-        python -m coverage run -m pytest payments
-        python -m coverage report --include "*/payments/*" > ${env:COVERAGE_REPORT_FILE}
-        python -m coverage html --include "*/payments/*"
-        python -m coverage report
+        coverage run --source=payments -m pytest payments
+        coverage report > ${env:COVERAGE_REPORT_FILE}
+        coverage html
+        coverage report
 
     - name: Prepare HTML payments coverage report for upload
       if: always()
@@ -102,7 +102,7 @@ jobs:
       run: |
         echo '### ✅ Static Analysis Summary' >> ${env:GITHUB_STEP_SUMMARY}
         echo '```' >> ${env:GITHUB_STEP_SUMMARY}
-        python -m mypy . --strict --ignore-missing-imports >> ${env:GITHUB_STEP_SUMMARY}
+        mypy . --strict --ignore-missing-imports >> ${env:GITHUB_STEP_SUMMARY}
         echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
     - name: Add pyright payments results to summary
@@ -128,7 +128,7 @@ jobs:
       run: |
         echo '### ✅ Ruff Summary' >> ${env:GITHUB_STEP_SUMMARY}
         echo '```' >> ${env:GITHUB_STEP_SUMMARY}
-        python -m ruff check . >> ${env:GITHUB_STEP_SUMMARY}
+        ruff check . >> ${env:GITHUB_STEP_SUMMARY}
         echo '```' >> ${env:GITHUB_STEP_SUMMARY}
 
     - name: Connect to Tailnet (ephemeral)
