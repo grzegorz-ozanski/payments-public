@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator, PageElement
 from payments.payments import Amount, Payment
-from payments.providers.provider import Provider
+from payments.providers.provider import Provider, FetchError
 
 log = setup_logging(__name__)
 
@@ -76,7 +76,7 @@ class Opec(Provider):
         log.web_trace('pre-amount')
         amount_item = browser.wait_for_page_element(AMOUNT, 2)
         if not amount_item:
-            raise RuntimeError('Unexpected error: total amount web item not found')
+            raise FetchError('Unexpected error: total amount web item not found')
         amount = amount_item.text
         log.web_trace('pre-months-table-0')
         months_table: PageElement | None = browser.find_page_element(MONTHS_TABLE)
@@ -89,7 +89,7 @@ class Opec(Provider):
                 log.web_trace(f'pre-months-table-{i}')
                 months_table = browser.wait_for_page_element(MONTHS_TABLE)
                 if not months_table:
-                    raise RuntimeError('Months table not found after page reload!')
+                    raise FetchError('Months table not found after page reload!')
             months = months_table.find_page_elements(MONTH_TABLE_ROW)
             log.web_trace(f'pre-months-table-{i}-click')
             months[i].click()

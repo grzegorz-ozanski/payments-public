@@ -33,6 +33,29 @@ def _sleep_with_message(amount: int, message: str) -> None:
         time.sleep(amount)
 
 
+class PaymentError(Exception):
+    """
+    General payment error
+    """
+    def __init__(self, message: str) -> None:
+        self.reason = message
+        super().__init__(message)
+
+
+class LoginError(PaymentError):
+    """
+    Login error
+    """
+    ...
+
+
+class FetchError(PaymentError):
+    """
+    Payments fetch error
+    """
+    ...
+
+
 class Provider:
     """Base class for a payment provider using Selenium."""
 
@@ -92,6 +115,12 @@ class Provider:
                     print_done('done.')
                 else:
                     payments = self._default_payments('Login error')
+            except (LoginError, FetchError) as e:
+                msg = f'{e.__class__.__name__}: {str(e)}'
+                log.exception(msg)
+                print(msg)
+                log.web_error()
+                payments = self._default_payments(e.reason)
             except Exception as e:
                 msg = f'{e.__class__.__name__}: {str(e)}\nCannot get payments for service {self.name}!'
                 log.exception(msg)

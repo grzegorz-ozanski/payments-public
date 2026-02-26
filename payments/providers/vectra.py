@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from browser import setup_logging, Browser, Locator
 from payments.payments import Payment, DueDate, Amount
 from payments.providers.auth_flow import TwoStageLogin
-from payments.providers.provider import Provider
+from payments.providers.provider import Provider, PaymentError
 
 log = setup_logging(__name__)
 
@@ -77,7 +77,7 @@ class Vectra(Provider):
             if logout_button:
                 logout_button.click()
             else:
-                raise RuntimeError('Unexpected error while logging out: logout button missing in user menu')
+                raise PaymentError('Unexpected error while logging out: logout button missing in user menu')
             browser.wait_for_page_element(USER_INPUT)
         else:
             log.debug("Logout error: user menu not found, are we logged in?")

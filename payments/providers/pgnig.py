@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator
 from payments.payments import Amount, Payment
-from payments.providers.provider import Provider
+from payments.providers.provider import Provider, FetchError
 
 log = setup_logging(__name__)
 
@@ -45,7 +45,7 @@ class Pgnig(Provider):
         if location_element:
             location = self._get_location(location_element.text)
         else:
-            raise RuntimeError(f"Cannot find location element '{READING_ADDRESS}'!")
+            raise FetchError(f"Cannot find location element '{READING_ADDRESS}'!")
 
         # If all invoices are paid, no point in processing the invoices list
         if browser.find_page_elements(ALL_INVOICES_PAID):
@@ -75,7 +75,7 @@ class Pgnig(Provider):
                 unpaid_invoices = []
                 elements = browser.wait_for_page_elements(INVOICE_ROW)
                 if elements is None:
-                    raise RuntimeError('Cannot get invoices list!')
+                    raise FetchError('Cannot get invoices list!')
                 for index, item in enumerate(elements):
                     if item.find_page_element(INVOICE_BUTTON).text == INVOICE_PAY_CAPTION:
                         unpaid_invoices.append(item)
@@ -89,7 +89,7 @@ class Pgnig(Provider):
         log.debug('Creating payments dict...')
         payments_dict: dict[str, float] = {}
         if unpaid_invoices is None:
-            raise RuntimeError(f'Failed to collect invoices after {attempts} attempts!')
+            raise FetchError(f'Failed to collect invoices after {attempts} attempts!')
         for invoice in unpaid_invoices:
             log.debug('Iterating over unpaid invoices...')
             columns = invoice.find_page_elements(INVOICE_COLUMN)

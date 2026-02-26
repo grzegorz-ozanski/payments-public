@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 from browser import setup_logging, Browser, Locator
 from payments.payments import Payment
 from payments.providers.auth_flow import RecaptchaLogin
-from payments.providers.provider import Provider
+from payments.providers.provider import Provider, LoginError
 from payments.console import print_progress, print_stage
 
 log = setup_logging(__name__)
@@ -21,7 +21,8 @@ SERVICE_URL = 'https://ebok.multimedia.pl/'
 USER_INPUT = Locator(By.ID, 'Login_SSO_UserName')
 PASSWORD_INPUT = Locator(By.ID, 'Login_SSO_Password')
 LOGIN_BUTTON = Locator(By.ID, 'LoginButton')
-LOGIN_BUTTON_DISAPPEAR_TIMEOUT = 60
+LOGIN_SPINNER = Locator(By.CSS_SELECTOR, "i.spinner.loadingSpinner")
+LOGIN_SPINNER_DISAPPEAR_TIMEOUT = 60
 
 COOKIES_BUTTON = Locator(By.ID, 'cookiescript_accept')
 
@@ -74,7 +75,7 @@ class Multimedia(Provider):
                 elif debug_input == '':
                     self.logged_in = True
                 else:
-                    raise RuntimeError(f'Unexpected debug state: "{debug_input}"')
+                    raise LoginError(f'Unexpected debug state: "{debug_input}"')
             except Exception as ex:
                 log.debug('Unexpectedly unhandled exception in %s.login(): %s',
                           self.__class__.__bases__[0].__name__, ex)
@@ -82,13 +83,16 @@ class Multimedia(Provider):
                     raise ex
                 continue
             browser.wait_for_page_inactive(2)
-            browser.wait_for_page_element_disappear(LOGIN_BUTTON, LOGIN_BUTTON_DISAPPEAR_TIMEOUT)
+            try:
+                browser.wait_for_page_element_disappear(LOGIN_SPINNER, LOGIN_SPINNER_DISAPPEAR_TIMEOUT)
+            except TimeoutError:
+                raise LoginError('Timed out waiting for login button to disappear')
 
             if not self.logged_in or browser.wait_for_page_element(LOGIN_ERROR_TEXT, 2):
                 log.debug('Login failure detected, retrying...')
                 log.web_trace(f'failed-login-attempt-{i}')
             elif all(browser.find_page_elements(element) for element in PASSWORD_CHANGE_ELEMENTS):
-                raise RuntimeError("Couldn't login, reason: password change required")
+                raise LoginError("Couldn't login, reason: password change required")
             else:
                 # Either super().login() ended with success, or due to some misterious ways
                 # we ended up here with page correctly logged in (i.e. no login elements are present)
@@ -105,7 +109,7 @@ class Multimedia(Provider):
         reason = 'unknown'
         if browser.find_page_elements(CAPTCHA_FORM):
             reason = 'CAPTCHA required'
-        raise RuntimeError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
+        raise LoginError(f"Couldn't login in {num_retries} attempts! Reason: {reason}")
 
     def _get_location_by_amount(self, amount: str) -> str:
         """Find the first matching location for the given amount prefix."""

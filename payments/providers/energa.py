@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator
 from payments.payments import Amount, DueDate, Payment
-from payments.providers.provider import Provider
+from payments.providers.provider import Provider, FetchError
 from payments.console import print_stage
 
 log = setup_logging(__name__)
@@ -114,9 +114,9 @@ class Energa(Provider):
                 log.web_trace('accounts-list-after-overlay')
                 locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
             else:
-                raise RuntimeError('Locations list is empty and no overlay was found!')
+                raise FetchError('Locations list is empty and no overlay was found!')
             if not locations_list_or_none:
-                raise RuntimeError(
+                raise FetchError(
                     f'Locations list is empty even after clicking overlay button "{OVERLAY_BUTTON}"!')
         locations_list = locations_list_or_none
         log.debug('Identified %d locations' % len(locations_list))
@@ -143,7 +143,7 @@ class Energa(Provider):
             log.web_trace(f'location-{location_id}pre-invoices-click')
             invoices_button = browser.wait_for_page_element(INVOICES_TAB)
             if not invoices_button:
-                raise RuntimeError(f'Could not find invoices button for location {location}!')
+                raise FetchError(f'Could not find invoices button for location {location}!')
             browser.click_page_element_with_retry(invoices_button, INVOICES_TAB)
             due_date = None
             # First check if all invoices are already paid
@@ -181,7 +181,7 @@ class Energa(Provider):
             browser.wait_for_page_element(ACCOUNTS_LIST)
             browser.safe_click_page_element(ACCOUNTS_LIST)
             if (locations_list_or_none := browser.wait_for_page_elements(ACCOUNTS_LABEL)) is None:
-                raise RuntimeError('Unexpected error: locations list is empty after page reload!')
+                raise FetchError('Unexpected error: locations list is empty after page reload!')
             locations_list = locations_list_or_none
 
         return payments
