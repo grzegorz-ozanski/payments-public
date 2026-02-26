@@ -286,7 +286,7 @@ jobs:
         SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
         REMOTE_DIR: upload/logs
       run: |
-        $errDir = "payments/error"
+        $errDir = "error"
         $errLogs = "error-logs.zip"
         $errFiles = @()
         $artifactPaths = @()
@@ -302,8 +302,8 @@ jobs:
         }
 
         $paths = @(
-          "payments/$env:BROWSER_LOG_FILENAME",
-          "payments/trace"
+          "$env:BROWSER_LOG_FILENAME",
+          "trace"
         )        
         $traceLogs = "trace-logs.zip"
         Compress-Archive -Path $paths -DestinationPath $traceLogs -Force
@@ -319,6 +319,7 @@ jobs:
           -SftpUser $env:SFTP_USER `
           -RemoteBaseDir $env:REMOTE_DIR `
           -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/logs"
+
     - name: Upload log if script output is different than reference
       if: steps.compare.outputs.status == 'changed'
       shell: pwsh
