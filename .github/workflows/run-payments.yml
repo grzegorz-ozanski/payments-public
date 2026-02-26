@@ -45,10 +45,6 @@ on:
         required: true
       REPORTS_SSH_KEY:
         required: true
-      TS_OAUTH_CLIENT_ID:
-        required: true
-      TS_OAUTH_SECRET:
-        required: true
 
 jobs:
   run-payments:
@@ -265,20 +261,24 @@ jobs:
         -Artifacts "$artifactPaths" `
         -TargetDir $env:LOCAL_ARTIFACTS_DIR
 
-    - name: Connect to Tailnet (ephemeral)
-      uses: tailscale/github-action@v4
-      with:
-        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-        tags: tag:ci
-        ping: ${{ env.REPORTS_TS_HOST }}
+    - name: Check reports SFTP reachable
+      id: reports
+      shell: bash
+      run: |
+        if nc -zv -w 3 "${{ secrets.REPORTS_TS_HOST }}" ${{ secrets.REPORTS_TS_PORT }}; then
+          echo "reachable=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "reachable=false" >> "$GITHUB_OUTPUT"
+        fi
 
     - name: Start ssh-agent
+      if: steps.reports.outputs.reachable == 'true'
       uses: webfactory/ssh-agent@v0.9.0
       with:
         ssh-private-key: ${{ secrets.REPORTS_SSH_KEY }}
 
     - name: Upload logs to SFTP
+      if: steps.reports.outputs.reachable == 'true'
       shell: pwsh
       env:
         SFTP_HOST: ${{ secrets.REPORTS_TS_HOST }}
