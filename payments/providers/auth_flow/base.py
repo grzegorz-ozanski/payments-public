@@ -89,7 +89,8 @@ class BaseLogin:
 
         password_value = self.credentials.password.get()
         if password_value is None:
-            raise CredentialsError(f"No valid password found for service '{self.service_name}', user '{username_value}'!")
+            raise CredentialsError(f"No valid password found for service '{self.service_name}', "
+                                   f"user '{username_value}'!")
 
         return username_value, password_value
 

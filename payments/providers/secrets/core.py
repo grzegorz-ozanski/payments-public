@@ -5,8 +5,10 @@ from os import environ
 
 import keyring
 
+from payments.payments.exceptions import PaymentError
 
-class CredentialsError(Exception):
+
+class CredentialsError(PaymentError):
     """
     General error raised when credentials are not found.
     """

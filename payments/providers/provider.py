@@ -12,10 +12,11 @@ from selenium.common.exceptions import NoSuchElementException, WebDriverExceptio
 from selenium.webdriver.common.by import By
 
 from browser import Browser, Locator, setup_logging
+from payments.console import print_progress, print_done
 from payments.payments import Payment
+from payments.payments.exceptions import PaymentError
 from payments.providers.auth_flow import BaseLogin, OneStageLogin
 from payments.providers.secrets.core import Secrets, CredentialsError
-from payments.console import print_progress, print_done
 
 log = setup_logging(__name__)
 
@@ -31,15 +32,6 @@ def _sleep_with_message(amount: int, message: str) -> None:
     if amount:
         log.debug('%s: sleeping %s seconds', message, amount)
         time.sleep(amount)
-
-
-class PaymentError(Exception):
-    """
-    General payment error
-    """
-    def __init__(self, message: str) -> None:
-        self.reason = message
-        super().__init__(message)
 
 
 class LoginError(PaymentError):
