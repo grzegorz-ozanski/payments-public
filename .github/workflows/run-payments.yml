@@ -37,6 +37,18 @@ on:
         required: true
       CREDENTIALS:
         required: true
+      REPORTS_TS_HOST:
+        required: true
+      REPORTS_TS_PORT:
+        required: true
+      REPORTS_USER:
+        required: true
+      REPORTS_SSH_KEY:
+        required: true
+      TS_OAUTH_CLIENT_ID:
+        required: true
+      TS_OAUTH_SECRET:
+        required: true
 
 jobs:
   run-payments:
@@ -53,6 +65,7 @@ jobs:
       LOCAL_ARTIFACTS_WINDOWS: Z:/github-runner/artifacts
       LOCAL_ARTIFACTS_LINUX:   /runner/artifacts
       REFERENCE_CONTENT:       reference.txt
+#      REFERENCE_OUTPUT:        ${{ github.workspace }}/testdata/reference_output.txt
       REFERENCE_OUTPUT:        ${{ github.workspace }}/testdata/reference_output.txt
       SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && format('{0}/testdata/test_output.txt', github.workspace) || 'script_output.txt' }}
       SCRIPT_HTML:             script_output.html
