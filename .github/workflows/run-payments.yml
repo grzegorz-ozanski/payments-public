@@ -66,6 +66,7 @@ jobs:
       READ_STATUS_SCRIPT:   .github/scripts/read-previous-status.ps1
       STATUS_SCRIPT:        .github/scripts/compare-status.ps1
       STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
+      UPLOAD_SCRIPT:        .github/scripts/upload-artifacts-sftp.ps1
 
     runs-on: ${{ fromJson(inputs.runner_label) }}
 
@@ -266,6 +267,11 @@ jobs:
 
     - name: Upload logs to SFTP
       shell: pwsh
+      env:
+        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST }}
+        SFTP_PORT: ${{ secrets.REPORTS_TS_PORT }}   # np. 22
+        SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
+        REMOTE_DIR: upload/logs
       run: |
         $errDir = "payments/error"
         $errLogs = "error-logs.zip"
@@ -290,7 +296,7 @@ jobs:
         Compress-Archive -Path $paths -DestinationPath $traceLogs -Force
         $artifactPaths += "$traceLogs"
         
-        pwsh -File ${env:UPLOAD_ARTIFACTS_SCRIPT} `
+        pwsh -File ${env:UPLOAD_SCRIPT} `
           -WorkflowName $env:GITHUB_WORKFLOW `
           -RunNumber $env:GITHUB_RUN_NUMBER `
           -JobName $env:GITHUB_JOB `
@@ -298,8 +304,8 @@ jobs:
           -SftpHost $env:SFTP_HOST `
           -SftpPort ([int]$env:SFTP_PORT) `
           -SftpUser $env:SFTP_USER `
-          -RemoteBaseDir $env:REMOTE_ARTIFACTS_DIR `
-          -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/artifacts"
+          -RemoteBaseDir $env:REMOTE_DIR `
+          -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/logs"
     - name: Upload log if script output is different than reference
       if: steps.compare.outputs.status == 'changed'
       shell: pwsh
@@ -313,7 +319,7 @@ jobs:
         Compress-Archive -Path $paths -DestinationPath changed-output.zip -Force
         
         $artifactPaths = @("changed-output.zip")
-        pwsh -File ${env:UPLOAD_ARTIFACTS_SCRIPT} `
+        pwsh -File ${env:UPLOAD_SCRIPT} `
           -WorkflowName $env:GITHUB_WORKFLOW `
           -RunNumber $env:GITHUB_RUN_NUMBER `
           -JobName $env:GITHUB_JOB `
@@ -321,7 +327,7 @@ jobs:
           -SftpHost $env:SFTP_HOST `
           -SftpPort ([int]$env:SFTP_PORT) `
           -SftpUser $env:SFTP_USER `
-          -RemoteBaseDir $env:REMOTE_ARTIFACTS_DIR `
+          -RemoteBaseDir $env:REMOTE_DIR `
           -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/artifacts"
 
     # 🔁 Compare current workflow status with the previous one
