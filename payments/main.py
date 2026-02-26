@@ -74,7 +74,8 @@ def parse_args() -> Namespace:
             "Automatically collects payment information from supported providers' web portals "
             "using browser automation (Selenium). Supports headless mode, trace logging, "
             "and output to file."
-        )
+        ),
+        formatter_class=argparse.RawTextHelpFormatter
     )
 
     parser.add_argument('-c', '--clear-profile-on-exit', default=False, action='store_true',
@@ -89,7 +90,7 @@ def parse_args() -> Namespace:
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
     parser.add_argument('-p', '--provider', default='',
-                        help='Run for single provider only', choices=providers.all_lower())
+                        help=f'Run for selected providers only\nAvailable providers: {providers.all_lower()}')
     parser.add_argument('--persistent-profile-dir', default='',
                         help='Persisten browser profile directory location (default: user temp directory)')
     parser.add_argument('-t', '--trace', default=False, action='store_true',
