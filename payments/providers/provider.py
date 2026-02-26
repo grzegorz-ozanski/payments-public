@@ -14,7 +14,7 @@ from selenium.webdriver.common.by import By
 from browser import Browser, Locator, setup_logging
 from payments.payments import Payment
 from payments.providers.auth_flow import BaseLogin, OneStageLogin
-from payments.providers.secrets.core import Secrets
+from payments.providers.secrets.core import Secrets, CredentialsError
 from payments.console import print_progress, print_done
 
 log = setup_logging(__name__)
@@ -115,7 +115,7 @@ class Provider:
                     print_done('done.')
                 else:
                     payments = self._default_payments('Login error')
-            except (LoginError, FetchError) as e:
+            except (LoginError, FetchError, CredentialsError) as e:
                 msg = f'{e.__class__.__name__}: {str(e)}'
                 log.exception(msg)
                 print(msg)

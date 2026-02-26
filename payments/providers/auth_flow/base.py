@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webelement import WebElement
 
 from browser import Browser, Locator, PageElement, setup_logging
-from payments.providers.secrets.core import Secrets
+from payments.providers.secrets.core import Secrets, CredentialsError
 
 log = setup_logging(__name__)
 
@@ -85,11 +85,11 @@ class BaseLogin:
         """
         username_value = self.credentials.username.get()
         if username_value is None:
-            raise RuntimeError(f"No valid username found for service '{self.service_name}'!")
+            raise CredentialsError(f"No valid username found for service '{self.service_name}'!")
 
         password_value = self.credentials.password.get()
         if password_value is None:
-            raise RuntimeError(f"No valid password found for service '{self.service_name}', user '{username_value}'!")
+            raise CredentialsError(f"No valid password found for service '{self.service_name}', user '{username_value}'!")
 
         return username_value, password_value
 

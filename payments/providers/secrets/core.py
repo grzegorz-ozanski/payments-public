@@ -6,6 +6,13 @@ from os import environ
 import keyring
 
 
+class CredentialsError(Exception):
+    """
+    General error raised when credentials are not found.
+    """
+    ...
+
+
 class Secret:
     """
     Retrieve credential from environment or system keyring.
@@ -26,8 +33,8 @@ class Secret:
         value = keyring.get_password(self.keyring_service, self.keyring)
         if value and value.strip():
             return value.strip()
-        raise RuntimeError(f'"{self.keyring}" not found in env {self.environ} '
-                           f'or keyring service {self.keyring_service}!')
+        raise CredentialsError(f'"{self.keyring}" not found in env {self.environ} '
+                               f'or keyring service {self.keyring_service}!')
 
 
 class Secrets:
