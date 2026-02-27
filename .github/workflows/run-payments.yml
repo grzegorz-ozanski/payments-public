@@ -263,13 +263,31 @@ jobs:
 
     - name: Check reports SFTP reachable
       id: reports
-      shell: bash
+      shell: pwsh
       run: |
-        if nc -zv -w 3 "${{ secrets.REPORTS_TS_HOST }}" ${{ secrets.REPORTS_TS_PORT }}; then
-          echo "reachable=true" >> "$GITHUB_OUTPUT"
-        else
-          echo "reachable=false" >> "$GITHUB_OUTPUT"
-        fi
+        $host = "${{ secrets.REPORTS_TS_HOST }}"
+        $port = [int]"${{ secrets.REPORTS_TS_PORT }}"
+        $timeoutMs = 3000
+    
+        try {
+            $client = New-Object System.Net.Sockets.TcpClient
+            $async = $client.BeginConnect($host, $port, $null, $null)
+            $wait = $async.AsyncWaitHandle.WaitOne($timeoutMs, $false)
+    
+            if (-not $wait) {
+                $client.Close()
+                throw "Timeout"
+            }
+    
+            $client.EndConnect($async)
+            $client.Close()
+    
+            "reachable=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host "Connection to $host:$port succeeded."
+        } catch {
+            "reachable=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host "Connection to $host:$port failed."
+        }
 
     - name: Start ssh-agent
       if: steps.reports.outputs.reachable == 'true'
