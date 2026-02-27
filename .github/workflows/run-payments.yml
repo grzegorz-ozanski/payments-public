@@ -342,7 +342,7 @@ jobs:
           -SftpPort ([int]$env:SFTP_PORT) `
           -SftpUser $env:SFTP_USER `
           -RemoteBaseDir $env:REMOTE_DIR `
-          -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/artifacts"
+          -SummaryBaseUrl "https://${{ secrets.REPORTS_TS_HOST }}/artifacts"
 
     # 🔁 Compare current workflow status with the previous one
     - name: Compare workflow status and set workflow summary
