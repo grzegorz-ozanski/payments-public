@@ -265,13 +265,13 @@ jobs:
       id: reports
       shell: pwsh
       run: |
-        $host = "${{ secrets.REPORTS_TS_HOST }}"
-        $port = [int]"${{ secrets.REPORTS_TS_PORT }}"
+        $targetHost = "${{ secrets.REPORTS_TS_HOST }}"
+        $targetPort = [int]"${{ secrets.REPORTS_TS_PORT }}"
         $timeoutMs = 3000
     
         try {
             $client = New-Object System.Net.Sockets.TcpClient
-            $async = $client.BeginConnect($host, $port, $null, $null)
+            $async = $client.BeginConnect($targetHost, $targetPort, $null, $null)
             $wait = $async.AsyncWaitHandle.WaitOne($timeoutMs, $false)
     
             if (-not $wait) {
