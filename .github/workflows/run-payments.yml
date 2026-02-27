@@ -277,7 +277,7 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.REPORTS_SSH_KEY }}
 
-    - name: Upload logs to SFTP
+    - name: Upload logs/artifacts to SFTP
       if: steps.reports.outputs.reachable == 'true'
       shell: pwsh
       env:
@@ -285,12 +285,13 @@ jobs:
         SFTP_PORT: ${{ secrets.REPORTS_TS_PORT }}   # np. 22
         SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
         REMOTE_DIR: upload/logs
+        COMPARE_STATUS: ${{ steps.compare.outputs.status }}
       run: |
+        $artifactPaths = @()
+        
         $errDir = "error"
         $errLogs = "error-logs.zip"
         $errFiles = @()
-        $artifactPaths = @()
-        
         if (Test-Path $errDir) {
           $errFiles = Get-ChildItem -Path $errDir -Recurse -File -ErrorAction SilentlyContinue
         }
@@ -301,14 +302,23 @@ jobs:
           Write-Host "No error logs — skipping $errLogs"
         }
 
-        $paths = @(
-          "$env:BROWSER_LOG_FILENAME",
-          "trace"
-        )        
         $traceLogs = "trace-logs.zip"
-        Compress-Archive -Path $paths -DestinationPath $traceLogs -Force
+        Compress-Archive -Path @("$env:BROWSER_LOG_FILENAME", "trace") -DestinationPath $traceLogs -Force
         $artifactPaths += "$traceLogs"
         
+        if ($env:COMPARE_STATUS -eq 'changed') {
+          $paths = @(
+            "${{ env.SCRIPT_OUTPUT }}",
+            "${{ env.ACTUAL_CONTENT }}",
+            "${{ env.REFERENCE_CONTENT }}",
+            "${{ env.DIFF_FILE }}"
+          )
+          Compress-Archive -Path $paths -DestinationPath changed-output.zip -Force
+          
+          $artifactPaths += "changed-output.zip"
+        } else {
+          Write-Host "Skipping changed-output upload because compare status is '$env:COMPARE_STATUS'."
+        }
         pwsh -File ${env:UPLOAD_SCRIPT} `
           -WorkflowName $env:GITHUB_WORKFLOW `
           -RunNumber $env:GITHUB_RUN_NUMBER `
@@ -319,30 +329,6 @@ jobs:
           -SftpUser $env:SFTP_USER `
           -RemoteBaseDir $env:REMOTE_DIR `
           -SummaryBaseUrl "https://${{ secrets.REPORTS_TS_HOST }}/logs"
-
-    - name: Upload log if script output is different than reference
-      if: steps.compare.outputs.status == 'changed'
-      shell: pwsh
-      run: |
-        $paths = @(
-          "${{ env.SCRIPT_OUTPUT }}",
-          "${{ env.ACTUAL_CONTENT }}",
-          "${{ env.REFERENCE_CONTENT }}",
-          "${{ env.DIFF_FILE }}"
-        )
-        Compress-Archive -Path $paths -DestinationPath changed-output.zip -Force
-        
-        $artifactPaths = @("changed-output.zip")
-        pwsh -File ${env:UPLOAD_SCRIPT} `
-          -WorkflowName $env:GITHUB_WORKFLOW `
-          -RunNumber $env:GITHUB_RUN_NUMBER `
-          -JobName $env:GITHUB_JOB `
-          -Artifacts $artifactPaths `
-          -SftpHost $env:SFTP_HOST `
-          -SftpPort ([int]$env:SFTP_PORT) `
-          -SftpUser $env:SFTP_USER `
-          -RemoteBaseDir $env:REMOTE_DIR `
-          -SummaryBaseUrl "https://${{ secrets.REPORTS_TS_HOST }}/artifacts"
 
     # 🔁 Compare current workflow status with the previous one
     - name: Compare workflow status and set workflow summary
