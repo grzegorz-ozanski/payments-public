@@ -74,8 +74,8 @@ $cmds += "bye"
 
 $cmds | Set-Content -Path $batchFile -Encoding ASCII
 
-Write-Host "Uploading via SFTP to $SftpUser@$SftpHost:$remoteDir"
-sftp @sshOpts -b "$batchFile" "$SftpUser@$SftpHost"
+Write-Host "Uploading via SFTP to ${SftpUser}@${SftpHost}:${remoteDir}"
+sftp @sshOpts -b "${batchFile}" "${SftpUser}@${SftpHost}"
 
 Write-Host "Upload OK: $($Artifacts -join ', ')"
 
