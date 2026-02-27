@@ -15,7 +15,7 @@ param (
   [Parameter(Mandatory = $true)][string]$RemoteBaseDir,
 
   # Optional: where to create temp files (default: system temp)
-  [Parameter(Mandatory = $false)][string]$TempDir
+  [Parameter(Mandatory = $false)][string]$TempDir,
   [Parameter(Mandatory = $false)][string]$SummaryBaseUrl
 )
 
