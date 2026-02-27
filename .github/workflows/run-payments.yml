@@ -176,7 +176,7 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
+        python -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}" -p actum
 
     - name: Generate HTML output
       continue-on-error: true
@@ -283,10 +283,10 @@ jobs:
             $client.Close()
     
             "reachable=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-            Write-Host "Connection to $host:$port succeeded."
+            Write-Host "Connection to ${host}:${port} succeeded."
         } catch {
             "reachable=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-            Write-Host "Connection to $host:$port failed."
+            Write-Host "Connection to ${host}:${port} failed."
         }
 
     - name: Start ssh-agent
