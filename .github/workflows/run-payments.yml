@@ -318,7 +318,7 @@ jobs:
           -SftpPort ([int]$env:SFTP_PORT) `
           -SftpUser $env:SFTP_USER `
           -RemoteBaseDir $env:REMOTE_DIR `
-          -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/logs"
+          -SummaryBaseUrl "https://${{ secrets.REPORTS_TS_HOST }}/logs"
 
     - name: Upload log if script output is different than reference
       if: steps.compare.outputs.status == 'changed'
