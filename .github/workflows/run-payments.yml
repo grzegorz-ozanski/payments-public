@@ -176,7 +176,7 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}" -p actum
+        python -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
 
     - name: Generate HTML output
       continue-on-error: true
@@ -289,12 +289,6 @@ jobs:
             Write-Host "Connection to ${$targetHost}:${$targetPort} failed."
         }
 
-#    - name: Start ssh-agent
-#      if: steps.reports.outputs.reachable == 'true'
-#      uses: webfactory/ssh-agent@v0.9.0
-#      with:
-#        ssh-private-key: ${{ secrets.REPORTS_SSH_KEY }}
-
     - name: Prepare SSH key for SFTP
       id: sshkey
       if: steps.reports.outputs.reachable == 'true'
@@ -306,7 +300,7 @@ jobs:
         "@ | Set-Content -Path ${keyPath} -NoNewline
     
         if ($IsWindows) {
-          # usuń dziedziczenie i wszystkie inne ACL-e
+          # remove inheritance and all other ACLs
           & icacls $keyPath /inheritance:r | Out-Null
           & icacls $keyPath /grant:r "${env:USERNAME}:(R)" | Out-Null
           & icacls $keyPath /grant:r "${env:USERNAME}:(F)" | Out-Null
