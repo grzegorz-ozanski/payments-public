@@ -305,9 +305,16 @@ jobs:
         ${{ secrets.REPORTS_SSH_KEY }}
         "@ | Set-Content -Path ${keyPath} -NoNewline
     
-        # Na Linux/macOS to potrzebne; na Windows harmless
-        try { & chmod 600 ${keyPath} | Out-Null } catch {}
-    
+        if ($IsWindows) {
+          # usuń dziedziczenie i wszystkie inne ACL-e
+          & icacls $keyPath /inheritance:r | Out-Null
+          & icacls $keyPath /grant:r "${env:USERNAME}:(R)" | Out-Null
+          & icacls $keyPath /grant:r "${env:USERNAME}:(F)" | Out-Null
+          & icacls $keyPath /remove "BUILTIN\Users" "Everyone" "Authenticated Users" 2>$null | Out-Null
+        } else {
+          & chmod 600 $keyPath | Out-Null
+        }
+
         "key_path=${keyPath}" | Out-File -FilePath ${env:GITHUB_OUTPUT} -Append
         Write-Host "SSH key written to ${keyPath}"
     - name: Upload logs/artifacts to SFTP
