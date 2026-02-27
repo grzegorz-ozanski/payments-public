@@ -325,10 +325,10 @@ jobs:
       shell: pwsh
       run: |
         $paths = @(
-          "payments/${{ env.SCRIPT_OUTPUT }}",
-          "payments/${{ env.ACTUAL_CONTENT }}",
-          "payments/${{ env.REFERENCE_CONTENT }}",
-          "payments/${{ env.DIFF_FILE }}"
+          "${{ env.SCRIPT_OUTPUT }}",
+          "${{ env.ACTUAL_CONTENT }}",
+          "${{ env.REFERENCE_CONTENT }}",
+          "${{ env.DIFF_FILE }}"
         )
         Compress-Archive -Path $paths -DestinationPath changed-output.zip -Force
         
