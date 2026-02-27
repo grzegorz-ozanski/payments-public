@@ -100,7 +100,7 @@ def parse_args() -> Namespace:
     parser.add_argument('-s', '--sort', default=None,
                         help='Sort payments by the provided key', choices=Payment.SORT_KEYS)
     parser.add_argument('-f', '--filter', default=None,
-                        help=f'Filter (<=, <, =, !=, >, >=) by provided keys ({Payment.SORT_KEYS})')
+                        help=f'Filter (<=, <, =, !=, >, >=) by provided keys {Payment.SORT_KEYS}')
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
                         help='Enable verbose mode (show debug logs)')
     parser.add_argument('--chrome-path',
