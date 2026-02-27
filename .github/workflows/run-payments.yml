@@ -283,18 +283,33 @@ jobs:
             $client.Close()
     
             "reachable=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-            Write-Host "Connection to ${host}:${port} succeeded."
+            Write-Host "Connection to ${$targetHost}:${$targetPort} succeeded."
         } catch {
             "reachable=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-            Write-Host "Connection to ${host}:${port} failed."
+            Write-Host "Connection to ${$targetHost}:${$targetPort} failed."
         }
 
-    - name: Start ssh-agent
-      if: steps.reports.outputs.reachable == 'true'
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.REPORTS_SSH_KEY }}
+#    - name: Start ssh-agent
+#      if: steps.reports.outputs.reachable == 'true'
+#      uses: webfactory/ssh-agent@v0.9.0
+#      with:
+#        ssh-private-key: ${{ secrets.REPORTS_SSH_KEY }}
 
+    - name: Prepare SSH key for SFTP
+      id: sshkey
+      if: steps.reports.outputs.reachable == 'true'
+      shell: pwsh
+      run: |
+        ${keyPath} = Join-Path $env:RUNNER_TEMP "reports_ssh_key"
+        @"
+        ${{ secrets.REPORTS_SSH_KEY }}
+        "@ | Set-Content -Path ${keyPath} -NoNewline
+    
+        # Na Linux/macOS to potrzebne; na Windows harmless
+        try { & chmod 600 ${keyPath} | Out-Null } catch {}
+    
+        "key_path=${keyPath}" | Out-File -FilePath ${env:GITHUB_OUTPUT} -Append
+        Write-Host "SSH key written to ${keyPath}"
     - name: Upload logs/artifacts to SFTP
       if: steps.reports.outputs.reachable == 'true'
       shell: pwsh
@@ -302,6 +317,7 @@ jobs:
         SFTP_HOST: ${{ secrets.REPORTS_TS_HOST }}
         SFTP_PORT: ${{ secrets.REPORTS_TS_PORT }}   # np. 22
         SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
+        SSH_KEY_PATH: ${{ steps.sshkey.outputs.key_path }}
         REMOTE_DIR: upload/logs
         COMPARE_STATUS: ${{ steps.compare.outputs.status }}
       run: |
@@ -345,6 +361,7 @@ jobs:
           -SftpHost $env:SFTP_HOST `
           -SftpPort ([int]$env:SFTP_PORT) `
           -SftpUser $env:SFTP_USER `
+          -SshKeyPath $env:SSH_KEY_PATH `
           -RemoteBaseDir $env:REMOTE_DIR `
           -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/logs"
 

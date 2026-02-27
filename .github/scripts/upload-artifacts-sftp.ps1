@@ -10,6 +10,7 @@ param (
   [Parameter(Mandatory = $true)][string]$SftpHost,
   [Parameter(Mandatory = $true)][int]$SftpPort,
   [Parameter(Mandatory = $true)][string]$SftpUser,
+  [Parameter(Mandatory = $true)][string]$SshKeyPath,
 
   # Remote base directory (POSIX path), e.g. /srv/reports/artifacts
   [Parameter(Mandatory = $true)][string]$RemoteBaseDir,
@@ -50,9 +51,9 @@ $knownHosts = Join-Path $TempDir "known_hosts_$sessionId"
 $sftpOpts = @(
   '-P', "$SftpPort",
   '-o', 'StrictHostKeyChecking=accept-new',
-  '-o', "UserKnownHostsFile=$knownHosts"
+  '-o', "UserKnownHostsFile=$knownHosts",
+  '-i', "$SshKeyPath"
 )
-
 # Upload via SFTP in batch mode
 $batchFile = Join-Path $TempDir "sftp_batch_$sessionId.txt"
 
