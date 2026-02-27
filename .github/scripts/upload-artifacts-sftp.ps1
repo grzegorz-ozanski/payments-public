@@ -53,10 +53,18 @@ $sshOpts = @(
   '-o', 'StrictHostKeyChecking=accept-new',
   '-o', "UserKnownHostsFile=$knownHosts"
 )
+$sftpOpts = @(
+  '-P', "$SftpPort",
+  '-o', 'StrictHostKeyChecking=accept-new',
+  '-o', "UserKnownHostsFile=$knownHosts"
+)
 
 # Ensure remote dir exists (mkdir -p)
 Write-Host "Ensuring remote dir exists: $remoteDir"
 ssh @sshOpts "$SftpUser@$SftpHost" "mkdir -p '$remoteDir'"
+if ($LASTEXITCODE -ne 0) {
+  throw "SSH command failed while creating remote directory '$remoteDir' (exit code: $LASTEXITCODE)."
+}
 
 # Upload via SFTP in batch mode
 $batchFile = Join-Path $TempDir "sftp_batch_$sessionId.txt"
@@ -75,7 +83,10 @@ $cmds += "bye"
 $cmds | Set-Content -Path $batchFile -Encoding ASCII
 
 Write-Host "Uploading via SFTP to ${SftpUser}@${SftpHost}:${remoteDir}"
-sftp @sshOpts -b "${batchFile}" "${SftpUser}@${SftpHost}"
+sftp @sftpOpts -b "${batchFile}" "${SftpUser}@${SftpHost}"
+if ($LASTEXITCODE -ne 0) {
+  throw "SFTP upload failed (exit code: $LASTEXITCODE)."
+}
 
 Write-Host "Upload OK: $($Artifacts -join ', ')"
 
