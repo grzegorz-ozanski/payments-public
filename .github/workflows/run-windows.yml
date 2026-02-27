@@ -22,3 +22,7 @@ jobs:
       BROWSER_REPO_TOKEN: ${{ secrets.BROWSER_REPO_TOKEN }}
       PAYMENTS_TESTDATA_REPO_TOKEN: ${{ secrets.TESTDATA_REPO_TOKEN }}
       CREDENTIALS: ${{ secrets.CREDENTIALS }}
+      REPORTS_TS_HOST: ${{ secrets.REPORTS_TS_HOST }}
+      REPORTS_TS_PORT: ${{ secrets.REPORTS_TS_PORT }}
+      REPORTS_USER: ${{ secrets.REPORTS_USER }}
+      REPORTS_SSH_KEY: ${{ secrets.REPORTS_SSH_KEY }}
