@@ -28,10 +28,9 @@ function Sanitize([string]$s) {
 
 function Require-Command([string]$name) {
   $cmd = Get-Command $name -ErrorAction SilentlyContinue
-  if (-not $cmd) { throw "Required command '$name' not found on PATH. Install OpenSSH client (ssh/sftp) on this runner." }
+  if (-not $cmd) { throw "Required command '$name' not found on PATH. Install OpenSSH SFTP client on this runner." }
 }
 
-Require-Command ssh
 Require-Command sftp
 
 $workflow = Sanitize $WorkflowName
@@ -45,33 +44,39 @@ if (-not $TempDir) { $TempDir = [System.IO.Path]::GetTempPath() }
 
 $sessionId = [guid]::NewGuid().ToString('N')
 
-# SSH options:
+# SFTP options:
 # - accept-new: first connect auto-add host key; later it must match (safer than "no")
 $knownHosts = Join-Path $TempDir "known_hosts_$sessionId"
-$sshOpts = @(
-  '-p', "$SftpPort",
-  '-o', 'StrictHostKeyChecking=accept-new',
-  '-o', "UserKnownHostsFile=$knownHosts"
-)
 $sftpOpts = @(
   '-P', "$SftpPort",
   '-o', 'StrictHostKeyChecking=accept-new',
   '-o', "UserKnownHostsFile=$knownHosts"
 )
 
-# Ensure remote dir exists (mkdir -p)
-Write-Host "Ensuring remote dir exists: $remoteDir"
-ssh @sshOpts "$SftpUser@$SftpHost" "mkdir -p '$remoteDir'"
-if ($LASTEXITCODE -ne 0) {
-  throw "SSH command failed while creating remote directory '$remoteDir' (exit code: $LASTEXITCODE)."
-}
-
 # Upload via SFTP in batch mode
 $batchFile = Join-Path $TempDir "sftp_batch_$sessionId.txt"
 
-$cmds = @(
-  "cd `"$remoteDir`""
-)
+function Get-SftpMkdirCommands([string]$path) {
+  $normalized = $path -replace '\\', '/'
+  $isAbsolute = $normalized.StartsWith('/')
+  $parts = $normalized.Trim('/') -split '/' | Where-Object { $_ -ne '' }
+  $current = if ($isAbsolute) { '/' } else { '' }
+  $commands = @()
+  foreach ($part in $parts) {
+    if ($current -eq '/' -or $current -eq '') {
+      $current = "$current$part"
+    } else {
+      $current = "$current/$part"
+    }
+    # Prefix "-" ignores "already exists" errors in batch mode.
+    $commands += "-mkdir `"$current`""
+  }
+  return $commands
+}
+
+$cmds = @()
+$cmds += Get-SftpMkdirCommands $remoteDir
+$cmds += "cd `"$remoteDir`""
 
 foreach ($path in $Artifacts) {
   $full = (Resolve-Path $path).Path
