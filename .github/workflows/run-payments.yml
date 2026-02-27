@@ -319,7 +319,7 @@ jobs:
         } else {
           Write-Host "Skipping changed-output upload because compare status is '$env:COMPARE_STATUS'."
         }
-        pwsh -File ${env:UPLOAD_SCRIPT} `
+        & ${env:UPLOAD_SCRIPT} `
           -WorkflowName $env:GITHUB_WORKFLOW `
           -RunNumber $env:GITHUB_RUN_NUMBER `
           -JobName $env:GITHUB_JOB `
