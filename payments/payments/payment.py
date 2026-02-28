@@ -227,10 +227,11 @@ class Payment:
         """
         Payment constructor
 
-        :param amount: amount
-        :param due_date: due date
+        :param provider: provider name
         :param location: location
-        :param provider: provider
+        :param due_date: due date
+        :param amount: amount
+        :param comment: comment
         """
 
         self.amount = Amount.create_from(amount)

@@ -74,13 +74,16 @@ class PaymentsManager:
         :param browser_class: Browser class
         """
         payments: list[Payment] = []
+        provider_timings: dict[str, float] = {}
         manager = BrowserManager(options, browser_class)
         try:
             for provider in self.providers:
+                start = time.perf_counter()
                 _print_banner(f'Processing service {provider.name}...')
                 with manager.session(provider.needs_clear_user_profile) as browser:
                     payments += provider.get_payments(browser)
-            return PaymentsList(payments)
+                provider_timings[provider.name] = time.perf_counter() - start
+            return PaymentsList(payments, provider_timings)
         finally:
             manager.close()
 

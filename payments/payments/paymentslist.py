@@ -1,6 +1,7 @@
 """ Collected payments list """
 import operator
 import re
+from functools import cache
 
 from payments.payments.payment import Payment
 
@@ -10,8 +11,9 @@ class PaymentsList:
         List of collected payments
     """
 
-    def __init__(self, payments: list[Payment]) -> None:
+    def __init__(self, payments: list[Payment], provider_timings: dict[str, float] | None = None) -> None:
         self.payments: list[Payment] = payments
+        self.provider_timings = provider_timings
 
     def copy(self) -> 'PaymentsList':
         """
@@ -50,6 +52,29 @@ class PaymentsList:
                                             self.payments)))
         return self.copy()
 
+    @cache
+    def json(self) -> dict:
+        """
+        Converts payments list to JSON
+        :return: payments list as JSON-serializable dict
+        """
+        result = {}
+        for payment in self.payments:
+            item = {
+                'location': payment.location,
+                'amount': payment.amount.value,
+                'due_date': payment.due_date.value.strftime('%d-%m-%Y'),
+                'comment': payment.comment,
+                'status': 'failure' if payment.amount.is_unknown() else 'success'
+            }
+            if payment.provider not in result:
+                result[payment.provider] = {
+                    'payments': [],
+                    'time': f'{self.provider_timings[payment.provider]:.2f}' if self.provider_timings else ''
+                }
+            result[payment.provider]['payments'].append(item)
+        return result
+
     def __str__(self) -> str:
         """
         Export all payments to string, adding padding
@@ -64,5 +89,3 @@ class PaymentsList:
             max_len_location = max(max_len_location, len(payment.location))
         return '\n'.join([payment.to_padded_string([max_len_provider, max_len_amount, max_len_location])
                           for payment in self.payments])
-
-

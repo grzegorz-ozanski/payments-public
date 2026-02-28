@@ -4,6 +4,7 @@
 import argparse
 import ctypes
 import datetime
+import json
 import logging
 import os
 import sys
@@ -87,6 +88,10 @@ def parse_args() -> Namespace:
                              f'({DebugFlags.BROWSER_PROFILE}: browser profile creation debugging, '
                              f'{DebugFlags.MULTIMEDIA_LOGIN}: Multimedia provider login debugging)'
                              f'{DebugFlags.MULTIMEDIA_PROFILE}: Use persistent profile for Multimedia provider)')
+    parser.add_argument('-j', '--json',
+                        help='Write retrieved payments to JSON file (UTF-8)')
+    parser.add_argument('-J', '--print-json', default=False, action='store_true',
+                        help='Print retrieved payments in JSON format to console')
     parser.add_argument('-o', '--output',
                         help='Write retrieved payments to output file (UTF-8)')
     parser.add_argument('-p', '--provider', default='',
@@ -202,6 +207,14 @@ def main() -> int:
     if args.output:
         with open(args.output, 'w', encoding='utf-8') as stream:
             print(output, file=stream)
+    if args.json or args.print_json:
+        indent = 2
+        ensure_ascii = False
+        if args.print_json:
+            print(json.dumps(output.json(), indent=indent, ensure_ascii=ensure_ascii))
+        if args.json:
+            with open(args.json, 'w', encoding='utf-8') as stream:
+                json.dump(output.json(), stream, indent=indent, ensure_ascii=ensure_ascii)
 
     end_time = datetime.datetime.now()
     print('Finished at %s' % end_time)
