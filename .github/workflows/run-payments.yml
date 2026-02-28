@@ -261,6 +261,20 @@ jobs:
         -Artifacts "$artifactPaths" `
         -TargetDir $env:LOCAL_ARTIFACTS_DIR
 
+    # 🔁 Compare current workflow status with the previous one
+    - name: Compare workflow status and set workflow summary
+      id: statuscheck
+      if: always()
+      shell: pwsh
+      run: |
+        pwsh -File ${env:STATUS_SCRIPT} `
+        "${{ steps.readstatus.outputs.previous }}" `
+        "${{ steps.compare.outputs.status }}" `
+        ${env:SCRIPT_HTML} `
+        ${env:DIFF_FILE} `
+        ${env:GITHUB_OUTPUT} `
+        ${env:GITHUB_STEP_SUMMARY}
+
     - name: Check reports SFTP reachable
       id: reports
       shell: pwsh
@@ -311,6 +325,7 @@ jobs:
 
         "key_path=${keyPath}" | Out-File -FilePath ${env:GITHUB_OUTPUT} -Append
         Write-Host "SSH key written to ${keyPath}"
+
     - name: Upload logs/artifacts to SFTP
       if: steps.reports.outputs.reachable == 'true'
       shell: pwsh
@@ -365,20 +380,6 @@ jobs:
           -SshKeyPath $env:SSH_KEY_PATH `
           -RemoteBaseDir $env:REMOTE_DIR `
           -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/logs"
-
-    # 🔁 Compare current workflow status with the previous one
-    - name: Compare workflow status and set workflow summary
-      id: statuscheck
-      if: always()
-      shell: pwsh
-      run: |
-        pwsh -File ${env:STATUS_SCRIPT} `
-        "${{ steps.readstatus.outputs.previous }}" `
-        "${{ steps.compare.outputs.status }}" `
-        ${env:SCRIPT_HTML} `
-        ${env:DIFF_FILE} `
-        ${env:GITHUB_OUTPUT} `
-        ${env:GITHUB_STEP_SUMMARY}
 
     - name: "[SKIP REASON] Send email if workflow result changed"
       if: inputs.event_name != 'schedule' || steps.statuscheck.outputs.changed != 'true'
