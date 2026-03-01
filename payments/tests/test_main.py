@@ -31,6 +31,8 @@ def setup_args(monkeypatch: MonkeyPatch, output: str = '') -> None:
         verbose=False,
         sort=None,
         filter=None,
+        json=None,
+        print_json=False
     ))
     monkeypatch.setattr(main, 'is_debugger_active', lambda: False)
 

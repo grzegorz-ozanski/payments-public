@@ -2,6 +2,7 @@
 import operator
 import re
 from functools import cache
+from typing import Any
 
 from payments.payments.payment import Payment
 
@@ -53,12 +54,12 @@ class PaymentsList:
         return self.copy()
 
     @cache
-    def json(self) -> dict:
+    def json(self) -> dict[str, Any]:
         """
         Converts payments list to JSON
         :return: payments list as JSON-serializable dict
         """
-        result = {}
+        result: dict[str, Any] = {}
         for payment in self.payments:
             item = {
                 'location': payment.location,
