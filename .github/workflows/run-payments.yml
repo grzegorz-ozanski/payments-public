@@ -37,7 +37,7 @@ on:
         required: true
       CREDENTIALS:
         required: true
-      REPORTS_TS_HOST:
+      REPORTS_TS_HOST_IP:
         required: true
       REPORTS_TS_PORT:
         required: true
@@ -76,7 +76,7 @@ jobs:
       STATUS_SCRIPT:        .github/scripts/compare-status.ps1
       STORE_LOCALLY_SCRIPT: .github/scripts/store-artifacts-locally.ps1
       UPLOAD_SCRIPT:        .github/scripts/upload-artifacts-sftp.ps1
-      REPORTS_TS_HOST:      reports.perch-antares.ts.net
+      REPORTS_TS_HOSTNAME:  reports.perch-antares.ts.net
 
     runs-on: ${{ fromJson(inputs.runner_label) }}
 
@@ -281,7 +281,7 @@ jobs:
       id: reports
       shell: pwsh
       run: |
-        $targetHost = "${{ secrets.REPORTS_TS_HOST }}"
+        $targetHost = "${{ secrets.REPORTS_TS_HOST_IP }}"
         $targetPort = [int]"${{ secrets.REPORTS_TS_PORT }}"
         $timeoutMs = 3000
     
@@ -332,7 +332,7 @@ jobs:
       if: steps.reports.outputs.reachable == 'true'
       shell: pwsh
       env:
-        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST }}
+        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST_IP }}
         SFTP_PORT: ${{ secrets.REPORTS_TS_PORT }}   # np. 22
         SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
         SSH_KEY_PATH: ${{ steps.sshkey.outputs.key_path }}
@@ -381,13 +381,13 @@ jobs:
           -SftpUser $env:SFTP_USER `
           -SshKeyPath $env:SSH_KEY_PATH `
           -RemoteBaseDir $env:REMOTE_DIR `
-          -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/logs"
+          -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOSTNAME }}/logs"
 
     - name: Upload JSON results to SFTP
       if: steps.reports.outputs.reachable == 'true'
       shell: pwsh
       env:
-        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST }}
+        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST_IP }}
         SFTP_PORT: ${{ secrets.REPORTS_TS_PORT }}   # np. 22
         SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
         SSH_KEY_PATH: ${{ steps.sshkey.outputs.key_path }}

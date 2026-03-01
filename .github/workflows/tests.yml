@@ -147,7 +147,7 @@ jobs:
     - name: Upload coverage archive via SFTP
       shell: bash
       env:
-        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST }}
+        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST_IP }}
         SFTP_PORT: ${{ secrets.REPORTS_TS_PORT }}   # np. 22
         SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
 
