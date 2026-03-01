@@ -1,7 +1,7 @@
 param (
-  [Parameter(Mandatory = $true)][string]$WorkflowName,
-  [Parameter(Mandatory = $true)][string]$RunNumber,
-  [Parameter(Mandatory = $true)][string]$JobName,
+  [Parameter(Mandatory = $false)][string]$WorkflowName,
+  [Parameter(Mandatory = $false)][string]$RunNumber,
+  [Parameter(Mandatory = $false)][string]$JobName,
 
   # Paths (files/dirs) relative to repo root or absolute
   [Parameter(Mandatory = $true)][string[]]$Artifacts,
@@ -32,14 +32,39 @@ function Require-Command([string]$name) {
   if (-not $cmd) { throw "Required command '$name' not found on PATH. Install OpenSSH SFTP client on this runner." }
 }
 
+function Join-PosixPath([string]$left, [string]$right) {
+  $l = ($left -replace '\\', '/')
+  $r = ($right -replace '\\', '/')
+
+  if ([string]::IsNullOrWhiteSpace($l)) { return $r.TrimStart('/') }
+  if ($l -eq '/') { return '/' + $r.TrimStart('/') }
+  return $l.TrimEnd('/') + '/' + $r.TrimStart('/')
+}
+
 Require-Command sftp
 
-$workflow = Sanitize $WorkflowName
-$job = Sanitize $JobName
+$hasRunContext = -not [string]::IsNullOrWhiteSpace($WorkflowName) `
+  -and -not [string]::IsNullOrWhiteSpace($RunNumber) `
+  -and -not [string]::IsNullOrWhiteSpace($JobName)
 
-# Remote dir: <base>/<workflow>/<job>/<runNumber>
-# (use POSIX separators regardless of platform)
-$remoteDir = ($RemoteBaseDir.TrimEnd('/') + "/$workflow/$job/$RunNumber")
+$remoteBaseRaw = ($RemoteBaseDir -replace '\\', '/')
+$remoteBase = if ($remoteBaseRaw -eq '/') { '/' } else { $remoteBaseRaw.TrimEnd('/') }
+if ([string]::IsNullOrWhiteSpace($remoteBase)) {
+  throw "RemoteBaseDir must not be empty."
+}
+if ($hasRunContext) {
+  $workflow = Sanitize $WorkflowName
+  $job = Sanitize $JobName
+
+  # Remote dir: <base>/<workflow>/<job>/<runNumber>
+  # (use POSIX separators regardless of platform)
+  $remoteRel = "$workflow/$job/$RunNumber"
+  $remoteDir = Join-PosixPath $remoteBase $remoteRel
+} else {
+  # Brak pełnego kontekstu workflow/run/job: upload bezpośrednio do bazy.
+  $remoteDir = $remoteBase
+  $remoteRel = ""
+}
 
 if (-not $TempDir) { $TempDir = [System.IO.Path]::GetTempPath() }
 
@@ -104,12 +129,14 @@ function Add-SummaryLine([string]$line) {
 
 if ($SummaryBaseUrl) {
   $baseUrl = $SummaryBaseUrl.TrimEnd('/')
-  # remoteRel musi odpowiadać temu co faktycznie tworzysz na serwerze
-  $remoteRel = "$workflow/$job/$RunNumber"   # jeśli masz taki układ
   Add-SummaryLine "## Artifacts (self-hosted via Tailscale)"
   foreach ($p in $Artifacts) {
     $leaf = Split-Path -Leaf $p
-    $url = "$baseUrl/$remoteRel/$leaf"
+    if ($remoteRel) {
+      $url = "$baseUrl/$remoteRel/$leaf"
+    } else {
+      $url = "$baseUrl/$leaf"
+    }
     Add-SummaryLine "- [$leaf]($url)"
   }
 }

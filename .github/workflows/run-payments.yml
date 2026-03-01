@@ -64,6 +64,7 @@ jobs:
       REFERENCE_OUTPUT:        ${{ github.workspace }}/testdata/reference_output.txt
       SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && format('{0}/testdata/test_output.txt', github.workspace) || 'script_output.txt' }}
       SCRIPT_HTML:             script_output.html
+      SCRIPT_JSON:             script_output.json
       STATUS_FILE:             ${{ github.workspace }}/testdata/last-status.txt
       TEST_DATA:               ${{ github.workspace }}/testdata
 
@@ -176,7 +177,8 @@ jobs:
       continue-on-error: true
       shell: pwsh
       run: |
-        python -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}"
+        python -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}" `
+        -j ${env:SCRIPT_JSON} -J
 
     - name: Generate HTML output
       continue-on-error: true
@@ -380,6 +382,29 @@ jobs:
           -SshKeyPath $env:SSH_KEY_PATH `
           -RemoteBaseDir $env:REMOTE_DIR `
           -SummaryBaseUrl "https://${{ env.REPORTS_TS_HOST }}/logs"
+
+    - name: Upload JSON results to SFTP
+      if: steps.reports.outputs.reachable == 'true'
+      shell: pwsh
+      env:
+        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST }}
+        SFTP_PORT: ${{ secrets.REPORTS_TS_PORT }}   # np. 22
+        SFTP_USER: ${{ secrets.REPORTS_USER }}   # np. uploader
+        SSH_KEY_PATH: ${{ steps.sshkey.outputs.key_path }}
+        REMOTE_DIR: upload/data/payments
+        COMPARE_STATUS: ${{ steps.compare.outputs.status }}
+      run: |
+        if (Test-Path ${env:SCRIPT_JSON}) {
+          & ${env:UPLOAD_SCRIPT} `
+            -Artifacts @(${env:SCRIPT_JSON}) `
+            -SftpHost $env:SFTP_HOST `
+            -SftpPort ([int]$env:SFTP_PORT) `
+            -SftpUser $env:SFTP_USER `
+            -SshKeyPath $env:SSH_KEY_PATH `
+            -RemoteBaseDir $env:REMOTE_DIR
+        } else {
+          Write-Host "Not uploading ${env:SCRIPT_JSON} because it was not found."
+        }
 
     - name: "[SKIP REASON] Send email if workflow result changed"
       if: inputs.event_name != 'schedule' || steps.statuscheck.outputs.changed != 'true'
