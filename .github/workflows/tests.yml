@@ -153,7 +153,17 @@ jobs:
 
       run: |
         set -euo pipefail
+        set -x
     
+        for v in SFTP_HOST SFTP_PORT SFTP_USER REMOTE_DIR; do
+          if [ -z "${!v:-}" ]; then
+            echo "MISSING:$v"
+            exit 1
+          fi
+        done
+        
+        echo "OK: env vars present"
+        echo "SFTP_PORT=$SFTP_PORT"
         mkdir -p ~/.ssh
         ssh-keyscan -p "$SFTP_PORT" "$SFTP_HOST" >> ~/.ssh/known_hosts
     
