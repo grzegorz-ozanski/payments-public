@@ -1,7 +1,7 @@
 """
     Energa provider module for reading payments via Selenium automation.
 """
-from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException
+from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
 from browser import setup_logging, Browser, Locator
@@ -129,10 +129,14 @@ class Energa(Provider):
             # If a 'button.primary' exists, there is probably a message displayed
             # that needs to be dismissed before continuing —  unless its text is "Zapłać teraz",
             # which indicates we're already on the target page
-            button = browser.wait_for_page_element(MESSAGE_BOX_CLOSE_BUTTON, 1)
-            if button and button.text != SKIP_PAYMENT_BUTTON_TEXT:
-                browser.click_element_using_js(button)
-
+            while True:
+                try:
+                    button = browser.wait_for_page_element(MESSAGE_BOX_CLOSE_BUTTON, 1)
+                    if button and button.text != SKIP_PAYMENT_BUTTON_TEXT:
+                        browser.click_element_using_js(button)
+                    break
+                except StaleElementReferenceException:
+                    pass
             location_element = browser.wait_for_page_element(LOCATION_NAME, 30)
             if location_element:
                 location = self._get_location(location_element.text)
