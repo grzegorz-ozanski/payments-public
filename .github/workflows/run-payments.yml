@@ -178,7 +178,8 @@ jobs:
       shell: pwsh
       run: |
         $env:PYTHONUTF8 = "1"
-        python -X utf8 -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} --persistent-profile-dir "${{inputs.browser_profile_dir}}" `
+        python -X utf8 -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} `
+        --persistent-profile-dir "${{inputs.browser_profile_dir}}" `
         -j ${env:SCRIPT_JSON} -J
 
     - name: Generate HTML output
