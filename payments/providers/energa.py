@@ -36,10 +36,17 @@ ALL_PAID = Locator(By.XPATH, '//form[@novalidate]/div/div/p/strong')
 USER_MENU = Locator(By.XPATH, '//button[contains(@class, "hover-submenu")]')
 LOGOUT_BUTTON = Locator(By.XPATH, '//span[contains(text(), "Wyloguj się")]')
 MESSAGE_BOX_CLOSE_BUTTON = Locator(By.CSS_SELECTOR, 'button.button.primary')
+CLOSE_ACCESSIBILITY_MODAL = Locator(By.CSS_SELECTOR, "button[aria-label='Zamknij modal']")
 
 MAINTENANCE_PATTERN = 'aktuali'
 
 DUE_DATE_TIMEOUT = 30
+
+
+def _close_accesibility_modal(browser: Browser) -> None:
+    buttons = browser.find_page_elements(CLOSE_ACCESSIBILITY_MODAL)
+    if buttons:
+        buttons[0].click()
 
 
 class Energa(Provider):
@@ -112,6 +119,7 @@ class Energa(Provider):
             if button:
                 browser.trace_click(button)
                 log.web_trace('accounts-list-after-overlay')
+                _close_accesibility_modal(browser)
                 locations_list_or_none = browser.wait_for_page_elements(ACCOUNTS_LABEL)
             else:
                 raise FetchError('Locations list is empty and no overlay was found!')
@@ -148,6 +156,7 @@ class Energa(Provider):
             invoices_button = browser.wait_for_page_element(INVOICES_TAB)
             if not invoices_button:
                 raise FetchError(f'Could not find invoices button for location {location}!')
+            _close_accesibility_modal(browser)
             browser.click_page_element_with_retry(invoices_button, INVOICES_TAB)
             due_date = None
             # First check if all invoices are already paid
