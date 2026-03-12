@@ -1,0 +1,29 @@
+[project]
+name = "payments"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "browser",
+  "keyring==25.6.0",
+  "numpy==2.4.1",
+  "python-dateutil==2.9.0.post0",
+  "scipy==1.17.0",
+]
+
+[tool.uv.sources]
+browser = { workspace = true }
+
+[dependency-groups]
+dev = [
+  "pytest==8.3.5",
+  "pytest-mock==3.14.1",
+  "pytest-cov==6.1.1",
+  "mypy==1.15.0",
+  "ruff==0.11.11",
+  "types-python-dateutil==2.9.0.20250516",
+  "types-requests==2.32.0.20250515",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
