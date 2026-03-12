@@ -76,6 +76,7 @@ def parse_args() -> Namespace:
             "using browser automation (Selenium). Supports headless mode, trace logging, "
             "and output to file."
         ),
+        prog="payments",
         formatter_class=argparse.RawTextHelpFormatter
     )
 
