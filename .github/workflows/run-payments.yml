@@ -197,7 +197,8 @@ jobs:
         ${env:REFERENCE_OUTPUT} `
         -ComparedActual ${env:ACTUAL_CONTENT} `
         -ComparedExpected ${env:REFERENCE_CONTENT} `
-        -Diff ${env:DIFF_FILE}
+        -Diff ${env:DIFF_FILE} `
+        -ResultJson ${env:SCRIPT_JSON}
 
     - name: Upload error logs
       uses: actions/upload-artifact@v4
