@@ -61,19 +61,19 @@ class PaymentsList:
         """
         result: dict[str, Any] = {}
         for payment in self.payments:
-            item = {
-                'location': payment.location,
-                'amount': payment.amount.value,
-                'due_date': payment.due_date.value.strftime('%d-%m-%Y'),
-                'comment': payment.comment,
-                'status': 'failure' if payment.amount.is_unknown() else 'success'
-            }
             if payment.provider not in result:
                 result[payment.provider] = {
                     'payments': [],
                     'time': f'{self.provider_timings[payment.provider]:.2f}' if self.provider_timings else ''
                 }
-            result[payment.provider]['payments'].append(item)
+            result[payment.provider]['payments'].append({
+                'location': payment.location,
+                'amount': payment.amount.value,
+                'due_date': payment.due_date.value.strftime('%d-%m-%Y'),
+                'comment': payment.comment,
+                'status': 'failure' if payment.amount.is_unknown() else 'success',
+                'reason': ''
+            })
         return result
 
     def __str__(self) -> str:
