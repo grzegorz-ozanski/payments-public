@@ -397,6 +397,13 @@ jobs:
         REMOTE_DIR: upload/data/payments
         COMPARE_STATUS: ${{ steps.compare.outputs.status }}
       run: |
+        $remoteDir = $env:REMOTE_DIR
+        if ($env:RUNNER_OS -eq 'Windows') {
+          $remoteDir = "$remoteDir/windows"
+        } else {
+          $remoteDir = "$remoteDir/linux"
+        }
+
         if (Test-Path ${env:SCRIPT_JSON}) {
           & ${env:UPLOAD_SCRIPT} `
             -Artifacts @(${env:SCRIPT_JSON}) `
@@ -404,7 +411,7 @@ jobs:
             -SftpPort ([int]$env:SFTP_PORT) `
             -SftpUser $env:SFTP_USER `
             -SshKeyPath $env:SSH_KEY_PATH `
-            -RemoteBaseDir $env:REMOTE_DIR
+            -RemoteBaseDir $remoteDir
         } else {
           Write-Host "Not uploading ${env:SCRIPT_JSON} because it was not found."
         }
