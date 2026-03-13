@@ -91,7 +91,11 @@ class Amount:
         if self.is_unknown():
             return '', ''
         separator = '|'
-        amount = re.sub(r'[^\d,.-]', '', self.value)
+        amount = self.value
+        if amount:
+            amount = re.sub(r'[^\d,.-]', '', self.value)
+        else:
+            amount = self._zero
         amount = re.sub(r'[,.]', separator, amount)
         whole, dec = amount.split(separator) if separator in amount else (amount, '0')
         return whole, dec
