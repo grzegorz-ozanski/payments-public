@@ -62,6 +62,9 @@ jobs:
       LOCAL_ARTIFACTS_LINUX:   /runner/artifacts
       REFERENCE_CONTENT:       reference.txt
       REFERENCE_OUTPUT:        ${{ github.workspace }}/testdata/reference_output.txt
+      RERUN_SCRIPT_JSON:       rerun_script_output.json
+      RERUN_SCRIPT_OUTPUT:     rerun_script_output.txt
+      PREVIOUS_SCRIPT_JSON:    previous_script_output.json
       SCRIPT_OUTPUT:           ${{ inputs.debug_workflow && format('{0}/testdata/test_output.txt', github.workspace) || 'script_output.txt' }}
       SCRIPT_HTML:             script_output.html
       SCRIPT_JSON:             script_output.json
@@ -70,6 +73,7 @@ jobs:
 
       # Scripts
       COMPARE_SCRIPT:       .github/scripts/compare-output.ps1
+      DOWNLOAD_SCRIPT:      .github/scripts/download-artifact-sftp.ps1
       GIT_PUSH_SCRIPT:      .github/scripts/git-push.ps1
       MASK_SCRIPT:          .github/scripts/mask-env-secrets.ps1
       READ_STATUS_SCRIPT:   .github/scripts/read-previous-status.ps1
@@ -172,15 +176,151 @@ jobs:
         path: ${{ env.TEST_DATA }}
         token: ${{ secrets.PAYMENTS_TESTDATA_REPO_TOKEN }}
 
+    - name: Check reports SFTP reachable for rerun
+      id: rerunreports
+      if: ${{ github.run_attempt > 1 && !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        $targetHost = "${{ secrets.REPORTS_TS_HOST_IP }}"
+        $targetPort = [int]"${{ secrets.REPORTS_TS_PORT }}"
+        $timeoutMs = 3000
+    
+        try {
+            $client = New-Object System.Net.Sockets.TcpClient
+            $async = $client.BeginConnect($targetHost, $targetPort, $null, $null)
+            $wait = $async.AsyncWaitHandle.WaitOne($timeoutMs, $false)
+    
+            if (-not $wait) {
+                $client.Close()
+                throw "Timeout"
+            }
+    
+            $client.EndConnect($async)
+            $client.Close()
+    
+            "reachable=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host "Connection to ${$targetHost}:${$targetPort} succeeded."
+        } catch {
+            "reachable=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host "Connection to ${$targetHost}:${$targetPort} failed."
+        }
+
+    - name: Prepare SSH key for rerun SFTP download
+      id: rerunsshkey
+      if: ${{ github.run_attempt > 1 && !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        ${keyPath} = Join-Path $env:RUNNER_TEMP "reports_ssh_key_rerun"
+        @"
+        ${{ secrets.REPORTS_SSH_KEY }}
+        "@ | Set-Content -Path ${keyPath} -NoNewline
+    
+        if ($IsWindows) {
+          & icacls $keyPath /inheritance:r | Out-Null
+          & icacls $keyPath /grant:r "${env:USERNAME}:(R)" | Out-Null
+          & icacls $keyPath /grant:r "${env:USERNAME}:(F)" | Out-Null
+          & icacls $keyPath /remove "BUILTIN\Users" "Everyone" "Authenticated Users" 2>$null | Out-Null
+        } else {
+          & chmod 600 $keyPath | Out-Null
+        }
+
+        "key_path=${keyPath}" | Out-File -FilePath ${env:GITHUB_OUTPUT} -Append
+        Write-Host "SSH key written to ${keyPath}"
+
+    - name: Fail rerun when reports SFTP is unreachable
+      if: ${{ github.run_attempt > 1 && !contains(env.SCRIPT_OUTPUT, 'test_') && steps.rerunreports.outputs.reachable != 'true' }}
+      shell: pwsh
+      run: |
+        throw "Re-run requires reports SFTP to be reachable in order to download ${env:SCRIPT_JSON}."
+
+    - name: Download previous JSON results for rerun
+      if: ${{ github.run_attempt > 1 && !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      env:
+        SFTP_HOST: ${{ secrets.REPORTS_TS_HOST_IP }}
+        SFTP_PORT: ${{ secrets.REPORTS_TS_PORT }}
+        SFTP_USER: ${{ secrets.REPORTS_USER }}
+        SSH_KEY_PATH: ${{ steps.rerunsshkey.outputs.key_path }}
+        REMOTE_DIR: upload/data/payments
+      run: |
+        if ($env:RUNNER_OS -eq 'Windows') {
+          $remoteDir = "$env:REMOTE_DIR/windows"
+        } else {
+          $remoteDir = "$env:REMOTE_DIR/linux"
+        }
+        $remotePath = "$remoteDir/$env:SCRIPT_JSON"
+        pwsh -File ${env:DOWNLOAD_SCRIPT} `
+          -SftpHost $env:SFTP_HOST `
+          -SftpPort ([int]$env:SFTP_PORT) `
+          -SftpUser $env:SFTP_USER `
+          -SshKeyPath $env:SSH_KEY_PATH `
+          -RemotePath $remotePath `
+          -LocalPath $env:PREVIOUS_SCRIPT_JSON
+
+    - name: Resolve failed providers for rerun
+      id: rerunproviders
+      if: ${{ github.run_attempt > 1 && !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        $json = Get-Content $env:PREVIOUS_SCRIPT_JSON -Raw | ConvertFrom-Json
+        $providers = @(
+          $json.PSObject.Properties |
+          Where-Object {
+            @($_.Value.payments | Where-Object { $_.status -eq 'failed' }).Count -gt 0
+          } |
+          ForEach-Object { $_.Name }
+        )
+        if ($providers.Count -eq 0) {
+          throw "Re-run requires at least one provider with failed status in $env:PREVIOUS_SCRIPT_JSON."
+        }
+
+        $providerList = $providers -join ','
+        Write-Host "Providers selected for rerun: $providerList"
+        "providers=$providerList" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        "RERUN_PROVIDERS=$providerList" | Out-File -FilePath $env:GITHUB_ENV -Append
+
     - name: Run the script
       if: ${{ !contains(env.SCRIPT_OUTPUT, 'test_') }}
       continue-on-error: true
       shell: pwsh
       run: |
         $env:PYTHONUTF8 = "1"
-        python -X utf8 -u -m payments -v -t -o ${env:SCRIPT_OUTPUT} `
-        --persistent-profile-dir "${{inputs.browser_profile_dir}}" `
-        -j ${env:SCRIPT_JSON}
+        $scriptOutput = $env:SCRIPT_OUTPUT
+        $scriptJson = $env:SCRIPT_JSON
+        $providers = $null
+        if ([int]$env:GITHUB_RUN_ATTEMPT -gt 1) {
+          $scriptOutput = $env:RERUN_SCRIPT_OUTPUT
+          $scriptJson = $env:RERUN_SCRIPT_JSON
+          $providers = $env:RERUN_PROVIDERS
+          if ([string]::IsNullOrWhiteSpace($providers)) {
+            throw "RERUN_PROVIDERS is empty during workflow re-run."
+          }
+        }
+
+        $args = @(
+          '-X', 'utf8',
+          '-u',
+          '-m', 'payments',
+          '-v',
+          '-t',
+          '-o', $scriptOutput,
+          '--persistent-profile-dir', "${{inputs.browser_profile_dir}}",
+          '-j', $scriptJson
+        )
+        if ($providers) {
+          $args += @('-p', $providers)
+        }
+        python @args
+
+    - name: Merge rerun JSON and generate text output
+      if: ${{ github.run_attempt > 1 && !contains(env.SCRIPT_OUTPUT, 'test_') }}
+      shell: pwsh
+      run: |
+        python -m payments.json_to_text `
+          -i ${env:PREVIOUS_SCRIPT_JSON} `
+          -u ${env:RERUN_SCRIPT_JSON} `
+          -o ${env:SCRIPT_OUTPUT} `
+          -j ${env:SCRIPT_JSON}
 
     - name: Generate HTML output
       continue-on-error: true
