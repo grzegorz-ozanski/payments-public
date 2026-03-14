@@ -69,7 +69,7 @@ function Update-ResultJsonStatuses {
   [System.IO.File]::WriteAllText($Path, ($json | ConvertTo-Json -Depth 100), $utf8NoBom)
 }
 
-function Compare {
+function Compare-Lines {
   param (
       [Parameter(Mandatory = $true, Position=0)]
       [AllowEmptyString()]
@@ -144,7 +144,7 @@ for ($i = 0; $i -lt [Math]::Max($_expected.Count, $_actual.Count); $i++) {
   $_expLine = if ($i -lt $_expected.Count) { $_expected[$i] } else { $null }
   $_actLine = if ($i -lt $_actual.Count) { $_actual[$i] } else { $null }
 
-  $result = Compare $_expLine $_actLine $_ignore_whitespace
+  $result = Compare-Lines $_expLine $_actLine $_ignore_whitespace
   if ($result.IsEqual) {
     $_diff += "✔ $_expLine"
   }
