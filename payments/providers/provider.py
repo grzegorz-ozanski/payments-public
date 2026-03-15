@@ -188,7 +188,9 @@ class Provider:
 
     def service_url(self) -> str | None:
         """Must be overridden in subclasses to return an actual service url."""
-        return os.getenv('PAYMENTS_MOCK_SERVER')
+        if base_url := os.getenv('PAYMENTS_MOCK_SERVER'):
+            return f'{base_url}/{self.__class__.__name__.lower()}'
+        return None
 
     def _default_payments(self, message: str = '') -> list[Payment]:
         return [Payment(self.name,

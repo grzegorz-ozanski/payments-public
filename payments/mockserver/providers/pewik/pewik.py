@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup, Tag
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
-BASE_PATH = "/content"
+BASE_PATH = "/pewik"
 LOGIN_PATH = f"{BASE_PATH}/login"
 FACTURES_PATH = f"{BASE_PATH}/trust/faktury"
 BALANCES_PATH = f"{BASE_PATH}/trust/saldawpl"
@@ -30,6 +30,7 @@ PAYMENTS_SOUP = BeautifulSoup(PAYMENTS_HTML.read_text(encoding="utf-8"), "html.p
 
 
 @bp.get("/")
+@bp.get(BASE_PATH)
 def root() -> Response:
     """Redirect the mock root to the PEWiK login page."""
     return redirect(url_for("pewik.pewik_login"))
@@ -42,6 +43,7 @@ def pewik_login() -> str:
     return _render_login_page(scenario=scenario)
 
 
+@bp.post(f"{BASE_PATH}/mock-login")
 @bp.post("/mock-login")
 def pewik_mock_login() -> Response:
     """Validate mock credentials and redirect either to balances or back to login page."""
@@ -80,10 +82,27 @@ def pewik_messages() -> str:
 
 
 @bp.get(LOGOUT_PATH)
+@bp.post(f"{BASE_PATH}/logout")
 @bp.post("/logout")
 def pewik_logout() -> Response:
     """Simulate logout by returning the browser to the login page."""
     return redirect(url_for("pewik.pewik_login"))
+
+
+@bp.get("/img/<path:_asset_path>")
+@bp.get("/js/<path:_asset_path>")
+@bp.get("/css/<path:_asset_path>")
+@bp.get("/webjars/<path:_asset_path>")
+@bp.get("/media/<path:_asset_path>")
+@bp.get(f"{BASE_PATH}/img/<path:_asset_path>")
+@bp.get(f"{BASE_PATH}/js/<path:_asset_path>")
+@bp.get(f"{BASE_PATH}/css/<path:_asset_path>")
+@bp.get(f"{BASE_PATH}/webjars/<path:_asset_path>")
+@bp.get(f"{BASE_PATH}/media/<path:_asset_path>")
+@bp.get(f"{BASE_PATH}/public/<path:_asset_path>")
+def pewik_asset(_asset_path: str) -> Response:
+    """Return a tiny placeholder payload for archived PEWiK asset URLs."""
+    return _placeholder_asset_response(_asset_path)
 
 
 def _remove_external_scripts(soup: BeautifulSoup) -> None:
@@ -106,6 +125,15 @@ def _clone_soup(source: BeautifulSoup) -> BeautifulSoup:
     return BeautifulSoup(str(source), "html.parser")
 
 
+def _placeholder_asset_response(asset_path: str) -> Response:
+    """Return an empty response with a rough content type matching the requested asset."""
+    if asset_path.endswith((".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".ico")):
+        return Response(b"", mimetype="image/png")
+    if asset_path.endswith((".css", ".js", ".json", ".map", ".webmanifest", ".pdf")):
+        return Response("", mimetype="text/plain")
+    return Response("", mimetype="application/octet-stream")
+
+
 def _render_login_page(*, scenario: str) -> str:
     """Prepare the captured login page HTML so Selenium can submit the mock form."""
     soup = _clone_soup(LOGIN_SOUP)
@@ -114,7 +142,7 @@ def _render_login_page(*, scenario: str) -> str:
     form = soup.select_one("form")
     if form is not None:
         form["method"] = "post"
-        form["action"] = f"/mock-login?scenario={scenario}"
+        form["action"] = f"{BASE_PATH}/mock-login?scenario={scenario}"
 
     error_box = soup.select_one("div.login-info")
     if error_box is not None:

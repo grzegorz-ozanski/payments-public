@@ -8,7 +8,8 @@ from bs4 import BeautifulSoup
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
-BASE_PATH = "/content/content/InetObsKontr"
+BASE_PATH = "/nordhome/content/InetObsKontr"
+ASSET_BASE_PATH = "/nordhome/iok"
 CONTENT_DIR = Path(__file__).resolve().parents[0] / "content"
 LOGIN_HTML = CONTENT_DIR / "login.html"
 PAYMENTS_HTML = CONTENT_DIR / "payments.html"
@@ -65,6 +66,14 @@ def nordhome_home() -> str:
 def nordhome_mock_logout() -> Response:
     """Simulate logout by returning the browser to the login page."""
     return redirect(url_for("nordhome.nordhome_login"))
+
+
+@bp.get(f"{ASSET_BASE_PATH}/<path:_asset_path>")
+def nordhome_asset(_asset_path: str) -> Response:
+    """Return a tiny placeholder payload for archived Nordhome asset URLs."""
+    if _asset_path.endswith((".png", ".jpg", ".jpeg", ".gif", ".webp")):
+        return Response(b"", mimetype="image/png")
+    return Response("", mimetype="text/plain")
 
 
 def _remove_external_scripts(soup: BeautifulSoup) -> None:

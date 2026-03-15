@@ -8,7 +8,8 @@ from bs4 import BeautifulSoup
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
-BASE_PATH = "/content/InetObsKontr"
+BASE_PATH = "/actum/InetObsKontr"
+ASSET_BASE_PATH = BASE_PATH
 CONTENT_DIR = Path(__file__).resolve().parents[0] / "content"
 LOGIN_HTML = CONTENT_DIR / "login.html"
 PAYMENTS_HTML = CONTENT_DIR / "payments.html"
@@ -65,6 +66,16 @@ def actum_home() -> str:
 def actum_mock_logout() -> Response:
     """Simulate logout by returning the browser to the login page."""
     return redirect(url_for("actum.actum_login"))
+
+
+@bp.get(f"{ASSET_BASE_PATH}/<path:_asset_path>")
+def actum_asset(_asset_path: str) -> Response:
+    """Return a tiny placeholder payload for archived Actum asset URLs."""
+    if _asset_path.endswith((".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg")):
+        return Response(b"", mimetype="image/png")
+    if _asset_path.endswith((".css", ".js", ".json", ".webmanifest")):
+        return Response("", mimetype="text/plain")
+    return Response("", mimetype="application/octet-stream")
 
 
 def _remove_external_scripts(soup: BeautifulSoup) -> None:
