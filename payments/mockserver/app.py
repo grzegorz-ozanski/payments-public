@@ -1,11 +1,12 @@
 from flask import Flask
 
-from payments.mockserver.providers.actum import actum_bp
+from payments.mockserver.providers import actum_bp, nordhome_bp
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
     app.register_blueprint(actum_bp)
+    app.register_blueprint(nordhome_bp)
     return app
 
 

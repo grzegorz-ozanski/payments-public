@@ -4,7 +4,8 @@
 from browser import setup_logging
 from .iok import IOK
 
-SERVICE_URL = 'https://www.iok.nordhome.com.pl/content/InetObsKontr/login'
+BASE_URL = 'https://www.iok.nordhome.com.pl'
+SERVICE_URL = 'content/InetObsKontr/login'
 
 log = setup_logging(__name__)
 
@@ -18,4 +19,7 @@ class Nordhome(IOK):
 
         :param location: Location name for this provider instance.
         """
-        super().__init__(10, SERVICE_URL, log, location)
+        super().__init__(10, self.url(), log, location)
+
+    def url(self) -> str:
+        return f'{super().url() or BASE_URL}/{SERVICE_URL}'
