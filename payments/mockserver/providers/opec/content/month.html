@@ -1,0 +1,261 @@
+﻿<html lang="pl"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Karta obiektu | eBOK</title>
+
+    <script src="/opec/Scripts/jquery-3.7.1.min.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/jquery.validate.unobtrusive.min.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/jquery.unobtrusive-ajax.min.js" type="text/javascript"></script>
+
+    <script src="/opec/Scripts/SoftHard.v1.37.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/messages_pl.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/jquery.form-4.3.0.min.js" type="text/javascript"></script>
+
+    
+    
+    
+    <script src="/opec/Content/LayoutParts/flatpickr.min.js" type="text/javascript"></script>
+    <script src="/opec/Content/LayoutParts/slimselect.min.js" type="text/javascript"></script>
+    <script src="/opec/Content/LayoutParts/dataTables-1.13.6.min.js" type="text/javascript"></script>
+    <script src="/opec/Content/LayoutParts/splide-4.1.3.min.js" type="text/javascript"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf('MSIE ');
+            var trident = ua.indexOf('Trident/');
+            if (msie > 0 || trident > 0) {
+                window.location.href = "https://eboksh.opecgdy.com.pl/opec/Main/NieobslugiwanaPrzegladarka";
+            }
+        });
+    </script>
+
+    <link rel="stylesheet" href="/opec/Content/Main.v1.9.css">
+    <link rel="stylesheet" href="/opec/Content/Site.css">
+
+    <link rel="stylesheet" href="/opec/Content/LayoutParts/sh.css?v=3">
+    <link rel="stylesheet" href="/opec/Content/LayoutParts/ZG.css?v=639091032923239648">
+        <link rel="stylesheet" type="text/css" href="/opec/Content/LayoutParts/sh-custom.css">
+
+
+
+    <link rel="icon" href="/opec/content/favicon.ico">
+</head>
+
+
+<body id="app">
+
+
+
+
+
+
+
+
+
+
+<header>
+    <div class="center">
+
+        <span class="sh-menu-ico sh-clickable" role="button" tabindex="0" onclick="shShowSidebar()" title="PokaĹĽ/ukryj pasek boczny">
+            <svg><use xlink:href="#menu"></use></svg>
+        </span>
+
+        <div class="sh-title">
+            <div>eBOK</div>
+            
+        </div>
+
+
+            <span class="sh-toggle shh-hide-below-sm sh-clickable" sh-toggle-for-id="app" sh-toggle-switch="wcag-hc" title="Zmiana kolorĂłw na mniej lub bardziej kontrastowe" tabindex="0">
+                <svg><use xlink:href="#contrast"></use></svg>
+            </span>
+            <span class="sh-toggle shh-hide-below-sm sh-clickable" sh-toggle-for-id="app" sh-toggle-switch="wcag-fs" title="Zmiana rozmiaru czcionki" tabindex="0">
+                <svg><use xlink:href="#zoom-in"></use></svg>
+            </span>
+
+
+            <div class="sh-user-menu" tabindex="0">
+                <div>
+                    <span class="sh-toggle shh-hide-below-sm sh-clickable"><svg height="24" viewBox="0 0 24 24" width="24"><path d="M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z" xmlns="http://www.w3.org/2000/svg"></path></svg></span>
+                </div>
+                <div class="sh-dropdown-content">
+                    <ul>
+                        <li class="sh-clickable " onclick="SHL('/opec/s/h?idd=y9qsj3Q5Pi2-sza-1koVU_qQGwCQqJaU55BrCGNV1inbY5AW2o258A2','app')" role="button" onkeydown="KeyHandlerForEnterSpace(event, 'SHL(\'/opec/s/h?idd=y9qsj3Q5Pi2-sza-1koVU_qQGwCQqJaU55BrCGNV1inbY5AW2o258A2\',\'app\')')" tabindex="0"><span>Polski</span></li>
+                        <li class="sh-clickable " onclick="SHL('/opec/s/h?idd=0hX8IZ5mPZCQmW0K8FyuqBQJnp0lp7JuqvBPKoyApew-iQX2-vmzPg2','app')" role="button" onkeydown="KeyHandlerForEnterSpace(event, 'SHL(\'/opec/s/h?idd=0hX8IZ5mPZCQmW0K8FyuqBQJnp0lp7JuqvBPKoyApew-iQX2-vmzPg2\',\'app\')')" href="/opec/s/h?idd=0hX8IZ5mPZCQmW0K8FyuqBQJnp0lp7JuqvBPKoyApew-iQX2-vmzPg2" tabindex="0"><span>English</span></li>
+                    </ul>
+                </div>
+            </div>
+
+        <div class="sh-user-menu" tabindex="0">
+            <div>
+                <span class="sh-toggle shh-hide-below-sm sh-clickable"><svg><use xlink:href="#user"></use></svg></span>
+                <span class="sh-toggle shh-hide-above-sm sh-clickable"><svg height="24" viewBox="0 0 24 24" width="24"><path d="M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z" xmlns="http://www.w3.org/2000/svg"></path></svg></span>
+            </div>
+            <div class="sh-dropdown-content">
+                <ul>
+                    <li class="sh-clickable " onclick="SHL('/opec/s/h?idd=Tk5_9RLCr6x-QjeAyNb1GGwQylpH4Kad_ZrdcVcgutU1','app')" role="button" onkeydown="KeyHandlerForEnterSpace(event, 'SHL(\'/opec/s/h?idd=Tk5_9RLCr6x-QjeAyNb1GGwQylpH4Kad_ZrdcVcgutU1\',\'app\')')" tabindex="0"><svg><use xlink:href="#logout"></use></svg><span>Wyloguj<br><small>GREGGOR</small></span></li>
+
+<li class="sh-clickable " onclick="SHL('/opec/s/h?idd=mQlg9_L3SndaxaOTU1o8dEk5Rj2ZTRMYpxG7U98Yt3M1')" role="button" onkeydown="KeyHandlerForEnterSpace(event, 'SHL(\'/opec/s/h?idd=mQlg9_L3SndaxaOTU1o8dEk5Rj2ZTRMYpxG7U98Yt3M1\')')" tabindex="0"><svg height="24" viewBox="0 0 24 24" width="24"><path d="M12,12H19C18.47,16.11 15.72,19.78 12,20.92V12H5V6.3L12,3.19M12,1L3,5V11C3,16.55 6.84,21.73 12,23C17.16,21.73 21,16.55 21,11V5L12,1Z" xmlns="http://www.w3.org/2000/svg"></path></svg><span>Zmiana hasĹ‚a</span></li>
+
+                        <li class="sh-toggle shh-hide-above-sm sh-clickable" sh-toggle-for-id="app" sh-toggle-switch="wcag-hc" tabindex="0"><svg><use xlink:href="#contrast"></use></svg> Zmiana kolorĂłw na mniej lub bardziej kontrastowe</li>
+                        <li class="sh-toggle shh-hide-above-sm sh-clickable" sh-toggle-for-id="app" sh-toggle-switch="wcag-fs" tabindex="0"><svg><use xlink:href="#zoom-in"></use></svg> Zmiana rozmiaru czcionki</li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+    <content>
+        <div class="center">
+                    <div id="sh-sidebar" class="sh-sidebar show">
+
+
+<nav class="sh-nav" role="navigation">
+  <ul class="level-0">
+    <li>
+<input id="sh-nav-id0" type="checkbox" hidden="">
+<label class="sh-nav-node" tabindex="0" for="sh-nav-id0" sh-nav-to="" sh-nav-target="_MainContent">
+<svg><use xlink:href="#user"></use></svg>Konto</label><ul class="level-1"><li class="sh-nav-item" id="sh-nav-id1" tabindex="-1" sh-nav-to="/opec/s/h?idd=rNtB5_R-RnPjHsq6_x-H6KErp4_antIb9i1UDtZATDw1" sh-nav-target="">
+<svg height="24" viewBox="0 0 24 24" width="24"><path d="M20,2A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H6L2,22V4C2,2.89 2.9,2 4,2H20M4,4V17.17L5.17,16H20V4H4M6,7H18V9H6V7M6,11H15V13H6V11Z" xmlns="http://www.w3.org/2000/svg"></path></svg>WiadomoĹ›ci
+</li>
+<li class="sh-nav-item" id="sh-nav-id2" tabindex="-1" sh-nav-to="/opec/s/h?idd=ccbV3KrAVyEtQxrgalOHgD-IInu9zwEyuwIQYlT4jZntPBOB-DfbMg2" sh-nav-target="">
+<svg height="24" viewBox="0 0 24 24" width="24"><path d="M12,12H19C18.47,16.11 15.72,19.78 12,20.92V12H5V6.3L12,3.19M12,1L3,5V11C3,16.55 6.84,21.73 12,23C17.16,21.73 21,16.55 21,11V5L12,1Z" xmlns="http://www.w3.org/2000/svg"></path></svg>ZmieĹ„ hasĹ‚o
+</li>
+</ul>
+</li>
+<li>
+<input id="sh-nav-id3" type="checkbox" hidden="">
+<label class="sh-nav-node" tabindex="0" for="sh-nav-id3" sh-nav-to="" sh-nav-target="_MainContent">
+<svg height="24" viewBox="0 0 24 24" width="24"><path d="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z" xmlns="http://www.w3.org/2000/svg"></path></svg>e-BOK</label><ul class="level-1"><li class="sh-nav-item" id="sh-nav-id4" tabindex="-1" sh-nav-to="/opec/s/h?idd=V2Z0sY2f8HtEUs6GiRrdNHNkcb3P61aOKNYvEQF4XgI1" sh-nav-target="">
+<svg height="24" viewBox="0 0 24 24" width="24"><path d="M12,3L2,12H5V20H19V12H22L12,3M12,8.75A2.25,2.25 0 0,1 14.25,11A2.25,2.25 0 0,1 12,13.25A2.25,2.25 0 0,1 9.75,11A2.25,2.25 0 0,1 12,8.75M12,15C13.5,15 16.5,15.75 16.5,17.25V18H7.5V17.25C7.5,15.75 10.5,15 12,15Z" xmlns="http://www.w3.org/2000/svg"></path></svg>Karta obiektu
+</li>
+<li class="sh-nav-item" id="sh-nav-id5" tabindex="-1" sh-nav-to="/opec/s/h?idd=NDWc7jr-DQRaXbIT7ZkYdbhK0r5QdUSckoBZF9Rx-R_9MphS2t4vJw2" sh-nav-target="">
+<svg height="24" viewBox="0 0 24 24" width="24"><path d="M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z" xmlns="http://www.w3.org/2000/svg"></path></svg>ZgĹ‚oszenia
+</li>
+<li class="sh-nav-item" id="sh-nav-id6" tabindex="-1" sh-nav-to="/opec/s/h?idd=fCvbSymNQ9Pq7wrb6-RnIdos9LAsFniHTal-84aPE201" sh-nav-target="">
+<svg height="24" viewBox="0 0 24 24" width="24"><path d="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z" xmlns="http://www.w3.org/2000/svg"></path></svg>Dokumenty
+</li>
+<li class="sh-nav-item" id="sh-nav-id7" tabindex="-1" sh-nav-to="/opec/s/h?idd=uY7vtVEoJY6ani6DdJROzNCoRcQXLJxSp8QK0xMiFG1D_Ec5l3ze8Q2" sh-nav-target="">
+<svg height="24" viewBox="0 0 24 24" width="24"><path d="M4,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M4,6V18H11V6H4M20,18V6H18.76C19,6.54 18.95,7.07 18.95,7.13C18.88,7.8 18.41,8.5 18.24,8.75L15.91,11.3L19.23,11.28L19.24,12.5L14.04,12.47L14,11.47C14,11.47 17.05,8.24 17.2,7.95C17.34,7.67 17.91,6 16.5,6C15.27,6.05 15.41,7.3 15.41,7.3L13.87,7.31C13.87,7.31 13.88,6.65 14.25,6H13V18H15.58L15.57,17.14L16.54,17.13C16.54,17.13 17.45,16.97 17.46,16.08C17.5,15.08 16.65,15.08 16.5,15.08C16.37,15.08 15.43,15.13 15.43,15.95H13.91C13.91,15.95 13.95,13.89 16.5,13.89C19.1,13.89 18.96,15.91 18.96,15.91C18.96,15.91 19,17.16 17.85,17.63L18.37,18H20M8.92,16H7.42V10.2L5.62,10.76V9.53L8.76,8.41H8.92V16Z" xmlns="http://www.w3.org/2000/svg"></path></svg>Odczyty licznikĂłw
+</li>
+</ul>
+</li>
+<li class="sh-nav-item" id="sh-nav-id8" tabindex="0" sh-nav-to="/opec/s/h?idd=Ms4pe8iF6azIOaI6bRWNJoi4muYvHfsP2Vt5hBXp7MI1" sh-nav-target="_blank">
+<svg><svg><use xlink:href="#none"></use></svg></svg>AktualnoĹ›ci
+</li>
+<li class="sh-nav-item" id="sh-nav-id9" tabindex="0" sh-nav-to="/opec/s/h?idd=A7OtoN-TN_AfxLqf0bIuTkDjtYDQHV9i90fByIId2101" sh-nav-target="_blank">
+<svg><svg><use xlink:href="#none"></use></svg></svg>Taryfy i cenniki
+</li>
+<li class="sh-nav-item" id="sh-nav-id10" tabindex="0" sh-nav-to="/opec/s/h?idd=JHKJndZaLjih6qWQdhC0ORfMilxfJBzVETma34S8WlU1" sh-nav-target="_blank">
+<svg><svg><use xlink:href="#none"></use></svg></svg>Cennik UsĹ‚ug Dodatkowych
+</li>
+
+  </ul>
+</nav>
+
+
+
+
+
+<script>
+sessionStorage['cpSessionRenewalPeriod']=JSON.stringify(300);
+sessionStorage['cpSessionTimeOut']=JSON.stringify(300);
+sessionStorage['cpSessionIsActive']=JSON.stringify(true);
+sessionStorage['cpSessionIsAuthenticated']=JSON.stringify(true);
+sessionStorage['cpAutoLogOffLink']='/opec/Account/AutoLogOff';
+sessionStorage['cpSessionRenewalLink']='/opec/Session/SessionRenewal';
+sessionStorage['cpSessionCheck']='/opec/Session/SessionCheck';
+sessionStorage['cpDefaultContentId']='_MainContent';
+sessionStorage['cpSidebarId']='sh-sidebar';
+sessionStorage['cpSidebarPartial']='/opec/Home/_NavigationPartial';
+sessionStorage['cpMainContentLink']='/opec/Home/MainContentPartial';
+sessionStorage['cpStartPageContentLink']='/opec/Home/StartPageContentPartial';
+sessionStorage['cpStartPageContentUrl']='/opec/WEBLokator/Main/Lokale';
+sessionStorage['cpStartPageMenuId']='40001';
+sessionStorage['cpCallbackErrorLink']='/opec/Home/CallbackErrorPartial';
+sessionStorage['cpTitle']='eBOK';
+</script>
+
+
+
+
+</div>
+
+
+            
+            <div id="_MainContentFocus" tabindex="-1"></div>
+
+            <div id="_MainContent" class="sh-main">
+
+
+
+<sh-blok>
+
+  <div class="sh-box-111 "><div class="__v1 sh-header sh-card "><div class="_big"><svg height="24" viewBox="0 0 24 24" width="24"><path d="M12,3L2,12H5V20H19V12H22L12,3M12,8.75A2.25,2.25 0 0,1 14.25,11A2.25,2.25 0 0,1 12,13.25A2.25,2.25 0 0,1 9.75,11A2.25,2.25 0 0,1 12,8.75M12,15C13.5,15 16.5,15.75 16.5,17.25V18H7.5V17.25C7.5,15.75 10.5,15 12,15Z" xmlns="http://www.w3.org/2000/svg"></path></svg><h1>Operacje finansowe w miesiÄ…cu 2026-02</h1></div><div class="__pod shh-flex-row"><span>Id:</span><span>     12172</span></div><div class="__pod shh-flex-row"><span>Adres:</span><span class="shf-w7">GDYNIA, SEZAMOWA   21</span></div><div class="__pod shh-flex-row"><span>Kontrahent:</span><span class="shf-w7">OĹ»AĹSKI GRZEGORZ, SZCZEPAĹSKA-OĹ»AĹSKA MAGDALENA</span></div></div></div>
+
+<div class="sh-box-111 "><div class="sh-card "><h2>Zapisy finansowe w miesiÄ…cu 2026-02</h2><style>table#Da7622d7-e441-4bbf-aacf-c080f1437e08{border-collapse: collapse; border-spacing: 2px; }table#Da7622d7-e441-4bbf-aacf-c080f1437e08.no-footer{border-bottom: none; }table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead th, table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead td{border-bottom: none; }table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting, table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting_asc, table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting_desc, table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting_asc_disable, table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting_desc_disable{padding: 0.35em; font-weight: 300; }table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting_asc:after, table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting_desc:after{margin-left: 0px; font-size: 0.8em; }table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting_asc:after{content: "\0025B2"; }table#Da7622d7-e441-4bbf-aacf-c080f1437e08 thead .sorting_desc:after{content: "\0025BC"; }sh-blok script{display: none !important; }</style><small>Dla zapisĂłw naliczeĹ„ po wskazaniu wiersza zapisu operacji pojawiÄ… siÄ™ dodatkowe informacje i moĹĽliwoĹ›Ä‡ pobrania dokumentu</small><table class="sh-table" id="Da7622d7-e441-4bbf-aacf-c080f1437e08"><thead><tr><th sh-hint="WskaĹşnik dodatkowych informacji" style="width:1em;"> </th><th>Data ksiÄ™gowania</th><th sh-hint="Termin wymaganej pĹ‚atnoĹ›ci lub data wpĹ‚aty">Data pĹ‚atnoĹ›ci</th><th>Numer faktury<br>Opis</th><th>ObciÄ…ĹĽenia</th><th>WpĹ‚aty</th></tr></thead><tbody><tr><td data-label=" " style="width:1em;"></td><td data-label="Data ksiÄ™gowania">2026-02-16</td><td data-label="Data pĹ‚atnoĹ›ci">2026-02-16</td><td data-label="Numer faktury/Opis">TYT.: CIEPĹO SEZAMOWA 21, 81-591 GDYNIA,|OĹ»AĹSKI GRZEGORZ, SZCZEPAĹSKA-OĹ»AĹSKA MAGDALENA</td><td data-label="ObciÄ…ĹĽenia">0,00</td><td data-label="WpĹ‚aty">2342,59</td></tr><tr><td data-label=" " style="width:1em;"></td><td data-label="Data ksiÄ™gowania">2026-02-28</td><td data-label="Data pĹ‚atnoĹ›ci">2026-03-15</td><td data-label="Numer faktury/Opis">FVC/117/00746/02/26<br>SEZAMOWA 21</td><td data-label="ObciÄ…ĹĽenia">2224,08</td><td data-label="WpĹ‚aty">0,00</td></tr></tbody><tfoot></tfoot></table><script>InitKeyPressForClass("exe");</script></div></div></sh-blok>
+
+
+
+<div class="__right sh-bar "><button class="sh-btn " tabindex="0" role="button" onclick="SHL('/opec/s/h?idd=Mmki1fbsquD3arfAJU6Tm8Z_mZlxd829WOX9DOGWF8uVQ8xzD_1sa_BEIeAt_31gDRvkXGC5-qc1')">PeĹ‚na lista zapisĂłw</button><button class="sh-btn " tabindex="0" role="button" onclick="SHL('/opec/s/h?idd=Mmki1fbsquD3arfAJU6Tm7bazcamkcaW6Mdlc-GG4ovfewOkqeeBqtYW4VN6B_760')">Karta obiektu</button></div>
+
+<div class="__justify sh-bar "><button class="sh-btn " tabindex="0" role="button" onclick="window.print()"><svg height="24" viewBox="0 0 24 24" width="24"><path d="M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z" xmlns="http://www.w3.org/2000/svg"></path></svg>Drukuj</button></div>
+</div>
+
+        </div>
+    </content>
+    
+
+
+
+
+<footer>
+    <div class="center">
+        <p>Â© 1990 - 2026 <b><softhard><sh>Soft<hh>Hard</hh></sh>&nbsp;<sa>S.A.</sa></softhard></b></p>
+        <p>Licencjobiorca:<b>OKRÄGOWE PRZEDSIÄBIORSTWO ENERGETYKI CIEPLNEJ SpĂłĹ‚ka z o.o.</b></p>
+        <p class="shh-txt-align-r">
+            <span>Wersja 26.01.21.00</span>
+        </p>
+    </div>
+</footer>
+
+    <svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <symbol id="none" viewBox="0 0 24 24">
+      <path d="M14.016 8.484c0.844 0 1.5 0.656 1.5 1.5s-0.656 1.5-1.5 1.5-1.5-0.656-1.5-1.5 0.656-1.5 1.5-1.5zM14.016 12.516c0.844 0 1.5 0.656 1.5 1.5s-0.656 1.5-1.5 1.5-1.5-0.656-1.5-1.5 0.656-1.5 1.5-1.5zM9.984 17.016c0.563 0 1.031 0.422 1.031 0.984s-0.469 0.984-1.031 0.984-0.984-0.422-0.984-0.984 0.422-0.984 0.984-0.984zM9.984 8.484c0.844 0 1.5 0.656 1.5 1.5s-0.656 1.5-1.5 1.5-1.5-0.656-1.5-1.5 0.656-1.5 1.5-1.5zM14.016 20.484c0.281 0 0.469 0.234 0.469 0.516s-0.188 0.516-0.469 0.516-0.516-0.234-0.516-0.516 0.234-0.516 0.516-0.516zM14.016 17.016c0.563 0 0.984 0.422 0.984 0.984s-0.422 0.984-0.984 0.984-1.031-0.422-1.031-0.984 0.469-0.984 1.031-0.984zM21 13.5c0.281 0 0.516 0.234 0.516 0.516s-0.234 0.469-0.516 0.469-0.516-0.188-0.516-0.469 0.234-0.516 0.516-0.516zM18 5.016c0.563 0 0.984 0.422 0.984 0.984s-0.422 0.984-0.984 0.984-0.984-0.422-0.984-0.984 0.422-0.984 0.984-0.984zM18 9c0.563 0 0.984 0.422 0.984 0.984s-0.422 1.031-0.984 1.031-0.984-0.469-0.984-1.031 0.422-0.984 0.984-0.984zM18 17.016c0.563 0 0.984 0.422 0.984 0.984s-0.422 0.984-0.984 0.984-0.984-0.422-0.984-0.984 0.422-0.984 0.984-0.984zM18 12.984c0.563 0 0.984 0.469 0.984 1.031s-0.422 0.984-0.984 0.984-0.984-0.422-0.984-0.984 0.422-1.031 0.984-1.031zM9.984 12.516c0.844 0 1.5 0.656 1.5 1.5s-0.656 1.5-1.5 1.5-1.5-0.656-1.5-1.5 0.656-1.5 1.5-1.5zM9.984 6.984c-0.563 0-0.984-0.422-0.984-0.984s0.422-0.984 0.984-0.984 1.031 0.422 1.031 0.984-0.469 0.984-1.031 0.984zM9.984 3.516c-0.281 0-0.469-0.234-0.469-0.516s0.188-0.516 0.469-0.516 0.516 0.234 0.516 0.516-0.234 0.516-0.516 0.516zM9.984 20.484c0.281 0 0.516 0.234 0.516 0.516s-0.234 0.516-0.516 0.516-0.469-0.234-0.469-0.516 0.188-0.516 0.469-0.516zM3 13.5c0.281 0 0.516 0.234 0.516 0.516s-0.234 0.469-0.516 0.469-0.516-0.188-0.516-0.469 0.234-0.516 0.516-0.516zM14.016 3.516c-0.281 0-0.516-0.234-0.516-0.516s0.234-0.516 0.516-0.516 0.469 0.234 0.469 0.516-0.188 0.516-0.469 0.516zM14.016 6.984c-0.563 0-1.031-0.422-1.031-0.984s0.469-0.984 1.031-0.984 0.984 0.422 0.984 0.984-0.422 0.984-0.984 0.984zM21 10.5c-0.281 0-0.516-0.234-0.516-0.516s0.234-0.469 0.516-0.469 0.516 0.188 0.516 0.469-0.234 0.516-0.516 0.516zM6 5.016c0.563 0 0.984 0.422 0.984 0.984s-0.422 0.984-0.984 0.984-0.984-0.422-0.984-0.984 0.422-0.984 0.984-0.984zM3 9.516c0.281 0 0.516 0.188 0.516 0.469s-0.234 0.516-0.516 0.516-0.516-0.234-0.516-0.516 0.234-0.469 0.516-0.469zM6 9c0.563 0 0.984 0.422 0.984 0.984s-0.422 1.031-0.984 1.031-0.984-0.469-0.984-1.031 0.422-0.984 0.984-0.984zM6 17.016c0.563 0 0.984 0.422 0.984 0.984s-0.422 0.984-0.984 0.984-0.984-0.422-0.984-0.984 0.422-0.984 0.984-0.984zM6 12.984c0.563 0 0.984 0.469 0.984 1.031s-0.422 0.984-0.984 0.984-0.984-0.422-0.984-0.984 0.422-1.031 0.984-1.031z"></path>
+    </symbol>
+    <symbol id="menu" viewBox="0 0 24 24">
+      <path d="M3 6h18v2.016h-18v-2.016zM3 12.984v-1.969h18v1.969h-18zM3 18v-2.016h18v2.016h-18z"></path>
+    </symbol>
+    <symbol id="user" viewBox="0 0 24 24">
+      <path d="M12 14.016c2.672 0 8.016 1.313 8.016 3.984v2.016h-16.031v-2.016c0-2.672 5.344-3.984 8.016-3.984zM12 12c-2.203 0-3.984-1.781-3.984-3.984s1.781-4.031 3.984-4.031 3.984 1.828 3.984 4.031-1.781 3.984-3.984 3.984z"></path>
+    </symbol>
+    <symbol id="logout" viewBox="0 0 24 24">
+      <path d="M14.08,15.59L16.67,13H7V11H16.67L14.08,8.41L15.5,7L20.5,12L15.5,17L14.08,15.59M19,3A2,2 0 0,1 21,5V9.67L19,7.67V5H5V19H19V16.33L21,14.33V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3H19Z"></path>
+    </symbol>
+    <symbol id="zoom-in" viewBox="0 0 24 24">
+      <path d="M15.5,14L20.5,19L19,20.5L14,15.5V14.71L13.73,14.43C12.59,15.41 11.11,16 9.5,16C5.91,16 3,13.09 3,9.5C3,5.91 5.91,3 9.5,3C13.09,3 16,5.91 16,9.5C16,11.11 15.41,12.59 14.43,13.73L14.71,14H15.5M9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14M12,10H10V12H9V10H7V9H9V7H10V9H12V10Z"></path>
+    </symbol>
+    <symbol id="contrast" viewBox="0 0 24 24">
+      <path d="M17,15.5H12V17H17M19,19H5L19,5M5.5,7.5H7.5V5.5H9V7.5H11V9H9V11H7.5V9H5.5M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3Z"></path>
+    </symbol>
+  </defs>
+</svg>
+
+
+
+
+
+        <script src="/opec/Content/LayoutParts/sh-css.js" type="text/javascript"></script>
+        <script>
+            NavigationPanelRefreshAndLoadStart();
+            CheckSession();
+            setInterval("RefreshSessionStatus()", 1000);
+        </script>
+
+
+</body></html>

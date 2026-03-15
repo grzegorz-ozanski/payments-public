@@ -1,0 +1,454 @@
+﻿<html lang="pl"><head>
+
+
+
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="icon" href="/pewik/img/pewikgdynia/favicon-b97e0cd91d1b0c6802a4301341fd6009.ico" type="image/x-icon">
+
+
+
+
+    <link rel="stylesheet" href="/pewik/webjars/select2/3.5.4/select2.css">
+    <link rel="stylesheet" href="/pewik/webjars/select2-bootstrap-css/1.4.6/select2-bootstrap.css">
+    <link rel="stylesheet" href="/pewik/webjars/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker3.min.css">
+    <link rel="stylesheet" href="/pewik/webjars/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/pewik/js/libs/bootstrap-material-design/0.5.10/css/ripples.min.css">
+    <link rel="stylesheet" href="/pewik/css/pewikgdynia/desktop-34e09f5ed9e1620ef164a5aeb72bec47.css">
+
+    <script src="/pewik/webjars/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/pewik/webjars/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+    <script defer="" src="/pewik/js/libs/bootstrap-material-design/0.5.10/js/material.min.js"></script>
+    <script defer="" src="/pewik/js/libs/bootstrap-material-design/0.5.10/js/ripples.min.js"></script>
+    <script src="/pewik/webjars/select2/3.5.4/select2.min.js"></script>
+    <script src="/pewik/webjars/select2/3.5.4/select2_locale_pl.js"></script>
+    <script defer="" src="/pewik/js/common-6c31a05b453c32c25900c68b3c5be6d2.js"></script>
+    <script defer="" src="/pewik/js/trust-16d0b44f6fe6e871bfe40219f8495c58.js"></script>
+    <script defer="" src="/pewik/js/materialdesign-a5764fbb3b614b638b0fd0b7556e1831.js"></script>
+    <script src="/pewik/js/libs/cleave.js/1.6.0/cleave.min.js"></script>
+
+
+
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+          <script src="/pewik/webjars/html5shiv/3.7.3-1/html5shiv.min.js"></script>
+          <script src="/pewik/webjars/respond/1.4.2-1/dest/respond.min.js"></script>
+        <![endif]-->
+
+
+<title>eBOK PEWIK GDYNIA Sp. z o.o. - Wykaz wiadomoĹ›ci</title>
+</head>
+<body>
+<section class="body-top">
+    <div class="container">
+	    <div class="row">
+		    <div id="left">
+		      <a href="/pewik" class="d-flex">
+		        <i class="material-icons mr-2">home</i> eBOK STRONA GĹĂ“WNA
+		      </a>
+		    </div>
+		    <div class="actions-wrapper">
+		        <ul class="nav navbar-right">
+		            
+		            <li class="pull-left pull-left-email d-none d-sm-block"><p>greggor@gmail.com</p></li>
+		            <li class="dropdown pull-left">
+		               <button data-toggle="dropdown" class="btn dropdown-toggle btn-settings" data-placement="bottom" title="Ustawienia" aria-haspopup="true" aria-expanded="false" aria-controls="zh-dropdown-menu">
+		                    <i class="material-icons">settings</i>
+		                </button>
+		                <ul class="dropdown-menu" id="zh-dropdown-menu">
+		                    <li><a href="/pewik/trust/zmien-haslo">ZmieĹ„ hasĹ‚o</a></li>
+		                </ul>
+		            </li>
+		            <li class="pull-left">
+		                <form action="/pewik/logout" method="post" class="">
+		                    <input type="hidden" name="_csrf" value="8dee37f2-db90-425f-bdbd-94973d3c3511">
+		                    <button type="submit" class="btn btn-wyloguj" title="Wyloguj" data-toggle="tooltip" data-placement="bottom">
+		                        <i class="material-icons">power_settings_new</i>
+		                    </button>
+		                </form>
+		            </li>
+		        </ul>
+		    </div>
+		</div>
+    </div>
+</section>
+<div class="container page-content-container">
+<div class="row">
+    <div class="col-md-12 row-navbar">
+	     <div class="menu-wrapper text-center">
+	       <div class="menu-border"> </div>
+	        <nav class="navbar">
+	            <div class="col-xl-12 navbar-container">
+	            <div class="collapse.show navbar-collapse" id="mainMenu">
+	                  <div class="site-nav-tabs-panel"><nav>
+<ul class="nav nav-tabs site-nav-tabs active"><li><a href="/pewik/trust/podmiot?pid=283121&amp;fid=STD">Klient</a></li>
+<li><a href="/pewik/trust/umowy-akt?pid=283121&amp;fid=STD">Umowy</a></li>
+<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Faktury i salda</a><ul class="dropdown-menu" role="menu"><li><a href="/pewik/trust/faktury?pid=283121&amp;fid=STD">Faktury</a></li>
+<li><a href="/pewik/trust/saldawpl?pid=283121&amp;fid=STD">Salda</a></li>
+<li><a href="/pewik/trust/analizakosztow?pid=283121&amp;fid=STD">Analiza kosztĂłw</a></li>
+</ul></li>
+<li><a href="/pewik/trust/rozlrzecz?pid=283121&amp;fid=STD">Rozliczenie rzeczywiste</a></li>
+<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Odczyty</a><ul class="dropdown-menu" role="menu"><li><a href="/pewik/trust/punkty-akt?pid=283121&amp;fid=STD">Punkty</a></li>
+<li><a href="/pewik/trust/odczytyPodmiotu?pid=283121&amp;fid=STD">Raport odczytĂłw</a></li>
+<li><a href="/pewik/trust/wniosek-odczyt?pid=283121&amp;fid=STD">WprowadĹş odczyt</a></li>
+</ul></li>
+<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Wnioski</a><ul class="dropdown-menu" role="menu"><li><a href="/pewik/trust/nowyWniosek?pid=283121&amp;fid=STD">ZgĹ‚oszenie wniosku</a></li>
+<li><a href="/pewik/trust/sprawy?pid=283121&amp;fid=STD">Sprawy</a></li>
+</ul></li>
+<li class="active otg-arrow-down"><a href="/pewik/trust/wiadomosci?pid=283121&amp;fid=STD">Poczta</a></li>
+</ul></nav></div>
+
+	             </div>
+	             </div>
+	      </nav>
+	    </div>
+    </div>
+	    <div class="col-xl-12 podmiot-menu-wrapper-container">
+		    <div class="podmiot-menu-wrapper">
+		        <div class="v-panel-podmiotow">
+		           <form id="formPodmiot" action="/pewik/trust/wiadomosci" class="form-horizontal" novalidate="novalidate">
+		            <div class="form-group form-group-sm">
+		               <div class="col-12 form-group-content">
+		                  <div class="select2-container select2-container-disabled form-control" id="s2id_pid" title="Wybierz podmiot"><a href="javascript:void(0)" class="select2-choice" tabindex="-1">   <span class="select2-chosen" id="select2-chosen-1">
+    <div class="v-panel-podmiotow-format-selection">
+        <div>Klient:</div><div><span>OĹ»AĹSKI GRZEGORZ, SZCZEPAĹSKA-OĹ»AĹSKA MAGDALENA</span></div>
+        <div>Kod nabywcy:</div><div><span>281441</span></div>
+        <div>Adres:</div> <div><span>Sezamowa 21, Gdynia</span></div>
+    </div>
+</span><abbr class="select2-search-choice-close"></abbr>   <span class="select2-arrow" role="presentation"><b role="presentation"></b></span></a><label for="s2id_autogen1" class="select2-offscreen"></label><input class="select2-focusser select2-offscreen" type="text" aria-haspopup="true" role="button" aria-labelledby="select2-chosen-1" id="s2id_autogen1" disabled=""><div class="select2-drop select2-display-none select2-with-searchbox otg-search-dropdown">   <div class="select2-search">       <label for="s2id_autogen1_search" class="select2-offscreen"></label>       <input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="select2-input" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-owns="select2-results-1" id="s2id_autogen1_search" placeholder="Wyszukaj klienta ...">   </div>   <ul class="select2-results" role="listbox" id="select2-results-1">   </ul></div></div><select id="pid" name="pid" class="form-control" placeholder="Wszyscy klienci" title="Wybierz podmiot" disabled="" tabindex="-1" style="display: none;">
+<option value="283121" selected="selected">281441|OĹ»AĹSKI GRZEGORZ, SZCZEPAĹSKA-OĹ»AĹSKA MAGDALENA|Sezamowa 21, Gdynia</option></select>
+<input type="hidden" name="fid" value="STD">
+
+		               </div>
+		            </div>
+		           </form>
+		        </div>
+	    	</div>
+    	</div>
+</div>
+<div class="row row-stan-konta-klienta">
+    <div class="col-md-3 visible-md visible-lg sidebar">
+        <div class="col-md-12 panel-sidebar">
+            <div>
+                <section class="sub-nav menu-page">
+<h2>WiadomoĹ›ci</h2><nav>
+<ul class="list-group"><li class="list-group-item active"><a href="/pewik/trust/wiadomosci?pid=283121&amp;fid=STD">Wykaz wiadomoĹ›ci</a></li>
+</ul>
+</nav>
+</section>
+
+                
+                
+                <section class="sub-nav dummy">&nbsp;</section>
+                   
+                        
+            </div>
+       </div>
+    </div> <!-- sidebar koniec -->
+    <div class="col-md-9">
+        <form action="/pewik/trust/wiadomosci" method="get" class="form-horizontal" id="wykazWiadomosciForm" novalidate="novalidate">
+<input type="hidden" name="pid" value="283121"><input type="hidden" name="fid" value="STD">
+	    <script defer="" src="/pewik/js/browser-63056918e0e9c960061405955cc6589d.js"></script><div class="brs">
+<div class="row browser-header">
+<div class="col-12 col-md-7 col-xl-8"><span class="title"><h1>WiadomoĹ›ci</h1></span><button type="button" class="brs-toggle" data-toggle="collapse" data-target=".brs-collapse" aria-expanded="false"><span class="sr-only">Nawigacja</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button></div><div class="brs-actions-panel col-md-5 col-xl-4 d-none d-sm-block">
+<section class="datatable-actions-panel">
+<ul>
+<li><a data-target="PRINTER" data-toggle="tooltip" class="print-link" target="_blank" title="Drukuj" href="#" aria-label="Drukuj"><span class="brs-action print"></span> </a></li>
+<li><a data-target="EXCEL" data-toggle="tooltip" class="print-link" title="Pobierz xls" data-title="Pobierz xls" href="#" aria-label="Pobierz xls"><i class="brs-action xls"></i> </a></li>
+<li><a data-target="BACK" data-toggle="tooltip" class="print-link" title="PowrĂłt" data-title="PowrĂłt" href="#" aria-label="PowrĂłt"><i class="brs-action back"></i> </a></li>
+</ul>
+</section></div></div>
+<div class="panel">
+<div class="brs-navigation-panel"><a class="link-back" href="#" title="PowrĂłt" aria-label="PowrĂłt"></a></div>
+	       <div class="collapse brs-collapse"><nav class="tabs"><ul class="nav nav-tabs datatable-filter-tabs"><li class="nav-item"><a href="#pane_filtrTyp_WG_DATY" class="nav-link active" data-toggle="tab" data-key="WG_DATY">Wg daty</a></li></ul></nav><div class="tab-content row">
+
+<div class="tab-pane active in" id="pane_filtrTyp_WG_DATY">
+	               <div class="input-daterange">
+                      <div class="input-group-date-panel">
+<div class="input-group date"><label for="_id_filtrDataOd" class="input-group-addon">Od:</label><div class="form-group is-empty"><input type="text" class="form-control" name="filtrDataOd" size="10" maxlength="10" value="" id="_id_filtrDataOd" autocomplete="off" data-date-format="yyyy-mm-dd" data-rule-dateformat="true"></div>
+<span class="input-group-addon"><i class="brs-calendar-icon"></i></span></div></div>
+                      <div class="input-group-date-panel">
+<div class="input-group date"><label for="_id_filtrDataDo" class="input-group-addon">Do:</label><div class="form-group is-empty"><input type="text" class="form-control" name="filtrDataDo" size="10" maxlength="10" value="" id="_id_filtrDataDo" autocomplete="off" data-date-format="yyyy-mm-dd" data-rule-dateformat="true"></div>
+<span class="input-group-addon"><i class="brs-calendar-icon"></i></span></div></div>
+                   </div>
+	           </div>
+<div class="tab-common">
+	               <div class="input-group-common-panel">
+                      <div class="form-group">
+                          <div class="radio radio-inline"><label class="custom-control custom-radio" for="ftd1">
+<input class="custom-control-input" type="radio" name="filtrStatus" id="ftd1" value="NIEPRZECZYTANE" checked="checked"><span class="circle"></span><span class="check"></span><span class="custom-control-label">Nieprzeczytane</span></label></div>
+                          <div class="radio radio-inline"><label class="custom-control custom-radio" for="ftd2">
+<input class="custom-control-input" type="radio" name="filtrStatus" id="ftd2" value="PRZECZYTANE"><span class="circle"></span><span class="check"></span> <span class="custom-control-label">Przeczytane</span></label></div>
+                          <div class="radio radio-inline"><label class="custom-control custom-radio" for="ftd3">
+<input class="custom-control-input" type="radio" name="filtrStatus" id="ftd3" value="WSZYSTKIE"><span class="circle"></span><span class="check"></span> <span class="custom-control-label">Wszystkie</span></label></div>
+                      </div>
+                   </div>
+	           </div>
+	           
+	           
+	           <div class="brs-submit"><span class="pull-right">
+<button title="ZnajdĹş" class="brs-submit-button" type="submit" name="disp" value="process"><i class="brs-action submit">search</i></button>
+</span></div>
+
+	       </div>
+<input data-type="filterValue" type="hidden" name="filtrTyp" value="WG_DATY">
+</div>
+	       <div class="row row-vertical-middle table-brs-header"></div><div class="table-responsive"><table id="wiadomosciWykaz" class="table table-brs"><thead><tr>
+<th class="brs-h-date">Data</th><th class="brs-h-text">Temat</th><th class="brs-h-text-ellipsis">TreĹ›Ä‡</th><th class="brs-h-boolean">Przeczytana</th>
+<th class="brs-ah-default">SzczegĂłĹ‚y</th>
+</tr></thead>
+<tbody>
+<tr><td class="brs-b-date">2025-05-17</td><td class="brs-b-text">Automatyczne odrzucenie akceptacji rozliczenia rzeczywistego</td><td class="brs-b-text-ellipsis">Szanowny Kliencie,
+informujemy, ĹĽe nie zakoĹ„czyĹ‚eĹ› rozliczenia w ciÄ…gu 60 minut. Ponownie wprowadĹş stan wodomierza oraz kliknij na etapie 2/2 [WYSTAW FAKTURÄ].
+
+Biuro ObsĹ‚ugi Klienta
+PEWIK Gdynia Sp. z o.o.</td><td class="brs-b-boolean">Nie</td><td class="brs-ab-default"><a href="/pewik/trust/wiadomosc?idWiadomosci=49987&amp;pid=283121&amp;fid=STD" class="btn-action" title="PodglÄ…d" aria-label="PodglÄ…d" data-toggle="tooltip"><span class="brs-action podglad"></span></a>&nbsp;<a href="/pewik/trust/wiadomosc-usun?idWiadomosci=49987&amp;pid=283121&amp;fid=STD" class="btn-action btn-usun-wiadomosc" title="UsuĹ„ wiadomoĹ›Ä‡" aria-label="UsuĹ„ wiadomoĹ›Ä‡" data-toggle="tooltip"><span class="brs-action usun"></span></a>&nbsp;</td></tr><tr><td class="brs-b-date">2025-01-11</td><td class="brs-b-text">Automatyczne odrzucenie akceptacji rozliczenia rzeczywistego</td><td class="brs-b-text-ellipsis">Szanowny Kliencie,
+informujemy, ĹĽe nie zakoĹ„czyĹ‚eĹ› rozliczenia w ciÄ…gu 60 minut. Ponownie wprowadĹş stan wodomierza oraz kliknij na etapie 2/2 [WYSTAW FAKTURÄ].
+
+Biuro ObsĹ‚ugi Klienta
+PEWIK Gdynia Sp. z o.o.</td><td class="brs-b-boolean">Nie</td><td class="brs-ab-default"><a href="/pewik/trust/wiadomosc?idWiadomosci=48440&amp;pid=283121&amp;fid=STD" class="btn-action" title="PodglÄ…d" aria-label="PodglÄ…d" data-toggle="tooltip"><span class="brs-action podglad"></span></a>&nbsp;<a href="/pewik/trust/wiadomosc-usun?idWiadomosci=48440&amp;pid=283121&amp;fid=STD" class="btn-action btn-usun-wiadomosc" title="UsuĹ„ wiadomoĹ›Ä‡" aria-label="UsuĹ„ wiadomoĹ›Ä‡" data-toggle="tooltip"><span class="brs-action usun"></span></a>&nbsp;</td></tr><tr><td class="brs-b-date">2024-10-11</td><td class="brs-b-text">Automatyczne odrzucenie akceptacji rozliczenia rzeczywistego</td><td class="brs-b-text-ellipsis">Szanowny Kliencie,
+informujemy, ĹĽe nie zakoĹ„czyĹ‚eĹ› rozliczenia w ciÄ…gu 60 minut. Ponownie wprowadĹş stan wodomierza oraz kliknij na etapie 2/2 [WYSTAW FAKTURÄ].
+
+Biuro ObsĹ‚ugi Klienta
+PEWIK Gdynia Sp. z o.o.</td><td class="brs-b-boolean">Nie</td><td class="brs-ab-default"><a href="/pewik/trust/wiadomosc?idWiadomosci=47500&amp;pid=283121&amp;fid=STD" class="btn-action" title="PodglÄ…d" aria-label="PodglÄ…d" data-toggle="tooltip"><span class="brs-action podglad"></span></a>&nbsp;<a href="/pewik/trust/wiadomosc-usun?idWiadomosci=47500&amp;pid=283121&amp;fid=STD" class="btn-action btn-usun-wiadomosc" title="UsuĹ„ wiadomoĹ›Ä‡" aria-label="UsuĹ„ wiadomoĹ›Ä‡" data-toggle="tooltip"><span class="brs-action usun"></span></a>&nbsp;</td></tr><tr><td class="brs-b-date">2024-04-18</td><td class="brs-b-text">Automatyczne odrzucenie akceptacji rozliczenia rzeczywistego</td><td class="brs-b-text-ellipsis">Szanowny Kliencie,
+informujemy, ĹĽe nie zakoĹ„czyĹ‚eĹ› rozliczenia w ciÄ…gu 60 minut. Ponownie wprowadĹş stan wodomierza oraz kliknij na etapie 2/2 [WYSTAW FAKTURÄ].
+
+Biuro ObsĹ‚ugi Klienta
+PEWIK Gdynia Sp. z o.o.</td><td class="brs-b-boolean">Nie</td><td class="brs-ab-default"><a href="/pewik/trust/wiadomosc?idWiadomosci=45203&amp;pid=283121&amp;fid=STD" class="btn-action" title="PodglÄ…d" aria-label="PodglÄ…d" data-toggle="tooltip"><span class="brs-action podglad"></span></a>&nbsp;<a href="/pewik/trust/wiadomosc-usun?idWiadomosci=45203&amp;pid=283121&amp;fid=STD" class="btn-action btn-usun-wiadomosc" title="UsuĹ„ wiadomoĹ›Ä‡" aria-label="UsuĹ„ wiadomoĹ›Ä‡" data-toggle="tooltip"><span class="brs-action usun"></span></a>&nbsp;</td></tr></tbody>
+</table></div><input type="hidden" name="page" value="1">
+			</div></div>
+		</form>
+    </div>
+</div>
+</div>
+
+<!-- Szablony komponentow  -->
+<div id="customerResultTemplate" class="hide">
+<div class="v-panel-podmiotow-result">
+   <div>Klient:</div><div>{0}</div>
+        <div>Kod nabywcy:</div><div>{1}</div>
+        <div>Adres:</div><div>{2}</div>
+</div>
+</div>
+<div id="customerSelectionTemplate" class="hide">
+    <div class="v-panel-podmiotow-format-selection">
+        <div>Klient:</div><div><span>{0}</span></div>
+        <div>Kod nabywcy:</div><div><span>{1}</span></div>
+        <div>Adres:</div> <div><span>{2}</span></div>
+    </div>
+</div>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close otg-primary" data-dismiss="modal"><span>Ă—</span></button>
+        <h1 class="modal-title" id="myModalLabel"></h1>
+      </div>
+      <div class="modal-body"></div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="zhModal" tabindex="-1" role="dialog" aria-labelledby="zhModalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close otg-primary" data-dismiss="modal"><span>Ă—</span></button>
+        <h1 class="modal-title" id="zhModalLabel">Zmiana hasĹ‚a</h1>
+      </div>
+      <div class="modal-body">
+      
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="pobierzOstrzezenieModal" tabindex="-1" role="dialog">
+<div class="modal-dialog">
+    <div class="modal-content"></div>
+</div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="rrmodal" aria-labelledby="rrModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Ă—</span></button>
+        <h1 class="modal-title" id="rrModalLabel">Odczyty powtĂłrzone</h1>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="rrcancel">Nie</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="rrsubmit">Tak</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<footer class="material footer">
+<div class="container">
+        <div class="row panel-navigation">
+        <div class="col-3 col-lg-1">
+            <a href="#" data-toggle="collapse" data-target=".footer-content" title="PokaĹĽ stopkÄ™">
+                <i class="material-icons arrow-drop-down">arrow_drop_down</i>
+            </a>
+        </div>
+        <div class="col-2 col-lg-1 offset-lg-7">
+            <button data-toggle="collapse" data-target=".footer-content" class="btn btn-fab btn-raised pull-right">
+                    <i class="material-icons">place</i>
+            </button>
+        </div>
+        <div class="col-2 col-lg-1">
+            <button data-toggle="collapse" data-target=".footer-content" class="btn btn-fab btn-raised pull-right">
+                    <i class="material-icons">phone</i>
+            </button>
+         </div>
+         <div class="col-2 col-lg-1">
+            <button data-toggle="collapse" data-target=".footer-content" class="btn btn-fab btn-raised pull-right">
+                    <i class="material-icons">library_books</i>
+            </button>
+         </div>
+         
+         <div class="col-2 col-lg-1">
+            <button data-toggle="collapse" data-target=".footer-content" class="btn btn-fab btn-raised pull-right">
+                    <i class="material-icons">link</i>
+            </button>
+         </div>
+            </div>
+            <div class="row collapse footer-content">
+            <ul>
+                <li class="col-12 col-lg-3 text-center">
+                    <button class="btn btn-fab btn-raised">
+                        <i class="material-icons">place</i>
+                    </button>
+                    <h3><small>KONTAKT</small></h3>
+                    <div>
+                        <dl>
+                            <dd>ul. WitomiĹ„ska 21</dd>
+                            <dd>81-311 Gdynia</dd>
+                            <dd><a href="https://www.pewik.gdynia.pl" target="_blank">www.pewik.gdynia.pl</a></dd>
+                        </dl>
+                    </div>
+                    
+                </li>
+                <li class="col-12 col-lg-3 text-center">
+                    <button class="btn btn-fab btn-raised">
+                        <i class="material-icons">phone</i>
+                    </button>
+                    <h3><small>OBSĹUGA KLIENTA</small></h3>
+                    <div class="text-center">
+                    <dl>
+                            <dd>ul. WitomiĹ„ska 21</dd>
+                            <dd>81-311 Gdynia</dd>
+                            <dd>Tel: <b>(58) 66 87 311</b></dd>
+                            <dd>faxmail: <b>bok@pewik.gdynia.pl</b></dd>
+                    </dl>
+                    </div>
+                    
+                </li>
+                <li class="col-12 col-lg-3 text-center">
+                    <button class="btn btn-fab btn-raised">
+                        <i class="material-icons">library_books</i>
+                    </button>
+                    <h3><small>DOKUMENTY</small></h3>
+                    <dl>
+                        <dd><a title="Regulamin eBOK" target="_blank" href="/pewik/media/doc/Regulamin_eBOK.pdf">Regulamin eBOK</a></dd>
+                        <dd><a title="Ankieta satysfakcji klienta" target="_blank" href="https://pewik.gdynia.pl/ankieta-statysfakcja/">Ankieta satysfakcji klienta</a></dd>
+                        <dd><a title="Ankieta na temat e-BOK" target="_blank" href="https://pewik.gdynia.pl/ankieta-ebok/">Ankieta na temat e-BOK</a></dd>
+                        <dd><a title="Ankieta ESG" target="_blank" href="https://pewik.gdynia.pl/ankieta-rozwoj/">Ankieta ESG</a></dd>
+                    </dl>
+                </li>
+                <li class="col-12 col-lg-3 text-center">
+                    <button class="btn btn-fab btn-raised">
+                        <i class="material-icons">link</i>
+                    </button>
+                    <h3><small>AWARIE</small></h3>
+                    <dl>
+                        <dt>E-mail</dt>
+                        <dd><a href="mailto:ed@pewik.gdynia.pl">ed@pewik.gdynia.pl</a></dd>
+                        <dt>Telefony czynne caĹ‚Ä… dobÄ™:</dt>
+                        <dd><b>994</b> (poĹ‚Ä…czenie bezpĹ‚atne)</dd>
+                        <dd><b>(58) 66 87 311</b></dd>
+                    </dl>
+                </li>
+            </ul>
+        
+                <a href="#" data-toggle="collapse" data-target=".footer-content">
+                    <i class="material-icons arrow-drop-up">arrow_drop_up</i>
+                    ZwiĹ„
+                </a>
+            
+            </div>
+</div>                      
+</footer>
+
+
+<div class="panel-cookies">
+	<div class="col-xl-12">
+		<div class="row">
+			<div class="container-flow">
+			    <div class="panel-header">
+			    <div class="panel-header-content float-right">
+					<a id="cookiesClose" href="#">Rozumiem</a>
+				</div>
+				</div>
+				<div class="panel-content">
+					<h4>Ta strona wykorzystuje pliki cookie</h4>
+					<p>W celu prawidĹ‚owego dziaĹ‚ania, strona internetowa korzysta z technicznych plikĂłw cookies, ktĂłre umoĹĽliwiajÄ… dziaĹ‚anie podstawowych funkcji,  takie jak zabezpieczenia i prawidĹ‚owe wyĹ›wietlanie strony. MoĹĽesz okreĹ›liÄ‡ warunki przechowywania lub dostÄ™pu do plikĂłw cookies w Twojej przeglÄ…darce.  WiÄ™cej informacji o korzystaniu z plikĂłw cookie oraz o przetwarzaniu Twoich danych osobowych, w tym o przysĹ‚ugujÄ…cych Ci uprawnieniach, znajdziesz  w naszej <a href="https://www.pewik.gdynia.pl/o-spolce/polityka-prywatnosci" target="_blank">Polityce prywatnoĹ›ci</a>.
+</p>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+    <script src="/pewik/webjars/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="/pewik/webjars/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.pl.min.js"></script>
+    <script src="/pewik/webjars/jquery-validation/1.20.0/jquery.validate.min.js"></script>
+    <script src="/pewik/webjars/jquery-validation/1.20.0/localization/messages_pl.min.js"></script>
+    <script defer="" src="/pewik/js/globalization-99b078f1a883eedd362ee6fa2c2348a3.js"></script>
+    <script defer="" src="/pewik/js/libs/jquery-maskedinput/1.4.1/jquery.maskedinput.min.js"></script>
+    <script defer="" src="/pewik/js/podmioty-e393c820792e0b52693bd4d5d2b6dfa4.js"></script>
+    <script defer="" src="/pewik/js/firmy-b568d05ff8ba24d67e28a76b4daba687.js"></script>
+    <script defer="" src="/pewik/js/admins-50131d7e7672916ad046ae0c39c31105.js"></script>
+
+
+
+
+
+
+
+
+<form action="/pewik/trust/wiadomosc-usun" method="post" class="form-horizontal" id="usunWiadomoscForm" novalidate="novalidate">
+<input type="hidden" name="pid" value="283121"><input type="hidden" name="fid" value="STD">
+  <input type="hidden" name="idWiadomosci" value="">
+  <input type="hidden" name="_csrf" value="8dee37f2-db90-425f-bdbd-94973d3c3511">
+  <div id="confirmationModal" class="modal" role="dialog">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-body">
+                  <h4 class="modal-title">UsunÄ…Ä‡ wiadomoĹ›Ä‡?</h4>
+              </div>
+              <div class="modal-footer">
+                  <input type="submit" class="btn-form-primary btn-submit" value="UsuĹ„">
+                  <button type="button" class="btn-default btn" data-dismiss="modal">Anuluj</button>
+              </div>
+          </div>
+      </div>
+      </div>
+</form>
+<span role="status" aria-live="polite" class="select2-hidden-accessible"></span></body></html>

@@ -1,0 +1,142 @@
+﻿<html lang="pl"><head><meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="description" content="OkrÄ™gowe PrzedsiÄ™biorstwo Energetyki Cieplnej Sp. z o.o. | Elektroniczne Biuro ObsĹ‚ugi Klienta">
+    <meta name="keywords" content="SoftHard, Papirus SQL, eBOK, ZSI">
+
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" href="/opec/content/favicon.ico">
+        <title>Logowanie | OkrÄ™gowe PrzedsiÄ™biorstwo Energetyki Cieplnej Sp. z o.o. | Elektroniczne Biuro ObsĹ‚ugi Klienta</title>
+    
+    
+    
+    
+    <link rel="stylesheet" type="text/css" href="/opec/Content/LayoutParts/sh.css?v=3">
+        <link rel="stylesheet" type="text/css" href="/opec/Content/LayoutParts/sh-custom.css">
+
+    <script src="/opec/Scripts/SoftHardNewLoginForm.js" type="text/javascript"></script>
+
+    <script src="/opec/Content/LayoutParts/sh-css.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/jquery-3.7.1.min.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/jquery.unobtrusive-ajax.min.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/jquery.validate.unobtrusive.min.js" type="text/javascript"></script>
+    <script src="/opec/Scripts/messages_pl.js" type="text/javascript"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf('MSIE ');
+            var trident = ua.indexOf('Trident/');
+            if (msie > 0 || trident > 0) {
+                window.location.href = "https://eboksh.opecgdy.com.pl/opec/Main/NieobslugiwanaPrzegladarka";
+            }
+        });
+    </script>
+</head>
+
+<body id="app">
+
+    <script>
+        sessionStorage['cpMainContentLink'] = '/opec/Home/MainContentPartial';
+        sessionStorage['cpDefaultContentId'] = 'LogOnForm';
+    </script>
+    <div id="login">
+        <div id="login-wrap" class="login-wrap">
+            <div id="login-splash" class="login-splash custom">
+            </div>
+            <div id="login-content" class="login-content">
+                <div class="head">
+                            <img src="/opec/Content/LayoutParts/logo.png" class="logo" alt="LOGO - eUsĹ‚ugi">
+
+                    
+                        <h1>OkrÄ™gowe PrzedsiÄ™biorstwo Energetyki Cieplnej Sp. z o.o.</h1>
+                                            <h2>Elektroniczne Biuro ObsĹ‚ugi Klienta</h2>
+                                    </div>
+                <div id="LogOnForm" class="form">
+
+
+
+
+<form action="/opec/Account/LogOn" method="post" autocomplete="on" novalidate="novalidate">
+    <input id="Description" name="Description" type="hidden" value=" ">
+    <input id="ReturnUrl" name="ReturnUrl" type="hidden" value="/opec/">
+    <input id="SessionId" name="SessionId" type="hidden" value="">
+    <input id="UserActVisible" name="UserActVisible" type="hidden" value="True">
+    <input id="ADDomainName" name="ADDomainName" type="hidden" value="">
+    <input id="TwoFAEnabled" name="TwoFAEnabled" type="hidden" value="False">
+    
+
+    
+    <input id="CurrentLogOnStage" name="CurrentLogOnStage" type="hidden" value="UPS">
+
+    <sh-form>
+        <div class="validation-summary-valid" data-valmsg-summary="true"><ul><li style="display:none"></li>
+</ul></div>
+        <input name="__RequestVerificationToken" type="hidden" value="7aaQmNQ6b92f3dtqvCbmd-4yxMal60aShIJw_BvShIytvSft5DRxigIx8ElD2TCWVg84Okwz-yXz7Sqk5t_gSUjzaHwTSaGqnrmTibUELvM1">
+
+                    <sh-form-item class="sh-box sh-required">
+                        <label for="UserName" title="Pole wymagane">Identyfikator logowania</label>
+                        <field> <input data-val="true" data-val-length="Nazwa uĹĽytkownika musi posiadaÄ‡ od 2 do 31 znakĂłw" data-val-length-max="31" data-val-length-min="2" data-val-required="Nie podano nazwy uĹĽytkownika" id="UserName" name="UserName" type="text" value=""> </field>
+                    </sh-form-item>
+                    <sh-form-item class="sh-box sh-required">
+                        <label for="Password" title="Pole wymagane">HasĹ‚o</label>
+                        <field>
+<input data-val="true" data-val-required="Brak hasĹ‚a uĹĽytkownika" id="Password" name="Password" type="password">                        </field>
+                    </sh-form-item>
+
+
+        <sh-form-item class="sh-box">
+            <button type="submit">
+                Zaloguj
+            </button>
+        </sh-form-item>
+
+    </sh-form>
+</form>
+
+<div id="LogOnButtons" class="foot show">
+    <div class="buttons">
+
+
+
+                <a href="#" onclick="SHL('/opec/Account/UserActPartial?aUserActType=F', 'LogOnForm');">ZaĹ‚ĂłĹĽ konto na podstawie faktury</a>
+
+
+                <a href="#" onclick="SHL('/opec/Account/UserActPartial?aUserActType=L', 'LogOnForm');">Odzyskaj hasĹ‚o na podstawie email</a>
+
+
+
+                <a href="#" onclick="location.href='/opec/Content/Regulamin Ĺ›wiadczenia usĹ‚ugi eBOK i eFaktura w OPEC Sp. z o.o..pdf';">Regulamin eBOK i eFaktur</a>
+
+    </div>
+</div>
+
+
+                </div>
+
+
+                <div class="foot">
+                    <p class="cookie-info">
+                        Strona uĹĽywa plikĂłw cookies.<br>JeĹĽeli nie wyraĹĽajÄ… PaĹ„stwo zgody na ich uĹĽycie, prosimy opuĹ›ciÄ‡ stronÄ™.
+                    </p>
+                    <p class="shh-txt-align-c shf-s06 shf-w1">
+                        Licencjobiorca: <b>OKRÄGOWE PRZEDSIÄBIORSTWO ENERGETYKI CIEPLNEJ SpĂłĹ‚ka z o.o.</b>
+                    </p>
+
+                    <div class="stopka">
+                        <a href="https://www.softhard.com.pl/" rel="nofollow" title="Producent oprogramowania">
+                            <softhard><sh>Soft<hh>Hard</hh></sh>&nbsp;<sa>S.A.</sa></softhard>
+                        </a>
+                        <small>Wersja 26.01.21.00</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        CheckSession();
+    </script>
+
+
+
+</body></html>
