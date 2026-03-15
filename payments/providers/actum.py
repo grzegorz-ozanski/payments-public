@@ -6,7 +6,8 @@ from .iok import IOK
 
 log = setup_logging(__name__)
 
-SERVICE_URL = 'https://iok.actum.pl/InetObsKontr/LoginPage'
+BASE_URL = 'https://iok.actum.pl'
+SERVICE_URL = 'InetObsKontr/LoginPage'
 
 
 class Actum(IOK):
@@ -18,4 +19,7 @@ class Actum(IOK):
 
         :param location: Location name for this provider instance.
         """
-        super().__init__(20, SERVICE_URL, log, location)
+        super().__init__(20, self.url(), log, location)
+
+    def url(self) -> str:
+        return f'{super().url() or BASE_URL}/{SERVICE_URL}'

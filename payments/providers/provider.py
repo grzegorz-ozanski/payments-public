@@ -6,6 +6,7 @@
     - Credential helper for secure access to secrets.
     - PageElement dataclass for defining input/button locators.
 """
+import os
 import time
 
 from selenium.common.exceptions import NoSuchElementException, WebDriverException, TimeoutException
@@ -87,6 +88,7 @@ class Provider:
         self.pre_login_delay = pre_login_delay
         self.post_login_delay = post_login_delay
         self.logged_in = False  # TODO: consider refactoring after all providers have _is_logged_in implemented
+        log.debug('Created service "%s" (URL: "%s")', self.name, self.url)
 
     def __repr__(self) -> str:
         """Provider name and list of supported locations."""
@@ -183,6 +185,10 @@ class Provider:
             log.debug('Cannot click logout button. Are we even logged in?')
         except WebDriverException:
             log.web_error()
+
+    def url(self) -> str | None:
+        """Must be overridden in subclasses to return an actual service url."""
+        return os.getenv('PAYMENTS_MOCK_SERVER')
 
     def _default_payments(self, message: str = '') -> list[Payment]:
         return [Payment(self.name,
