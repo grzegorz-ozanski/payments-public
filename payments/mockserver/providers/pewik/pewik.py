@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup, Tag
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
+from payments.mockserver.providers._html import render_mock_html
+
 BASE_PATH = "/pewik"
 LOGIN_PATH = f"{BASE_PATH}/login"
 FACTURES_PATH = f"{BASE_PATH}/trust/faktury"
@@ -173,7 +175,7 @@ def _render_login_page(*, scenario: str) -> str:
         }
         """,
     )
-    return str(soup)
+    return render_mock_html(soup)
 
 
 def _render_home_page(*, scenario: str, location: str, active_tab: str) -> str:
@@ -215,7 +217,7 @@ def _render_home_page(*, scenario: str, location: str, active_tab: str) -> str:
         }
         """,
     )
-    return str(soup)
+    return render_mock_html(soup)
 
 
 def _configure_logout_button(soup: BeautifulSoup) -> None:

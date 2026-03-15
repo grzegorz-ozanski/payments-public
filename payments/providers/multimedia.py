@@ -48,7 +48,7 @@ class Multimedia(Provider):
         self._locations_map = locations
         locations_tuple = tuple(locations.values())
         self.debug_login = getenv('PAYMENTS_DEBUG_MULTIMEDIA_LOGIN', '0') == '1'
-        super().__init__(SERVICE_URL,
+        super().__init__(self.service_url(),
                          locations_tuple,
                          USER_INPUT,
                          PASSWORD_INPUT,
@@ -57,6 +57,9 @@ class Multimedia(Provider):
                          pre_login_delay=1,
                          login_strategy=RecaptchaLogin)
         self.login_strategy.login_button = LOGIN_BUTTON
+
+    def service_url(self) -> str:
+        return f'{super().service_url() or SERVICE_URL}'
 
     def login(self, browser: Browser, load: bool = True) -> None:
         """Retryable login with detection of CAPTCHA and password change."""

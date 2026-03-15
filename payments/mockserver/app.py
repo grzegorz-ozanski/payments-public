@@ -5,7 +5,7 @@ from pathlib import Path
 
 from flask import Flask, Response, request
 
-from payments.mockserver.providers import actum_bp, nordhome_bp, opec_bp, pewik_bp
+from payments.mockserver.providers import actum_bp, multimedia_bp, nordhome_bp, opec_bp, pgnig_bp, pewik_bp
 
 LOG_FILE = Path('log.txt')
 
@@ -37,8 +37,10 @@ def create_app() -> Flask:
         return Response("", mimetype="application/octet-stream")
 
     flask_app.register_blueprint(actum_bp)
+    flask_app.register_blueprint(multimedia_bp)
     flask_app.register_blueprint(nordhome_bp)
     flask_app.register_blueprint(opec_bp)
+    flask_app.register_blueprint(pgnig_bp)
     flask_app.register_blueprint(pewik_bp)
     return flask_app
 

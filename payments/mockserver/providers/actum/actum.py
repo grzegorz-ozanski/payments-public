@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
+from payments.mockserver.providers._html import render_mock_html
+
 BASE_PATH = "/actum/InetObsKontr"
 ASSET_BASE_PATH = BASE_PATH
 CONTENT_DIR = Path(__file__).resolve().parents[0] / "content"
@@ -131,7 +133,7 @@ def _render_login_page(*, scenario: str) -> str:
         }
         """,
     )
-    return str(soup)
+    return render_mock_html(soup)
 
 
 def _render_home_page(*, scenario: str) -> str:
@@ -175,4 +177,4 @@ def _render_home_page(*, scenario: str) -> str:
         document.title = 'Actum mock - home';
         """,
     )
-    return str(soup)
+    return render_mock_html(soup)

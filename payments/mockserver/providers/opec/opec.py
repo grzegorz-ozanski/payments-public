@@ -8,6 +8,8 @@ from werkzeug.wrappers import Response
 from bs4 import BeautifulSoup, Tag
 from flask import Blueprint, redirect, request, url_for
 
+from payments.mockserver.providers._html import render_mock_html
+
 BASE_PATH = "/opec"
 LOGIN_PATH = f"{BASE_PATH}/"
 LOGIN_POST_PATH = f"{BASE_PATH}/Account/LogOn"
@@ -129,7 +131,7 @@ def _render_login_page(*, scenario: str) -> str:
         document.getElementById('UserName')?.focus();
         """,
     )
-    return str(soup)
+    return render_mock_html(soup)
 
 
 def _render_home_page(*, scenario: str) -> str:
@@ -147,7 +149,7 @@ def _render_home_page(*, scenario: str) -> str:
         document.title = 'OPEC mock - home';
         """,
     )
-    return str(soup)
+    return render_mock_html(soup)
 
 
 def _render_month_page(*, scenario: str) -> str:
@@ -164,7 +166,7 @@ def _render_month_page(*, scenario: str) -> str:
         document.title = 'OPEC mock - month';
         """,
     )
-    return str(soup)
+    return render_mock_html(soup)
 
 
 def _configure_logout(soup: BeautifulSoup) -> None:
