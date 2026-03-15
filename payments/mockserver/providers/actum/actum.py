@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from flask import Blueprint, Response, redirect, request, url_for
 
 BASE_PATH = "/content/InetObsKontr"
-CONTENT_DIR = Path(__file__).resolve().parents[1] / "content" / "actum"
+CONTENT_DIR = Path(__file__).resolve().parents[0] / "content"
 LOGIN_HTML = CONTENT_DIR / "login.html"
 PAYMENTS_HTML = CONTENT_DIR / "payments.html"
 
@@ -20,22 +20,26 @@ PAYMENTS_SOUP = BeautifulSoup(PAYMENTS_HTML.read_text(encoding="utf-8"), "html.p
 
 @bp.get("/")
 def root() -> Response:
+    """Redirect the blueprint root to the Actum login page."""
     return redirect(url_for("actum.actum_login"))
 
 
 @bp.get(f"{BASE_PATH}/")
 def actum_index() -> Response:
+    """Mirror the portal base path and forward it to the login page."""
     return redirect(url_for("actum.actum_login"))
 
 
 @bp.get(f"{BASE_PATH}/LoginPage")
 def actum_login() -> str:
+    """Render the login page variant selected by the optional scenario query param."""
     scenario = request.args.get("scenario", "ok")
     return _render_login_page(scenario=scenario)
 
 
 @bp.post(f"{BASE_PATH}/mock-login")
 def actum_mock_login() -> Response:
+    """Validate mock credentials and redirect either to the home page or the error state."""
     scenario = request.args.get("scenario", "ok")
     username = request.form.get("nazwaUzytkownika", "")
     password = request.form.get("haslo", "")
@@ -51,21 +55,25 @@ def actum_mock_login() -> Response:
 
 @bp.get(f"{BASE_PATH}/home")
 def actum_home() -> str:
+    """Render the post-login home page for the selected mock scenario."""
     scenario = request.args.get("scenario", "ok")
     return _render_home_page(scenario=scenario)
 
 
 @bp.get(f"{BASE_PATH}/mock-logout")
 def actum_mock_logout() -> Response:
+    """Simulate logout by returning the browser to the login page."""
     return redirect(url_for("actum.actum_login"))
 
 
 def _remove_external_scripts(soup: BeautifulSoup) -> None:
+    """Strip original external scripts so the archived HTML stays static inside the mock."""
     for script in soup.find_all("script", src=True):
         script.decompose()
 
 
 def _append_helper_script(soup: BeautifulSoup, script_content: str) -> None:
+    """Append inline JavaScript used to adapt a captured page to mock-server behavior."""
     body = soup.body
     assert body is not None
     tag = soup.new_tag("script")
@@ -74,10 +82,12 @@ def _append_helper_script(soup: BeautifulSoup, script_content: str) -> None:
 
 
 def _clone_soup(source: BeautifulSoup) -> BeautifulSoup:
+    """Return a fresh soup instance to avoid mutating the shared HTML template."""
     return BeautifulSoup(str(source), "html.parser")
 
 
 def _render_login_page(*, scenario: str) -> str:
+    """Prepare the captured login page HTML so Selenium can submit the mock form."""
     soup = _clone_soup(LOGIN_SOUP)
     _remove_external_scripts(soup)
 
@@ -113,6 +123,7 @@ def _render_login_page(*, scenario: str) -> str:
 
 
 def _render_home_page(*, scenario: str) -> str:
+    """Prepare the captured home page HTML and inject scenario-specific payment states."""
     soup = _clone_soup(PAYMENTS_SOUP)
     _remove_external_scripts(soup)
 
