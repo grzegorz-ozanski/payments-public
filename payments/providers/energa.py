@@ -60,11 +60,14 @@ class Energa(Provider):
         """
         user_input = Locator(By.ID, 'username')
         password_input = Locator(By.ID, 'password')
-        super().__init__(SERVICE_URL, locations, user_input, password_input,
+        super().__init__(self.service_url(), locations, user_input, password_input,
                          overlay_buttons=[Locator(By.ID, 'CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll'),
                                           Locator(By.ID, 'kc-switch-button')])
         self.under_maintenance = False
         
+    def service_url(self) -> str:
+        return f'{super().service_url() or SERVICE_URL}'
+
     def login(self, browser: Browser, load: bool = True) -> None:
         try:
             super().login(browser, load)
