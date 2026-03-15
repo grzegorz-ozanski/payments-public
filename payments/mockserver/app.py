@@ -1,13 +1,21 @@
+"""
+    Main mock application
+"""
 from flask import Flask
 
-from payments.mockserver.providers import actum_bp, nordhome_bp
+from payments.mockserver.providers import actum_bp, nordhome_bp, pewik_bp
 
 
 def create_app() -> Flask:
-    app = Flask(__name__)
-    app.register_blueprint(actum_bp)
-    app.register_blueprint(nordhome_bp)
-    return app
+    """
+    Creates main mock Flask application
+    :return: Mock application
+    """
+    flask_app = Flask(__name__)
+    flask_app.register_blueprint(actum_bp)
+    flask_app.register_blueprint(nordhome_bp)
+    flask_app.register_blueprint(pewik_bp)
+    return flask_app
 
 
 app = create_app()

@@ -11,7 +11,8 @@ log = setup_logging(__name__)
 
 # === PEWiK specific constants - URLs, selectors and texts ===
 
-SERVICE_URL = 'https://ebok.pewik.gdynia.pl/login'
+BASE_URL = 'https://ebok.pewik.gdynia.pl'
+SERVICE_URL = 'login'
 
 USER_INPUT = Locator(By.ID, 'username')
 PASSWORD_INPUT = Locator(By.ID, 'password')
@@ -46,7 +47,10 @@ class Pewik(Provider):
 
     def __init__(self, *locations: str):
         """Initialize the provider with given locations."""
-        super().__init__(SERVICE_URL, locations, USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
+        super().__init__(self.service_url(), locations, USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
+
+    def service_url(self) -> str:
+        return f'{super().service_url() or BASE_URL}/{SERVICE_URL}'
 
     def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Extract payments from balances table, switching between locations."""

@@ -186,7 +186,7 @@ class Provider:
         except WebDriverException:
             log.web_error()
 
-    def url(self) -> str | None:
+    def service_url(self) -> str | None:
         """Must be overridden in subclasses to return an actual service url."""
         return os.getenv('PAYMENTS_MOCK_SERVER')
 

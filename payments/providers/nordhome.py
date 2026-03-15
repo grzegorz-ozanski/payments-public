@@ -19,7 +19,7 @@ class Nordhome(IOK):
 
         :param location: Location name for this provider instance.
         """
-        super().__init__(10, self.url(), log, location)
+        super().__init__(10, self.service_url(), log, location)
 
-    def url(self) -> str:
-        return f'{super().url() or BASE_URL}/{SERVICE_URL}'
+    def service_url(self) -> str:
+        return f'{super().service_url() or BASE_URL}/{SERVICE_URL}'
