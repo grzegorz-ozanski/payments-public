@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from bs4 import BeautifulSoup, Tag
+from bs4.element import NavigableString
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
@@ -172,10 +173,14 @@ def _append_helper_script(soup: BeautifulSoup, script_content: str) -> None:
 def _rewrite_asset_paths(soup: BeautifulSoup) -> None:
     """Rewrite archived absolute asset URLs so they resolve through the mock."""
     for tag in soup.find_all(src=True):
+        if not isinstance(tag, Tag):
+            continue
         src = tag.get("src")
         if isinstance(src, str) and src.startswith(ASSET_PREFIX):
             tag["src"] = f"{BASE_PATH}{src}"
     for tag in soup.find_all(href=True):
+        if not isinstance(tag, Tag):
+            continue
         href = tag.get("href")
         if isinstance(href, str) and href.startswith(ASSET_PREFIX):
             tag["href"] = f"{BASE_PATH}{href}"
@@ -237,7 +242,7 @@ def _configure_user_menu(soup: BeautifulSoup) -> None:
 
     logout_link = None
     for candidate in dropdown.find_all("a"):
-        if "Wyloguj" in candidate.get_text(" ", strip=True):
+        if "Wyloguj" in " ".join(candidate.stripped_strings):
             logout_link = candidate
             break
     if not isinstance(logout_link, Tag):
@@ -275,7 +280,7 @@ def _configure_navigation(soup: BeautifulSoup, *, scenario: str, location: str, 
     """Point top-level navigation controls at mock views for the selected account."""
     accounts_button = None
     for button in soup.find_all(["button", "a"]):
-        if "LISTA KONT" in button.get_text(" ", strip=True):
+        if "LISTA KONT" in " ".join(button.stripped_strings):
             accounts_button = button
             break
     if isinstance(accounts_button, Tag):
@@ -311,7 +316,7 @@ def _set_location_header(soup: BeautifulSoup, account: dict[str, str]) -> None:
 
     label_span = soup.find(string=lambda text: isinstance(text, str) and "Konto fakturowe" in text)
     if label_span is not None and label_span.parent is not None:
-        label_span.replace_with(f"Konto fakturowe {account['id']}:")
+        label_span.replace_with(NavigableString(f"Konto fakturowe {account['id']}:"))
 
 
 def _configure_amount(soup: BeautifulSoup, *, amount: str) -> None:
@@ -333,7 +338,7 @@ def _configure_invoices_table(soup: BeautifulSoup, *, account: dict[str, str], s
         return
 
     for strong in form.select("strong"):
-        if "wszystkie" in strong.get_text(" ", strip=True).lower():
+        if "wszystkie" in " ".join(strong.stripped_strings).lower():
             strong.decompose()
 
     table = form.select_one("table.side-by-side__table")

@@ -171,7 +171,7 @@ def _render_month_page(*, scenario: str) -> str:
 
 def _configure_logout(soup: BeautifulSoup) -> None:
     """Turn the archived logout control into a simple local redirect."""
-    logout_item = soup.find(lambda tag: isinstance(tag, Tag) and "Wyloguj" in tag.get_text(" ", strip=True))
+    logout_item = soup.find(lambda tag: isinstance(tag, Tag) and "Wyloguj" in " ".join(tag.stripped_strings))
     if isinstance(logout_item, Tag):
         logout_item["onclick"] = f"window.location.assign('{LOGOUT_PATH}');"
         logout_item["role"] = "button"

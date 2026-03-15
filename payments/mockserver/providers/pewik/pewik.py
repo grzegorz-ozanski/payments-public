@@ -290,6 +290,7 @@ def _configure_location_panel(soup: BeautifulSoup, *, scenario: str, location: s
         )
         arrow["role"] = "button"
         arrow["tabindex"] = "0"
+        # noinspection PyUnnecessaryCast
         icon = cast(Tag | None, arrow.find("b"))
         if icon is not None:
             icon.string = "v"

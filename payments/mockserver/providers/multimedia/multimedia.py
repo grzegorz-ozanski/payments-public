@@ -110,6 +110,16 @@ def _append_helper_script(soup: BeautifulSoup, script_content: str) -> None:
     body.append(tag)
 
 
+def _class_values(tag: Tag) -> list[str]:
+    """Return class attribute values normalized to a plain list of strings."""
+    class_attr = tag.get("class")
+    if class_attr is None:
+        return []
+    if isinstance(class_attr, str):
+        return class_attr.split()
+    return [value for value in class_attr if isinstance(value, str)]
+
+
 def _render_login_page(*, scenario: str) -> str:
     """Prepare the captured login page HTML so Selenium can submit the mock form."""
     soup = _clone_soup(LOGIN_SOUP)
@@ -129,8 +139,8 @@ def _render_login_page(*, scenario: str) -> str:
 
     spinner = soup.select_one("#LoginButton i.spinner")
     if spinner is not None:
-        classes = [value for value in spinner.get("class", []) if value != "loadingSpinner"]
-        spinner["class"] = classes
+        classes = [value for value in _class_values(spinner) if value != "loadingSpinner"]
+        spinner["class"] = " ".join(classes)
 
     error_box = soup.select_one("span.logonFailureText")
     if error_box is None:

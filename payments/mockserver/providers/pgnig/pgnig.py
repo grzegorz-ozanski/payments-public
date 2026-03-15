@@ -202,31 +202,32 @@ def _configure_location(soup: BeautifulSoup, *, location: str) -> None:
 def _configure_invoices_link(soup: BeautifulSoup, *, scenario: str, location: str) -> None:
     """Point the invoices menu to the local mock route instead of the live portal."""
     for link in soup.select("a.menu-element"):
-        if link.get_text(" ", strip=True) == "Faktury":
+        if " ".join(link.stripped_strings) == "Faktury":
             link["href"] = f"{INVOICES_PATH}?scenario={scenario}&location={location}"
 
 
 def _configure_dashboard_status(soup: BeautifulSoup, *, scenario: str) -> None:
     """Adjust the dashboard payment summary for success and no-overdue scenarios."""
     status = soup.select_one("div.last-invoice.blue")
-    if status is None:
+    if not isinstance(status, Tag):
         return
 
     strong = status.find("strong")
+    strong_tag = strong if isinstance(strong, Tag) else None
     if scenario == "no_overdue":
-        if strong is not None:
-            strong.string = ALL_PAID_TEXT
+        if strong_tag is not None:
+            strong_tag.string = ALL_PAID_TEXT
         status.clear()
-        if strong is not None:
-            status.append(strong)
+        if strong_tag is not None:
+            status.append(strong_tag)
         status.append("Brak p\u0142atno\u015bci do uregulowania")
         return
 
-    if strong is not None:
-        strong.string = "Zbli\u017caj\u0105ce si\u0119 p\u0142atno\u015bci"
+    if strong_tag is not None:
+        strong_tag.string = "Zbli\u017caj\u0105ce si\u0119 p\u0142atno\u015bci"
     status.clear()
-    if strong is not None:
-        status.append(strong)
+    if strong_tag is not None:
+        status.append(strong_tag)
     status.append(soup.new_tag("br"))
     status.append(f"Kwota do zap\u0142aty: {DEFAULT_AMOUNT}")
     status.append(soup.new_tag("br"))
