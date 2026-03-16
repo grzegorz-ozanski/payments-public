@@ -317,6 +317,8 @@ def _scenario_invoices(scenario: str) -> tuple[dict[str, str], ...]:
 def _configure_invoices_link(soup: BeautifulSoup, *, scenario: str) -> None:
     """Point the invoices CTA at the mock invoices page."""
     for candidate in soup.find_all("a"):
+        if not isinstance(candidate, Tag):
+            continue
         if "Zobacz faktury" in " ".join(candidate.stripped_strings):
             candidate["href"] = f"{INVOICES_PATH}?scenario={scenario}"
             break
@@ -326,6 +328,8 @@ def _configure_user_menu(soup: BeautifulSoup) -> None:
     """Expose a stable avatar menu with a logout action."""
     avatar_button = None
     for button in soup.find_all("button"):
+        if not isinstance(button, Tag):
+            continue
         if button.select_one("span.ico-avatar") is not None:
             avatar_button = button
             break
@@ -367,7 +371,9 @@ def _configure_user_menu(soup: BeautifulSoup) -> None:
     label.string = "Wyloguj się"
     logout.append(label)
     menu.append(logout)
-    avatar_button.parent.append(menu)
+    parent = avatar_button.parent
+    if isinstance(parent, Tag):
+        parent.append(menu)
 
 
 def _remove_invoice_table(soup: BeautifulSoup) -> None:

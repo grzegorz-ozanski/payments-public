@@ -189,13 +189,14 @@ def _stabilize_login_layout(soup: BeautifulSoup) -> None:
                 element["style"] = f"{style}; position: static; display: block; margin: 0 0 1rem 0;"
 
     for selector in ("#Login_SSO_UserName", "#Login_SSO_Password"):
-        element = soup.select_one(selector)
-        if isinstance(element, Tag):
-            style = element.get("style", "")
-            element["style"] = (
-                f"{style}; display: block; width: 100%; min-height: 2.75rem; "
-                "position: static; box-sizing: border-box;"
-            )
+        input_element = soup.select_one(selector)
+        if not isinstance(input_element, Tag):
+            continue
+        style = input_element.get("style", "")
+        input_element["style"] = (
+            f"{style}; display: block; width: 100%; min-height: 2.75rem; "
+            "position: static; box-sizing: border-box;"
+        )
 
     login_button = soup.select_one("#LoginButton")
     if isinstance(login_button, Tag):
