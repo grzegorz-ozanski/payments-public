@@ -8,7 +8,7 @@ from werkzeug.wrappers import Response
 from bs4 import BeautifulSoup, Tag
 from flask import Blueprint, redirect, request, url_for
 
-from payments.mockserver.providers._html import render_mock_html
+from mockserver.providers._html import render_mock_html
 
 BASE_PATH = "/opec"
 LOGIN_PATH = f"{BASE_PATH}/"

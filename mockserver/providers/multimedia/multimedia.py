@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup, Tag
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
-from payments.mockserver.providers._html import render_mock_html
+from mockserver.providers._html import render_mock_html
 
 BASE_PATH = "/multimedia"
 LOGIN_PATH = f"{BASE_PATH}/"
@@ -151,6 +151,8 @@ def _render_login_page(*, scenario: str) -> str:
     if error_box is not None:
         error_box.string = "Nieprawidlowy login lub haslo" if scenario == "error" else ""
 
+    _stabilize_login_layout(soup)
+
     _append_helper_script(
         soup,
         """
@@ -164,6 +166,52 @@ def _render_login_page(*, scenario: str) -> str:
         """,
     )
     return render_mock_html(soup)
+
+
+def _stabilize_login_layout(soup: BeautifulSoup) -> None:
+    """Force a simple, in-viewport login layout so mouse-based login stays stable."""
+    form = soup.select_one("form#Form1")
+    if isinstance(form, Tag):
+        form["style"] = (
+            "max-width: 32rem; margin: 4rem auto; padding: 2rem; "
+            "background: #ffffff; border: 1px solid #d9d9d9; border-radius: 0.75rem; "
+            "position: relative; z-index: 2;"
+        )
+
+    for selector in (
+        ".panel-form-line-input",
+        ".panel-form-line-box",
+        ".panel-form-line-submit",
+    ):
+        for element in soup.select(selector):
+            if isinstance(element, Tag):
+                style = element.get("style", "")
+                element["style"] = f"{style}; position: static; display: block; margin: 0 0 1rem 0;"
+
+    for selector in ("#Login_SSO_UserName", "#Login_SSO_Password"):
+        element = soup.select_one(selector)
+        if isinstance(element, Tag):
+            style = element.get("style", "")
+            element["style"] = (
+                f"{style}; display: block; width: 100%; min-height: 2.75rem; "
+                "position: static; box-sizing: border-box;"
+            )
+
+    login_button = soup.select_one("#LoginButton")
+    if isinstance(login_button, Tag):
+        style = login_button.get("style", "")
+        login_button["style"] = (
+            f"{style}; display: inline-flex; width: 100%; min-height: 2.75rem; "
+            "align-items: center; justify-content: center; position: static;"
+        )
+
+    body = soup.body
+    if body is not None:
+        style = body.get("style", "")
+        body["style"] = (
+            f"{style}; min-height: 100vh; padding: 2rem 1rem; "
+            "background: #f6f6f6; overflow-x: hidden;"
+        )
 
 
 def _render_home_page(*, scenario: str) -> str:

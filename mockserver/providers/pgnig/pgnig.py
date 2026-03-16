@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup, Tag
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
-from payments.mockserver.providers._html import render_mock_html
+from mockserver.providers._html import render_mock_html
 
 BASE_PATH = "/pgnig"
 LOGIN_PATH = f"{BASE_PATH}/"
@@ -195,8 +195,26 @@ def _render_invoices_page(*, scenario: str, location: str) -> str:
 def _configure_location(soup: BeautifulSoup, *, location: str) -> None:
     """Replace the captured address text with a stable mock location."""
     address = soup.select_one("div.reading-adress span")
-    if address is not None:
+    if isinstance(address, Tag):
         address.string = f" ul. {location}, 81-591 Gdynia "
+        return
+
+    anchor = soup.select_one("div.reading-box .small-12.large-12.columns")
+    if not isinstance(anchor, Tag):
+        return
+
+    wrapper = soup.new_tag("div", attrs={"class": "reading-adress"})
+    icon = soup.new_tag("i", attrs={"class": "icon-fire orange"})
+    label = soup.new_tag("span")
+    label.string = f" ul. {location}, 81-591 Gdynia "
+    wrapper.append(icon)
+    wrapper.append(label)
+
+    submit_row = anchor.select_one("#reading_form")
+    if isinstance(submit_row, Tag):
+        submit_row.insert_before(wrapper)
+    else:
+        anchor.append(wrapper)
 
 
 def _configure_invoices_link(soup: BeautifulSoup, *, scenario: str, location: str) -> None:

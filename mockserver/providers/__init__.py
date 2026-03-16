@@ -8,6 +8,7 @@ from .nordhome.nordhome import bp as nordhome_bp
 from .opec.opec import bp as opec_bp
 from .pgnig.pgnig import bp as pgnig_bp
 from .pewik.pewik import bp as pewik_bp
+from .vectra.vectra import bp as vectra_bp
 __all__ = [
     'actum_bp',
     'energa_bp',
@@ -16,4 +17,5 @@ __all__ = [
     'opec_bp',
     'pgnig_bp',
     'pewik_bp',
+    'vectra_bp',
 ]

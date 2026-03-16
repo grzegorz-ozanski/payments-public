@@ -10,6 +10,10 @@ dependencies = [
   "scipy==1.17.0",
 ]
 
+[project.scripts]
+payments = "payments.main:main"
+mockserver = "mockserver.app:main"
+
 [tool.uv.sources]
 browser = { workspace = true }
 

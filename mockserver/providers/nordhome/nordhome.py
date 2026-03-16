@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
-from payments.mockserver.providers._html import render_mock_html
+from mockserver.providers._html import render_mock_html
 
 BASE_PATH = "/nordhome/content/InetObsKontr"
 ASSET_BASE_PATH = "/nordhome/iok"

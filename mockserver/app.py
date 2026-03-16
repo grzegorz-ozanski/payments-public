@@ -5,7 +5,7 @@ from pathlib import Path
 
 from flask import Flask, Response, request
 
-from payments.mockserver.providers import actum_bp, energa_bp, multimedia_bp, nordhome_bp, opec_bp, pgnig_bp, pewik_bp
+from mockserver.providers import actum_bp, energa_bp, multimedia_bp, nordhome_bp, opec_bp, pgnig_bp, pewik_bp, vectra_bp
 
 LOG_FILE = Path('log.txt')
 
@@ -43,10 +43,15 @@ def create_app() -> Flask:
     flask_app.register_blueprint(opec_bp)
     flask_app.register_blueprint(pgnig_bp)
     flask_app.register_blueprint(pewik_bp)
+    flask_app.register_blueprint(vectra_bp)
     return flask_app
 
 
 app = create_app()
 
-if __name__ == "__main__":
+def main() -> None:
+    """Run the local mock server."""
     app.run(debug=True, port=5000)
+
+if __name__ == "__main__":
+    main()

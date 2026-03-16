@@ -9,7 +9,7 @@ from bs4.element import NavigableString
 from flask import Blueprint, redirect, request, url_for
 from werkzeug.wrappers import Response
 
-from payments.mockserver.providers._html import render_mock_html
+from mockserver.providers._html import render_mock_html
 
 BASE_PATH = "/energa"
 LOGIN_PATH = f"{BASE_PATH}/"
