@@ -47,9 +47,8 @@ class ProviderConfig:
         if not cls._initialized:
             cls._mock_url = cls.detect_mock_server()
             cls._initialized = True
-        if cls._mock_url:
-            return f'{cls._mock_url}/{classname}'
-        return base if not url else f'{base}/{url}'
+        base_url = f'{cls._mock_url}/{classname}' if cls._mock_url else base
+        return f'{base_url}/{url}'
 
     @staticmethod
     def detect_mock_server(base_url: str = 'http://127.0.0.1:5000') -> str | None:
