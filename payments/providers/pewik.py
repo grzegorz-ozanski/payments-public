@@ -47,10 +47,10 @@ class Pewik(Provider):
 
     def __init__(self, *locations: str):
         """Initialize the provider with given locations."""
-        super().__init__(self.service_url(), locations, USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
+        super().__init__(self.get_url(), locations, USER_INPUT, PASSWORD_INPUT, LOGOUT_BUTTON)
 
-    def service_url(self) -> str:
-        return f'{super().service_url() or BASE_URL}/{SERVICE_URL}'
+    def get_url(self) -> str:
+        return self.service_url(BASE_URL, SERVICE_URL)
 
     def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Extract payments from balances table, switching between locations."""

@@ -36,10 +36,10 @@ class Pgnig(Provider):
         overlays = [Locator(By.ID, 'CybotCookiebotDialogBodyButtonDecline'),
                     Locator(By.CLASS_NAME, 'modalCloseButton'),
                     Locator(By.CSS_SELECTOR, '.button.expanded.invert-colors'), ]
-        super().__init__(self.service_url(), locations, USER_INPUT, PASSWORD_INPUT, overlay_buttons=overlays)
+        super().__init__(self.get_url(), locations, USER_INPUT, PASSWORD_INPUT, overlay_buttons=overlays)
 
-    def service_url(self) -> str:
-        return super().service_url() or SERVICE_URL
+    def get_url(self) -> str:
+        return self.service_url(SERVICE_URL)
 
     def _fetch_payments(self, browser: Browser) -> list[Payment]:
         """Return the list of unpaid invoices from the PGNiG eBOK portal."""

@@ -7,7 +7,10 @@
     - PageElement dataclass for defining input/button locators.
 """
 import os
+import socket
 import time
+from urllib.error import URLError
+from urllib.request import urlopen
 
 from selenium.common.exceptions import NoSuchElementException, WebDriverException, TimeoutException
 from selenium.webdriver.common.by import By
@@ -27,6 +30,47 @@ DEFAULT_LOGOUT_XPATH = (
     '//*[contains(string(), "Wyloguj") and not(.//*[contains(string(), "Wyloguj")])]'
 )
 
+
+class ProviderConfig:
+    """
+    Provider configuration
+    """
+    _initialized = False
+    _mock_url = None
+
+    @classmethod
+    def service_url(cls, classname: str, base: str, url: str) -> str:
+        """
+        Returns mock server URL if server is running
+        :return:
+        """
+        if not cls._initialized:
+            cls._mock_url = cls.detect_mock_server()
+            cls._initialized = True
+        if cls._mock_url:
+            return f'{cls._mock_url}/{classname}'
+        return base if not url else f'{base}/{url}'
+
+    @staticmethod
+    def detect_mock_server(base_url: str = 'http://127.0.0.1:5000') -> str | None:
+        """
+        Detect a local mockserver instance and route providers through it.
+        Returns the configured base URL or None when no mockserver was detected.
+        """
+        env_name = 'PAYMENTS_MOCK_SERVER'
+        if configured_url := os.getenv(env_name):
+            log.debug('Using mock server from %s=%s', env_name, configured_url)
+            return configured_url
+
+        try:
+            with urlopen(f'{base_url}/vectra', timeout=0.5) as response:
+                if response.status >= 400:
+                    return None
+        except (TimeoutError, URLError, ValueError, socket.timeout):
+            return None
+
+        log.info('Detected local mock server at %s', base_url)
+        return base_url
 
 def _sleep_with_message(amount: int, message: str) -> None:
     """Sleep for `amount` seconds, logging a debug message first."""
@@ -186,11 +230,18 @@ class Provider:
         except WebDriverException:
             log.web_error()
 
-    def service_url(self) -> str | None:
+    def service_url(self, base: str, url: str = '') -> str:
+        """
+        Calculates service URL either for mock server (if running) or real provider page
+        :param base: Base URL
+        :param url: Path under base URL, if applicable
+        :return: Calculated service URL
+        """
+        return ProviderConfig.service_url(self.__class__.__name__.lower(), base, url)
+
+    def get_url(self) -> str:
         """Must be overridden in subclasses to return an actual service url."""
-        if base_url := os.getenv('PAYMENTS_MOCK_SERVER'):
-            return f'{base_url}/{self.__class__.__name__.lower()}'
-        return None
+        raise NotImplementedError(f'{self.__class__.__name__} must override get_url().')
 
     def _default_payments(self, message: str = '') -> list[Payment]:
         return [Payment(self.name,

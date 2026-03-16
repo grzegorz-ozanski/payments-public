@@ -40,13 +40,13 @@ class Vectra(Provider):
     def __init__(self, *locations: str):
         """Initialize OPEC service with given locations."""
         self.payment_comment = ''
-        super().__init__(self.service_url(), locations, USER_INPUT, PASSWORD_INPUT,
+        super().__init__(self.get_url(), locations, USER_INPUT, PASSWORD_INPUT,
                          overlay_buttons=[Locator(By.ID, 'cookiescript_accept')],
                          login_strategy=TwoStageLogin)
 
 
-    def service_url(self) -> str:
-        return f'{super().service_url() or SERVICE_URL}'
+    def get_url(self) -> str:
+        return self.service_url(SERVICE_URL)
 
     def login(self, browser: Browser, load: bool = True) -> None:
         if load:
