@@ -2,7 +2,7 @@
 set -euo pipefail
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-cd ${BASEDIR}/..
+cd "${BASEDIR}/.."
 FILES=(error* trace* tests/error* test/trace* ../error* ../trace*)
 
 if [[ "${1:-}" == "all" ]]; then
