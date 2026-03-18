@@ -135,7 +135,7 @@ def html_output(log_file: Path | str,
             f.write(f'''\
 <details>
     <summary>{encode(output[provider], True)}</summary>
-    <pre>{logs[provider]}</pre>
+    <pre>{logs.get(provider, 'Using values from previous run')}</pre>
 </details>''')
         if add_header:
             f.write(HTML_FOOTER)
