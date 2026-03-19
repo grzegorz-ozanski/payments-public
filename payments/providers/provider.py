@@ -174,16 +174,7 @@ class Provider:
         browser.open_in_new_tab(self.url)
         log.debug('Wating 2 seconds')
         browser.wait_for_page_inactive(2)
-        for overlay_button in self.overlay_buttons:
-            log.debug('Checking overlay button %s', overlay_button)
-            webelement = browser.wait_for_page_element(overlay_button, 2)
-            if webelement:
-                log.debug('Overlay button %s found, closing', overlay_button)
-                try:
-                    browser.safe_click_page_element(overlay_button)
-                    browser.wait_for_page_element_disappear(overlay_button, 2)
-                except TimeoutException:
-                    log.debug('Timeout expired waiting for button %s to become clickable!', overlay_button)
+        self._close_overlays(browser)
 
     def login(self, browser: Browser, load: bool = True) -> None:
         """Perform login in the web application."""
@@ -241,6 +232,18 @@ class Provider:
     def get_url(self) -> str:
         """Must be overridden in subclasses to return an actual service url."""
         raise NotImplementedError(f'{self.__class__.__name__} must override get_url().')
+
+    def _close_overlays(self, browser: Browser) -> None:
+        for overlay_button in self.overlay_buttons:
+            log.debug('Checking overlay button %s', overlay_button)
+            webelement = browser.wait_for_page_element(overlay_button, 2)
+            if webelement:
+                log.debug('Overlay button %s found, closing', overlay_button)
+                try:
+                    browser.safe_click_page_element(overlay_button)
+                    browser.wait_for_page_element_disappear(overlay_button, 2)
+                except TimeoutException:
+                    log.debug('Timeout expired waiting for button %s to become clickable!', overlay_button)
 
     def _default_payments(self, message: str = '') -> list[Payment]:
         return [Payment(self.name,
