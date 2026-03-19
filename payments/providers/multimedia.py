@@ -142,3 +142,6 @@ class Multimedia(Provider):
             index = payments.index(next(payment for payment in payments if payment.location == location))
             payments[index] = Payment(self.name, location, due_date, amount)
         return payments
+
+    def _is_logged_in(self, browser: Browser) -> bool:
+        return False

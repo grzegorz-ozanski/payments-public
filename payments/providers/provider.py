@@ -251,6 +251,7 @@ class Provider:
                 for location in self.locations]
 
     def _is_logged_in(self, browser: Browser) -> bool:
+        """Must be overridden in subclasses to return actual logged in state."""
         return False
 
     def _fetch_payments(self, browser: Browser) -> list[Payment]:

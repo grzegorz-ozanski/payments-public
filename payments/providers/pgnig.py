@@ -101,3 +101,6 @@ class Pgnig(Provider):
 
         payments = [Payment(self.name, location, date, amount) for date, amount in payments_dict.items()]
         return payments if payments else [Payment(self.name, location, comment='Failed to process unpaid invoices')]
+
+    def _is_logged_in(self, browser: Browser) -> bool:
+        return browser.find_page_elements(Locator(By.CSS_SELECTOR, "a[aria-current='page']")) != []

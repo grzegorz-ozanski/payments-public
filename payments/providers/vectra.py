@@ -120,3 +120,6 @@ class Vectra(Provider):
         if total.due_date == DueDate.unknown:
             total.due_date = DueDate('today')
         return [total]
+
+    def _is_logged_in(self, browser: Browser) -> bool:
+        return False

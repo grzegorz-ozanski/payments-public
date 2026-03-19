@@ -95,3 +95,6 @@ class Pewik(Provider):
                 break
 
         return payments
+
+    def _is_logged_in(self, browser: Browser) -> bool:
+        return False

@@ -109,3 +109,6 @@ class Opec(Provider):
                     break
             browser.back()
         return [Payment(self.name, self.locations[0], due_date, amount)]
+
+    def _is_logged_in(self, browser: Browser) -> bool:
+        return False

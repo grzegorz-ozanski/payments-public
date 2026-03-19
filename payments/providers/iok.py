@@ -59,3 +59,6 @@ class IOK(Provider):
 
         self.log.debug("Got amount '%s' of location '%s'", amount.text, self.locations[0])
         return [Payment(self.name, self.locations[0], due_date, amount)]
+
+    def _is_logged_in(self, browser: Browser) -> bool:
+        return False
