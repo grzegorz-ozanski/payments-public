@@ -19,8 +19,9 @@ PASSWORD_INPUT = Locator(By.NAME, 'accessPin')
 
 READING_ADDRESS = Locator(By.CLASS_NAME, 'reading-adress')
 INVOICES_MENU = Locator(By.XPATH, '//*[@class="menu-element" and normalize-space()="Faktury"]')
-ALL_INVOICES_PAID = Locator(By.XPATH, '//div[contains(@class,"last-invoice") and contains(@class,"blue")]'
-                                      '/strong[contains(text(), "Faktury są opłacone")]')
+ALL_INVOICES_PAID_ELEMENT = Locator(By.XPATH, '//div[contains(@class,"last-invoice") and contains(@class,"blue")]')
+ALL_INVOICES_PAID_TEXT = 'Faktury są opłacone'
+OVERPAID_TEXT = 'Kwota nadpłaty:'
 
 INVOICE_ROW = Locator(By.CLASS_NAME, 'main-row-container')
 INVOICE_COLUMN = Locator(By.CLASS_NAME, 'columns')
@@ -35,6 +36,8 @@ class Pgnig(Provider):
         """Initialize the PGNiG provider with input elements and locations."""
         overlays = [Locator(By.ID, 'CybotCookiebotDialogBodyButtonDecline'),
                     Locator(By.CLASS_NAME, 'modalCloseButton'),
+                    Locator(By.CLASS_NAME, 'icon-close'),
+                    Locator(By.CLASS_NAME, 'icon-close'),
                     Locator(By.CSS_SELECTOR, '.button.expanded.invert-colors'), ]
         super().__init__(self.get_url(), locations, USER_INPUT, PASSWORD_INPUT, overlay_buttons=overlays)
 
@@ -51,9 +54,15 @@ class Pgnig(Provider):
             raise FetchError(f"Cannot find location element '{READING_ADDRESS}'!")
 
         # If all invoices are paid, no point in processing the invoices list
-        if browser.find_page_elements(ALL_INVOICES_PAID):
+        if all_invoices_paid := browser.find_page_elements(ALL_INVOICES_PAID_ELEMENT):
             log.info('All invoices paid, skipping processing invoices list')
-            return [Payment(self.name, location)]
+            all_invoices_paid_text = all_invoices_paid[0].text
+            amount = Amount.zero
+            if OVERPAID_TEXT in all_invoices_paid_text:
+                overpaid_amount = all_invoices_paid_text.split(OVERPAID_TEXT)[1]
+                amount = f'-{overpaid_amount}'
+            return [Payment(self.name, location, amount=amount)]
+
         log.info('Getting invoices menu...')
         invoices_menu = browser.wait_for_page_element(INVOICES_MENU)
         log.info('Opening invoices menu...')

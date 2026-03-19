@@ -24,7 +24,7 @@ class Amount:
     """
         Represents payment amount either as float or decimal value with comma (',') decimal separator
     """
-    _zero = '0,00'
+    zero = '0,00'
     unknown = '<unknown>'
 
     def __init__(self, value: AmountT) -> None:
@@ -95,7 +95,7 @@ class Amount:
         if amount:
             amount = re.sub(r'[^\d,.-]', '', self.value)
         else:
-            amount = self._zero
+            amount = self.zero
         amount = re.sub(r'[,.]', separator, amount)
         whole, dec = amount.split(separator) if separator in amount else (amount, '0')
         return whole, dec
