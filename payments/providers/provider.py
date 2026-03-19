@@ -178,13 +178,15 @@ class Provider:
 
     def login(self, browser: Browser, load: bool = True) -> None:
         """Perform login in the web application."""
-        if self._is_logged_in(browser):
-            return
         try:
             if load:
                 self.load(browser)
 
             log.info('Logging into service...')
+            if self._is_logged_in(browser):
+                log.info('Already logged in.')
+                self.logged_in = True
+                return
             log.web_trace('pre-login')
             _sleep_with_message(self.pre_login_delay, 'Pre-login')
 
